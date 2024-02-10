@@ -1,0 +1,33 @@
+{
+  "name": "@stcland/utils",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "STC"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/json-stringify-safe": "^5.0.3",
+    "@types/ramda": "^0.29.10",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "eslint": "^8.56.0",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "json-stringify-safe": "^5.0.1",
+    "ramda": "^0.29.1",
+    "ramda-adjunct": "^4.1.1"
+  },
+  "scripts": {
+    "build": "pnpm run clean && tsup && ls dist",
+    "clean": "rimraf ./dist && mkdir dist",
+    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
+  }
+}

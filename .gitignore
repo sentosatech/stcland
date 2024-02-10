@@ -1,0 +1,25 @@
+# builds / dependencies
+node_modules
+/.pnp
+.pnp.js
+build
+dist
+.env-production
+
+# misc
+.DS_Store
+*.pem
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# eslint
+.eslintcache
+backend/.eslintcache
+
+# vite
+.vite
+
+# dev envs
+.vscode
