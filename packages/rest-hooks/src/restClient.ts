@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { assocPath, keys } from 'ramda'
 import { isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
@@ -102,6 +102,9 @@ interface _RequestPreprocessorOptions {
 const _requestPreprocessor =
   (opts: _RequestPreprocessorOptions) =>
   (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
+  // Now using InternalAxiosRequestConfig to remove tyscript error
+  // he InternalAxiosRequestConfig serves as a behind-the-scenes type for Axios internals, 
+  // enabling features like interceptors and maintaining type safety
 {
   const { verbose, getAccessToken } = opts
   const accessToken = getAccessToken()
