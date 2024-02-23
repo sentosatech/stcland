@@ -102,9 +102,6 @@ interface _RequestPreprocessorOptions {
 const _requestPreprocessor =
   (opts: _RequestPreprocessorOptions) =>
   (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
-  // Now using InternalAxiosRequestConfig to remove tyscript error
-  // he InternalAxiosRequestConfig serves as a behind-the-scenes type for Axios internals, 
-  // enabling features like interceptors and maintaining type safety
 {
   const { verbose, getAccessToken } = opts
   const accessToken = getAccessToken()
