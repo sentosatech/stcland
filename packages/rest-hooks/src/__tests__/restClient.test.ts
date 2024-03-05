@@ -122,9 +122,7 @@ describe('_expandRestPath', () => {
       pathParams: { appPlatformId: 22 },
       queryParams: { hydrate: true },
     }
-
     const expandedPath = _expandRestPath(restPath, params)
-
     expect(expandedPath).toEqual('/v1/spark/appplatforms/22?hydrate=true')
   })
   it('should return the correct expanded path', () => {
@@ -134,9 +132,7 @@ describe('_expandRestPath', () => {
       queryParams: { hydrate: true }
     }
     const expectedOutput = '/v1/spark/appplatforms/22?hydrate=true'
-
     const result = _expandRestPath(restPath, params)
-
     expect(result).toEqual(expectedOutput)
   })
 
