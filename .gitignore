@@ -23,3 +23,6 @@ backend/.eslintcache
 
 # dev envs
 .vscode
+
+# jest result
+packages\rest-hooks\coverage
