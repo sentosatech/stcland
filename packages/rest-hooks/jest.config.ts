@@ -157,7 +157,6 @@ const config: Config = {
   // The glob patterns Jest uses to detect test files
   testMatch: [
     '<rootDir>/__tests__/**/*.[jt]s?(x)',
-    '**/?(*.)+(spec|test).[tj]s?(x)',
     '<rootDir>/src/**/*.test.[jt]s?(x)'
 
   ],
@@ -203,8 +202,6 @@ const config: Config = {
     'tsx'
   ],
   'preset': 'ts-jest'
-
-
 }
 
 export default config
