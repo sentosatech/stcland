@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, AxiosRequestConfig } from 'axios'
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { assocPath, keys } from 'ramda'
 import { isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
@@ -75,7 +75,6 @@ export const createRestClient = (
   // all clients use these middlewares
 
   restClient.axiosClient.interceptors.request.use(
-    // @ts-expect-error becaused TS is a pain in the ass
     _requestPreprocessor({
       verbose: !!clientConfig?.verbose,
       getAccessToken: clientConfig?.getAccessToken || (() => 'fakeApiToken'),
@@ -102,7 +101,7 @@ interface _RequestPreprocessorOptions {
 
 const _requestPreprocessor =
   (opts: _RequestPreprocessorOptions) =>
-  (req: AxiosRequestConfig): AxiosRequestConfig =>
+  (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
 {
   const { verbose, getAccessToken } = opts
   const accessToken = getAccessToken()
