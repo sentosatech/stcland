@@ -1,8 +1,7 @@
-import { jest } from '@jest/globals' // Import jest from @jest/globals
+import { jest } from '@jest/globals' 
 import axios from 'axios'
 import { createRestClient, _expandRestPath } from '../restClient'
 
-// Mock axios.create to prevent actual network requests
 jest.mock('axios')
 const mockedAxios = axios as jest.Mocked<typeof axios>
 import { RestClient } from '../restClientTypes'
@@ -10,18 +9,17 @@ import { RestClient } from '../restClientTypes'
 
 describe('createRestClient', () => {
 
-
   const mockGetAccessToken = jest.fn(() => 'fakeAccessToken')
 
   const clientConfig = {
     verbose: true,
-    getAccessToken: mockGetAccessToken, // Use the mock function
+    getAccessToken: mockGetAccessToken, 
   }
   const serverConfig = {
     defaultBaseUrl: 'https://example.com/api',
     timeout: 5000,
   }
-  let restClient: RestClient // Change the type to match your RestClient type
+  let restClient: RestClient
 
   beforeEach(() => {
     restClient = createRestClient(clientConfig, serverConfig)
@@ -30,21 +28,17 @@ describe('createRestClient', () => {
     jest.clearAllMocks()
   })
 
-
   it('should create a REST client with provided configurations', () => {
-    // Mock function for getAccessToken
     const mockGetAccessToken = jest.fn(() => 'fakeAccessToken')
 
     const clientConfig = {
       verbose: true,
-      getAccessToken: mockGetAccessToken, // Use the mock function
+      getAccessToken: mockGetAccessToken,
     }
     const serverConfig = {
       defaultBaseUrl: 'https://example.com/api',
       timeout: 5000,
     }
-
-
     expect(restClient.clientConfig).toEqual(clientConfig)
     expect(restClient.serverConfig).toEqual(serverConfig)
     expect(axios.create).toHaveBeenCalledWith({
@@ -53,7 +47,6 @@ describe('createRestClient', () => {
     })
   })
   describe('GET request', () => {
-
     it('should make a GET request with provided configurations', async () => {
       let response
       if (restClient.get) {
@@ -62,10 +55,10 @@ describe('createRestClient', () => {
       if (response) expect(response.status).toEqual(200)
     })
   })
+
   describe('POST request', () => {
 
     it('should make a POST request with provided configurations', async () => {
-
       const postData = { key: 'value' };
       (restClient.axiosClient.post as jest.Mock).mockResolvedValueOnce({ data: postData } as never)
       let response
@@ -91,6 +84,7 @@ describe('createRestClient', () => {
       expect(response).toEqual(data)
     })
   })
+
   describe('PATCH request', () => {
     it('should send a PATCH request with correct data', async () => {
       const path = '/example/path'
@@ -105,6 +99,7 @@ describe('createRestClient', () => {
       expect(response).toEqual(data)
     })
   })
+
   describe('DELETE request', () => {
     it('should send a DELETE request', async () => {
       const path = '/example/path'
@@ -118,11 +113,7 @@ describe('createRestClient', () => {
       expect(response).toEqual({})
     })
   })
-
-
 })
-
-
 
 describe('_expandRestPath', () => {
   it('should expand a REST path with given parameters', () => {
@@ -149,50 +140,4 @@ describe('_expandRestPath', () => {
     expect(result).toEqual(expectedOutput)
   })
 
-
-
 })
-// it('should make a GET request with provided configurations', async () => {
-//   // Create a mock Axios instance
-//   const axiosInstance = axios.create()
-//   const mockGet = jest.spyOn(axiosInstance, 'get')
-
-//   // Assume createRestClient returns an Axios instance
-//   const restClient = createRestClient({}, {})
-
-//   if (restClient.get) {
-//     // Replace '/test' with your actual API endpoint
-//     await restClient.get('/test')
-//   }
-
-//   // Verify that the get method was called with the expected URL
-//   expect(mockGet).toHaveBeenCalledWith('/test')
-// })
-// it('should make a POST request with provided configurations', async () => {
-//   const axiosInstance = axios.create()
-//   const mockPost = jest.spyOn(axiosInstance, 'post')
-//   const restClient = createRestClient({}, {})
-
-//   if (restClient.post) {
-//     const data = { test: 'data' }
-//     await restClient.post('/test', data)
-//   }
-
-//   expect(mockPost).toHaveBeenCalledWith('/test', expect.anything())
-// })
-
-// it('should make a PUT request with provided configurations', async () => {
-//   const axiosInstance = axios.create()
-//   const mockPut = jest.spyOn(axiosInstance, 'put')
-//   const restClient = createRestClient({}, {})
-
-//   // Ensure restClient is not undefined before calling put()
-//   if (restClient.put) {
-//     const data = { test: 'data' }
-//     await restClient.put('/test', data)
-//   }
-
-//   expect(mockPut).toHaveBeenCalledWith('/test', expect.anything())
-// })
-
-
