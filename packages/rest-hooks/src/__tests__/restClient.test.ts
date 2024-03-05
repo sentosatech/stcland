@@ -4,11 +4,12 @@ import { createRestClient, _expandRestPath } from '../restClient'
 
 // Mock axios.create to prevent actual network requests
 jest.mock('axios')
+const mockedAxios = axios as jest.Mocked<typeof axios>
+import { RestClient } from '../restClientTypes'
+
 
 describe('createRestClient', () => {
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
+
 
   const mockGetAccessToken = jest.fn(() => 'fakeAccessToken')
 
@@ -20,6 +21,15 @@ describe('createRestClient', () => {
     defaultBaseUrl: 'https://example.com/api',
     timeout: 5000,
   }
+  let restClient: RestClient // Change the type to match your RestClient type
+
+  beforeEach(() => {
+    restClient = createRestClient(clientConfig, serverConfig)
+  })
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
 
   it('should create a REST client with provided configurations', () => {
     // Mock function for getAccessToken
@@ -34,7 +44,6 @@ describe('createRestClient', () => {
       timeout: 5000,
     }
 
-    const restClient = createRestClient(clientConfig, serverConfig)
 
     expect(restClient.clientConfig).toEqual(clientConfig)
     expect(restClient.serverConfig).toEqual(serverConfig)
@@ -43,42 +52,73 @@ describe('createRestClient', () => {
       timeout: serverConfig.timeout,
     })
   })
+  describe('GET request', () => {
 
-  it('should make a GET request with provided configurations', async () => {
-    const restClient = createRestClient({}, {}) // Initialize your rest client
-    let response
-    // Replace '/test' with your actual API endpoint
-    if (restClient.get) {
-      // Replace '/test' with your actual API endpoint
-      response = await restClient.get('/test')
-    }
-    // Add your assertions here
-    if (response) expect(response.status).toEqual(200)
-    // ...
+    it('should make a GET request with provided configurations', async () => {
+      let response
+      if (restClient.get) {
+        response = await restClient.get('/test')
+      }
+      if (response) expect(response.status).toEqual(200)
+    })
+  })
+  describe('POST request', () => {
+
+    it('should make a POST request with provided configurations', async () => {
+
+      const postData = { key: 'value' };
+      (restClient.axiosClient.post as jest.Mock).mockResolvedValueOnce({ data: postData } as never)
+      let response
+      if (restClient.post) {
+        response = await restClient.post('/example', postData)
+      }
+      expect(restClient.axiosClient.post).toHaveBeenCalledWith('/example', postData, undefined)
+      expect(response).toEqual(postData)
+
+    })
   })
 
-  it('should make a POST request with provided configurations', async () => {
-  
-    const restClient = createRestClient(clientConfig, serverConfig)
-
-    const postData = { key: 'value' };
-
-    // Mock the Axios post method
-    (restClient.axiosClient.post as jest.Mock).mockResolvedValueOnce({ data: postData } as never)
-
-    let response
-    if (restClient.post) {
-
-      response = await restClient.post('/example', postData)
-    }
-
-    // Verify that the post method is called with the correct arguments
-    expect(restClient.axiosClient.post).toHaveBeenCalledWith('/example', postData, undefined)
-
-    // Verify the response
-    expect(response).toEqual(postData)
-
+  describe('PUT request', () => {
+    it('should send a PUT request with correct data', async () => {
+      const path = '/example/path'
+      const data = { id: 1, name: 'Example' }
+      mockedAxios.put.mockResolvedValueOnce({ data })
+      let response
+      if (restClient.put) {
+        response = await restClient.put(path, data)
+      }
+      expect(mockedAxios.put).toHaveBeenCalledWith(path, data)
+      expect(response).toEqual(data)
+    })
   })
+  describe('PATCH request', () => {
+    it('should send a PATCH request with correct data', async () => {
+      const path = '/example/path'
+      const data = { id: 1, name: 'Updated Example' }
+
+      mockedAxios.patch.mockResolvedValueOnce({ data })
+      let response
+      if (restClient.patch) {
+        response = await restClient.patch(path, data)
+      }
+      expect(mockedAxios.patch).toHaveBeenCalledWith(path, data)
+      expect(response).toEqual(data)
+    })
+  })
+  describe('DELETE request', () => {
+    it('should send a DELETE request', async () => {
+      const path = '/example/path'
+
+      mockedAxios.delete.mockResolvedValueOnce({})
+      let response
+      if (restClient.delete) {
+        response = await restClient.delete(path)
+      }
+      expect(mockedAxios.delete).toHaveBeenCalledWith(path)
+      expect(response).toEqual({})
+    })
+  })
+
 
 })
 
