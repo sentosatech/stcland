@@ -158,7 +158,6 @@ const config: Config = {
   testMatch: [
     '<rootDir>/__tests__/**/*.[jt]s?(x)',
     '<rootDir>/src/**/*.test.[jt]s?(x)'
-
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
