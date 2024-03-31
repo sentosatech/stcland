@@ -20,10 +20,11 @@ export interface ServerConfig {
 export interface ClientConfig {
   verbose?: boolean
     // should rest interactions be logged to the console (default false)
-  fetchResponseContents?: FetchResponseContents
-    // what should the responce contain?
+  responsePostProcessorFn?: (rsp: AxiosResponse) => AxiosResponse
+    // optonal function to apply to raw response before returning
+
   getAccessToken?: () => string
-    // function to call to get the access token for the current user
+    // optional function to call to get the access token for the current user
     // if not provided, the client will not add an access token to requests
 }
 

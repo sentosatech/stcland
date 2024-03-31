@@ -6,13 +6,7 @@ module.exports = {
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
   'rules': {
     quotes: ['error', 'single'],
-    semi: ['error', 'never'],
-    'object-curly-spacing': ['error', 'always'],
-    'no-unused-vars': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    semi: ['error', 'never']
   },
-  env: {
-    'jest': true
-  }
 }
 

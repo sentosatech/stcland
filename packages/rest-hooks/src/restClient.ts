@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
 import { assocPath, keys } from 'ramda'
-import { isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
+import { isFunction, isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
 import { throwIf } from '@stcland/errors'
 import {
   isNotStringOrNumber,
@@ -13,11 +13,9 @@ import {
 import {
   ServerConfig,
   ClientConfig,
-  FetchResponseContents,
   RestClient,
   RestParams,
 } from './restClientTypes'
-
 
 export const createRestClient = (
   clientConfig: ClientConfig,
@@ -49,27 +47,27 @@ export const createRestClient = (
   restClient.createGetFn =
     (restPath, restParams, axiosOptions) =>
     () =>
-    restClient.axiosClient.get(_expandRestPath(restPath, restParams || {}), axiosOptions)
+    restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions)
 
   restClient.createPostFn =
     (restPath, axiosOptions) =>
     ({ data, restParams }) =>
-      restClient.axiosClient.post(_expandRestPath(restPath, restParams || {}), data, axiosOptions)
+      restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
 
   restClient.createPutFn =
     (restPath, axiosOptions) =>
     ({ data, restParams }) =>
-      restClient.axiosClient.put(_expandRestPath(restPath, restParams || {}), data, axiosOptions)
+      restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions)
 
   restClient.createPatchFn =
     (restPath, axiosOptions) =>
     ({ data, restParams }) =>
-      restClient.axiosClient.patch(_expandRestPath(restPath, restParams || {}), data, axiosOptions)
+      restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions)
 
   restClient.createDeleteFn =
     (restPath, axiosOptions) =>
     (restParams) =>
-      restClient.axiosClient.delete(_expandRestPath(restPath, restParams || {}), axiosOptions)
+      restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
 
 
   // all clients use these middlewares
@@ -82,9 +80,11 @@ export const createRestClient = (
   )
 
   restClient.axiosClient.interceptors.response.use(
-    _responsePostProcessor(!!clientConfig?.verbose)
+    _responsePostProcessor({
+      verbose: !!clientConfig?.verbose,
+      responsePostProcessor: clientConfig?.responsePostProcessorFn
+    })
   )
-
   return restClient
 }
 
@@ -92,19 +92,19 @@ export const createRestClient = (
 // // Module Only Stuff
 // //*****************************************************************************
 
-interface _RequestPreprocessorOptions {
-  verbose: boolean
-  getAccessToken: () => string
+interface _RequestPreProcessorOptions {
+  verbose?: boolean
+  getAccessToken?: () => string
     // If not nullish, will be used to get an access token,
     // which will be added to the request headers
 }
 
 const _requestPreprocessor =
-  (opts: _RequestPreprocessorOptions) =>
+  (opts: _RequestPreProcessorOptions) =>
   (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
 {
   const { verbose, getAccessToken } = opts
-  const accessToken = getAccessToken()
+  const accessToken = isFunction(getAccessToken) ? getAccessToken() : ''
   const { method, baseURL, url, data } = req
 
   if (verbose) {
@@ -117,13 +117,26 @@ const _requestPreprocessor =
     : req
 }
 
-const _responsePostProcessor = (
-  verbose: boolean = false, fetchResponse: FetchResponseContents = 'FULL') =>
+interface _RequestPostProcessorOptions {
+  verbose?: boolean
+  responsePostProcessor?: (rsp: AxiosResponse) => AxiosResponse
+}
+
+
+const _responsePostProcessor =
+  (opts: _RequestPostProcessorOptions) =>
   (rsp: AxiosResponse) =>
 {
+
+  const {
+    verbose = false,
+    responsePostProcessor = rsp => rsp
+  } = opts
+
   const { data, status, statusText } = rsp
   if (verbose) { console.debug(`response: ${status} ${statusText} `, data || '') }
-  return fetchResponse === 'DATA_ONLY' ? data : rsp
+
+  return responsePostProcessor(rsp)
 }
 
 /**
@@ -145,13 +158,14 @@ const _responsePostProcessor = (
  *   output
  *     /v1/spark/appplatforms/22?hydrate=true
  */
-export const _expandRestPath = (
+export const expandRestPath = (
   restPath: string,
-  params: RestParams) => {
+  params?: RestParams
+) => {
   if (isNilOrEmpty(params)) return restPath
   throwIf(isNotObject(params), 'expandUrl(): non object supplied for params')
 
-  const { pathParams, queryParams } = params
+  const { pathParams, queryParams } = params || {}
   if (isNilOrEmpty(pathParams) && isNilOrEmpty(queryParams)) return restPath
 
   throwIf(
@@ -179,19 +193,18 @@ export const _expandRestPath = (
     }, restPath)
   }
 
-  // append query params
   if (queryParams) {
     expandedPath = isString(queryParams)
       ? expandedPath + queryParams
-      : keys(pathParams || {}).reduce((accumPath: string, queryKey, idx) => {
-        const queryValue = queryParams[queryKey]
-        throwIf(
-          isNotStringOrNumberOrBool(queryValue),
-          'expandRestPath(): query value is not a string, number or bool'
-        )
-        return accumPath +
-          `${idx === 0 ? '?' : '&'}${String(queryKey)}=${String(queryValue)}`
-      }, expandedPath)
+      : <string>
+        keys(queryParams).reduce((accumPath, queryKey, idx) => {
+          const queryValue = queryParams[queryKey]
+          throwIf(
+            isNotStringOrNumberOrBool(queryValue),
+            'expandRestPath(): query value is not a string or number or bool'
+          )
+          return accumPath + `${idx === 0 ? '?' : '&'}${String(queryKey)}=${String(queryValue)}`
+        }, expandedPath)
   }
 
   return expandedPath
