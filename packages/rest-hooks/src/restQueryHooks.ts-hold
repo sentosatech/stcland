@@ -74,13 +74,13 @@ export const useRestQuery = <T>(
   })
 
   const { restClient } = useRestClient()
-  if (!restClient.makeGetFn) {
-    console.error('makeGetFn not provided')
-    throw new Error('makeGetFn not provided')
+  if (!restClient.makeGetFnOrig) {
+    console.error('makeGetFnOrig not provided')
+    throw new Error('makeGetFnOrig not provided')
   }
   const res: UseQueryResult = useQuery(
     cacheId,
-    restClient.makeGetFn(restPath, queryParams, { ...axiosOptions }),
+    restClient.makeGetFnOrig(restPath, queryParams, { ...axiosOptions }),
     useQueryOptions
   )
 

@@ -75,7 +75,7 @@ export type CreateRestClient = (
  * @property {AxiosInstance} axiosClient -
  *   The Axios instance used for making HTTP requests.
  *
- * @property {CreateGetFn} createGetFn -
+ * @property {CreateGetFnOrig} createGetFnOrig -
  *   Function to create a custom GET request handler.
  *
  * @property {CreatePostFn} createPostFn -
@@ -95,6 +95,7 @@ export type RestClient =
   clientConfig: ClientConfig;
   serverConfig: ServerConfig;
   axiosClient: AxiosInstance;
+  createGetFnOrig: CreateGetFnOrig;
   createGetFn: CreateGetFn;
   createPostFn: CreatePostFn;
   createPutFn: CreatePutFn;
@@ -180,7 +181,7 @@ export type RestParams = {
  *   for greater flexibility in specifying path and query parameters.
  *
  * @example
- *   const getUserData: GetFn = () => {
+ *   const getUserData: GetFnOrig = () => {
  *     return axios.get('/api/user/123');
  *   };
  *
@@ -188,7 +189,10 @@ export type RestParams = {
  *     console.log(response.data);
  *   });
  */
-export type GetFn = () => Promise<AxiosResponse>;
+export type GetFnOrig = () => Promise<AxiosResponse>;
+
+export type GetFn = (restParams?: RestParams) => Promise<AxiosResponse>;
+
 
 /**
  * Creates a function that performs a REST GET request for the specified restPath and restParams.
@@ -205,23 +209,23 @@ export type GetFn = () => Promise<AxiosResponse>;
  *   Optional Axios request configuration.
  *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
  *
- * @returns {GetFn}
+ * @returns {GetFnOrig}
  *   A function that can be called to perform a REST GET request.
- *   @see {@link GetFn} for details on the returned function.
+ *   @see {@link GetFnOrig} for details on the returned function.
  *
  * @example
  *   // Basic usage
- *   const getThings = restClient.createGetFn("/things")
+ *   const getThings = restClient.createGetFnOrig("/things")
  *   const things = await getThings()
  *
  * @example
  *   // With a specific ID in the path
- *   const getThing1 = restClient.createGetFn("/things/1")
+ *   const getThing1 = restClient.createGetFnOrig("/things/1")
  *   const thing1 = await getThing1()
  *
  * @example
  *   // Using path variables
- *   const getThing1WithPathVariable = restClient.createGetFn("/things/:id", {
+ *   const getThing1WithPathVariable = restClient.createGetFnOrig("/things/:id", {
  *     pathParams: { id: 1 }
  *   })
  *   const thing1WithVar = await getThing1WithPathVariable()
@@ -231,11 +235,19 @@ export type GetFn = () => Promise<AxiosResponse>;
  *   Path variables in `restPath` (e.g., `:id`) will be substituted with values from `pathParams`.
  *   Query parameters from `queryParams` will be appended to the URL.
  */
-export type CreateGetFn = (
+export type CreateGetFnOrig = (
     restPath: string,
     restParams?: RestParams,
     axiosOptions?: Partial<AxiosRequestConfig>
-  ) => GetFn;
+  ) => GetFnOrig;
+
+
+// SPS
+// TODO: docs
+export type CreateGetFn = (
+  restPath: string,
+  axiosOptions?: Partial<AxiosRequestConfig>
+) => GetFn;
 
 /**
  * A function that performs a REST mutation (create or update) operation.
@@ -245,13 +257,14 @@ export type CreateGetFn = (
  * @param {RestParams} [params.restParams] - Optional path and query parameters for the REST call.
  * @returns {Promise<AxiosResponse>} A promise containing the results of the mutation.
  */
+
 export type MutateFn = ({
-    data,
-    restParams
-  }: {
-    data: unknown,
-    restParams?: RestParams
-  }) => Promise<AxiosResponse>;
+  data,
+  restParams
+}: {
+  data: unknown,
+  restParams?: RestParams
+}) => Promise<AxiosResponse>;
 
   /**
    * Creates a function that performs a REST POST request for the specified restPath.

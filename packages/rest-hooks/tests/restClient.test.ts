@@ -97,38 +97,41 @@ describe('Test Rest Calls Without Hooks', () => {
 
   test('Test Get', async () => {
     {
-      const getManyFnNoParams = defaultRestClient.createGetFn('/simple-get')
-      rsp = await getManyFnNoParams() as unknown as STC.TestResponse;
+      const getManyFn = defaultRestClient.createGetFn('/simple-get')
+      rsp = await getManyFn() as unknown as STC.TestResponse;
+
       [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
       expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get')
       expect(requestInfo?.method).toEqual('GET')
       expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
       expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      const getOneFnNoParams = defaultRestClient.createGetFn('/simple-get/88')
-      rsp = await getOneFnNoParams() as unknown as STC.TestResponse;
+      const getOneFn = defaultRestClient.createGetFn('/simple-get/88')
+      rsp = await getOneFn() as unknown as STC.TestResponse;
+
       [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
       expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get/88')
       expect(requestInfo?.method).toEqual('GET')
       expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
       expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      const getOneFnWithPathParams = defaultRestClient.createGetFn('/simple-get/:id', {
+      const getOneFnWithPathParams = defaultRestClient.createGetFn('/simple-get/:id')
+      rsp = await getOneFnWithPathParams({
         pathParams: { id: 33 }
-      })
-      rsp = await getOneFnWithPathParams() as unknown as STC.TestResponse;
+      }) as unknown as STC.TestResponse;
+
       [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
       expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get/33')
       expect(requestInfo?.method).toEqual('GET')
       expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
       expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      const getManyFnWithQueryParams = defaultRestClient.createGetFn('/simple-get', {
+      const getManyFnWithQueryParams = defaultRestClient.createGetFn('/simple-get')
+      rsp = await getManyFnWithQueryParams({
         queryParams: { hydrate: true, paginate: false }
-      })
-      rsp = await getManyFnWithQueryParams() as unknown as STC.TestResponse;
+      }) as unknown as STC.TestResponse;
+
       [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      console.log('requestInfo: ', requestInfo)
       expect(requestInfo?.url).toEqual(
         'http://fakehost.com:5023/simple-get?hydrate=true&paginate=false'
       )
@@ -136,13 +139,13 @@ describe('Test Rest Calls Without Hooks', () => {
       expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
       expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      const getOneFnWithQueryAndPathParams = defaultRestClient.createGetFn('/simple-get/:enityType', {
+      const getOneFnWithQueryAndPathParams = defaultRestClient.createGetFn('/simple-get/:enityType')
+      rsp = await getOneFnWithQueryAndPathParams({
         pathParams: { enityType: 'users' },
         queryParams: { limit: 100, offset: 0 }
-      })
-      rsp = await getOneFnWithQueryAndPathParams() as unknown as STC.TestResponse;
+      }) as unknown as STC.TestResponse;
+
       [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      console.log('requestInfo: ', requestInfo)
       expect(requestInfo?.url).toEqual(
         'http://fakehost.com:5023/simple-get/users?limit=100&offset=0'
       )
