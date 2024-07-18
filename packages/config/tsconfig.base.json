@@ -1,12 +1,16 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
+    // "strict": true,
+    // "noImplicitAny": true,
+    "strict": false,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "strictNullChecks": true,
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
     "declaration": true,
     "sourceMap": true,
     "isolatedModules": true,
@@ -16,7 +20,10 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
-    "incremental": true, /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
-    "tsBuildInfoFile": "./.tsbuildinfo" /* Specify the path to .tsbuildinfo incremental compilation file. */
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo",
+  },
+  "rules": {
+    "no-unused-vars": "warn"
   }
 }

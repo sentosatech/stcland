@@ -1,0 +1,67 @@
+/**
+ * For a detailed explanation regarding each configuration property, visit:
+ * https://jestjs.io/docs/configuration
+ */
+
+import type { Config } from 'jest'
+
+const config: Config = {
+
+    verbose: true,
+
+  // Automatically clear mock calls, instances, contexts and results before every test
+  clearMocks: true,
+
+  // A set of global variables that need to be available in all test environments
+  // globals: {},
+
+  // A list of paths to directories that Jest should use to search for files in
+  roots: [
+    '<rootDir>'
+  ],
+
+  // The glob patterns Jest uses to detect test files
+  testMatch: [
+    // '<rootDir>/__tests__/**/*.[jt]s?(x)',
+    '<rootDir>/tests/**/*.test.[jt]s?(x)'
+  ],
+
+  // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
+  testPathIgnorePatterns: [
+    '\\\\node_modules\\\\'
+  ],
+
+  // Whether to use watchman for file crawling
+  // watchman: true,
+  'moduleFileExtensions': [
+    'js',
+    'jsx',
+    'ts',
+    'tsx'
+  ],
+  testEnvironment: 'node',
+  preset: 'ts-jest',
+//   transform: {
+//     '^.+\\.tsx?$': 'ts-jest',
+//     diagnostics: {
+//     ignoreCodes: [6133]
+//     }
+
+//   },
+//   globals: {
+//     'ts-jest': {
+//       tsconfig: '../config/tsconfig.base.json'
+//     }
+//   },
+// //   transform: {
+//     '^.+\\.tsx?$': ['ts-jest', {
+//       tsconfig: '../config/tsconfig.base.json',
+//       diagnostics: {
+//         ignoreCodes: [6133]
+//       }
+//     }]
+//   },
+}
+
+export default config
+

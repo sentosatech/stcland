@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 
-import { assocPath, keys } from 'ramda'
+import { assocPath, keys, toUpper } from 'ramda'
 import { isFunction, isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
 import { throwIf } from '@stcland/errors'
 import {
@@ -15,60 +15,63 @@ import {
   ClientConfig,
   RestClient,
   RestParams,
+  CreateRestClient,
 } from './restClientTypes'
 
-export const createRestClient = (
+export const createRestClient: CreateRestClient = (
   clientConfig: ClientConfig,
-  serverConfig: ServerConfig) =>
+  serverConfig: ServerConfig ) =>
 {
 
-  // start from here
+  const axiosClient = axios.create({
+    baseURL: serverConfig?.defaultBaseUrl || '',
+    timeout: serverConfig?.timeout || 1000
+  })
 
   const restClient: RestClient = {
+
     clientConfig,
     serverConfig,
-    axiosClient: axios.create({
-      baseURL: serverConfig?.defaultBaseUrl || '',
-      timeout: serverConfig?.timeout || 1000
-    })
+    axiosClient,
+
+    // rest actions, same calling arguments as axios rest actions
+
+    get: axiosClient.get,
+    post: axiosClient.post,
+    put: axiosClient.put,
+    patch: axiosClient.patch,
+    delete: axiosClient.delete,
+
+
+    // rest action function create utils
+    // creates functions that can be passed directly into react-query hooks
+
+    createGetFn:
+      (restPath, restParams, axiosOptions) =>
+      () =>
+      restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions),
+
+    createPostFn:
+      (restPath, axiosOptions) =>
+      ({ data, restParams }) =>
+        restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+
+    createPutFn:
+      (restPath, axiosOptions) =>
+      ({ data, restParams }) =>
+        restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+
+    createPatchFn:
+      (restPath, axiosOptions) =>
+      ({ data, restParams }) =>
+        restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+
+    createDeleteFn:
+      (restPath, axiosOptions) =>
+      (restParams) =>
+        restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
+
   }
-
-  // add rest actions, same calling arguments as axios rest actions
-
-  restClient.get = async (...args) => await restClient.axiosClient.get(...args)
-  restClient.post = async (...args) => await restClient.axiosClient.post(...args)
-  restClient.put = async (...args) => await restClient.axiosClient.put(...args)
-  restClient.patch = async (...args) => await restClient.axiosClient.patch(...args)
-  restClient.delete = async (...args) => await restClient.axiosClient.delete(...args)
-
-  // add the rest action function create utils
-  // creates functions that can be passed into reqact-query hooks
-
-  restClient.createGetFn =
-    (restPath, restParams, axiosOptions) =>
-    () =>
-    restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions)
-
-  restClient.createPostFn =
-    (restPath, axiosOptions) =>
-    ({ data, restParams }) =>
-      restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
-
-  restClient.createPutFn =
-    (restPath, axiosOptions) =>
-    ({ data, restParams }) =>
-      restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions)
-
-  restClient.createPatchFn =
-    (restPath, axiosOptions) =>
-    ({ data, restParams }) =>
-      restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions)
-
-  restClient.createDeleteFn =
-    (restPath, axiosOptions) =>
-    (restParams) =>
-      restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
-
 
   // all clients use these middlewares
 
@@ -88,9 +91,9 @@ export const createRestClient = (
   return restClient
 }
 
-// //*****************************************************************************
-// // Module Only Stuff
-// //*****************************************************************************
+//*****************************************************************************
+// Module Only Stuff
+//*****************************************************************************
 
 interface _RequestPreProcessorOptions {
   verbose?: boolean
@@ -108,7 +111,7 @@ const _requestPreprocessor =
   const { method, baseURL, url, data } = req
 
   if (verbose) {
-    console.debug(`\n${method} (new) ${baseURL}${url}`)
+    console.debug(`\n${toUpper(method || '')} ${baseURL}${url}`)
     if (data) console.debug('body', data)
   }
 
@@ -121,6 +124,11 @@ interface _RequestPostProcessorOptions {
   verbose?: boolean
   responsePostProcessor?: (rsp: AxiosResponse) => AxiosResponse
 }
+
+export const f = async () => {
+    await Promise.resolve(1)
+}
+
 
 
 const _responsePostProcessor =
@@ -158,6 +166,7 @@ const _responsePostProcessor =
  *   output
  *     /v1/spark/appplatforms/22?hydrate=true
  */
+
 export const expandRestPath = (
   restPath: string,
   params?: RestParams
@@ -182,7 +191,7 @@ export const expandRestPath = (
 
   // insert path params
   if (pathParams) {
-    expandedPath = keys(pathParams || {}).reduce((accumPath: string, paramKey) => {
+    expandedPath = <string>keys(pathParams || {}).reduce((accumPath: string, paramKey) => {
       const paramValue = String((pathParams || {})[paramKey])
       throwIf(
         isNotStringOrNumber(paramValue),

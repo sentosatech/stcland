@@ -1,7 +1,7 @@
 import { curry, equals, findIndex, keys } from 'ramda'
 
 // if propName is on sourceObj, returns object with propName added to targetObj with value sourceObj[propName]
-export const pasteProp: (
+export const copyPasteProp: (
   propName: string,
   sourceObj: object,
   targetObj: object
@@ -12,10 +12,10 @@ export const pasteProp: (
 )
 
 // for all propNames in propNames, returns targetObj with propName added to targetObj with values source[propName]
-export const pasteProps: (
+export const copyPasteProps: (
   propNames: string[],
   sourceObj: object,
   targetObj: object
 ) => object = curry((propNames, sourceObj, targetObj ) =>
-  propNames.reduce((acc: object, propName: string)=>pasteProp(propName,sourceObj,acc), targetObj ))
+  propNames.reduce((acc: object, propName: string)=>copyPasteProp(propName,sourceObj,acc), targetObj ))
 
