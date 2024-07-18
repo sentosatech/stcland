@@ -81,7 +81,6 @@ describe('Test Rest Calls Without Hooks', () => {
 
   const defaultRestClient = createRestClient(defaultClientConfig, defaultServerConfig)
 
-
   // used accross multiple tests, so declared here
   let rsp: STC.TestResponse
   let requestInfo: STC.Rest.RequestInfo

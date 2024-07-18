@@ -46,11 +46,6 @@ export const createRestClient: CreateRestClient = (
     // rest action function create utils
     // creates functions that can be passed directly into react-query hooks
 
-    createGetFnOrig:
-      (restPath, restParams, axiosOptions) =>
-      () =>
-      restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions),
-
     createGetFn:
       (restPath, axiosOptions) =>
       (restParams) =>
