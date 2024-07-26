@@ -1,17 +1,16 @@
-import { describe, test, expect } from '@jest/globals'
-import { expandRestPath, createRestClient } from '../src/restClient'
-import { ClientConfig, ServerConfig } from '../src/restClientTypes'
-
-import { setupServer } from 'msw/node'
-import { handlers } from './handlers'
 import { AxiosResponse } from 'axios'
+import { describe, test, expect } from '@jest/globals'
+import { setupServer } from 'msw/node'
 
-import { STC } from './testTypes'
+import { handlers } from './handlers'
+
+import { StcRest} from '../src/restHooksTypes'
+import { StcRestTest} from './testTypes'
+import { expandRestPath, createRestClient } from '../src/restClient'
 
 describe('Test Rest Client Utils', () => {
 
-
-  test('path expansion', () => {``
+  test('path expansion', () => {
 
     expect(expandRestPath('/raw-path')).toEqual('/raw-path')
     expect(expandRestPath('/path/with/id/:id', {
@@ -60,98 +59,208 @@ describe('Test Rest Client Utils', () => {
   })
 })
 
-
-describe('Test Rest Calls Without Hooks', () => {
+describe('Test Rest Client', () => {
 
   // start the test server
   const server = setupServer(...handlers)
   server.listen()
 
-  const defaultClientConfig: ClientConfig = {
+  const defaultClientConfig: StcRest.ClientConfig = {
     verbose: false,
     getAccessToken: () => 'testing-access-token',
+    // This fxn strips all of the AxiosResponse except for the data
     responsePostProcessorFn: (rsp: AxiosResponse) => rsp?.data || rsp
-      // NOTE: this fxn strips all of the AxiosResponse except for the data
   }
 
-  const defaultServerConfig: ServerConfig = {
+  const defaultServerConfig: StcRest.ServerConfig = {
     defaultBaseUrl: 'http://fakehost.com:5023',
     timeout: 1000
   }
-
-  const defaultRestClient = createRestClient(defaultClientConfig, defaultServerConfig)
-
   // used accross multiple tests, so declared here
-  let rsp: STC.TestResponse
-  let requestInfo: STC.Rest.RequestInfo
-  let responseBody: STC.Rest.ResponseBody
+  let rsp: StcRestTest.TestResponse
+  let requestInfo: StcRestTest.RequestInfo
+  let responseBody: StcRestTest.ResponseBody
+  let postData: any
 
   test('Test Straight Get', async () => {
-    [ requestInfo, responseBody ] = <STC.TestResponse> await defaultRestClient.get('/simple-get')
+    const restClient = createRestClient(defaultClientConfig, defaultServerConfig)
+
+    rsp = await restClient.get('/simple-get') as unknown as StcRestTest.TestResponse
+    [ requestInfo, responseBody ] = rsp
+
     expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get')
     expect(requestInfo?.method).toEqual('GET')
     expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
     expect(responseBody).toEqual({ simpleGet: 'data' })
   })
 
-  test('Test Get', async () => {
-    {
-      const getManyFn = defaultRestClient.createGetFn('/simple-get')
-      rsp = await getManyFn() as unknown as STC.TestResponse;
+  test('Test GetFn', async () => {
+    const restClient = createRestClient(defaultClientConfig, {
+      ...defaultServerConfig,
+      defaultBaseUrl: 'http://fakehost2.com:7777'
+    })
 
-      [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get')
-      expect(requestInfo?.method).toEqual('GET')
-      expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-      expect(responseBody).toEqual({ simpleGet: 'data' })
+    // simple gets
 
-      const getOneFn = defaultRestClient.createGetFn('/simple-get/88')
-      rsp = await getOneFn() as unknown as STC.TestResponse;
+    const getManyFn = restClient.createGetFn('/simple-get')
+    rsp = await getManyFn() as unknown as StcRestTest.TestResponse
 
-      [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get/88')
-      expect(requestInfo?.method).toEqual('GET')
-      expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-      expect(responseBody).toEqual({ simpleGet: 'data' })
+    [ requestInfo, responseBody ] = rsp
 
-      const getOneFnWithPathParams = defaultRestClient.createGetFn('/simple-get/:id')
-      rsp = await getOneFnWithPathParams({
-        pathParams: { id: 33 }
-      }) as unknown as STC.TestResponse;
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get/33')
-      expect(requestInfo?.method).toEqual('GET')
-      expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-      expect(responseBody).toEqual({ simpleGet: 'data' })
+    const getOneFn = restClient.createGetFn('/simple-get/88')
 
-      const getManyFnWithQueryParams = defaultRestClient.createGetFn('/simple-get')
-      rsp = await getManyFnWithQueryParams({
-        queryParams: { hydrate: true, paginate: false }
-      }) as unknown as STC.TestResponse;
+    rsp = await getOneFn() as unknown as StcRestTest.TestResponse;
+    [ requestInfo, responseBody ] = rsp
 
-      [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      expect(requestInfo?.url).toEqual(
-        'http://fakehost.com:5023/simple-get?hydrate=true&paginate=false'
-      )
-      expect(requestInfo?.method).toEqual('GET')
-      expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-      expect(responseBody).toEqual({ simpleGet: 'data' })
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get/88')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
-      const getOneFnWithQueryAndPathParams = defaultRestClient.createGetFn('/simple-get/:enityType')
-      rsp = await getOneFnWithQueryAndPathParams({
-        pathParams: { enityType: 'users' },
-        queryParams: { limit: 100, offset: 0 }
-      }) as unknown as STC.TestResponse;
+    // // with path params
 
-      [ requestInfo, responseBody ] = rsp as unknown as STC.TestResponse
-      expect(requestInfo?.url).toEqual(
-        'http://fakehost.com:5023/simple-get/users?limit=100&offset=0'
-      )
-      expect(requestInfo?.method).toEqual('GET')
-      expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-      expect(responseBody).toEqual({ simpleGet: 'data' })
-    }
+    const getOneFnWithPathParams = restClient.createGetFn('/simple-get/:id', {
+      pathParams: { id: 33 }
+    })
+
+    rsp = await getOneFnWithPathParams() as unknown as StcRestTest.TestResponse;
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get/33')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
+
+    // with query params
+
+    const getManyFnWithQueryParams = restClient.createGetFn('/simple-get', {
+      queryParams: { hydrate: true, paginate: false }
+    })
+
+    rsp = await getManyFnWithQueryParams() as unknown as StcRestTest.TestResponse;
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost2.com:7777/simple-get?hydrate=true&paginate=false'
+    )
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
+
+    // with path params and query params
+
+    const getOneFnWithQueryAndPathParams = restClient.createGetFn('/simple-get/:enityType', {
+      pathParams: { enityType: 'users' },
+      queryParams: { limit: 100, offset: 0 }
+    })
+
+    rsp = await getOneFnWithQueryAndPathParams() as unknown as StcRestTest.TestResponse;
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost2.com:7777/simple-get/users?limit=100&offset=0'
+    )
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
   })
-})
 
+  test('Test Straight Post', async () => {
+    const restClient = createRestClient(defaultClientConfig, defaultServerConfig)
+    const postData = { name: 'bill' }
+    rsp = await restClient.post(
+      '/simple-post', postData) as unknown as StcRestTest.TestResponse
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
+  })
+
+  test('Test PostFn', async () => {
+
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      getAccessToken: () => 'another-access-token'
+    }, defaultServerConfig)
+
+    // simple post
+
+    const postFn = restClient.createPostFn('/simple-post')
+    postData = { species: 'dog', breed: 'lab' }
+    rsp = await postFn(postData) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
+
+    // with query params
+
+    postData = { species: 'cat', breed: 'siamese' }
+    rsp = await postFn(postData, {queryParams: {
+      pureBread: true, age: 3
+    }}) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post?pureBread=true&age=3')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
+
+    // with path params
+
+    const postFnWithPathParams = restClient.createPostFn('/simple-post/:species')
+    postData = { breed: 'golden', name: 'knoa' }
+    rsp = await postFnWithPathParams(postData, {
+      pathParams: { species: 'dog' }
+    }) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/dog')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
+
+    // with query and path params
+
+    postData = { breed: 'rattler', name: 'snuggles' }
+    rsp = await postFnWithPathParams(postData, {
+      pathParams: { species: 'snake' },
+      queryParams: { region: 'rockies' }
+    }) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/snake?region=rockies')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
+  })
+
+  test.skip('Test Straight Put', async () => {})
+  test.skip('Test PutFn', async () => {})
+
+  test.skip('Test Straight Patch', async () => {})
+  test.skip('Test PatchFn', async () => {})
+
+  test.skip('Test Straight Delete', async () => {})
+  test.skip('Test DeleteFn', async () => {})
+
+})

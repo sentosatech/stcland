@@ -1,4 +1,5 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { assocPath, keys, toUpper } from 'ramda'
 import { isFunction, isNilOrEmpty, isNotObject, isString } from 'ramda-adjunct'
@@ -10,17 +11,11 @@ import {
   isNotNilOrStringOrObject
 } from '@stcland/utils'
 
-import {
-  ServerConfig,
-  ClientConfig,
-  RestClient,
-  RestParams,
-  CreateRestClient,
-} from './restClientTypes'
+import { StcRest } from './restHooksTypes'
 
-export const createRestClient: CreateRestClient = (
-  clientConfig: ClientConfig,
-  serverConfig: ServerConfig ) =>
+export const createRestClient: StcRest.CreateRestClient = (
+  clientConfig: StcRest.ClientConfig,
+  serverConfig: StcRest.ServerConfig ) =>
 {
 
   const axiosClient = axios.create({
@@ -28,7 +23,7 @@ export const createRestClient: CreateRestClient = (
     timeout: serverConfig?.timeout || 1000
   })
 
-  const restClient: RestClient = {
+  const restClient: StcRest.RestClient = {
 
     clientConfig,
     serverConfig,
@@ -47,30 +42,30 @@ export const createRestClient: CreateRestClient = (
     // creates functions that can be passed directly into react-query hooks
 
     createGetFn:
-      (restPath, axiosOptions) =>
-      (restParams) =>
+      (restPath, restParams, axiosOptions) =>
+      (queryContext: QueryFunctionContext) =>
         restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions),
 
     createPostFn:
       (restPath, axiosOptions) =>
-      ({ data, restParams }) =>
-        restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+      (data, restParams) => {
+        return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
+      },
 
     createPutFn:
       (restPath, axiosOptions) =>
-      ({ data, restParams }) =>
+      (data, restParams) =>
         restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createPatchFn:
       (restPath, axiosOptions) =>
-      ({ data, restParams }) =>
+      (data, restParams) =>
         restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createDeleteFn:
       (restPath, axiosOptions) =>
       (restParams) =>
         restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
-
   }
 
   // all clients use these middlewares
@@ -169,7 +164,7 @@ const _responsePostProcessor =
 
 export const expandRestPath = (
   restPath: string,
-  params?: RestParams
+  params?: StcRest.RestParams
 ) => {
   if (isNilOrEmpty(params)) return restPath
   throwIf(isNotObject(params), 'expandUrl(): non object supplied for params')
@@ -193,6 +188,7 @@ export const expandRestPath = (
   if (pathParams) {
     expandedPath = <string>keys(pathParams || {}).reduce((accumPath: string, paramKey) => {
       const paramValue = String((pathParams || {})[paramKey])
+
       throwIf(
         isNotStringOrNumber(paramValue),
         'expandRestPath(): param value is not a string or number'

@@ -32,11 +32,11 @@
   "dependencies": {
     "@stcland/errors": "workspace:^",
     "@stcland/utils": "workspace:^",
+    "@tanstack/react-query": "^5.51.11",
     "axios": "^1.7.2",
     "json-stringify-safe": "^5.0.1",
     "ramda": "^0.30.1",
     "ramda-adjunct": "^5.0.1",
-    "react-query": "^3.39.3",
     "ts-node": "^10.9.2"
   },
   "scripts": {

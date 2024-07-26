@@ -1,16 +1,20 @@
-import { STC } from './testTypes'
+import { StcRestTest } from './testTypes'
 
-export const extractRequestUrl = (request: STC.Rest.Request): STC.Rest.RequestUrl =>
+export const extractRequestUrl = (request: StcRestTest.Request): StcRestTest.RequestUrl =>
     request.url.toString()
 
-export const extractRequestMethod = (request: STC.Rest.Request): STC.Rest.RequestMethod =>
+export const extractRequestMethod = (request: StcRestTest.Request): StcRestTest.RequestMethod =>
   request.method
 
-export const extractRequestBody = (request: STC.Rest.Request) => ({ ...request.body })
+export const extractRequestBody = async (request: StcRestTest.Request) => {
+  if (!request?.body) return null
+  const bodyJson = await request.text()
+  const bodyObj = JSON.parse(bodyJson)
+  return bodyObj
+}
 
-
-export const extractRequestHeaders = (request: STC.Rest.Request) => {
-  let headers: STC.Rest.RequestHeaders = {}
+export const extractRequestHeaders = (request: StcRestTest.Request) => {
+  let headers: StcRestTest.RequestHeaders = {}
   request.headers.forEach((headerValue: string, headerEntry: string) => {
     const headerValueExanded = headerValue.includes(',') ? headerValue.split(',') : headerValue
     headers = { ...headers, [headerEntry]: headerValueExanded }
@@ -18,17 +22,19 @@ export const extractRequestHeaders = (request: STC.Rest.Request) => {
   return headers
 }
 
-export const makeTestResponse = (
-  request: STC.Rest.Request,
+export const makeTestResponse = async (
+  request: StcRestTest.Request,
+  params: StcRestTest.ReqestPathParams,
+  cookies: StcRestTest.ReqestCookies,
   data: any,
-) : STC.TestResponse => {
-  return [
-    {
-      url: extractRequestUrl(request),
-      method: extractRequestMethod(request),
-      headers: extractRequestHeaders(request),
-      body: extractRequestBody(request),
-    },
-    data
-  ]
-}
+) : Promise<StcRestTest.TestResponse> => [
+  {
+    method: extractRequestMethod(request),
+    headers: extractRequestHeaders(request),
+    url: extractRequestUrl(request),
+    pathParams: { ...params },
+    cookies: { ...cookies },
+    body: await extractRequestBody(request)
+  },
+  data
+]
