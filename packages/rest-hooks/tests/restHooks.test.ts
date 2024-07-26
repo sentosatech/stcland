@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import { describe, test, expect } from '@jest/globals'
 import { setupServer } from 'msw/node'
-// import { renderHook, act } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react'
 
 import { handlers } from './handlers'
 
