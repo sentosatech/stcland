@@ -7,9 +7,22 @@ module.exports = {
   'rules': {
     quotes: ['error', 'single'],
     semi: ['error', 'never'],
+    tabs: ['error', 2],
     'object-curly-spacing': ['error', 'always'],
-    'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-implicit-any": "off"
   },
+  // env: {
+  //   'jest': true
+  // },
+"overrides": [
+    {
+      "files": ["tests/**/*"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }
 
