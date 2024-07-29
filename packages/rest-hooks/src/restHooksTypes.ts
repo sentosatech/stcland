@@ -200,7 +200,7 @@ export namespace StcRest {
     Function that performs a REST mutation (create or update) for specified path and rest params.
     This function can be passed into 'react-query' mutation hooks.
    
-    See {@link MutateFnOptions} for details on the available options.
+    @see {@link MutateFnOptions} for details on the available options.
    */
   export type MutateFn = (
     options: MutateFnOptions
@@ -213,22 +213,22 @@ export namespace StcRest {
    
     Examples:
     // Creating a mutation function
-    const createThing = restClient.createMutateFn("/things");
+      const createThing = restClient.createMutateFn("/things");
 
-     // Using the mutation function
+    // Using the mutation function
       const response = await createThing({
         data: { name: "New Thing" },
         restParams: { queryParams: { validate: true } }
        });
-     // With path variables
-     const updateThing = restClient.createMutateFn("/things/:id");
+    // With path variables
+      const updateThing = restClient.createMutateFn("/things/:id");
    
-     const response = await updateThing({
-      data: { name: "Updated Thing" },
-      restParams: {
+      const response = await updateThing({
+       data: { name: "Updated Thing" },
+       restParams: {
         pathParams: { id: 123 },
         queryParams: { version: 2 }
-      }
+       }
      });
    */
   export type CreateMutateFn = (
@@ -261,7 +261,7 @@ export namespace StcRest {
     Creates a function that performs a REST PUT request to the specified path.
     @see {@link CreateMutateFn} for details about the base function.
    
-      Examples:
+    Examples:
       const updateThing1 = createPutFn("/things/1")
       const updatedThing1 = await updateThing1({ thing: 'updates' })
        => Request PUT /things/1
@@ -282,7 +282,7 @@ export namespace StcRest {
 
   /**
     Creates a function that performs a REST PATCH request to the specified path.
-     @see {@link CreateMutateFn} for details about the base function.
+    @see {@link CreateMutateFn} for details about the base function.
    
     Examples:
       const updateThing1 = createPatchFn("/things/1")
