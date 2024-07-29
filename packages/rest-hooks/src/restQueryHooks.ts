@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { StcRest } from './restHooksTypes'
-import { isUndefined, isNotUndefined } from 'ramda-adjunct';
-import { assoc } from 'ramda';
+import { isUndefined, isNotUndefined } from 'ramda-adjunct'
+import { assoc } from 'ramda'
 
 export const useRestQuery = (
   restClient: StcRest.RestClient,
@@ -27,8 +27,8 @@ export const useRestQuery = (
   // handle default response on undefined data
   if (isUndefined(res?.data)) {
     return resultsPropName
-      ? {...res, data: defaultResponse, [resultsPropName]: defaultResponse}
-      : {...res, data: defaultResponse}
+      ? { ...res, data: defaultResponse, [resultsPropName]: defaultResponse }
+      : { ...res, data: defaultResponse }
   }
 
   // if we have nothing custom to do, we are done
