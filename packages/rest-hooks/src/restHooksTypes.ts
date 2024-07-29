@@ -184,6 +184,17 @@ export namespace StcRest {
       // Optional Axios request configuration.
     ) => GetFn;
 
+
+    export interface MutateFnOptions {
+      data: unknown;
+      restParams?: RestParams;
+    }
+
+
+  // TODO: convert the docs below from tsdoc to match the documentation style
+  // of the docs above.  Also, double check to make sure the docs are correct,
+  // as there has beens some churn
+
  /**
    * A function that performs a REST mutation (create or update) operation.
    *
@@ -192,7 +203,7 @@ export namespace StcRest {
    * @param {QueryParams}  restParams.queryParams - Optional path and query parameters for the REST call.
    * @returns {Promise<AxiosResponse>} A promise containing the results of the mutation.
    */
-    export type MutateFn= (data: unknown, restParams?: RestParams) => Promise<AxiosResponse>;
+    export type MutateFn= (options: MutateFnOptions) => Promise<AxiosResponse>;
 
     /**
      * Creates a function that performs a mutation request (POST, PUT, PATCH) to the specified REST path.
@@ -300,7 +311,6 @@ export namespace StcRest {
    *   // => Request PUT /things/2?smile=true
    *   //    Body { thing: 'updates' }
    */
-  // TODO: update docs (passing in 2 params instead of object)
   export type CreatePutFn = CreateMutateFn;
 
   /**
@@ -345,7 +355,6 @@ export namespace StcRest {
    * @returns {Promise<AxiosResponse>}
    *   A promise containing the response to the delete request.
    */
-  // TODO: update docs (passing in 2 params instead of object)
   export type DeleteFn = (restParams: RestParams) => Promise<AxiosResponse>;
 
   /**

@@ -2,10 +2,13 @@
   "name": "stcland",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "build:all": "pnpm run -r --filter=./packages/* build",
+    "test:all": "pnpm run -r test"
+  }
 }
