@@ -80,7 +80,8 @@ describe('Test Rest Client', () => {
   let rsp: StcRestTest.TestResponse
   let requestInfo: StcRestTest.RequestInfo
   let responseBody: StcRestTest.ResponseBody
-  let postData: any
+  let data: any
+  let restParams: StcRest.RestParams
 
   test('Test Straight Get', async () => {
     const restClient = createRestClient(defaultClientConfig, defaultServerConfig)
@@ -195,62 +196,64 @@ describe('Test Rest Client', () => {
     // simple post
 
     const postFn = restClient.createPostFn('/simple-post')
-    postData = { species: 'dog', breed: 'lab' }
-    rsp = await postFn(postData) as unknown as StcRestTest.TestResponse;
+    data = { species: 'dog', breed: 'lab' }
+    rsp = await postFn({data}) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
     expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post')
     expect(requestInfo?.method).toEqual('POST')
     expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-    expect(requestInfo?.body).toEqual(postData)
+    expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with query params
 
-    postData = { species: 'cat', breed: 'siamese' }
-    rsp = await postFn(postData, {queryParams: {
-      pureBread: true, age: 3
-    }}) as unknown as StcRestTest.TestResponse;
+    data = { species: 'cat', breed: 'siamese' }
+    restParams = { queryParams: { pureBread: true, age: 3 } }
+    rsp = await postFn({data, restParams}) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
     expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post?pureBread=true&age=3')
     expect(requestInfo?.method).toEqual('POST')
     expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-    expect(requestInfo?.body).toEqual(postData)
+    expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with path params
 
     const postFnWithPathParams = restClient.createPostFn('/simple-post/:species')
-    postData = { breed: 'golden', name: 'knoa' }
-    rsp = await postFnWithPathParams(postData, {
-      pathParams: { species: 'dog' }
-    }) as unknown as StcRestTest.TestResponse;
+    data = { breed: 'golden', name: 'kona' }
+    restParams = { pathParams: { species: 'dog' } }
+
+
+    rsp = await postFnWithPathParams({data, restParams}) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
     expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/dog')
     expect(requestInfo?.method).toEqual('POST')
     expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-    expect(requestInfo?.body).toEqual(postData)
+    expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with query and path params
 
-    postData = { breed: 'rattler', name: 'snuggles' }
-    rsp = await postFnWithPathParams(postData, {
+    data = { breed: 'rattler', name: 'snuggles' }
+    restParams = {
       pathParams: { species: 'snake' },
       queryParams: { region: 'rockies' }
-    }) as unknown as StcRestTest.TestResponse;
+    }
+    rsp = await postFnWithPathParams(
+      {data, restParams}) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
     expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/snake?region=rockies')
     expect(requestInfo?.method).toEqual('POST')
     expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-    expect(requestInfo?.body).toEqual(postData)
+    expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'post succesful' })
   })
 

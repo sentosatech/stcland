@@ -45,6 +45,6 @@
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
-    "test": "jest"
+    "test": "jest --verbose"
   }
 }
