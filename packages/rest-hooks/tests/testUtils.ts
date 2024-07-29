@@ -1,7 +1,7 @@
 import { StcRestTest } from './testTypes'
 
 export const extractRequestUrl = (request: StcRestTest.Request): StcRestTest.RequestUrl =>
-    request.url.toString()
+  request.url.toString()
 
 export const extractRequestMethod = (request: StcRestTest.Request): StcRestTest.RequestMethod =>
   request.method
