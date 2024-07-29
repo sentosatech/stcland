@@ -257,8 +257,101 @@ describe('Test Rest Client', () => {
     expect(responseBody).toEqual({ message: 'post succesful' })
   })
 
-  test.skip('Test Straight Put', async () => {})
-  test.skip('Test PutFn', async () => {})
+  test('Test Straight Put', async () => {
+    const restClient = createRestClient(
+      defaultClientConfig,
+      defaultServerConfig
+    );
+    const putData = { songs: ['Graves', 'Fade Away', 'Anything Can Happen In The Next Half Hour']};
+    rsp = (await restClient.put(
+      '/simple-put/user/favorite-songs',
+      putData
+    )) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp;
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-put/user/favorite-songs'
+    );
+    expect(requestInfo?.method).toEqual('PUT');
+    expect(requestInfo?.headers.authorization).toEqual(
+      'Bearer testing-access-token'
+    );
+    expect(requestInfo?.body).toEqual(putData);
+    expect(responseBody).toEqual({ message: 'put succesful' });
+  });
+
+  test('Test PutFn', async () => {
+    
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      getAccessToken: () => 'another-access-token'
+    }, defaultServerConfig)
+
+    // simple put
+
+    const putFn = restClient.createPutFn('/simple-put')
+    data = { songName: 'Graves' }
+    rsp = await putFn({data}) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
+
+  // with query params
+
+   data = { songName: 'Lost' };
+   const restParams = { queryParams: { genre: 'metal'} };
+   rsp = (await putFn({ data, restParams })) as unknown as StcRestTest.TestResponse;
+
+   [requestInfo, responseBody] = rsp;
+
+    expect(requestInfo?.url).toEqual(
+    'http://fakehost.com:5023/simple-put?genre=metal');
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
+
+  // with path params
+
+   const putFnWithPathParams = restClient.createPutFn('/simple-put/:id');
+   data = { songName: 'Songs for No One'};
+   const pathParams = { id: '123' };
+
+   rsp = (await putFnWithPathParams({ data, restParams: { pathParams } })) as unknown as StcRestTest.TestResponse;
+
+   [requestInfo, responseBody] = rsp;
+
+   expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/123');
+   expect(requestInfo?.method).toEqual('PUT')
+   expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+   expect(requestInfo?.body).toEqual(data)
+   expect(responseBody).toEqual({ message: 'put succesful' })
+
+  // with query and path params
+
+  data = { songName: 'Capulet' };
+  const combinedRestParams = {
+    pathParams: { id:'666' },
+    queryParams: { genre: 'ballad' },
+  };
+
+  rsp = (await putFnWithPathParams({ data, restParams: combinedRestParams })) as unknown as StcRestTest.TestResponse;
+
+  [requestInfo, responseBody] = rsp;
+  
+   expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/666?genre=ballad');
+   expect(requestInfo?.method).toEqual('PUT')
+   expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+   expect(requestInfo?.body).toEqual(data)
+   expect(responseBody).toEqual({ message: 'put succesful' })
+
+  });
 
   test.skip('Test Straight Patch', async () => {})
   test.skip('Test PatchFn', async () => {})

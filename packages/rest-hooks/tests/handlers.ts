@@ -25,4 +25,13 @@ export const handlers = [
     return HttpResponse.json(rsp)
   }),
 
+   // Generic put handler
+   http.put('*/simple-put*', async ({ request, params, cookies }) => {
+    // const body = await request.text()
+    // console.log('body: ', body)
+
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'put succesful' })
+    return HttpResponse.json(rsp)
+  }),
+
 ]
