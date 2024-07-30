@@ -1,4 +1,4 @@
-import { QueryFunctionContext, UseQueryOptions } from '@tanstack/react-query';
+import { QueryFunctionContext, UseQueryOptions } from '@tanstack/react-query'
 import {
   AxiosStatic, AxiosResponse, AxiosInstance, AxiosRequestConfig
 } from 'axios'
@@ -144,7 +144,10 @@ export namespace StcRest {
 
     It is assumed that the function internally knows the path to the REST endpoint.
 
-    example const getFn = () => axios.get('/api/user')
+    Example:
+    ```
+    const getFn = () => axios.get('/api/user')
+    ```
   */
   export type GetFn = (
     queryContext?: QueryFunctionContext
@@ -158,21 +161,22 @@ export namespace StcRest {
     The returned function can be passed directly into 'react-query' query hooks.
 
     Examples:
-      const getThings = createGetFn("/things")
-      const things = await getThings() //=> GET /things
+    ```
+    const getThings = createGetFn('/things')
+    const things = await getThings() //=> GET /things
 
-      const getThing1 = createGetFn("/things/1")
-      const thing1 = await getThing1() //=> GET /things/1
+    const getThing1 = createGetFn('/things/1')
+    const thing1 = await getThing1() //=> GET /things/1
 
-      const getThing2 = createGetFn("/things/1?version=2")
-      const thing2 = await getThing1() //=> GET /things/1?version=2
+    const getThing2 = createGetFn('/things/1?version=2')
+    const thing2 = await getThing1() //=> GET /things/1?version=2
 
-      const getThing1WithParams = createGetFn("/things/:id")
-      const thing3 = await getThing1WithParams({
-        pathParams: { id: 123 },
-        queryParams: { hydrate: true }
-      }); //=> GET /things/123?hydrate=true
-
+    const getThing1WithParams = createGetFn('/things/:id')
+    const thing3 = await getThing1WithParams({
+      pathParams: { id: 123 },
+      queryParams: { hydrate: true }
+    }) //=> GET /things/123?hydrate=true
+     ``` 
     */
   export type CreateGetFn = (
     restPath: string,
@@ -184,203 +188,148 @@ export namespace StcRest {
       // Optional Axios request configuration.
     ) => GetFn;
 
-
-    export interface MutateFnOptions {
-      data: unknown;
-      restParams?: RestParams;
-    }
-
-
-  // TODO: convert the docs below from tsdoc to match the documentation style
-  // of the docs above.  Also, double check to make sure the docs are correct,
-  // as there has beens some churn
-
- /**
-   * A function that performs a REST mutation (create or update) operation.
-   *
-   * @param {unkown} data - The parameters for the mutation operation.
-   * @param {PathParams} restParams.pathParams - for path variable substitutions
-   * @param {QueryParams}  restParams.queryParams - Optional path and query parameters for the REST call.
-   * @returns {Promise<AxiosResponse>} A promise containing the results of the mutation.
-   */
-    export type MutateFn= (options: MutateFnOptions) => Promise<AxiosResponse>;
-
-    /**
-     * Creates a function that performs a mutation request (POST, PUT, PATCH) to the specified REST path.
-     * The returned function can be used for mutation operations.
-     *
-     * @param {string} restPath -
-     *   Path to the REST endpoint. Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-     *
-     * @param {Partial<AxiosRequestConfig>} [axiosOptions] -
-     *   Optional Axios request configuration.
-     *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
-     *
-     * @returns {MutateFn}
-     *   A function that can be called to perform a REST POST request.
-     *   @see {@link MutateFn} for details on the returned function.
-     *
-     * @example
-     *   // Creating a mutation function
-     *   const createThing = restClient.createMutateFn("/things");
-     *
-     *   // Using the mutation function
-     *   const response = await createThing({
-     *     data: { name: "New Thing" },
-     *     restParams: { queryParams: { validate: true } }
-     *   });
-     *
-     * @example
-     *   // With path variables
-     *   const updateThing = restClient.createMutateFn("/things/:id");
-     *
-     *   const response = await updateThing({
-     *     data: { name: "Updated Thing" },
-     *     restParams: {
-     *       pathParams: { id: 123 },
-     *       queryParams: { version: 2 }
-     *     }
-     *   });
-     */
-
-    export type CreateMutateFn = (
-      restPath: string,
-      axiosOptions?: Partial<AxiosRequestConfig>
-    ) => MutateFn;
+  
+  /**
+    Options passed into the {@link MutateFn}.
+  */
+  export interface MutateFnOptions {
+    data: unknown;
+      // The parameters for the mutation operation.
+    restParams?: RestParams;
+      // restParams.pathParams - For path variable substitutions.
+      // restParams.queryParams - Optional path and query params for the REST call.
+  }
 
   /**
-   * Creates a function that performs a REST POST request to the specified path.
-   *
-   * @param {string} restPath -
-   *   Path to the REST endpoint.
-   *   Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-   *
-   * @param {Partial<AxiosRequestConfig>} [axiosOptions] -
-   *   Optional Axios request configuration.
-   *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
-   *
-   * @returns {MutateFn}
-   *   A function that performs a REST POST request and returns a promise resolving to the created entity.
-   *   This function can be passed into 'react-query' mutation hooks.
-   *   @see {@link MutateFn} for details on the returned function.
-   *
-   *
-   * @example
-   *   const createThing = createPostFnOrig("/things/:bucket")
-   *   const newThing = await createThing({ thing: 'data' }, {
-   *       pathParams: { bucket: 'blueThings' },
-   *       queryParams: { smile: true }
-   *     }
-   *   )
-   *   // => Request POST /things/blueThings?smile=true
-   *   //    Body { thing: 'data' }
+    Function that performs a REST mutation (create or update) for specified path and rest params.
+    This function can be passed into 'react-query' mutation hooks.
+   */
+  export type MutateFn = (
+    options: MutateFnOptions
+      // A promise containing the results of the mutation.
+  ) => Promise<AxiosResponse>;
+
+  /**
+    Creates a function that performs a mutation request (POST, PUT, PATCH) to the specified REST path.
+
+    Examples:
+    ```
+     // Creating a mutation function
+    const createThing = restClient.createMutateFn('/things')
+
+    // Using the mutation function
+    const response = await createThing({
+      data: { name: 'New Thing' },
+      restParams: { queryParams: { validate: true } }
+    })
+    // With path variables
+    const updateThing = restClient.createMutateFn('/things/:id')
+   
+    const response = await updateThing({
+      data: { name: 'Updated Thing' },
+      restParams: {
+        pathParams: { id: 123 },
+        queryParams: { version: 2 }
+      }
+    })
+    ```
+   */
+  export type CreateMutateFn = (
+    restPath: string,
+      // Path to the REST endpoint.
+      // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
+    axiosOptions?: Partial<AxiosRequestConfig>
+      // Optional Axios request configuration.
+  ) => MutateFn;
+
+  /**
+    Creates a function that performs a REST POST request to the specified path.
+   
+    Example:
+    ```
+    const createThing = createPostFnOrig('/things/:bucket')
+    const newThing = await createThing({ thing: 'data' }, {
+      pathParams: { bucket: 'blueThings' },
+      queryParams: { smile: true }
+    }
+    )
+    //=> Request POST /things/blueThings?smile=true
+    //  Body { thing: 'data' }
+    ```   
    */
   export type CreatePostFn = CreateMutateFn;
 
   /**
-   * Creates a function that performs a REST PUT request to the specified path.
-   *
-   * @param {string} restPath -
-   *   Path to the REST endpoint.
-   *   Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-   *
-   * @param {Partial<AxiosRequestConfig>} [axiosOptions] -
-   *   Optional Axios request configuration.
-   *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
-   *
-   * @returns {MutateFn}
-   *   A function that performs a REST PUT request and returns a promise resolving to the updated resource.
-   *   This function can be passed into 'react-query' mutation hooks.
-   *   @see {@link MutateFn} for details on the returned function.
-   *
-   * @example
-   *   const updateThing1 = createPutFn("/things/1")
-   *   const updatedThing1 = await updateThing1({ thing: 'updates' })
-   *   // => Request PUT /things/1
-   *   //    Body { thing: 'updates' }
-   *
-   * @example
-   *   const updateThing2 = createPutFn("/things/:thingId")
-   *   const updatedThing2 = await updateThing2(
-   *     { thing: 'updates' },
-   *     {
-   *       pathParams: { thingId: 2 },
-   *       queryParams: { smile: true }
-   *     }
-   *   )
-   *   // => Request PUT /things/2?smile=true
-   *   //    Body { thing: 'updates' }
+    Creates a function that performs a REST PUT request to the specified path.
+
+    Examples:
+    ```
+    const updateThing1 = createPutFn('/things/1')
+    const updatedThing1 = await updateThing1({ thing: 'updates' })
+    //=> Request PUT /things/1
+    //  Body { thing: 'updates' }
+   
+    const updateThing2 = createPutFn('/things/:thingId')
+    const updatedThing2 = await updateThing2(
+      { thing: 'updates' },
+      {
+        pathParams: { thingId: 2 },
+        queryParams: { smile: true }
+      }
+    )
+    // => Request PUT /things/2?smile=true
+    //   Body { thing: 'updates' }
+    ```   
    */
   export type CreatePutFn = CreateMutateFn;
 
   /**
-   * Creates a function that performs a REST PATCH request to the specified path.
-   *
-   * @param {string} restPath -
-   *   Path to the REST endpoint.
-   *   Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-   *
-   * @param {Partial<AxiosRequestConfig>} [axiosOptions] -
-   *   Optional Axios request configuration.
-   *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
-   *
-   * @returns {MutateFn}
-   *   A function that performs a REST PATCH request and returns a promise resolving to the updated resource.
-   *   This function can be passed into 'react-query' mutation hooks.
-   *   @see {@link MutateFn} for details on the returned function.
-   *
-   * @example
-   *   const updateThing1 = createPatchFn("/things/1")
-   *   const updatedThing1 = await updateThing1({ thing: 'updates' })
-   *   // => Request PATCH /things/1
-   *   //    Body { thing: 'updates' }
-   *
-   * @example
-   *   const updateThing2 = createPatchFn("/things/:thingId")
-   *   const updatedThing2 = await updateThing2({ thing: 'updates' }, {
-   *       pathParams: { thingId: 2 },
-   *       queryParams: { smile: true }
-   *     }
-   *   )
-   *   // => Request PATCH /things/2?smile=true
-   *   //    Body { thing: 'updates' }
+    Creates a function that performs a REST PATCH request to the specified path.
+   
+    Examples:
+    ```
+    const updateThing1 = createPatchFn('/things/1')
+    const updatedThing1 = await updateThing1({ thing: 'updates' })
+    //=> Request PATCH /things/1
+    // Body { thing: 'updates' }
+   
+    const updateThing2 = createPatchFn('/things/:thingId')
+    const updatedThing2 = await updateThing2({ thing: 'updates' }, {
+      pathParams: { thingId: 2 },
+      queryParams: { smile: true }
+    }
+    )
+    // => Request PATCH /things/2?smile=true
+    // Body { thing: 'updates' }
+    ```     
    */
   export type CreatePatchFn = CreateMutateFn;
 
   /**
-   * A function that performs a REST DELETE request.
-   *
-   * @param {RestParams} restParams -
-   *   The path and query parameters to be used for the REST call.
-   * @returns {Promise<AxiosResponse>}
-   *   A promise containing the response to the delete request.
+    A function that performs a REST DELETE request.
+    This function can be passed into 'react-query' mutation hooks.
+    Returns a promise containing the response to the delete request.
    */
-  export type DeleteFn = (restParams: RestParams) => Promise<AxiosResponse>;
+  export type DeleteFn = (
+    restParams: RestParams
+      // The path and query parameters to be used for the REST call.
+  ) => Promise<AxiosResponse>;
 
   /**
-   * Creates a function that performs a REST DELETE request to the specified path.
-   *
-   * @param {string} restPath -
-   *   Path to the REST endpoint.
-   *   Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-   *
-   * @param {Partial<AxiosRequestConfig>} [axiosOptions] -
-   *   Optional Axios request configuration.
-   *   @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
-   *
-   * @returns {DeleteFn}
-   *   A function that performs a REST DELETE request.
-   *   This function can be passed into 'react-query' mutation hooks.
-   *   @see {@link DeleteFn} for details on the returned function.
-   *
-   * @example
-   *   const deleteThing = createDeleteFn("/things/:id")
-   *   await deleteThing({ pathParams: { id: 123 } })
-   *   // => Request DELETE /things/123
+    Creates a function that performs a REST DELETE request to the specified path.
+
+    Example:
+    ```
+    const deleteThing = createDeleteFn('/things/:id')
+    await deleteThing({ pathParams: { id: 123 } })
+    //=> Request DELETE /things/123
+    ```  
    */
   export type CreateDeleteFn = (
     restPath: string,
+      // Path to the REST endpoint.
+      // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
     axiosOptions?: Partial<AxiosRequestConfig>
+      // Optional Axios request configuration.
   ) => DeleteFn;
 }
-
