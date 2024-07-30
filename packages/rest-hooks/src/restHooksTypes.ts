@@ -1,4 +1,4 @@
-import { QueryFunctionContext, UseQueryOptions } from '@tanstack/react-query';
+import { QueryFunctionContext, UseQueryOptions } from '@tanstack/react-query'
 import {
   AxiosStatic, AxiosResponse, AxiosInstance, AxiosRequestConfig
 } from 'axios'
@@ -199,8 +199,6 @@ export namespace StcRest {
   /**
     Function that performs a REST mutation (create or update) for specified path and rest params.
     This function can be passed into 'react-query' mutation hooks.
-   
-    @see {@link MutateFnOptions} for details on the available options.
    */
   export type MutateFn = (
     options: MutateFnOptions
@@ -212,7 +210,8 @@ export namespace StcRest {
     @see {@link MutateFn} for details on the returned function.
    
     Examples:
-    // Creating a mutation function
+    ```
+     // Creating a mutation function
       const createThing = restClient.createMutateFn("/things");
 
     // Using the mutation function
@@ -230,6 +229,8 @@ export namespace StcRest {
         queryParams: { version: 2 }
        }
      });
+
+    ```
    */
   export type CreateMutateFn = (
     restPath: string,

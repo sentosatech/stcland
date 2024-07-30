@@ -18,6 +18,7 @@ export default [
       'object-curly-spacing': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'off',
-    }
+      '@typescript-eslint/no-namespace': 'off'
+    },
   },
 ]
