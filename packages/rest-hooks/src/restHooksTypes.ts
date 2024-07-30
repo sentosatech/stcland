@@ -144,7 +144,10 @@ export namespace StcRest {
 
     It is assumed that the function internally knows the path to the REST endpoint.
 
-    example const getFn = () => axios.get('/api/user')
+    Example:
+    ```
+    const getFn = () => axios.get('/api/user')
+    ```
   */
   export type GetFn = (
     queryContext?: QueryFunctionContext
@@ -158,21 +161,22 @@ export namespace StcRest {
     The returned function can be passed directly into 'react-query' query hooks.
 
     Examples:
-      const getThings = createGetFn("/things")
-      const things = await getThings() //=> GET /things
+    ```
+    const getThings = createGetFn('/things')
+    const things = await getThings() //=> GET /things
 
-      const getThing1 = createGetFn("/things/1")
-      const thing1 = await getThing1() //=> GET /things/1
+    const getThing1 = createGetFn('/things/1')
+    const thing1 = await getThing1() //=> GET /things/1
 
-      const getThing2 = createGetFn("/things/1?version=2")
-      const thing2 = await getThing1() //=> GET /things/1?version=2
+    const getThing2 = createGetFn('/things/1?version=2')
+    const thing2 = await getThing1() //=> GET /things/1?version=2
 
-      const getThing1WithParams = createGetFn("/things/:id")
-      const thing3 = await getThing1WithParams({
-        pathParams: { id: 123 },
-        queryParams: { hydrate: true }
-      }); //=> GET /things/123?hydrate=true
-
+    const getThing1WithParams = createGetFn('/things/:id')
+    const thing3 = await getThing1WithParams({
+      pathParams: { id: 123 },
+      queryParams: { hydrate: true }
+    }) //=> GET /things/123?hydrate=true
+     ``` 
     */
   export type CreateGetFn = (
     restPath: string,
@@ -207,29 +211,27 @@ export namespace StcRest {
 
   /**
     Creates a function that performs a mutation request (POST, PUT, PATCH) to the specified REST path.
-    @see {@link MutateFn} for details on the returned function.
-   
+
     Examples:
     ```
      // Creating a mutation function
-      const createThing = restClient.createMutateFn("/things");
+    const createThing = restClient.createMutateFn('/things')
 
     // Using the mutation function
-      const response = await createThing({
-        data: { name: "New Thing" },
-        restParams: { queryParams: { validate: true } }
-       });
+    const response = await createThing({
+      data: { name: 'New Thing' },
+      restParams: { queryParams: { validate: true } }
+    })
     // With path variables
-      const updateThing = restClient.createMutateFn("/things/:id");
+    const updateThing = restClient.createMutateFn('/things/:id')
    
-      const response = await updateThing({
-       data: { name: "Updated Thing" },
-       restParams: {
+    const response = await updateThing({
+      data: { name: 'Updated Thing' },
+      restParams: {
         pathParams: { id: 123 },
         queryParams: { version: 2 }
-       }
-     });
-
+      }
+    })
     ```
    */
   export type CreateMutateFn = (
@@ -238,67 +240,68 @@ export namespace StcRest {
       // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
     axiosOptions?: Partial<AxiosRequestConfig>
       // Optional Axios request configuration.
-      // @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
   ) => MutateFn;
 
   /**
     Creates a function that performs a REST POST request to the specified path.
-    @see {@link CreateMutateFn} for details about the base function.
    
     Example:
-      const createThing = createPostFnOrig("/things/:bucket")
-   
-      const newThing = await createThing({ thing: 'data' }, {
-          pathParams: { bucket: 'blueThings' },
-          queryParams: { smile: true }
-        }
-      )
-      => Request POST /things/blueThings?smile=true
-        Body { thing: 'data' }
+    ```
+    const createThing = createPostFnOrig('/things/:bucket')
+    const newThing = await createThing({ thing: 'data' }, {
+      pathParams: { bucket: 'blueThings' },
+      queryParams: { smile: true }
+    }
+    )
+    //=> Request POST /things/blueThings?smile=true
+    //  Body { thing: 'data' }
+    ```   
    */
   export type CreatePostFn = CreateMutateFn;
 
   /**
     Creates a function that performs a REST PUT request to the specified path.
-    @see {@link CreateMutateFn} for details about the base function.
-   
+
     Examples:
-      const updateThing1 = createPutFn("/things/1")
-      const updatedThing1 = await updateThing1({ thing: 'updates' })
-       => Request PUT /things/1
-         Body { thing: 'updates' }
+    ```
+    const updateThing1 = createPutFn('/things/1')
+    const updatedThing1 = await updateThing1({ thing: 'updates' })
+    //=> Request PUT /things/1
+    //  Body { thing: 'updates' }
    
-      const updateThing2 = createPutFn("/things/:thingId")
-      const updatedThing2 = await updateThing2(
-        { thing: 'updates' },
-        {
-          pathParams: { thingId: 2 },
-          queryParams: { smile: true }
-        }
-      )
-       => Request PUT /things/2?smile=true
-         Body { thing: 'updates' }
+    const updateThing2 = createPutFn('/things/:thingId')
+    const updatedThing2 = await updateThing2(
+      { thing: 'updates' },
+      {
+        pathParams: { thingId: 2 },
+        queryParams: { smile: true }
+      }
+    )
+    // => Request PUT /things/2?smile=true
+    //   Body { thing: 'updates' }
+    ```   
    */
   export type CreatePutFn = CreateMutateFn;
 
   /**
     Creates a function that performs a REST PATCH request to the specified path.
-    @see {@link CreateMutateFn} for details about the base function.
    
     Examples:
-      const updateThing1 = createPatchFn("/things/1")
-      const updatedThing1 = await updateThing1({ thing: 'updates' })
-       => Request PATCH /things/1
-         Body { thing: 'updates' }
+    ```
+    const updateThing1 = createPatchFn('/things/1')
+    const updatedThing1 = await updateThing1({ thing: 'updates' })
+    //=> Request PATCH /things/1
+    // Body { thing: 'updates' }
    
-      const updateThing2 = createPatchFn("/things/:thingId")
-      const updatedThing2 = await updateThing2({ thing: 'updates' }, {
-          pathParams: { thingId: 2 },
-          queryParams: { smile: true }
-        }
-      )
-       => Request PATCH /things/2?smile=true
-         Body { thing: 'updates' }
+    const updateThing2 = createPatchFn('/things/:thingId')
+    const updatedThing2 = await updateThing2({ thing: 'updates' }, {
+      pathParams: { thingId: 2 },
+      queryParams: { smile: true }
+    }
+    )
+    // => Request PATCH /things/2?smile=true
+    // Body { thing: 'updates' }
+    ```     
    */
   export type CreatePatchFn = CreateMutateFn;
 
@@ -314,12 +317,13 @@ export namespace StcRest {
 
   /**
     Creates a function that performs a REST DELETE request to the specified path.
-    @see {@link DeleteFn} for details on the returned function.
-   
+
     Example:
-      const deleteThing = createDeleteFn("/things/:id")
-      await deleteThing({ pathParams: { id: 123 } })
-      => Request DELETE /things/123
+    ```
+    const deleteThing = createDeleteFn('/things/:id')
+    await deleteThing({ pathParams: { id: 123 } })
+    //=> Request DELETE /things/123
+    ```  
    */
   export type CreateDeleteFn = (
     restPath: string,
@@ -327,6 +331,5 @@ export namespace StcRest {
       // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
     axiosOptions?: Partial<AxiosRequestConfig>
       // Optional Axios request configuration.
-      // @see {@link https://axios-http.com/docs/req_config|Axios documentation} for available options.
   ) => DeleteFn;
 }
