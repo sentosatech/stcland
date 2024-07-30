@@ -353,8 +353,100 @@ describe('Test Rest Client', () => {
 
   })
 
-  test.skip('Test Straight Patch', async () => {})
-  test.skip('Test PatchFn', async () => {})
+  test('Test Straight Patch', async () => {
+    const restClient = createRestClient(
+      defaultClientConfig,    
+      defaultServerConfig
+    )
+    const patchData = { artist: 'Caligulas Horse' }
+    rsp = (await restClient.patch(
+      '/simple-patch/user/favorite-song',
+      patchData
+    )) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-patch/user/favorite-song'
+    )
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual(
+      'Bearer testing-access-token'
+    )
+    expect(requestInfo?.body).toEqual(patchData)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
+
+  })
+
+  test('Test PatchFn', async () => {
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      getAccessToken: () => 'another-access-token'
+    }, defaultServerConfig)
+
+    // simple patch
+
+    const patchFn = restClient.createPatchFn('/simple-patch')
+    data = { artist: 'Enter Shikari' }
+    rsp = await patchFn({ data }) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-patch')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
+
+    // with query params
+
+    data = { artist: 'Maria Cristina Plata' }
+    restParams = { queryParams: { genre: 'folk' } }
+    rsp = (await patchFn({ data, restParams })) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-patch?genre=folk')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
+
+    // with path params
+
+    const patchFnWithPathParams = restClient.createPatchFn('/simple-patch/:genre')
+    data = { artist: 'Breaking Benjamin' }
+    const pathParams = { genre: 'metal' }
+
+    rsp = (await patchFnWithPathParams({ data, restParams: { pathParams } })) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-patch/metal')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
+
+    // with query and path params
+
+    data = { artist: 'Esperanza Spalding' }
+    restParams = {
+      pathParams: { genre:'jazz' },
+      queryParams: { song: 'radio song' },
+    }
+
+    rsp = (await patchFnWithPathParams({ data, restParams })) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+  
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-patch/jazz?song=radio%20song')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
+  })
 
   test.skip('Test Straight Delete', async () => {})
   test.skip('Test DeleteFn', async () => {})
