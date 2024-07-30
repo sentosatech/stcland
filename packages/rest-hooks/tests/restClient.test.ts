@@ -356,7 +356,98 @@ describe('Test Rest Client', () => {
   test.skip('Test Straight Patch', async () => {})
   test.skip('Test PatchFn', async () => {})
 
-  test.skip('Test Straight Delete', async () => {})
-  test.skip('Test DeleteFn', async () => {})
+  test('Test Straight Delete', async () => {
+    const restClient = createRestClient(
+      defaultClientConfig,
+      defaultServerConfig
+    )
+
+    const rsp = (await restClient.delete(
+      '/simple-delete/user/favorite-songs'
+    )) as unknown as StcRestTest.TestResponse
+
+    const [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-delete/user/favorite-songs'
+    )
+    expect(requestInfo?.method).toEqual('DELETE')
+    expect(requestInfo?.headers.authorization).toEqual(
+      'Bearer testing-access-token'
+    )
+    // Normally, you wouldn't expect a body for DELETE.
+    expect(requestInfo?.body).toBeNull()
+    expect(responseBody).toEqual({ message: 'delete succesful' })
+
+  })
+
+  test('Test DeleteFn', async () => {
+
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      getAccessToken: () => 'another-access-token'
+    }, defaultServerConfig)
+
+    // simple delete
+
+    const deleteFn = restClient.createDeleteFn('/simple-delete')
+    rsp = await deleteFn({}) as unknown as StcRestTest.TestResponse;
+
+    [ requestInfo, responseBody ] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-delete')
+    expect(requestInfo?.method).toEqual('DELETE')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toBeNull()
+    expect(responseBody).toEqual({ message: 'delete succesful' })
+
+    // with query params
+
+    restParams = { queryParams: { life: 'bills' } }
+    rsp = (await deleteFn(restParams)) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-delete?life=bills')
+    expect(requestInfo?.method).toEqual('DELETE')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toBeNull()
+    expect(responseBody).toEqual({ message: 'delete succesful' })
+
+    // with path params
+
+    const deleteFnWithPathParams = restClient.createDeleteFn('/simple-delete/:problem')
+    restParams = { pathParams: { problem: 'traffic' } }
+
+    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-delete/traffic')
+    expect(requestInfo?.method).toEqual('DELETE')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toBeNull()
+    expect(responseBody).toEqual({ message: 'delete succesful' })
+
+
+    // with query and path params
+
+    restParams = {
+      pathParams: { problem: 'poverty' },
+      queryParams: { scope: 'global' },
+    }
+
+    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse;
+
+    [requestInfo, responseBody] = rsp
+  
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-delete/poverty?scope=global')
+    expect(requestInfo?.method).toEqual('DELETE')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toBeNull()
+    expect(responseBody).toEqual({ message: 'delete succesful' })
+
+  })
 
 })

@@ -21,4 +21,9 @@ export const handlers = [
     return HttpResponse.json(rsp)
   }),
 
+  // Generic delete handler
+  http.delete('*/simple-delete*', async ({ request, params, cookies }) => {
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'delete succesful' })
+    return HttpResponse.json(rsp)
+  }),
 ]
