@@ -4,8 +4,8 @@ import { setupServer } from 'msw/node'
 
 import { handlers } from './handlers'
 
-import { StcRest} from '../src/restHooksTypes'
-import { StcRestTest} from './testTypes'
+import { StcRest } from '../src/restHooksTypes'
+import { StcRestTest } from './testTypes'
 import { expandRestPath, createRestClient } from '../src/restClient'
 
 describe('Test Rest Client Utils', () => {
@@ -51,11 +51,11 @@ describe('Test Rest Client Utils', () => {
       '/test-non-existent-path-params/3'
     )
     expect(expandRestPath('/unfilled_params/:notFilled', {
-        pathParams: { one: 'one', two: 2, id: 3 },
-      })
-      ).toEqual(
-        '/unfilled_params/:notFilled'
-      )
+      pathParams: { one: 'one', two: 2, id: 3 },
+    })
+    ).toEqual(
+      '/unfilled_params/:notFilled'
+    )
   })
 })
 
@@ -197,7 +197,7 @@ describe('Test Rest Client', () => {
 
     const postFn = restClient.createPostFn('/simple-post')
     data = { species: 'dog', breed: 'lab' }
-    rsp = await postFn({data}) as unknown as StcRestTest.TestResponse;
+    rsp = await postFn({ data }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
@@ -211,7 +211,7 @@ describe('Test Rest Client', () => {
 
     data = { species: 'cat', breed: 'siamese' }
     restParams = { queryParams: { pureBread: true, age: 3 } }
-    rsp = await postFn({data, restParams}) as unknown as StcRestTest.TestResponse;
+    rsp = await postFn({ data, restParams }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
@@ -228,7 +228,7 @@ describe('Test Rest Client', () => {
     restParams = { pathParams: { species: 'dog' } }
 
 
-    rsp = await postFnWithPathParams({data, restParams}) as unknown as StcRestTest.TestResponse;
+    rsp = await postFnWithPathParams({ data, restParams }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
@@ -246,7 +246,7 @@ describe('Test Rest Client', () => {
       queryParams: { region: 'rockies' }
     }
     rsp = await postFnWithPathParams(
-      {data, restParams}) as unknown as StcRestTest.TestResponse;
+      { data, restParams }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
@@ -259,27 +259,27 @@ describe('Test Rest Client', () => {
 
   test('Test Straight Put', async () => {
     const restClient = createRestClient(
-      defaultClientConfig,
+      defaultClientConfig,    
       defaultServerConfig
-    );
-    const putData = { songs: ['Graves', 'Fade Away', 'Anything Can Happen In The Next Half Hour']};
+    )
+    const putData = { songs: ['Graves', 'Fade Away', 'Anything Can Happen In The Next Half Hour'] }
     rsp = (await restClient.put(
       '/simple-put/user/favorite-songs',
       putData
     )) as unknown as StcRestTest.TestResponse;
 
-    [requestInfo, responseBody] = rsp;
+    [requestInfo, responseBody] = rsp
 
     expect(requestInfo?.url).toEqual(
       'http://fakehost.com:5023/simple-put/user/favorite-songs'
-    );
-    expect(requestInfo?.method).toEqual('PUT');
+    )
+    expect(requestInfo?.method).toEqual('PUT')
     expect(requestInfo?.headers.authorization).toEqual(
       'Bearer testing-access-token'
-    );
-    expect(requestInfo?.body).toEqual(putData);
-    expect(responseBody).toEqual({ message: 'put succesful' });
-  });
+    )
+    expect(requestInfo?.body).toEqual(putData)
+    expect(responseBody).toEqual({ message: 'put succesful' })
+  })
 
   test('Test PutFn', async () => {
     
@@ -292,7 +292,7 @@ describe('Test Rest Client', () => {
 
     const putFn = restClient.createPutFn('/simple-put')
     data = { songName: 'Graves' }
-    rsp = await putFn({data}) as unknown as StcRestTest.TestResponse;
+    rsp = await putFn({ data }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
@@ -302,56 +302,56 @@ describe('Test Rest Client', () => {
     expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'put succesful' })
 
-  // with query params
+    // with query params
 
-   data = { songName: 'Lost' };
-   const restParams = { queryParams: { genre: 'metal'} };
-   rsp = (await putFn({ data, restParams })) as unknown as StcRestTest.TestResponse;
+    data = { songName: 'Lost' }
+    restParams = { queryParams: { genre: 'metal' } }
+    rsp = (await putFn({ data, restParams })) as unknown as StcRestTest.TestResponse;
 
-   [requestInfo, responseBody] = rsp;
+    [requestInfo, responseBody] = rsp
 
     expect(requestInfo?.url).toEqual(
-    'http://fakehost.com:5023/simple-put?genre=metal');
+      'http://fakehost.com:5023/simple-put?genre=metal')
     expect(requestInfo?.method).toEqual('PUT')
     expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
     expect(requestInfo?.body).toEqual(data)
     expect(responseBody).toEqual({ message: 'put succesful' })
 
-  // with path params
+    // with path params
 
-   const putFnWithPathParams = restClient.createPutFn('/simple-put/:id');
-   data = { songName: 'Songs for No One'};
-   const pathParams = { id: '123' };
+    const putFnWithPathParams = restClient.createPutFn('/simple-put/:id')
+    data = { songName: 'Songs for No One' }
+    const pathParams = { id: '123' }
 
-   rsp = (await putFnWithPathParams({ data, restParams: { pathParams } })) as unknown as StcRestTest.TestResponse;
+    rsp = (await putFnWithPathParams({ data, restParams: { pathParams } })) as unknown as StcRestTest.TestResponse;
 
-   [requestInfo, responseBody] = rsp;
+    [requestInfo, responseBody] = rsp
 
-   expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/123');
-   expect(requestInfo?.method).toEqual('PUT')
-   expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-   expect(requestInfo?.body).toEqual(data)
-   expect(responseBody).toEqual({ message: 'put succesful' })
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/123')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
 
-  // with query and path params
+    // with query and path params
 
-  data = { songName: 'Capulet' };
-  const combinedRestParams = {
-    pathParams: { id:'666' },
-    queryParams: { genre: 'ballad' },
-  };
+    data = { songName: 'Capulet' }
+    restParams = {
+      pathParams: { id:'666' },
+      queryParams: { genre: 'ballad' },
+    }
 
-  rsp = (await putFnWithPathParams({ data, restParams: combinedRestParams })) as unknown as StcRestTest.TestResponse;
+    rsp = (await putFnWithPathParams({ data, restParams })) as unknown as StcRestTest.TestResponse;
 
-  [requestInfo, responseBody] = rsp;
+    [requestInfo, responseBody] = rsp
   
-   expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/666?genre=ballad');
-   expect(requestInfo?.method).toEqual('PUT')
-   expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
-   expect(requestInfo?.body).toEqual(data)
-   expect(responseBody).toEqual({ message: 'put succesful' })
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/666?genre=ballad')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
 
-  });
+  })
 
   test.skip('Test Straight Patch', async () => {})
   test.skip('Test PatchFn', async () => {})
