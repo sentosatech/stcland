@@ -5,7 +5,7 @@ export const handlers = [
 
   // Generic get hanlder
   http.get('*/simple-get*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { simpleGet: 'data' })
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'get succesful' })
     return HttpResponse.json(rsp)
   }),
 
