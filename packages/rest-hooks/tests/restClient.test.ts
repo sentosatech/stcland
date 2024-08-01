@@ -8,7 +8,6 @@ import { StcRest } from '../src/restHooksTypes'
 import { StcRestTest } from './testTypes'
 import { expandRestPath, createRestClient } from '../src/restClient'
 
-const DEFAULT_BASE_URL = 'http://fakehost.com:5023'
 
 describe('Test Rest Client Utils', () => {
 
@@ -63,30 +62,6 @@ describe('Test Rest Client Utils', () => {
 
 describe('Test Rest Client', () => {
 
-  /**
-    Helper handler to assert response details based on the REST METHOD.
-   */
-  const assertResponse = (
-    method: StcRestTest.Request['method'],
-    // The HTTP method used in the request.
-    path: string,
-    // Composed path, can container either query and/or path params.
-    bodyData?: Record<string, unknown>
-    // (Optional) The expected body data.
-  ) => {
-    
-    expect(requestInfo?.url).toEqual(`${DEFAULT_BASE_URL}${path}`)
-    expect(requestInfo?.method).toEqual(method)
-    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
-
-    // Verify the request body or ensure it's null for DELETE.
-    if (method !== 'GET') {
-      method === 'DELETE'  ? expect(responseBody?.body).toBeNull() : expect(requestInfo?.body).toEqual(bodyData)
-    }
-
-    expect(responseBody).toEqual({ message: `${method.toLowerCase()} succesful` })
-  }
-
   // start the test server
   const server = setupServer(...handlers)
   server.listen()
@@ -99,7 +74,7 @@ describe('Test Rest Client', () => {
   }
 
   const defaultServerConfig: StcRest.ServerConfig = {
-    defaultBaseUrl: DEFAULT_BASE_URL,
+    defaultBaseUrl: 'http://fakehost.com:5023',
     timeout: 1000
   }
   // used accross multiple tests, so declared here
@@ -115,13 +90,16 @@ describe('Test Rest Client', () => {
     rsp = await restClient.get('/simple-get') as unknown as StcRestTest.TestResponse
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET', '/simple-get')
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-get')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
   })
 
   test('Test GetFn', async () => {
     const restClient = createRestClient(defaultClientConfig, {
       ...defaultServerConfig,
-      defaultBaseUrl: DEFAULT_BASE_URL
+      defaultBaseUrl: 'http://fakehost2.com:7777'
     })
 
     // simple gets
@@ -131,14 +109,20 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET', '/simple-get')
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
     const getOneFn = restClient.createGetFn('/simple-get/88')
 
     rsp = await getOneFn() as unknown as StcRestTest.TestResponse;
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET',  '/simple-get/88')
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get/88')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
     // with path params
 
@@ -149,7 +133,10 @@ describe('Test Rest Client', () => {
     rsp = await getOneFnWithPathParams() as unknown as StcRestTest.TestResponse;
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET', '/simple-get/33')
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:7777/simple-get/33')
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
     // with query params
 
@@ -160,7 +147,12 @@ describe('Test Rest Client', () => {
     rsp = await getManyFnWithQueryParams() as unknown as StcRestTest.TestResponse;
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET', '/simple-get?hydrate=true&paginate=false')
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost2.com:7777/simple-get?hydrate=true&paginate=false'
+    )
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
 
     // with path params and query params
 
@@ -172,7 +164,12 @@ describe('Test Rest Client', () => {
     rsp = await getOneFnWithQueryAndPathParams() as unknown as StcRestTest.TestResponse;
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('GET', '/simple-get/users?limit=100&offset=0')
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost2.com:7777/simple-get/users?limit=100&offset=0'
+    )
+    expect(requestInfo?.method).toEqual('GET')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(responseBody).toEqual({ simpleGet: 'data' })
   })
 
   test('Test Straight Post', async () => {
@@ -183,14 +180,18 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('POST', '/simple-post', postData)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(requestInfo?.body).toEqual(postData)
+    expect(responseBody).toEqual({ message: 'post succesful' })
   })
 
   test('Test PostFn', async () => {
 
     const restClient = createRestClient({
       ...defaultClientConfig,
-      getAccessToken: () => 'testing-access-token'
+      getAccessToken: () => 'another-access-token'
     }, defaultServerConfig)
 
     // simple post
@@ -201,7 +202,11 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('POST', '/simple-post', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with query params
 
@@ -212,7 +217,11 @@ describe('Test Rest Client', () => {
     [ requestInfo, responseBody ] = rsp
 
     
-    assertResponse('POST', '/simple-post?pureBread=true&age=3', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post?pureBread=true&age=3')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with path params
 
@@ -225,7 +234,11 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('POST', '/simple-post/dog', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/dog')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'post succesful' })
 
     // with query and path params
 
@@ -238,8 +251,12 @@ describe('Test Rest Client', () => {
       { data, restParams }) as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
-
-    assertResponse('POST', '/simple-post/snake?region=rockies', data)
+    
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-post/snake?region=rockies')
+    expect(requestInfo?.method).toEqual('POST')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'post succesful' })
   })
 
   test('Test Straight Put', async () => {
@@ -255,14 +272,22 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
 
-    assertResponse('PUT', '/simple-put/user/favorite-songs', putData)
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-put/user/favorite-songs'
+    )
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual(
+      'Bearer testing-access-token'
+    )
+    expect(requestInfo?.body).toEqual(putData)
+    expect(responseBody).toEqual({ message: 'put succesful' })
   })
 
   test('Test PutFn', async () => {
     
     const restClient = createRestClient({
       ...defaultClientConfig,
-      getAccessToken: () => 'testing-access-token'
+      getAccessToken: () => 'another-access-token'
     }, defaultServerConfig)
 
     // simple put
@@ -273,7 +298,11 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('PUT', '/simple-put', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
 
     // with query params
 
@@ -284,7 +313,12 @@ describe('Test Rest Client', () => {
     [requestInfo, responseBody] = rsp
 
 
-    assertResponse('PUT', '/simple-put?genre=metal', data)
+    expect(requestInfo?.url).toEqual(
+      'http://fakehost.com:5023/simple-put?genre=metal')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
 
     // with path params
 
@@ -296,7 +330,11 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
 
-    assertResponse('PUT', '/simple-put/123', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/123')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
 
     // with query and path params
 
@@ -310,7 +348,11 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
   
-    assertResponse('PUT','/simple-put/666?genre=ballad', data)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-put/666?genre=ballad')
+    expect(requestInfo?.method).toEqual('PUT')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer another-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'put succesful' })
   })
 
   test('Test Straight Patch', async () => {
@@ -326,14 +368,19 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
 
-    assertResponse('PATCH', '/simple-patch/user/favorite-song', patchData)
+    expect(requestInfo?.url).toEqual('http://fakehost.com:5023/simple-patch/user/favorite-song')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer testing-access-token')
+    expect(requestInfo?.body).toEqual(patchData)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
   })
 
   test('Test PatchFn', async () => {
     const restClient = createRestClient({
       ...defaultClientConfig,
-      getAccessToken: () => 'testing-access-token'
-    }, defaultServerConfig)
+      getAccessToken: () => 'different-access-token'
+    }, {   ...defaultServerConfig,
+      defaultBaseUrl: 'http://fakehost2.com:9999' })
 
     // simple patch
 
@@ -343,7 +390,11 @@ describe('Test Rest Client', () => {
 
     [ requestInfo, responseBody ] = rsp
 
-    assertResponse('PATCH', '/simple-patch', data)
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:9999/simple-patch')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer different-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
 
     // with query params
 
@@ -353,7 +404,11 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
 
-    assertResponse('PATCH', '/simple-patch?genre=folk', data)
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:9999/simple-patch?genre=folk')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer different-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
 
     // with path params
 
@@ -365,7 +420,11 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
 
-    assertResponse('PATCH', '/simple-patch/metal', data)
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:9999/simple-patch/metal')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer different-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
 
     // with query and path params
 
@@ -379,7 +438,11 @@ describe('Test Rest Client', () => {
 
     [requestInfo, responseBody] = rsp
   
-    assertResponse('PATCH', '/simple-patch/jazz?song=radio%20song', data)
+    expect(requestInfo?.url).toEqual('http://fakehost2.com:9999/simple-patch/jazz?song=radio%20song')
+    expect(requestInfo?.method).toEqual('PATCH')
+    expect(requestInfo?.headers.authorization).toEqual('Bearer different-access-token')
+    expect(requestInfo?.body).toEqual(data)
+    expect(responseBody).toEqual({ message: 'patch succesful' })
   })
 
   test.skip('Test Straight Delete', async () => {})
