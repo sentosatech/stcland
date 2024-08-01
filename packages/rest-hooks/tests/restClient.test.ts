@@ -391,7 +391,7 @@ describe('Test Rest Client', () => {
     // simple delete
 
     const deleteFn = restClient.createDeleteFn('/simple-delete')
-    rsp = await deleteFn({}) as unknown as StcRestTest.TestResponse;
+    rsp = await deleteFn() as unknown as StcRestTest.TestResponse;
 
     [ requestInfo, responseBody ] = rsp
 
