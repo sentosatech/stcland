@@ -24,8 +24,8 @@ export const extractRequestHeaders = (request: StcRestTest.Request) => {
 
 export const makeTestResponse = async (
   request: StcRestTest.Request,
-  params: StcRestTest.ReqestPathParams,
-  cookies: StcRestTest.ReqestCookies,
+  params: StcRestTest.RequestPathParams,
+  cookies: StcRestTest.RequestCookies,
   data: any,
 ) : Promise<StcRestTest.TestResponse> => [
   {
