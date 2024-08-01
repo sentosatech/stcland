@@ -5,7 +5,7 @@ export const handlers = [
 
   // Generic get hanlder
   http.get('*/simple-get*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { message: 'get succesful' })
+    const rsp = await makeTestResponse(request, params, cookies, { simpleGet: 'data' })
     return HttpResponse.json(rsp)
   }),
 
@@ -23,7 +23,7 @@ export const handlers = [
 
   // Generic patch handler
   http.patch('*/simple-patch*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { message: 'patch succesful' })
+    const rsp = await makeTestResponse(request, params, cookies, {  message: 'patch succesful',  })
     return HttpResponse.json(rsp)
   }),
 

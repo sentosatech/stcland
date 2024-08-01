@@ -10,8 +10,8 @@ export namespace StcRestTest {
 
     export type RequestUrl = string
     export type RequestMethod = string
-    export type ReqestPathParams = PathParams
-    export type ReqestCookies = Record<string, string>
+    export type RequestPathParams = PathParams
+    export type RequestCookies = Record<string, string>
     export interface RequestHeaders {[key: string]: string | string[]}
     export type RequestBody = any
 
@@ -19,9 +19,9 @@ export namespace StcRestTest {
       method: RequestMethod
       headers: RequestHeaders
       url: RequestUrl
-      pathParams: ReqestPathParams
-      cookies: ReqestCookies
-      body: RequestBody
+      pathParams?: RequestPathParams
+      cookies?: RequestCookies
+      body?: RequestBody
     } | null
 
   export type TestResponse = [
