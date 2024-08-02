@@ -23,7 +23,7 @@ export const handlers = [
 
   // Generic patch handler
   http.patch('*/simple-patch*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { message: 'patch succesful' })
+    const rsp = await makeTestResponse(request, params, cookies, {  message: 'patch succesful',  })
     return HttpResponse.json(rsp)
   }),
 

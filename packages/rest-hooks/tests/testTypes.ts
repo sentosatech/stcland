@@ -19,9 +19,9 @@ export namespace StcRestTest {
       method: RequestMethod
       headers: RequestHeaders
       url: RequestUrl
-      pathParams: RequestPathParams
-      cookies: RequestCookies
-      body: RequestBody
+      pathParams?: RequestPathParams
+      cookies?: RequestCookies
+      body?: RequestBody
     } | null
 
   export type TestResponse = [
