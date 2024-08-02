@@ -1,4 +1,4 @@
-import { DefaultBodyType, StrictRequest, HttpResponse, PathParams } from 'msw';
+import { DefaultBodyType, StrictRequest, HttpResponse, PathParams } from 'msw'
 
 export namespace StcRestTest {
   export type Request<
