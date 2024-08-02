@@ -311,7 +311,7 @@ export namespace StcRest {
     Returns a promise containing the response to the delete request.
    */
   export type DeleteFn = (
-    restParams: RestParams
+    restParams?: RestParams
       // The path and query parameters to be used for the REST call.
   ) => Promise<AxiosResponse>;
 

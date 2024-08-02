@@ -11,20 +11,25 @@ export const handlers = [
 
   // Generic post hanlder
   http.post('*/simple-post*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { message: 'post succesful' })
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'post successful' })
     return HttpResponse.json(rsp)
   }),
 
   // Generic put handler
   http.put('*/simple-put*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, { message: 'put succesful' })
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'put successful' })
     return HttpResponse.json(rsp)
   }),
 
   // Generic patch handler
   http.patch('*/simple-patch*', async ({ request, params, cookies }) => {
-    const rsp = await makeTestResponse(request, params, cookies, {  message: 'patch succesful',  })
+    const rsp = await makeTestResponse(request, params, cookies, {  message: 'patch successful',  })
     return HttpResponse.json(rsp)
   }),
 
+  // Generic delete handler
+  http.delete('*/simple-delete*', async ({ request, params, cookies }) => {
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'delete successful' })
+    return HttpResponse.json(rsp)
+  }),
 ]
