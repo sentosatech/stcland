@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios'
-import { describe, test, expect } from '@jest/globals'
+import { describe, test, expect } from 'vitest'
 import { setupServer } from 'msw/node'
 
 import { handlers } from './handlers'
