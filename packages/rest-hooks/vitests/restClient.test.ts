@@ -1,10 +1,12 @@
 import { AxiosResponse } from 'axios'
 import { describe, test, expect } from 'vitest'
 import { setupServer } from 'msw/node'
-import { handlers } from '@stcland/rest-hooks/tests/handlers'
-import { StcRest } from '@stcland/rest-hooks/src/restHooksTypes'
-import { StcRestTest } from '@stcland/rest-hooks/tests/testTypes'
-import { expandRestPath, createRestClient } from '@stcland/rest-hooks/src/restClient'
+
+import { handlers } from './handlers'
+
+import { StcRest } from '../src/restHooksTypes'
+import { StcRestTest } from './testTypes'
+import { expandRestPath, createRestClient } from '../src/restClient'
 
 
 describe('Test Rest Client Utils', () => {

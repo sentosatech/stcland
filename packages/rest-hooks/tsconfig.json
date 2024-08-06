@@ -2,7 +2,7 @@
   "extends": "../config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["jest"],
+    "types": ["jest", "vite/client"],
   },
   "include": [
     "src"

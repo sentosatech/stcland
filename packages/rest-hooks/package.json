@@ -32,7 +32,8 @@
     "tsup": "^8.1.0",
     "typedoc": "^0.26.4",
     "typescript": "^5.5.3",
-    "typescript-eslint": "^7.18.0"
+    "typescript-eslint": "^7.18.0",
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "@stcland/errors": "workspace:^",
@@ -49,6 +50,7 @@
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "vitest": "vitest"
   }
 }
