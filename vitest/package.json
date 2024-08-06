@@ -1,0 +1,46 @@
+{
+  "name": "vitest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "keywords": [
+    "STC"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^20.14.10",
+    "@types/ramda": "^0.30.1",
+    "@types/react": "^18.3.3",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "eslint": "^9.7.0",
+    "eslint-plugin-react": "^7.35.0",
+    "msw": "^2.3.1",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.1.0",
+    "typedoc": "^0.26.4",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^7.18.0",
+    "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "@stcland/rest-hooks": "workspace:^",
+    "axios": "^1.7.2",
+    "json-stringify-safe": "^5.0.1",
+    "ramda": "^0.30.1",
+    "ramda-adjunct": "^5.0.1",
+    "ts-node": "^10.9.2"
+  },
+    "scripts": {
+    "docs": "typedoc",
+    "build": "pnpm run clean && tsup",
+    "clean": "rimraf ./dist && mkdir dist",
+    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
+    "vitest": "vitest"
+  }
+}
