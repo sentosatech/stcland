@@ -9,7 +9,6 @@
   "dependencies": {},
   "scripts": {
     "build:all": "pnpm run -r --filter=./packages/* build",
-    "test:all": "pnpm run -r test",
-    "vitest:all": "pnpm run -r vitest"
+    "test:all": "pnpm run -r test"
   }
 }
