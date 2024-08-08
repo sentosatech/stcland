@@ -24,8 +24,9 @@ export namespace StcRestTest {
       body?: RequestBody
     } | null
 
-  export type TestResponse = [
-    RequestInfo,
-    ResponseBody
-  ]
+  export type TestResponse = {
+    data: ResponseBody
+    meta: RequestInfo
+  }
+
 }

@@ -1,1 +1,1 @@
-export * from "./restClient";
+export * from './restClient'
