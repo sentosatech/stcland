@@ -27,8 +27,8 @@ export const makeTestResponse = async (
   params: StcRestTest.RequestPathParams,
   cookies: StcRestTest.RequestCookies,
   data: any,
-) : Promise<StcRestTest.TestResponse> => [
-  {
+) : Promise<StcRestTest.TestResponse> => ({
+  meta: {
     method: extractRequestMethod(request),
     headers: extractRequestHeaders(request),
     url: extractRequestUrl(request),
@@ -37,4 +37,4 @@ export const makeTestResponse = async (
     body: await extractRequestBody(request)
   },
   data
-]
+})
