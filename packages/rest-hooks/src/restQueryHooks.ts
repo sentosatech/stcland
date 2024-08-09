@@ -7,12 +7,12 @@ export const useRestQuery = (
   restClient: StcRest.RestClient,
   queryKey: any,
   restPath: string,
-  options: StcRest.RestQueryOptions,
+  options: StcRest.RestQueryOptionsOld,
 ) => {
   const { op, baseUrl, resultsPropName, transformFn, defaultResponse, restParams } = options
   const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
 
-  const defaultOptoins: StcRest.RestQueryOptions = {
+  const defaultOptoins: StcRest.RestQueryOptionsOld = {
     op: 'useRestQuery',
     refetchOnWindowFocus: false,
   }
@@ -21,7 +21,7 @@ export const useRestQuery = (
     ...defaultOptoins,
     ...options,
     queryKey,
-    queryFn: () => restClient.createGetFn(restPath, restParams, axiosOptions),
+    queryFn: restClient.createGetFn(restPath, restParams, axiosOptions),
   })
 
   // handle default response on undefined data

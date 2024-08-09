@@ -6,7 +6,7 @@ import {
 
 export namespace StcRest {
 
-  export interface RestQueryOptions extends Omit<UseQueryOptions,
+  export interface RestQueryOptionsOld extends Omit<UseQueryOptions,
     'queryFn' | 'queryKey'> // Taken care of internally
   {
     op: string
@@ -27,6 +27,11 @@ export namespace StcRest {
       //   queryParams: { paginate: true, page: 2 }
       //  }
   }
+
+  export interface RestQueryOptions extends UseQueryOptions {
+
+  }
+
 
   /*
     Defines properties of a rest server to be accessed by the rest client.
@@ -74,7 +79,7 @@ export namespace StcRest {
 
     // The following functions create custom REST actions that can be
     // passed directly into react-query hooks
-    createGetFn: CreateGetFn;
+    createGetFn: CreateGetFnOld;
     createPostFn: CreatePostFn;
     createPutFn: CreatePutFn;
     createPatchFn: CreatePatchFn;
@@ -176,9 +181,25 @@ export namespace StcRest {
       pathParams: { id: 123 },
       queryParams: { hydrate: true }
     }) //=> GET /things/123?hydrate=true
-     ``` 
-    */
+     ```
+  */
+
+  export interface CreateGetFnOptions {
+    restParams?: RestParams;
+      // Optional path and query parameters for the REST call.
+    axiosOptions?: Partial<AxiosRequestConfig>;
+      // Optional Axios request configuration.
+  }
+
   export type CreateGetFn = (
+    restPath: string,
+      // Path to the REST endpoint (including query parameters if desired)
+      // Can contain path variables in the form of `:variableToSubstitute`.
+    options?: CreateGetFnOptions
+      // Optional path and query parameters for the REST call.
+    ) => GetFn;
+
+  export type CreateGetFnOld = (
     restPath: string,
       // Path to the REST endpoint (including query parameters if desired)
       // Can contain path variables in the form of `:variableToSubstitute`.
@@ -188,7 +209,7 @@ export namespace StcRest {
       // Optional Axios request configuration.
     ) => GetFn;
 
-  
+
   /**
     Options passed into the {@link MutateFn}.
   */
@@ -224,7 +245,7 @@ export namespace StcRest {
     })
     // With path variables
     const updateThing = restClient.createMutateFn('/things/:id')
-   
+
     const response = await updateThing({
       data: { name: 'Updated Thing' },
       restParams: {
@@ -244,7 +265,7 @@ export namespace StcRest {
 
   /**
     Creates a function that performs a REST POST request to the specified path.
-   
+
     Example:
     ```
     const createThing = createPostFnOrig('/things/:bucket')
@@ -255,7 +276,7 @@ export namespace StcRest {
     )
     //=> Request POST /things/blueThings?smile=true
     //  Body { thing: 'data' }
-    ```   
+    ```
    */
   export type CreatePostFn = CreateMutateFn;
 
@@ -268,7 +289,7 @@ export namespace StcRest {
     const updatedThing1 = await updateThing1({ thing: 'updates' })
     //=> Request PUT /things/1
     //  Body { thing: 'updates' }
-   
+
     const updateThing2 = createPutFn('/things/:thingId')
     const updatedThing2 = await updateThing2(
       { thing: 'updates' },
@@ -279,20 +300,20 @@ export namespace StcRest {
     )
     // => Request PUT /things/2?smile=true
     //   Body { thing: 'updates' }
-    ```   
+    ```
    */
   export type CreatePutFn = CreateMutateFn;
 
   /**
     Creates a function that performs a REST PATCH request to the specified path.
-   
+
     Examples:
     ```
     const updateThing1 = createPatchFn('/things/1')
     const updatedThing1 = await updateThing1({ thing: 'updates' })
     //=> Request PATCH /things/1
     // Body { thing: 'updates' }
-   
+
     const updateThing2 = createPatchFn('/things/:thingId')
     const updatedThing2 = await updateThing2({ thing: 'updates' }, {
       pathParams: { thingId: 2 },
@@ -301,7 +322,7 @@ export namespace StcRest {
     )
     // => Request PATCH /things/2?smile=true
     // Body { thing: 'updates' }
-    ```     
+    ```
    */
   export type CreatePatchFn = CreateMutateFn;
 
@@ -323,7 +344,7 @@ export namespace StcRest {
     const deleteThing = createDeleteFn('/things/:id')
     await deleteThing({ pathParams: { id: 123 } })
     //=> Request DELETE /things/123
-    ```  
+    ```
    */
   export type CreateDeleteFn = (
     restPath: string,
