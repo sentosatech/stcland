@@ -1,4 +1,4 @@
-import { QueryFunctionContext, UseQueryOptions } from '@tanstack/react-query'
+import { QueryFunctionContext, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
 import {
   AxiosStatic, AxiosResponse, AxiosInstance, AxiosRequestConfig
 } from 'axios'
@@ -6,20 +6,20 @@ import {
 
 export namespace StcRest {
 
-  export interface RestQueryOptionsOld extends Omit<UseQueryOptions,
+  export interface UseRestQueryOptions<TDefaultResponse> extends Omit<UseQueryOptions,
     'queryFn' | 'queryKey'> // Taken care of internally
   {
     op: string
       // The operation being performed, for informative error messaging
       // For examlpe: "Fetching users"
+    resultsPropName: string
+      // Include a prop in the results object that references the response data
+    defaultResponse: TDefaultResponse
+      // Will be returned as results when query returns `undefined`
     baseUrl?: string
       // base url for the query (if not provided default rest client url will be used)
-    defaultResponse?: any
-      // Will be returned as results when query returns `undefined`
-    resultsPropName?: string
-      // Include a prop in the results object that references the response data
     transformFn?: (data: any) => any
-      // Transform the response data before returning
+      // Transform the data referenced by resultsPropName before returning
     restParams?:  RestParams
       // Path and query params to be applied to the query
       // eg: {
@@ -28,10 +28,28 @@ export namespace StcRest {
       //  }
   }
 
-  export interface RestQueryOptions extends UseQueryOptions {
 
-  }
+  export type UseRestQueryResult<
+    TData,
+    TDefaultResponse = TData,
+    TMeta = any,
+    TResultsName extends string = string
+  > = UseQueryResult<any> & {
+    meta?: TMeta | undefined;
+  } & {
+    [key in TResultsName]: TData | TDefaultResponse;
+  };
 
+  export type UseRestQuery = <TData, TDefaultResponse = TData, TMeta = any>(
+    restClient: RestClient,
+      // The REST client to use for the query
+    queryKey: [any],
+      // The key to use for the query
+    restPath: string,
+      // The path to the REST endpoint
+    options: UseRestQueryOptions<TDefaultResponse>
+      // Options for the query
+  ) => UseRestQueryResult<TData, TDefaultResponse, TMeta>
 
   /*
     Defines properties of a rest server to be accessed by the rest client.

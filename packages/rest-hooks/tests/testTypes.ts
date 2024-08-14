@@ -6,7 +6,7 @@ export namespace StcRestTest {
     > = StrictRequest<BodyType>
 
     export type Response = HttpResponse
-    export type ResponseBody = any
+    export type ResponseBody<TData = any> = TData
 
     export type RequestUrl = string
     export type RequestMethod = string
@@ -24,9 +24,8 @@ export namespace StcRestTest {
       body?: RequestBody
     } | null
 
-  export type TestResponse = {
-    data: ResponseBody
+  export type TestResponse<TData = any> = {
+    data: ResponseBody<TData>
     meta: RequestInfo
   }
-
 }

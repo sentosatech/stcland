@@ -1,46 +1,61 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import type { StcRest } from './restHooksTypes'
-import { isUndefined, isNotUndefined } from 'ramda-adjunct'
-import { assoc } from 'ramda'
 
-export const useRestQuery = (
-  restClient: StcRest.RestClient,
-  queryKey: any,
-  restPath: string,
-  options: StcRest.RestQueryOptionsOld,
-) => {
-  const { op, baseUrl, resultsPropName, transformFn, defaultResponse, restParams } = options
+export const useRestQuery: StcRest.UseRestQuery = <
+  TData = any,
+  TDefaultResponse = TData,
+  TMeta = any> (
+    restClient: StcRest.RestClient,
+    queryKey: any,
+    restPath: string,
+    options: StcRest.UseRestQueryOptions<TDefaultResponse> ) =>
+{
+  // NOTE: not currently using op, but likely will when we build in
+  // global useQuery error handling
+
+  const {
+    baseUrl,
+    defaultResponse,
+    restParams,
+    transformFn = v => v, // simple passthrough fxn as default
+    resultsPropName = 'missingPropName' // should happen
+  } = options
+
   const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
-
-  const defaultOptoins: StcRest.RestQueryOptionsOld = {
-    op: 'useRestQuery',
-    refetchOnWindowFocus: false,
+  const useRestQueryDefaultOptions: Partial<UseQueryOptions> = {
+    refetchOnWindowFocus: false
   }
 
-  const res = useQuery({
-    ...defaultOptoins,
+  const useQueryOptions: UseQueryOptions = {
+    ...useRestQueryDefaultOptions,
     ...options,
     queryKey,
     queryFn: restClient.createGetFn(restPath, restParams, axiosOptions),
-  })
-
-  // handle default response on undefined data
-  if (isUndefined(res?.data)) {
-    return resultsPropName
-      ? { ...res, data: defaultResponse, [resultsPropName]: defaultResponse }
-      : { ...res, data: defaultResponse }
   }
 
-  // if we have nothing custom to do, we are done
-  if (!resultsPropName && !transformFn) return res
+  const useQueryRsp: any = useQuery(useQueryOptions)
 
-  if (transformFn && !resultsPropName) {
-    throw new Error(`useRestQuery() ${op}: cant use transformFn without resultsPropName`)
+  // account for various depths for location of data
+  const resultsProp: TData | TDefaultResponse =
+    useQueryRsp?.data?.data?.data ||
+    useQueryRsp?.data?.data ||
+    useQueryRsp?.data ||
+    defaultResponse
+
+  // account for various depths for location of meta
+  const meta =
+    useQueryRsp?.data?.data?.meta ||
+    useQueryRsp?.data?.meta ||
+    useQueryRsp?.meta
+
+
+
+  const useRestQueryResult: StcRest.UseRestQueryResult<TData, TDefaultResponse, TMeta> = {
+    ...useQueryRsp,
+    [resultsPropName]: transformFn(resultsProp),
+    meta
   }
 
-  return assoc(
-    resultsPropName || 'missingPropName',
-    transformFn && isNotUndefined(res?.data) ? transformFn(res?.data) : res?.data,
-    res
-  )
+  return useRestQueryResult
 }
+
