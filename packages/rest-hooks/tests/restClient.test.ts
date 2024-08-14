@@ -102,7 +102,7 @@ describe('Test Rest Client', () => {
     defaultBaseUrl: 'http://fakehost.com:5023',
     timeout: 1000
   }
-  
+
   // used accross multiple tests, so declared here
   let rsp: StcRestTest.TestResponse
   let body: any
@@ -140,7 +140,7 @@ describe('Test Rest Client', () => {
       meta: {
         url: 'http://fakehost2.com:7777/simple-get',
         method: 'GET',
-        headers: { authorization: 'Bearer testing-access-token' }, 
+        headers: { authorization: 'Bearer testing-access-token' },
       }
     }
     assertResponse(rsp, expectedRsp)
@@ -155,7 +155,7 @@ describe('Test Rest Client', () => {
         url: 'http://fakehost2.com:7777/simple-get/88',
         method: 'GET',
         headers: { authorization: 'Bearer testing-access-token' },
-      } 
+      }
     }
     assertResponse(rsp,  expectedRsp)
 
@@ -173,7 +173,7 @@ describe('Test Rest Client', () => {
         url: 'http://fakehost2.com:7777/simple-get/33',
         method: 'GET',
         headers: { authorization: 'Bearer testing-access-token' },
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -191,7 +191,7 @@ describe('Test Rest Client', () => {
         url: 'http://fakehost2.com:7777/simple-get?hydrate=true&paginate=false',
         method: 'GET',
         headers: { authorization: 'Bearer testing-access-token' },
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -210,7 +210,7 @@ describe('Test Rest Client', () => {
         url: 'http://fakehost2.com:7777/simple-get/users?limit=100&offset=0',
         method: 'GET',
         headers: { authorization: 'Bearer testing-access-token' },
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -231,7 +231,7 @@ describe('Test Rest Client', () => {
         method: 'POST',
         headers: { authorization: 'Bearer testing-access-token' },
         body: postData,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -258,7 +258,7 @@ describe('Test Rest Client', () => {
         method: 'POST',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -278,7 +278,7 @@ describe('Test Rest Client', () => {
         method: 'POST',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -299,7 +299,7 @@ describe('Test Rest Client', () => {
         method: 'POST',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -323,7 +323,7 @@ describe('Test Rest Client', () => {
         method: 'POST',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -349,7 +349,7 @@ describe('Test Rest Client', () => {
         method: 'PUT',
         headers: { authorization: 'Bearer testing-access-token' },
         body: putData
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -377,7 +377,7 @@ describe('Test Rest Client', () => {
         method: 'PUT',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -397,7 +397,7 @@ describe('Test Rest Client', () => {
         method: 'PUT',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -418,7 +418,7 @@ describe('Test Rest Client', () => {
         method: 'PUT',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -441,7 +441,7 @@ describe('Test Rest Client', () => {
         method: 'PUT',
         headers: { authorization: 'Bearer another-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -467,7 +467,7 @@ describe('Test Rest Client', () => {
         method: 'PATCH',
         headers: { authorization: 'Bearer testing-access-token' },
         body: patchData,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -493,7 +493,7 @@ describe('Test Rest Client', () => {
         method: 'PATCH',
         headers: { authorization: 'Bearer different-access-token' },
         body
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -513,7 +513,7 @@ describe('Test Rest Client', () => {
         method: 'PATCH',
         headers: { authorization: 'Bearer different-access-token' },
         body
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -534,7 +534,7 @@ describe('Test Rest Client', () => {
         method: 'PATCH',
         headers: { authorization: 'Bearer different-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -557,7 +557,7 @@ describe('Test Rest Client', () => {
         method: 'PATCH',
         headers: { authorization: 'Bearer different-access-token' },
         body,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -581,7 +581,7 @@ describe('Test Rest Client', () => {
         method: 'DELETE',
         headers: { authorization: 'Bearer testing-access-token' },
         body: null,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })
@@ -607,7 +607,7 @@ describe('Test Rest Client', () => {
         method: 'DELETE',
         headers: { authorization: 'Bearer unique-access-token' },
         body: null,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -625,7 +625,7 @@ describe('Test Rest Client', () => {
         method: 'DELETE',
         headers: { authorization: 'Bearer unique-access-token' },
         body: null,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -645,7 +645,7 @@ describe('Test Rest Client', () => {
         method: 'DELETE',
         headers: { authorization: 'Bearer unique-access-token' },
         body: null,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
 
@@ -667,7 +667,7 @@ describe('Test Rest Client', () => {
         method: 'DELETE',
         headers: { authorization: 'Bearer unique-access-token' },
         body: null,
-      } 
+      }
     }
     assertResponse(rsp, expectedRsp)
   })

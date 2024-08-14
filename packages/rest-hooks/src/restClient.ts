@@ -43,29 +43,29 @@ export const createRestClient: StcRest.CreateRestClient = (
 
     createGetFn:
       (restPath, restParams, axiosOptions) =>
-      (queryContext: QueryFunctionContext) =>
-        restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions),
+        (queryContext: QueryFunctionContext) =>
+          restClient.axiosClient.get(expandRestPath(restPath, restParams || {}), axiosOptions),
 
     createPostFn:
       (restPath, axiosOptions) =>
-      ({data, restParams}) => {
-        return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
-      },
+        ({ data, restParams }) => {
+          return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
+        },
 
     createPutFn:
       (restPath, axiosOptions) =>
-      ({data, restParams}) =>
-        restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams }) =>
+          restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createPatchFn:
       (restPath, axiosOptions) =>
-      ({data, restParams}) =>
-        restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams }) =>
+          restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createDeleteFn:
       (restPath, axiosOptions) =>
-      (restParams) =>
-        restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
+        (restParams) =>
+          restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
   }
 
   // all clients use these middlewares
@@ -99,21 +99,21 @@ interface _RequestPreProcessorOptions {
 
 const _requestPreprocessor =
   (opts: _RequestPreProcessorOptions) =>
-  (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
-{
-  const { verbose, getAccessToken } = opts
-  const accessToken = isFunction(getAccessToken) ? getAccessToken() : ''
-  const { method, baseURL, url, data } = req
+    (req: InternalAxiosRequestConfig<unknown>):  InternalAxiosRequestConfig<unknown> =>
+    {
+      const { verbose, getAccessToken } = opts
+      const accessToken = isFunction(getAccessToken) ? getAccessToken() : ''
+      const { method, baseURL, url, data } = req
 
-  if (verbose) {
-    console.debug(`\n${toUpper(method || '')} ${baseURL}${url}`)
-    if (data) console.debug('body', data)
-  }
+      if (verbose) {
+        console.debug(`\n${toUpper(method || '')} ${baseURL}${url}`)
+        if (data) console.debug('body', data)
+      }
 
-  return accessToken
-    ? assocPath(['headers', 'Authorization'], `Bearer ${accessToken}`, req)
-    : req
-}
+      return accessToken
+        ? assocPath(['headers', 'Authorization'], `Bearer ${accessToken}`, req)
+        : req
+    }
 
 interface _RequestPostProcessorOptions {
   verbose?: boolean
@@ -121,26 +121,26 @@ interface _RequestPostProcessorOptions {
 }
 
 export const f = async () => {
-    await Promise.resolve(1)
+  await Promise.resolve(1)
 }
 
 
 
 const _responsePostProcessor =
   (opts: _RequestPostProcessorOptions) =>
-  (rsp: AxiosResponse) =>
-{
+    (rsp: AxiosResponse) =>
+    {
 
-  const {
-    verbose = false,
-    responsePostProcessor = rsp => rsp
-  } = opts
+      const {
+        verbose = false,
+        responsePostProcessor = rsp => rsp
+      } = opts
 
-  const { data, status, statusText } = rsp
-  if (verbose) { console.debug(`response: ${status} ${statusText} `, data || '') }
+      const { data, status, statusText } = rsp
+      if (verbose) { console.debug(`response: ${status} ${statusText} `, data || '') }
 
-  return responsePostProcessor(rsp)
-}
+      return responsePostProcessor(rsp)
+    }
 
 /**
  * @function _expandRestPath
@@ -178,7 +178,7 @@ export const expandRestPath = (
   )
 
   throwIf(
-     isNotNilOrStringOrObject(queryParams),
+    isNotNilOrStringOrObject(queryParams),
     'expandUrl(): non object supplied for queryParams'
   )
 
