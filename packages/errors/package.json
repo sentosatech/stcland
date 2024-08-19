@@ -33,6 +33,7 @@
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
   },
   "publishConfig": {
-   "access": "public" 
+   "access": "public",
+   "registry": "https://registry.npmjs.org/"
   }
 }
