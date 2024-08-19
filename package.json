@@ -5,10 +5,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
-  "dependencies": {},
+  "devDependencies": {
+    "@changesets/cli": "^2.27.7",
+    "dotenv-cli": "^7.4.2"
+  },
   "scripts": {
     "build:all": "pnpm run -r --filter=./packages/* build",
-    "test:all": "pnpm run -r test"
+    "test:all": "pnpm run -r test",
+    "publish": "dotenv pnpm publish --workspace --access public"
   }
 }

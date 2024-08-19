@@ -26,3 +26,9 @@ backend/.eslintcache
 
 # jest result
 packages\rest-hooks\coverage
+
+# env vars
+.env
+
+# npm config
+.npmrc

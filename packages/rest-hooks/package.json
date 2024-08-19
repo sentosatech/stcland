@@ -6,6 +6,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "files": ["dist"],
   "keywords": [
     "STC"
   ],
@@ -50,5 +51,8 @@
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
     "test": "vitest --run"
+  },
+    "publishConfig": {
+    "access": "public" 
   }
 }
