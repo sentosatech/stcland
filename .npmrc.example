@@ -1,0 +1,8 @@
+# Example npmrc configuration
+registry=https://registry.npmjs.org/
+
+# Use environment variable for token
+//registry.npmjs.org/:_authToken=${NPM_TOKEN}
+
+# Scope config
+@org-name:registry=https://registry.npmjs.org/
