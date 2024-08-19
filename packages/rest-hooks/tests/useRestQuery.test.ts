@@ -45,245 +45,260 @@ describe('Test Rest Query Hooks', () => {
     { ...defaultClientConfig, responsePostProcessorFn }, defaultServerConfig
   )
 
-  type TestHook = 'simpleGet' | 'getById' | 'getWithPathParams' | 'getWithAxiosDataOnly' | 'getWithNoMeta' | 'getWithNoMetaAxiosData'
+    type TestHook = 'simpleGet' | 'getById' | 'getWithPathParams' | 'getWithAxiosDataOnly' | 'getWithNoMeta' | 'getWithNoMetaAxiosData'
+    
+    // Helper assert hook result.
+    const assertResult = async (
+      hook: TestHook,
+      result: any,
+      expectedResult: any
+    ) => {
+      // Wait for query to succeed
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
 
-  type RenderHookParams = {
-    id?: string
-    pathParam?: string
-    options?: StcRest.UseRestQueryOptions<DefaultType>
-  }
+      const { isError, isLoading, data, meta, simpleGetResponse } = result.current
 
-  const useQueryRenderHook = (hook?: TestHook, params?: RenderHookParams) => {
+      // Common checks
+      expect(isError).toEqual(false)
+      expect(isLoading).toEqual(false)
 
-    // Defaul simpleGet test hook data
-    let path = '/simple-get'
-    let restClientSelected = restClient
-    let op = 'simpleGet'
-    let queryKey: any = ['simple-get']
-    let resultsPropName = 'simpleGetResponse'
-    let defaultResponse = {}
+      // Handle the 'getWithNoMeta' case early to skip unnecessary checks
+      if (hook === 'getWithNoMeta') {
+        expect(meta).toBeUndefined()
+        expect(data?.config?.method).toEqual(expectedResult.method)
+        expect(data?.config?.url).toEqual(expectedResult.url)
+        expect(simpleGetResponse).toEqual(expectedResult.simpleGetResponse)
+        expect(data?.data).toEqual(simpleGetResponse)
+        return
+      }
 
-    // Handle unique cases based on hook type
-    switch (hook) {
-    case 'getById':
-      path = `/simple-get/${params?.id}`
-      break 
-    case 'getWithPathParams':
-      path = `/simple-get/${params?.pathParam}`
-      break 
-    case 'getWithAxiosDataOnly':
-      restClientSelected = restClientAxiosDataOnly
-      break   
-    case 'getWithNoMeta':
-      path = '/simple-get-no-meta'
-      queryKey = ['simple-get-no-meta']
-      op = 'simpleGetNoMeta'
-      resultsPropName = 'simpleGetResponse'
-      defaultResponse = {}
-      break 
-    case 'getWithNoMetaAxiosData':
-      path = '/simple-get-no-meta'
-      queryKey = ['simple-get-no-meta']
-      op = 'simpleGetNoMeta'
-      resultsPropName = 'simpleGetResponse'
-      defaultResponse = {}
-      restClientSelected = restClientAxiosDataOnly
-      break  
-    default:
-      break
+      // Meta checks for hooks that expect meta
+      if (meta) {
+        expect(meta.method).toEqual(expectedResult.method)
+        expect(meta.url).toEqual(expectedResult.url)
+      }
+
+      // Hook-specific checks
+      switch (hook) {
+      case 'getWithPathParams':
+        expect(meta?.pathParams?.[1]).toContain(expectedResult.pathParam)
+        break
+      
+      case 'getWithAxiosDataOnly':
+        expect(data?.data).toEqual(simpleGetResponse)
+        expect(data?.meta).toEqual(meta)
+        break
+      
+      case 'getWithNoMetaAxiosData':
+        expect(meta).toBeUndefined()
+        expect(simpleGetResponse).toEqual({ simpleGet: 'data' })
+        expect(data).toEqual(simpleGetResponse)
+        break
+    
+      default:
+        break
+      }
     }
 
-    return useRestQuery<DataType, EmptyObject>(
-      restClientSelected, 
-      queryKey, 
-      path, 
-      {
-        ...params?.options, 
-        op, 
-        resultsPropName, 
-        defaultResponse,
+    const useGetSimple = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = '/simple-get'
+      const queryKey: any = ['simple-get']
+      const op = 'simpleGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
+    }
+  
+
+    test('Basic useRestQuery', async () => {
+
+      const { result } = reactQueryRenderHook(useGetSimple)
+
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:5555/simple-get',
+        simpleGetResponse: { simpleGet: 'data' }
       }
-    )
-  }
-    
-  /**
-  Helper handler to assert result details.
- */
-  const assertResult = async (
-    hook: TestHook,
-    result: any,
-    expectedResult: any
-  ) => {
-  // Wait for query to succeed
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true)
+ 
+      // axios wraps response in `data`, and our default convention wraps result in `data`
+      // follow on tests don't neeed to check this, but we will for the first test
+      expect(result.current.data?.data?.meta).toEqual(result.current.meta)
+
+      await assertResult('simpleGet', result, expectedResult)
     })
 
-    const { isError, isLoading, data, meta, simpleGetResponse } = result.current
-
-    // Common checks
-    expect(isError).toEqual(false)
-    expect(isLoading).toEqual(false)
-
-    // Handle the 'getWithNoMeta' case early to skip unnecessary checks
-    if (hook === 'getWithNoMeta') {
-      expect(meta).toBeUndefined()
-      expect(data?.config?.method).toEqual(expectedResult.method)
-      expect(data?.config?.url).toEqual(expectedResult.url)
-      expect(simpleGetResponse).toEqual(expectedResult.simpleGetResponse)
-      expect(data?.data).toEqual(simpleGetResponse)
-      return
+    const useGetSimpleById = (id: string, options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = `/simple-get/${id}`
+      const queryKey: any = ['simple-get']
+      const op = 'simpleGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
     }
 
-    // Meta checks for hooks that expect meta
-    if (meta) {
-      expect(meta.method).toEqual(expectedResult.method)
-      expect(meta.url).toEqual(expectedResult.url)
-    }
+    test('useRestQuery by ID', async () => {
 
-    // Hook-specific checks
-    switch (hook) {
-    case 'getWithPathParams':
-      expect(meta?.pathParams?.[1]).toContain(expectedResult.pathParam)
-      break
-      
-    case 'getWithAxiosDataOnly':
-      expect(data?.data).toEqual(simpleGetResponse)
-      expect(data?.meta).toEqual(meta)
-      break
-      
-    case 'getWithNoMetaAxiosData':
-      expect(meta).toBeUndefined()
-      expect(simpleGetResponse).toEqual({ simpleGet: 'data' })
-      expect(data).toEqual(simpleGetResponse)
-      break
-    
-    default:
-      break
-    }
-  }
+      const { result } = reactQueryRenderHook(()=> useGetSimpleById('2'))
 
-  test('Basic useRestQuery', async () => {
-
-    const { result } = reactQueryRenderHook(useQueryRenderHook)
-
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:5555/simple-get',
-      simpleGetResponse: { simpleGet: 'data' }
-    }
- 
-    // axios wraps response in `data`, and our default convention wraps result in `data`
-    // follow on tests don't neeed to check this, but we will for the first test
-    expect(result.current.data?.data?.meta).toEqual(result.current.meta)
-
-    await assertResult('simpleGet', result, expectedResult)
-  })
-
-  test('useRestQuery by ID', async () => {
-
-    const { result } = reactQueryRenderHook(()=> useQueryRenderHook('getById', {
-      id: '2'
-    }))
-
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:5555/simple-get/2',
-      simpleGetResponse: { simpleGet: 'data' }
-    }
-
-    await assertResult('getById', result, expectedResult)
-  })
- 
-  test('useRestQuery with rest params', async () => {
-    const restParams = {
-      pathParams: { genre: 'funk' },
-      queryParams: { artist: 'vulfpeck' },
-    }
-    const { result } = reactQueryRenderHook(() =>  useQueryRenderHook('getWithPathParams', { pathParam: ':genre', options: { restParams }  
-    }))
-
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:5555/simple-get/funk?artist=vulfpeck',
-      simpleGetResponse: { simpleGet: 'data' },
-      pathParam: '/funk'
-    }
-
-    await assertResult('getWithPathParams', result, expectedResult)
-  })
-
-  test('useRestQuery baseUrl override', async () => {
-
-    const { result } = reactQueryRenderHook(() =>  useQueryRenderHook('simpleGet', { options: {
-      baseUrl: 'http://testhost.com:6666',
-    } }))
-
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:6666/simple-get',
-      simpleGetResponse: { simpleGet: 'data' },
-    }
-
-    await assertResult('simpleGet', result, expectedResult)
-  })
-
-  test('useRestQuery transformFn', async () => {
-
-    const transformFn = (data: any) => {
-      return { ...data, addedBy: 'transformFn' }
-    }
-
-    const { result } = reactQueryRenderHook(() =>  useQueryRenderHook('simpleGet', {
-      options: {
-        transformFn,
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:5555/simple-get/2',
+        simpleGetResponse: { simpleGet: 'data' }
       }
-    }))
 
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:5555/simple-get',
-      simpleGetResponse: { simpleGet: 'data', addedBy: 'transformFn'  },
-    }
-
-    await assertResult('simpleGet', result, expectedResult)
-  })
-
-  test('useRestQuery with Axios Striped', async () => {
-    const { result } = reactQueryRenderHook(() => useQueryRenderHook('getWithAxiosDataOnly'))
-    const expectedResult = {
-      method: 'GET',
-      url: 'http://testhost.com:5555/simple-get',
-      simpleGetResponse: { simpleGet: 'data' },
-    }
-
-    await assertResult('getWithAxiosDataOnly', result, expectedResult)
-  })
-
-  test('useRestQuery with no Meta', async () => {
-
-    const { result } = reactQueryRenderHook(() => useQueryRenderHook('getWithNoMeta'))
-
-    const expectedResult = {
-      method: 'get',
-      url: '/simple-get-no-meta',
-      simpleGetResponse: { simpleGet: 'data' },
-    }
-
-    await assertResult('getWithNoMeta', result, expectedResult)
-  })
-
-  test('useRestQuery with no Meta and axios stripped', async () => {
-
-    const { result } = reactQueryRenderHook(()=> useQueryRenderHook('getWithNoMetaAxiosData'))
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true)
+      await assertResult('getById', result, expectedResult)
     })
 
-    const expectedResult = {
-      simpleGetResponse: { simpleGet: 'data' },
+    const useGetWithParams = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = '/simple-get/:param'
+      const queryKey: any = ['simple-get']
+      const op = 'simpleGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
+    }
+ 
+
+    test('useRestQuery with rest params', async () => {
+      const restParams = {
+        // pathParam key must match dynamic segment in useGetWithParams.
+        pathParams: { param: 'funk' },
+        queryParams: { artist: 'vulfpeck' },
+      }
+
+      const { result } = reactQueryRenderHook(() =>  useGetWithParams({ restParams }))
+
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:5555/simple-get/funk?artist=vulfpeck',
+        simpleGetResponse: { simpleGet: 'data' },
+        pathParam: '/funk'
+      }
+
+      await assertResult('getWithPathParams', result, expectedResult)
+    })
+
+    test('useRestQuery baseUrl override', async () => {
+
+      const { result } = reactQueryRenderHook(() =>  useGetSimple({
+        baseUrl: 'http://testhost.com:6666',
+      }))
+
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:6666/simple-get',
+        simpleGetResponse: { simpleGet: 'data' },
+      }
+
+      await assertResult('simpleGet', result, expectedResult)
+    })
+
+    test('useRestQuery transformFn', async () => {
+
+      const transformFn = (data: any) => {
+        return { ...data, addedBy: 'transformFn' }
+      }
+
+      const { result } = reactQueryRenderHook(() =>  useGetSimple( { transformFn }))
+
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:5555/simple-get',
+        simpleGetResponse: { simpleGet: 'data', addedBy: 'transformFn'  },
+      }
+
+      await assertResult('simpleGet', result, expectedResult)
+    })
+
+    const useGetSimpleAxiosDataOnly = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = '/simple-get'
+      const queryKey: any = ['simple-get']
+      const op = 'simpleGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClientAxiosDataOnly, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
     }
 
-    await assertResult('getWithNoMetaAxiosData', result, expectedResult)
-  })
+
+    test('useRestQuery with Axios Striped', async () => {
+      const { result } = reactQueryRenderHook(useGetSimpleAxiosDataOnly)
+      const expectedResult = {
+        method: 'GET',
+        url: 'http://testhost.com:5555/simple-get',
+        simpleGetResponse: { simpleGet: 'data' },
+      }
+
+      await assertResult('getWithAxiosDataOnly', result, expectedResult)
+    })
+
+    const useGetSimpleNoMeta = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = '/simple-get-no-meta'
+      const queryKey: any = ['simple-get-no-meta']
+      const op = 'simpleGetNoMeta'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
+    }
+
+    test('useRestQuery with no Meta', async () => {
+
+      const { result } = reactQueryRenderHook(useGetSimpleNoMeta)
+
+      const expectedResult = {
+        method: 'get',
+        url: '/simple-get-no-meta',
+        simpleGetResponse: { simpleGet: 'data' },
+      }
+
+      await assertResult('getWithNoMeta', result, expectedResult)
+    })
+
+    const useGetSimpleNoMetaAxiosDataOnly = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+      const path = '/simple-get-no-meta'
+      const queryKey: any = ['simple-get-no-meta']
+      const op = 'simpleGetNoMeta'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClientAxiosDataOnly, queryKey, path, {
+          ...options, op, resultsPropName, defaultResponse
+        }
+      )
+    }
+
+    test('useRestQuery with no Meta and axios stripped', async () => {
+
+      const { result } = reactQueryRenderHook(useGetSimpleNoMetaAxiosDataOnly)
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true)
+      })
+
+      const expectedResult = {
+        simpleGetResponse: { simpleGet: 'data' },
+      }
+
+      await assertResult('getWithNoMetaAxiosData', result, expectedResult)
+    })
 })
