@@ -12,6 +12,7 @@
   "scripts": {
     "build:all": "pnpm run -r --filter=./packages/* build",
     "test:all": "pnpm run -r test",
+    "create-changeset": "npx changeset",
     "set-version": "changeset version",
     "publish:packages": "dotenv pnpm publish --filter '@stcland/*' --access public"
   }
