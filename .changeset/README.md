@@ -24,7 +24,14 @@ Create an `.env` file with your `NPM_TOKEN` variable so that the `.npmrc` file c
 ```
 pnpm create-changeset
 ```
-Follow the prompts to specify the type of version bump(patch, minor, major) and describe the changes. Example input (automatically created under `.changeset`)
+Follow the prompts to specify the type of version bump:
+```
+Patch: 1.0.0 to 1.0.1 — Bug fixes or minor improvements.
+Minor: 1.0.0 to 1.1.0 — Backward-complatible new/significant improvements.
+Major: 1.0.0 to 2.0.0 — Breaking changes not backward-compatible.
+```
+
+Describe the changes. Example input (automatically created under `.changeset`)
 
 ```
 ---
