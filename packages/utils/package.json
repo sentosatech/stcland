@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
+  "files": ["dist"],
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "keywords": [
@@ -30,5 +31,9 @@
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
+  },
+    "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
