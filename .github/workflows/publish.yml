@@ -1,0 +1,49 @@
+name: Publish Packages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build:all
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [[ -n "$(pnpm prepublish:changed)" ]]; then
+            echo "Changes detected."
+          else
+            echo "No changes detected."
+            exit 0
+          fi
+
+      - name: Set version
+        if: ${{ steps.check-changes.outputs.changes == 'true' }}
+        run: pnpm set-version
+
+      - name: Publish changed packages
+        if: ${{ steps.check-changes.outputs.changes == 'true' }}
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish:changed

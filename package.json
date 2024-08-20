@@ -14,6 +14,7 @@
     "test:all": "pnpm run -r test",
     "create-changeset": "npx changeset",
     "set-version": "changeset version",
-    "publish:packages": "dotenv pnpm publish --filter '@stcland/*' --access public"
+    "prepublish:changed": "changeset status --since-master",
+    "publish:changed": "dotenv pnpm publish --filter '@stcland/*' --access public"
   }
 }
