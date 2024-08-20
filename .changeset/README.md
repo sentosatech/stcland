@@ -55,3 +55,10 @@ For the first time you can also publish All Packages using this script:
 ```
 pnpm publish:all
 ```
+### Nice to know but not recommended
+
+Under the `npm cli` if you want to unpublish a package use:
+
+```
+npm unpublish `@package/name@<version>`
+```
