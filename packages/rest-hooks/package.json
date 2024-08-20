@@ -1,12 +1,14 @@
 {
   "name": "@stcland/rest-hooks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "STC"
   ],
@@ -52,7 +54,7 @@
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
     "test": "vitest --run"
   },
-    "publishConfig": {
+  "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   }

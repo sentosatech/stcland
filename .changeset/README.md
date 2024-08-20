@@ -6,3 +6,52 @@ find the full documentation for it [in our repository](https://github.com/change
 
 We have a quick list of common questions to get you started engaging with this project in
 [our documentation](https://github.com/changesets/changesets/blob/main/docs/common-questions.md)
+
+## How to use
+Based on the scripts localed at the root `package.json`
+
+### Requirements
+
+Make sure to have all packages installed:
+
+```
+pnpm install
+```
+
+Create an `.env` file with your `NPM_TOKEN` variable so that the `.npmrc` file can consume it while publishing, make sure that it has permissions under the `stcland` organization.
+
+### Creating a Changeset
+```
+pnpm create-changeset
+```
+Follow the prompts to specify the type of version bump(patch, minor, major) and describe the changes. Example input (automatically created under `.changeset`)
+
+```
+---
+"@stcland/rest-hooks": patch
+---
+
+patch bumping test for rest-hooks
+
+```
+
+### Setting the Version
+
+ Apply the version changes based on the changesets
+
+ ```
+ pnpm set-version
+ ```
+
+### Publishing Packages
+
+Publish packages based on the changesets:
+
+```
+pnpm publish:changeset
+```
+
+For the first time you can also publish All Packages using this script:
+```
+pnpm publish:all
+```
