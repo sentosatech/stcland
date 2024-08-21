@@ -64,6 +64,8 @@ pnpm publish:all
 ```
 ### Nice to know but not recommended
 
+_Once a version is unpublished, you CAN'T publish the same version again._
+
 Under the `npm cli` if you want to unpublish a package use:
 
 ```
