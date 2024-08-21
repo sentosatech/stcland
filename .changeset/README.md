@@ -49,6 +49,13 @@ patch bumping test for rest-hooks
  ```
  pnpm set-version
  ```
+### Build the packages
+
+_It is very important to build, before publishing a new version._
+
+```
+pnpm build:all 
+```
 
 ### Publishing Packages
 
@@ -63,6 +70,8 @@ For the first time you can also publish All Packages using this script:
 pnpm publish:all
 ```
 ### Nice to know but not recommended
+
+_Once a version is unpublished, you CAN'T publish the same version again._
 
 Under the `npm cli` if you want to unpublish a package use:
 
