@@ -49,6 +49,13 @@ patch bumping test for rest-hooks
  ```
  pnpm set-version
  ```
+### Build the packages
+
+_It is very important to build, before publishing a new version._
+
+```
+pnpm build:all 
+```
 
 ### Publishing Packages
 
