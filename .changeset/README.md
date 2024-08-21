@@ -18,8 +18,6 @@ Make sure to have all packages installed:
 pnpm install
 ```
 
-Create an `.env` file with your `NPM_TOKEN` variable so that the `.npmrc` file can consume it while publishing, make sure that it has permissions under the `stcland` organization.
-
 ### Creating a Changeset
 ```
 pnpm create-changeset
