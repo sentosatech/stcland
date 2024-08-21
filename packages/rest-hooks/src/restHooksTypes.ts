@@ -9,12 +9,12 @@ export namespace StcRest {
   export interface UseRestQueryOptions<TDefaultResponse> extends Omit<UseQueryOptions,
     'queryFn' | 'queryKey'> // Taken care of internally
   {
-    op?: string
+    op: string
       // The operation being performed, for informative error messaging
       // For examlpe: "Fetching users"
-    resultsPropName?: string
+    resultsPropName: string
       // Include a prop in the results object that references the response data
-    defaultResponse?: TDefaultResponse
+    defaultResponse: TDefaultResponse
       // Will be returned as results when query returns `undefined`
     baseUrl?: string
       // base url for the query (if not provided default rest client url will be used)

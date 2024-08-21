@@ -70,7 +70,6 @@ describe('Test Rest Query Hooks', () => {
     const { isError, isLoading, data, meta, simpleGetResponse } = result.current
 
     if (log) {
-
       console.log('useQueryResponse.simpleGetResponse: ', simpleGetResponse)
       console.log('expectedResult.simpleGetResponse: ', expectedResult.simpleGetResponse)
       console.log('expectedResult.meta', expectedResult.meta, '\n')
@@ -81,10 +80,10 @@ describe('Test Rest Query Hooks', () => {
     expect(isError).toEqual(false)
     expect(isLoading).toEqual(false)
 
-    const restCallInputs = meta
-    const { meta: expectedRestCallInputs } = expectedResult
 
     if (expectedResult.meta) {
+      const restCallInputs = meta
+      const { meta: expectedRestCallInputs } = expectedResult
       expect(restCallInputs?.url).toEqual(expectedRestCallInputs?.url)
       expect(restCallInputs?.method).toEqual(expectedRestCallInputs?.method)
       expect(restCallInputs?.headers.authorization).toEqual(expectedRestCallInputs?.headers.authorization)
@@ -96,7 +95,7 @@ describe('Test Rest Query Hooks', () => {
   }
 
   // used by multiple tests
-  const useGetSimple = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+  const useGetSimple = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
     const path = '/simple-get'
     const queryKey: any = ['simple-get']
     const op = 'simpleGet'
@@ -129,7 +128,7 @@ describe('Test Rest Query Hooks', () => {
 
   test('useRestQuery by ID', async () => {
 
-    const useGetSimpleById = (id: string, options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+    const useGetSimpleById = (id: string, options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
       const path = `/simple-get/${id}`
       const queryKey: any = ['simple-get']
       const op = 'simpleGet'
@@ -162,7 +161,7 @@ describe('Test Rest Query Hooks', () => {
 
   test('useRestQuery with rest params', async () => {
 
-    const useGetSimpleWithParams = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+    const useGetSimpleWithParams = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
       const path = '/simple-get/:param'
       const queryKey: any = ['simple-get']
       const op = 'simpleGet'
@@ -237,7 +236,7 @@ describe('Test Rest Query Hooks', () => {
 
   test('useRestQuery with Axios Striped', async () => {
 
-    const useGetSimpleAxiosDataOnly = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+    const useGetSimpleAxiosDataOnly = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
       const path = '/simple-get'
       const queryKey: any = ['simple-get']
       const op = 'simpleGet'
@@ -269,7 +268,7 @@ describe('Test Rest Query Hooks', () => {
 
   test('useRestQuery with no Meta', async () => {
 
-    const useGetSimpleNoMeta = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+    const useGetSimpleNoMeta = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
       const path = '/simple-get-no-meta'
       const queryKey: any = ['simple-get-no-meta']
       const op = 'simpleGetNoMeta'
@@ -302,7 +301,7 @@ describe('Test Rest Query Hooks', () => {
 
   test('useRestQuery with no Meta and axios stripped', async () => {
 
-    const useGetSimpleNoMetaAxiosDataOnly = (options?: StcRest.UseRestQueryOptions<DefaultType>) => {
+    const useGetSimpleNoMetaAxiosDataOnly = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
       const path = '/simple-get-no-meta'
       const queryKey: any = ['simple-get-no-meta']
       const op = 'simpleGetNoMeta'
@@ -324,7 +323,7 @@ describe('Test Rest Query Hooks', () => {
       simpleGetResponse: { simpleGet: 'data' },
     }
 
-    await assertResult(result, expectedResult, true)
+    await assertResult(result, expectedResult)
 
     // we have no way to check the rest inputs
   })
