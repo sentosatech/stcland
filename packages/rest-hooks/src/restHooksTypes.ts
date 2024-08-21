@@ -18,16 +18,27 @@ export namespace StcRest {
       // Will be returned as results when query returns `undefined`
     baseUrl?: string
       // base url for the query (if not provided default rest client url will be used)
-    transformFn?: (data: any) => any
+    transformResult?: (rsp: any) => any
       // Transform the data referenced by resultsPropName before returning
-    restParams?:  RestParams
-      // Path and query params to be applied to the query
-      // eg: {
-      //   pathParams: { id: 123 },
-      //   queryParams: { paginate: true, page: 2 }
-      //  }
+      // Note: this will be appliaed to the data selected by the `pickResults` function
+    pickResults?: (rsp: any) => any
+      // * Function to grab the data from the response, that will be referenced by resultsPropName
+      // * if you are using useQuery `select` option, this function is applied to the
+      //   outcomed of the `select` function
+      // * If not supplied, default function will pick useQueryRsp.data
+    pickMeta?: (rsp: any) => any
+      // * Function to grab the meta from the response
+      // * If you are using useQuery `select` option, this function is applied to the
+      //   outcomed of the `select` function
+      // * If not supplied, meta will be udefined
+    pathParams?: PathParams
+      // Path values to be applied to path variables in the query
+      // eg: { id: 123 } for substitution in `/users/:id`
+    queryParams?: QueryParams
+      // Query values to be applied to the query
+      // eg: { paginate: true, page: 2 } for "/somepath?paginate=true&page
+      // restParams?:  RestParams
   }
-
 
   export type UseRestQueryResult<
     TData,
