@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.7
+
+### Patch Changes
+
+- Build before publish :)
+
 ## 0.0.6
 
 ### Patch Changes
