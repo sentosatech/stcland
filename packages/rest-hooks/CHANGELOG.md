@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.6
+
+### Patch Changes
+
+- Add pickResutls and picMeta to useRestQuery options
+
 ## 0.0.5
 
 ### Patch Changes
