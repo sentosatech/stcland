@@ -16,9 +16,12 @@ export const useRestQuery: StcRest.UseRestQuery = <
   const {
     baseUrl,
     defaultResponse,
-    restParams,
-    transformFn = v => v, // simple passthrough fxn as default
-    resultsPropName = 'missingPropName' // should happen
+    pathParams,
+    queryParams,
+    transformResult = (data: any) => data, // Default: simple passthrough
+    pickResults = (rsp: any) => rsp?.data, // Default: pick useQuery data
+    pickMeta = () => undefined, // Default: no meta
+    resultsPropName = 'missingPropName' // should never happen
   } = options
 
   const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
@@ -30,29 +33,21 @@ export const useRestQuery: StcRest.UseRestQuery = <
     ...useRestQueryDefaultOptions,
     ...options,
     queryKey,
-    queryFn: restClient.createGetFn(restPath, restParams, axiosOptions),
+    queryFn: restClient.createGetFn(restPath, {
+      queryParams, pathParams
+    },
+    axiosOptions),
   }
 
   const useQueryRsp: any = useQuery(useQueryOptions)
 
   // account for various depths for location of data
-  const resultsProp: TData | TDefaultResponse =
-    useQueryRsp?.data?.data?.data ||
-    useQueryRsp?.data?.data ||
-    useQueryRsp?.data ||
-    defaultResponse
-
-  // account for various depths for location of meta
-  const meta =
-    useQueryRsp?.data?.data?.meta ||
-    useQueryRsp?.data?.meta ||
-    useQueryRsp?.meta
-
-
+  const resultsProp = pickResults(useQueryRsp) || defaultResponse
+  const meta = pickMeta(useQueryRsp)
 
   const useRestQueryResult: StcRest.UseRestQueryResult<TData, TDefaultResponse, TMeta> = {
     ...useQueryRsp,
-    [resultsPropName]: transformFn(resultsProp),
+    [resultsPropName]: transformResult(resultsProp),
     meta
   }
 
