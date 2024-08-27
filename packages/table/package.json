@@ -1,0 +1,36 @@
+{
+  "name": "@stcland/table",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm run clean && tsup",
+    "clean": "rimraf ./dist && mkdir dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@stcland/utils": "workspace:^",
+    "@types/node": "^20.14.10",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react": "^7.35.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.20.1"
+  },
+  "peerDependencies": {
+    "@babel/core": "^7.13.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@storybook/react": "^8.2.9"
+  }
+}

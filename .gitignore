@@ -29,3 +29,4 @@ packages\rest-hooks\coverage
 
 # env vars
 .env
+*storybook.log
