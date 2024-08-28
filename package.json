@@ -10,6 +10,7 @@
     "dotenv-cli": "^7.4.2"
   },
   "scripts": {
+    "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
     "test:all": "pnpm run -r test",
     "create-changeset": "changeset",
