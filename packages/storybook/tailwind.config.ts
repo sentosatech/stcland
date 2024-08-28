@@ -32,7 +32,7 @@ function createColorExtension(color: Record<string, string>): Record<ShadeKey, s
 const appGray = twColors.zinc
 const grayWithMoreShades = createColorExtension(appGray)
 
-const config : Config = {
+export const config : Config = {
   // Optimize CSS generation and compilation for faster build times.
   mode: 'jit',
   content: [
