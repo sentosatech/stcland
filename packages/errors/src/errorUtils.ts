@@ -1,4 +1,4 @@
-import { StcError } from "./stcError"
+import { StcError } from './stcError'
 
 export const throwIf = (condition: boolean, errorMsg: string, code?: number) => {
   if (condition) {
