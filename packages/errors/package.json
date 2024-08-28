@@ -1,9 +1,11 @@
 {
   "name": "@stcland/errors",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "./dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "keywords": [
@@ -34,7 +36,7 @@
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
   },
   "publishConfig": {
-   "access": "public",
-   "registry": "https://registry.npmjs.org/"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
