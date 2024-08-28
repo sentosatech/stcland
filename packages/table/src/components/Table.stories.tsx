@@ -32,14 +32,13 @@ export const Base = Template.bind({})
 Base.args = {
   columns: sampleColumns,
   data: sampleData,
-  className: 'bg-gray-825'
 }
 
 export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
   columns: sampleColumns,
   data: sampleData,
-  customStyles: {
+  customStyles : {
     root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
     table: 'table-fixed',
     header: 'text-s text-secondary-main text-left',

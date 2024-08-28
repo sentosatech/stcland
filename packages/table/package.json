@@ -3,15 +3,25 @@
   "version": "0.0.1",
   "description": "",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist/style.css": "./dist/style.css"
+  },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite serve",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist"
   },
   "keywords": [],
@@ -20,20 +30,27 @@
   "devDependencies": {
     "@stcland/utils": "workspace:^",
     "@types/node": "^20.14.10",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.35.0",
-    "typescript": "^5.5.4"
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.2",
+    "vite-plugin-css-injected-by-js": "^3.5.1",
+    "vite-plugin-dts": "^4.0.3"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.20.1"
   },
   "peerDependencies": {
     "@babel/core": "^7.13.0",
+    "@storybook/react": "^8.2.9",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@storybook/react": "^8.2.9"
+    "react-dom": "^18.3.1"
   },
-    "publishConfig": {
+  "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   }

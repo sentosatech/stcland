@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { cns, withCustomStyles } from '@stcland/utils'
+import '../index.css'
 
 //*****************************************************************************
 // Interface
@@ -17,16 +18,16 @@ import { cns, withCustomStyles } from '@stcland/utils'
 
 // To customize styling of specific table elements
 // TODO: selectedRow styles are only applied via customStyles, In that case we should set a default style, me thinks.
-type CustomStylesShape = {
-  root?: string
-  table?: string
-  header?: string
-  headerRow?: string
-  headerCell?: string
-  body?: string
-  cell?: string
-  row?: string
-  selectedRow?: string
+export type CustomStylesShape = {
+  root: string
+  table: string
+  header: string
+  headerRow: string
+  headerCell: string
+  body: string
+  cell: string
+  row: string
+  selectedRow: string
 }
 
 export interface Props {
@@ -34,7 +35,7 @@ export interface Props {
   columns: ColumnDef<any>[]
   data: {[key: string]: any}[]
   className?: string
-  customStyles?: CustomStylesShape
+  customStyles?: Partial<CustomStylesShape>
   expanded?: ExpandedState
   setExpanded?: (value) => void
   rowSelection?: RowSelectionState
@@ -76,8 +77,7 @@ const Table = ({
     },
   })
 
-
-  const cn = withCustomStyles( {
+  const defaultStyles : CustomStylesShape = {
     root: cns('border border-gray-825 bg-gray-825 px-4 pt-8 pb-14', className),
     table: 'table-fixed',
     header: 'text-s text-gray-100 text-left',
@@ -86,7 +86,9 @@ const Table = ({
     body: 'text-s text-gray-400',
     row: 'border-t last:border-b border-primary-dark',
     cell: 'px-6 py-6',
-  }, customStyles)
+    selectedRow: 'bg-gray-500'
+  }
+  const cn  = withCustomStyles<CustomStylesShape>( defaultStyles, customStyles)
 
 
   return (
