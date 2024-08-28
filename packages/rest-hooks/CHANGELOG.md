@@ -1,5 +1,14 @@
 # @stcland/rest-hooks
 
+## 0.0.9
+
+### Patch Changes
+
+- update eslint config
+- Updated dependencies
+  - @stcland/errors@0.0.2
+  - @stcland/utils@0.0.3
+
 ## 0.0.8
 
 ### Patch Changes
