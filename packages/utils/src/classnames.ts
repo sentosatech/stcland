@@ -9,12 +9,20 @@ export const cns = (...inputs: ClassValue[]): string => {
   return twMerge(clsx(inputs))
 }
 
+/**
+   Generic `CustomStylesShape` type param used 
+   to determine `baseSytyles` and `customStyles` type params.
+ */
+type WithCustomStyles = <CustomStylesShape extends Record<string, ClassValue>>(
+  baseStyles: CustomStylesShape, 
+  customStyles?: Partial<CustomStylesShape>
+) => CustomStylesShape
 
-export const withCustomStyles = (baseStyles: Record<string, ClassValue>, customStyles: Record<string, ClassValue>) => {
-  const newStyles: Record<string, string> = {}
-  for (const [key, value] of toPairs(baseStyles))
+export const withCustomStyles: WithCustomStyles = (baseStyles, customStyles = {}) => {
+  const newStyles : Record<string, ClassValue> = {}
+  for (const [key, value] of toPairs(baseStyles as Record<string, any>))
     newStyles[key] = cns(value, customStyles?.[key])
-  return newStyles
+  return newStyles as typeof baseStyles
 }
-
+  
 export default cns
