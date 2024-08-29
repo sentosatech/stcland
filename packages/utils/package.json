@@ -1,6 +1,6 @@
 {
   "name": "@stcland/utils",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "./dist/index.js",
   "files": [
@@ -26,6 +26,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "json-stringify-safe": "^5.0.1",
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1"
