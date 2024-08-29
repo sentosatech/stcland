@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react-swc'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
@@ -7,12 +7,9 @@ import dts from 'vite-plugin-dts'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig({
-  resolve: {
-    alias: [{ find: '@', replacement: '/src' }],
-  },
   plugins: [
     react(),
-    dts({ rollupTypes: true }),
+    dts({ rollupTypes: true, insertTypesEntry: true }),
     cssInjectedByJsPlugin(),
   ],
   css: {
@@ -21,24 +18,24 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: './dist',
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'STCLandTable',
-      fileName: (format) => `stcland-table.${format}.js`,
-      formats: ['es', 'cjs'],
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@tanstack/react-table'],
+      external: ['react', 'react-dom', '@tanstack/react-table', 'tailwindcss'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
           '@tanstack/react-table': 'ReactTable',
+          'tailwindcss': 'tailwindcss'
         },
       },
     },
     target: 'esnext',
     sourcemap: true,
-    emptyOutDir: true,
   },
 })
