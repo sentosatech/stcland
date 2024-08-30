@@ -13,6 +13,7 @@
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
     "test:all": "pnpm run -r test",
+    "clean:all": "pnpm run -r clean:all",
     "create-changeset": "changeset",
     "set-version": "changeset version",
     "publish:changeset": "changeset publish",
