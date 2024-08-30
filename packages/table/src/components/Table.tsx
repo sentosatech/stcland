@@ -17,7 +17,6 @@ import '../index.css'
 //*****************************************************************************
 
 // To customize styling of specific table elements
-// TODO: selectedRow styles are only applied via customStyles, In that case we should set a default style, me thinks.
 export type CustomStylesShape = {
   root: string
   table: string
@@ -28,6 +27,7 @@ export type CustomStylesShape = {
   cell: string
   row: string
   selectedRow: string
+  subRow: string
 }
 
 export interface Props {
@@ -86,7 +86,8 @@ const Table = ({
     body: 'text-s text-gray-400',
     row: 'border-t last:border-b border-primary-dark',
     cell: 'px-6 py-6',
-    selectedRow: 'bg-gray-500'
+    selectedRow: 'bg-gray-500',
+    subRow: 'text-secondary-main border-none',
   }
   const cn  = withCustomStyles<CustomStylesShape>( defaultStyles, customStyles)
 
@@ -125,14 +126,16 @@ const Table = ({
         <tbody className={cn.body}>
           {tableInstance.getRowModel().rows.map(function (row) {
             const isSelected = row.getIsSelected()
+            const isSubRow = row.depth > 0
+            const rowStyleVariants = {
+              [cn.selectedRow] : isSelected,
+              [cn.subRow] : isSubRow
+            }
             return (
               /* table row */
               <tr
                 key={row.id}
-                className={cns(cn.row, customStyles?.row, isSelected && customStyles?.selectedRow)}
-                style={{
-                  border: row.depth > 0 ? 'none' : '',
-                }}
+                className={cns(cn.row, rowStyleVariants)}
                 onClick={() => onRowClick?.(row)}
               >
                 {row.getVisibleCells().map((cell) => {
