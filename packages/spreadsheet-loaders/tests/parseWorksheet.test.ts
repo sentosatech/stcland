@@ -1,42 +1,41 @@
 import path from 'path'
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'url'
 
 import { Workbook, Worksheet } from 'exceljs'
 import { describe, test, expect, beforeEach, assert } from 'vitest'
 
+import { ParseWorksheetOptions } from '../src/SpreadSheetLoaderTypes'
 import { getWorksheetList } from '../src/spreadSheetUtils'
 import { parseWorksheet } from '../src/parseWorksheet'
 
-import { startingRow, worksheetHasArangoData } from '../src/arangoSpreadsheetLoader'
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const workbookPath = path.join(__dirname, 'test-wb-arango.xlsx');
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const workbookPath = path.join(__dirname, 'test-wb-parsing.xlsx')
 
 let workbook: Workbook
-let sheets: Worksheet[] = []
+let worksheets: Worksheet[] = []
 
 beforeEach(async () => {
   workbook = new Workbook()
   await workbook.xlsx.readFile(workbookPath)
-  sheets = getWorksheetList({
-    wb: workbook,
-    filterFns: [worksheetHasArangoData]})
+  worksheets = getWorksheetList(workbook)
 })
 
 describe('Test Worksheet Parser', () => {
   test('Basic Parsing', () => {
 
     expect(workbook).toBeDefined()
-    expect(sheets).toBeDefined()
+    expect(worksheets).toBeDefined()
 
-    const firstRowOffset = startingRow
-    for (const sheet of sheets) {
-      const parsedData = parseWorksheet({
-        ws: sheet, firstRowOffset, log: true
-      })
+    const parseOpts: ParseWorksheetOptions = {
+      reportProgress: true,
+      reportWarnings: false
     }
 
+    const firstRowOffset = 1
+    for (const sheet of worksheets) {
+      const parsedData = parseWorksheet(sheet, firstRowOffset, parseOpts)
+    }
   })
 })
 

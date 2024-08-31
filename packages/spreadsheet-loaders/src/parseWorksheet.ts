@@ -1,13 +1,12 @@
 import { CellValue, Row } from 'exceljs'
 
 import {
-  ParseWorksheet, PropType, RowMeta, DataCellMeta
+  ParseWorksheet, PropType, RowMeta, DataCellMeta, ParseWorksheetOptions
 } from './SpreadSheetLoaderTypes'
 
 import {
   getRowValues,
-  shouldSkipCell,
-  colNumToText,
+  isEmptyCell,
   cellValueToDate,
   getPropNamesFromRow,
   getPropTypesFromRow,
@@ -17,27 +16,29 @@ import {
   cellValueToPasswordHash,
   cellValueFromJson,
   cellValueToUuid,
-  cellWarning
+  cellWarning,
+  parserWarning,
+  cellValueHasError,
+  getCellError
 } from './spreadSheetUtils'
 
-export const parseWorksheet: ParseWorksheet = ({
-  ws,
-  firstRowOffset = 0,
-  log = false
-}): any => {
+export const parseWorksheet: ParseWorksheet = (ws, startingRow=1, parseOpts): any => {
+  const { reportProgress } = parseOpts || {}
 
-  if (log) console.log(`\n... Parsing worksheet '${ws.name}'`)
+  if (reportProgress) console.log(`\n... Parsing worksheet '${ws.name}'`)
 
-  const propNames = getPropNamesFromRow(ws.getRow(firstRowOffset))
-  const propTypes = getPropTypesFromRow(ws.getRow(firstRowOffset+1))
+  const propNames = getPropNamesFromRow(ws.getRow(startingRow))
+  const propTypes = getPropTypesFromRow(ws.getRow(startingRow+1))
 
-  if (propNames.length !== propTypes.length)
-    throw new Error(`Property names and types are not the same length in worksheet ${ws.name}`)
+  if (propNames.length !== propTypes.length) {
+    parserWarning('Number of property names does not match number of property types', parseOpts)
+    return
+  }
 
   ws.eachRow(async (row, rowNumber) => {
-    const dataRowInfo: RowMeta = { worksheetName: ws.name, rowNumber }
-    if (rowNumber < firstRowOffset+2 ) return
-    const rowData = parseDataRow(propNames, propTypes, row, dataRowInfo)
+    const rowMeta: RowMeta = { worksheetName: ws.name, rowNumber }
+    if (rowNumber < startingRow+2 ) return
+    const rowData = parseDataRow(propNames, propTypes, row, rowMeta, parseOpts)
     console.log('rowData: ', rowData)
   })
 }
@@ -46,7 +47,8 @@ const parseDataRow = (
   propNames: string[],
   propTypes: PropType[],
   row: Row,
-  rowMeta: RowMeta
+  rowMeta: RowMeta,
+  parseOpts?: ParseWorksheetOptions
 ) => {
 
   const propValues = getRowValues(row)
@@ -59,8 +61,12 @@ const parseDataRow = (
       propType: propTypes[i]
     }
 
-    const dataValue = parseDataCell(propTypes[i], propValues[i], cellMeta)
+    if (propValues[i]?.toString().trim() === '_skip_')
+      return accData
 
+    const dataValue = parseDataCell(
+      propTypes[i], propValues[i], cellMeta, parseOpts
+    )
     return {
       ...accData, [propName]: dataValue
     }
@@ -73,21 +79,25 @@ export const parseDataCell = (
   propType: PropType,
   cellValue: CellValue,
   cellMeta: DataCellMeta,
-  silent: boolean = false // if true, don't log warnings (for testing)
+  parseOpts?: ParseWorksheetOptions
 ): any => {
 
-  // TODO: check for error cells
 
-  if (shouldSkipCell(propType, cellValue)) return undefined
+  if (isEmptyCell(cellValue)) return undefined
+
+  if (cellValueHasError(cellValue)) {
+    const errorStr: string = getCellError(cellValue)
+    return cellWarning(`Cell has an error: ${errorStr}`, cellMeta, parseOpts)
+  }
 
   switch (propType) {
-  case 'string': return cellValueToString(cellValue, cellMeta)
-  case 'number': return cellValueToNumber(cellValue, cellMeta)
-  case 'boolean':return cellValueToBool(cellValue, cellMeta)
-  case 'date': return cellValueToDate(cellValue, cellMeta)
-  case 'password': return cellValueToPasswordHash(cellValue, cellMeta)
-  case 'json': return cellValueFromJson(cellValue, cellMeta)
-  case 'uuid': return cellValueToUuid(cellValue)
-  default: return cellWarning(`Invalid property type: '${propType}'`, cellMeta)
+  case 'string': return cellValueToString(cellValue, cellMeta, parseOpts)
+  case 'number': return cellValueToNumber(cellValue, cellMeta, parseOpts)
+  case 'boolean':return cellValueToBool(cellValue, cellMeta, parseOpts)
+  case 'date': return cellValueToDate(cellValue, cellMeta, parseOpts)
+  case 'password': return cellValueToPasswordHash(cellValue, cellMeta, parseOpts)
+  case 'json': return cellValueFromJson(cellValue, cellMeta, parseOpts)
+  case 'uuid': return cellValueToUuid(cellValue, cellMeta, parseOpts)
+  default: return cellWarning(`Invalid property type: '${propType}'`, cellMeta, parseOpts)
   }
 }

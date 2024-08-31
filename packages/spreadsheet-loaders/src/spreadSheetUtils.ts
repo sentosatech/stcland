@@ -1,108 +1,140 @@
 import { complement, isNil } from 'ramda'
-import { isBoolean, isObject, isString, isNotNaN, isDate } from 'ramda-adjunct'
+import { isBoolean, isObject, isString, isNotNaN, isDate, isNotNil } from 'ramda-adjunct'
 
 import { Worksheet, Row, Cell, CellValue } from 'exceljs'
 import sha256 from 'hash.js/lib/hash/sha/256'
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4, validate as isValidUuid4 } from 'uuid'
 
 import { isStringOrNumber } from '@stcland/utils'
 
 
 import { validPropTypes } from './SpreadSheetLoaderTypes'
 import type {
-  GetWorkSheetList, GetRowValues, PropType, DataCellMeta as cellMeta, GetPropTypesFromRow
+  GetWorkSheetList, GetRowValues, PropType, DataCellMeta as cellMeta, GetPropTypesFromRow, ParseWorksheetOptions
 } from './SpreadSheetLoaderTypes'
 
-export const worksheetTypeCell = [2, 1]
-export const cellsToSkip = ['_auto_', '_skip_']
+// export const worksheetTypeCell_DEPRECATE_ME = [2, 1]
 
-export const shouldSkipCell = (propType: PropType, cellValue: CellValue) => {
-  if (isString(cellValue) && cellsToSkip.includes(cellValue)) return true
-  if (isNil(cellValue) && propType !== 'uuid') return true
-  return false
-}
+//*****************************************************************************
+// Cell value parsers
+//*****************************************************************************
 
-export const cellWarning = (msg: string, cellMeta: cellMeta) =>  {
-  console.warn(
-    '\nParsing error:\n' +
-    `   Worksheet: ${cellMeta.worksheetName}\n` +
-    `   Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}\n` +
-    `   propName = '${cellMeta.propName}' | propType = '${cellMeta.propType}'\n` +
-    `   ${msg}\n`
-  )
-  return `${msg} Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
-}
-
-export const cellValueToString = (cellValue: CellValue, cellMeta: cellMeta) => {
+export const cellValueToString = (
+  cellValue: CellValue,
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+) : string | undefined => {
   const cellText = cellValue?.toString()
   return isString(cellText)
     ? cellText
-    : cellWarning(`Invalid string value: '${cellValue}'`, cellMeta)
+    : cellWarning(`Invalid string value: '${cellValue}'`, cellMeta, parseOpts)
 }
 
-export const cellValueToNumber = (cellValue: CellValue, cellMeta: cellMeta) => {
+export const cellValueToNumber = (
+  cellValue: CellValue,
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+) : number | string | undefined => {
   const result = Number(cellValue)
   return isNotNaN(result)
     ? result
-    : cellWarning(`Invalid number: ${cellValue}`, cellMeta)
+    : cellWarning(`Invalid number: ${cellValue}`, cellMeta, parseOpts)
 }
 
 export const cellValueToPasswordHash = (
   cellValue: CellValue,
-  cellMeta: cellMeta
-) => isStringOrNumber(cellValue)
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+) : string | undefined => isStringOrNumber(cellValue)
   ? sha256().update(cellValue?.toString).digest('hex')
-  : cellWarning(`Invalid password: ${cellValue}`, cellMeta)
+  : cellWarning(`Invalid password: ${cellValue}`, cellMeta, parseOpts)
 
 export const cellValueToBool = (
   cellValue: CellValue,
-  cellMeta: cellMeta) : boolean | string =>
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions) : boolean | string | undefined =>
 {
   if (cellValueIsNotBoolean(cellValue))
-    return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta)
+    return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta, parseOpts)
   if (isBoolean(cellValue)) return cellValue
   if (isString(cellValue)) {
     const boolText = cellValue.toLowerCase()
     return boolText === 'true'
   }
   // shoud not get here
-  return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta)
+  return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta, parseOpts)
 }
 
 // If the cell has text, then we will prepend it to the uuid
-export const cellValueToUuid = (cellValue: CellValue) =>
-  isStringOrNumber(cellValue) ?  `${cellValue?.toString()}-${uuidv4()}` : uuidv4()
+export const cellValueToUuid = (
+  cellValue: CellValue,
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+) : string | undefined => {
+  if (isNil(cellValue) || isNil(cellValue.valueOf())) return undefined
+  const cellText = cellValue?.toString() || ''
+  if (cellText.trim().indexOf('_auto_') > -1) {
+    const forUuidInsertion = cellText
+    return forUuidInsertion.replace('_auto_', uuidv4())
+  } else if (isValidUuid4(cellText)) {
+    return cellText
+  } else {
+    return cellWarning(`Invalid UUID: ${cellValue}`, cellMeta, parseOpts)
+  }
+}
 
-export const cellValueToDate = (cellValue: CellValue, cellMeta: cellMeta) =>
-  isDate(cellValue) ? cellValue : cellWarning(`Invalid date: ${cellValue}`, cellMeta)
+export const cellValueToDate = (
+  cellValue: CellValue,
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+) : Date | string | undefined =>
+  isDate(cellValue) ? cellValue : cellWarning(`Invalid date: ${cellValue}`, cellMeta, parseOpts)
 
-export const cellValueFromJson = (cellValue: CellValue, cellMeta: cellMeta) => {
+export const cellValueFromJson = (
+  cellValue: CellValue,
+  cellMeta: cellMeta,
+  parseOpts?: ParseWorksheetOptions
+): any | undefined => {
   if (cellValue) {
     try {
       return JSON.parse(cellValue.toString())
     } catch (e) {
-      return cellWarning(`Invalid JSON: ${cellValue}`, cellMeta)
+      return cellWarning(`Invalid JSON: ${cellValue}`, cellMeta, parseOpts)
     }
   }
   return cellWarning(`Cell had no JSON content: ${cellValue}`, cellMeta)
 }
 
+//*****************************************************************************
+// Logging
+//*****************************************************************************
 
-export const getWorksheetList: GetWorkSheetList = ({ wb,  filterFns = [] }) => {
-  const workSheets: Worksheet[] = []
-  wb.eachSheet((ws) => {
-    if (filterFns.every(fn => fn(ws))) { workSheets.push(ws) }
-  })
-  return workSheets
+export const parserWarning = (msg: string, parseOpts?: ParseWorksheetOptions) => {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(`\nParsing warning: ${msg}`)
+  }
 }
 
-// Allows usser to add worksheets to the file that won't be parsed
-export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
+export const cellWarning = (
+  msg: string, cellMeta: cellMeta, parseOpts?: ParseWorksheetOptions
+) =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${cellMeta.worksheetName}\n` +
+      `   Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}\n` +
+      `   propName = '${cellMeta.propName}' | propType = '${cellMeta.propType}'\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
+}
 
-// By convention, the second cell in the first row of a worksheet is the
-// type of data in the worksheet
-export const getWorksheetType = (ws: Worksheet) =>
-  ws.getRow(worksheetTypeCell[1]).getCell(worksheetTypeCell[0]).value
+//*****************************************************************************
+// General Parsing Utils
+//*****************************************************************************
 
 export const cellValueIsFormula = (cell: Cell) =>
   isObject(cell) && cell?.formula && cell?.result
@@ -117,8 +149,34 @@ export const cellValueIsBoolean = (cellValue: CellValue) => {
 }
 export const cellValueIsNotBoolean = complement(cellValueIsBoolean)
 
+export const isEmptyCell = (cellValue: CellValue) => {
+  if (isNil(cellValue)) return true
+  if (isNil(cellValue.valueOf())) return true
+  return false
+}
+
+export const cellValueHasError = (cellValue: CellValue) =>
+  isObject(cellValue) && isNotNil((cellValue as any)?.error)
+
+export const getCellError = (cellValue: CellValue): string =>
+  cellValueHasError(cellValue) ? (cellValue as any).error : ''
+
 export const cellValue = (cell: Cell): CellValue =>
   cellValueIsFormula(cell) ? cell?.result : cell?.value
+
+// Allows usser to add worksheets to the file that won't be parsed
+export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
+
+// excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
+export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
+  const workSheets: Worksheet[] = []
+  const withHiddenFilter = [...filterFns, worksheetNotHidden]
+  wb.eachSheet((ws) => {
+    if (withHiddenFilter.every(fn => fn(ws)))
+      workSheets.push(ws)
+  })
+  return workSheets
+}
 
 // Returnn values from a worksheet row
 export const getRowValues: GetRowValues = row => {
@@ -160,8 +218,6 @@ export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
   }
   return propTypes as PropType[]
 }
-
-// export const getCellText = (cell: CellValue) => cell?.toString() || ''
 
 export const isValidPropType = (propType: PropType) =>
   isString(propType) && validPropTypes.includes(propType)
