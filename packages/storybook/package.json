@@ -3,14 +3,8 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
-   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ]
-  },
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
-    "pre-commit": "lint-staged",
     "sb": "storybook dev -p 6006",
     "sb-docs": "storybook dev --docs",
     "sb-build-docs": "storybook build --docs",
