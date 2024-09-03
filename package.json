@@ -6,8 +6,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@changesets/cli": "^2.27.7",
-    "dotenv-cli": "^7.4.2"
+    "@changesets/cli": "^2.27.7"
   },
   "scripts": {
     "lint:all": "pnpm run -r --filter=./packages/* lint",
@@ -16,6 +15,6 @@
     "create-changeset": "changeset",
     "set-version": "changeset version",
     "publish:changeset": "changeset publish",
-    "publish:all": "dotenv pnpm publish --filter '@stcland/*' --access public"
+    "publish:all": "dotenv pnpm publish --filter '@stcland/*' --access public"  
   }
 }
