@@ -9,7 +9,6 @@
     ]
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --ext .js,.ts",
     "pre-commit": "lint-staged",
     "sb": "storybook dev -p 6006",
@@ -45,7 +44,6 @@
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "eslint": "^8.56.0",
-    "lint-staged": "^15.2.10",
     "prop-types": "15.8.1",
     "storybook": "^8.2.9",
     "typescript": "^5.3.3"

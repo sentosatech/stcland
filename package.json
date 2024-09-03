@@ -10,16 +10,11 @@
     "husky": "^9.1.5",
     "lint-staged": "^15.2.10"
   },
-  "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ]
-  },
   "scripts": {
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
-    "test:all": "pnpm run -r test",
-    "pre-commit": "pnpm run -r --filter=./packages/* pre-commit",
+    "test:all": "pnpm run -r --filter=./packages/* test",
+    "pre-commit": "pnpm lint-staged && pnpm test:all",
     "fix-trailling-spaces": "find . -type f \\( -name '*.js' -o -name '*.ts' -o -name '*.jsx' -o -name '*.tsx' \\) -exec sed -i 's/[ \\t]*$//' {} \\; && git add .",
     "prepare": "husky",
     "create-changeset": "changeset",

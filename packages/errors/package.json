@@ -20,7 +20,6 @@
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",
-    "lint-staged": "^15.2.10",
     "rimraf": "^5.0.5",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
@@ -31,16 +30,10 @@
     "ramda-adjunct": "^4.1.1"
   },
   "scripts": {
-    "pre-commit": "lint-staged",
     "lint": "eslint . --ext .js,.ts",
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
-  },
-   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ]
   },
   "publishConfig": {
     "access": "public",
