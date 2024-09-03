@@ -31,8 +31,14 @@
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1"
   },
+   "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "eslint --fix"
+    ]
+  },
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
+    "pre-commit": "lint-staged",
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"

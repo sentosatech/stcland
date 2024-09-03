@@ -26,6 +26,7 @@
     "eslint-plugin-react": "^7.35.0",
     "globals": "^15.8.0",
     "jsdom": "^24.1.1",
+    "lint-staged": "^15.2.10",
     "msw": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -46,8 +47,14 @@
     "ramda-adjunct": "^5.0.1",
     "ts-node": "^10.9.2"
   },
+   "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "eslint --fix"
+    ]
+  },
   "scripts": {
     "docs": "typedoc",
+    "pre-commit": "lint-staged && pnpm test",
     "lint": "eslint . --ext .js,.ts",
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
