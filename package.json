@@ -6,15 +6,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@changesets/cli": "^2.27.7"
+    "@changesets/cli": "^2.27.7",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.10"
   },
   "scripts": {
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
-    "test:all": "pnpm run -r test",
+    "test:all": "pnpm run -r --filter=./packages/* test",
+    "pre-commit": "pnpm lint-staged && pnpm test:all",
+    "prepare": "husky",
     "create-changeset": "changeset",
     "set-version": "changeset version",
     "publish:changeset": "changeset publish",
-    "publish:all": "dotenv pnpm publish --filter '@stcland/*' --access public"  
+    "publish:all": "dotenv pnpm publish --filter '@stcland/*' --access public"
   }
 }

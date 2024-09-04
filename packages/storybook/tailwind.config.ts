@@ -67,7 +67,7 @@ export const config : Config = {
           dark: twColors.orange['600'],
           range: twColors.orange
         },
-  
+
         // Specific colors w/in app
         'link': twColors.sky['600'],
 

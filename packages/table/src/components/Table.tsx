@@ -12,6 +12,7 @@ import {
 import { cns, withCustomStyles } from '@stcland/utils'
 import '../index.css'
 
+
 //*****************************************************************************
 // Interface
 //*****************************************************************************
@@ -110,7 +111,7 @@ const Table = ({
                       style={{ width: column.getSize() }}
                       className={cn.headerCell}
                     >
-                      {column.isPlaceholder !== null && 
+                      {column.isPlaceholder !== null &&
                         <div>
                           {flexRender(column.column.columnDef.header, column.getContext())}
                         </div>
