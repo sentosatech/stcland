@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "vite",
     "lint": "eslint . --ext .js,.ts",
+    "ts-check": "tsc --noEmit --skipLibCheck",
     "build": "vite build",
     "serve": "vite serve",
     "clean": "rimraf ./dist && mkdir dist"

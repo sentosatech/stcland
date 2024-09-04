@@ -2,6 +2,7 @@
   "name": "@stcland/utils",
   "version": "0.0.4",
   "description": "",
+  "type": "module",
   "main": "./dist/index.js",
   "files": [
     "dist"
