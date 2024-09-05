@@ -62,12 +62,12 @@ const WithRowSelectionTemplate: StoryFn<Props> = (args) => {
   return (
     <Table
       {...args}
-      rowSelection={rowSelection}  
+      rowSelection={rowSelection}
       onRowClick={(row: any) => {
         const rowId = row.id
         setRowSelection((prevState) => ({
           ...prevState,
-          [rowId]: !prevState[rowId],  
+          [rowId]: !prevState[rowId],
         }))
       }}
     />
@@ -116,7 +116,7 @@ const sampleColumnsExpandedRows: ColumnDef<any>[] = [
               className='mr-4 cursor-pointer'
               onClick={row.getToggleExpandedHandler()}
             >
-              {isExpanded ? '▼' : '▶'} 
+              {isExpanded ? '▼' : '▶'}
             </span>
           )}
           <span>{row.original.name}</span>

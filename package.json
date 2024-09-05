@@ -13,6 +13,7 @@
   "scripts": {
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
+    "clean:all": "pnpm run -r clean:all",
     "test:all": "pnpm run -r --filter=./packages/* test",
     "pre-commit": "pnpm lint-staged && pnpm test:all",
     "prepare": "husky",
