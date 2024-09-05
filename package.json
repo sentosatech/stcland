@@ -7,13 +7,16 @@
   "license": "ISC",
   "devDependencies": {
     "@changesets/cli": "^2.27.7",
-    "dotenv-cli": "^7.4.2"
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.10"
   },
   "scripts": {
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
-    "test:all": "pnpm run -r test",
     "clean:all": "pnpm run -r clean:all",
+    "test:all": "pnpm run -r --filter=./packages/* test",
+    "pre-commit": "pnpm lint-staged && pnpm test:all",
+    "prepare": "husky",
     "create-changeset": "changeset",
     "set-version": "changeset version",
     "publish:changeset": "changeset publish",

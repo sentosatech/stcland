@@ -45,8 +45,7 @@ export const cellValueToPasswordHash = (
   parseOpts?: WorksheetParseOptions
 ) : string | undefined =>
   isStringOrNumber(cellValue)
-    ? passwordHash(cellValue.toString())
-    // ? sha256().update(cellValue?.toString()).digest('hex')
+    ? passwordHash(cellValue?.toString() || '')
     : cellWarning(`Invalid password: ${cellValue}`, cellMeta, parseOpts)
 
 export const cellValueToBool = (

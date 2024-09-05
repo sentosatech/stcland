@@ -1,0 +1,46 @@
+{
+  "name": "@stcland/storybook",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts",
+    "sb": "storybook dev -p 6006",
+    "sb-docs": "storybook dev --docs",
+    "sb-build-docs": "storybook build --docs",
+    "build-sb": "storybook build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@storybook/addon-docs": "^8.2.9",
+    "@storybook/addon-essentials": "^8.2.9",
+    "@storybook/addon-interactions": "^8.2.9",
+    "@storybook/addon-links": "^8.2.9",
+    "@storybook/react": "^8.2.9",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "d3-interpolate": "^3.0.1",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "vite": "^5.4.2"
+  },
+  "devDependencies": {
+    "@chromatic-com/storybook": "1.7.0",
+    "@storybook/addons": "^7.6.17",
+    "@storybook/blocks": "^8.2.9",
+    "@storybook/react-vite": "^8.2.9",
+    "@storybook/test": "^8.2.9",
+    "@storybook/theming": "^8.2.9",
+    "@tailwindcss/typography": "^0.5.14",
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "eslint": "^8.56.0",
+    "prop-types": "15.8.1",
+    "storybook": "^8.2.9",
+    "typescript": "^5.3.3"
+  }
+}

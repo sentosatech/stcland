@@ -10,11 +10,11 @@ export const cns = (...inputs: ClassValue[]): string => {
 }
 
 /**
-   Generic `CustomStylesShape` type param used 
+   Generic `CustomStylesShape` type param used
    to determine `baseSytyles` and `customStyles` type params.
  */
 type WithCustomStyles = <CustomStylesShape extends Record<string, ClassValue>>(
-  baseStyles: CustomStylesShape, 
+  baseStyles: CustomStylesShape,
   customStyles?: Partial<CustomStylesShape>
 ) => CustomStylesShape
 
@@ -24,5 +24,5 @@ export const withCustomStyles: WithCustomStyles = (baseStyles, customStyles = {}
     newStyles[key] = cns(value, customStyles?.[key])
   return newStyles as typeof baseStyles
 }
-  
+
 export default cns
