@@ -104,6 +104,7 @@ export const expectedWorkbookData = {
   ],
   ErrorCasesParsing: [
     {
+      expectAllErrors: true,
       key: 'errors',
       divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:3 Col:B',
       badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:3 Col:C',
