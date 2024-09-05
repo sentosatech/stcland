@@ -22,9 +22,11 @@
     "semi": ["error", "never"],
     "indent": ["error", 2, { "flatTernaryExpressions": true }],
     "object-curly-spacing": ["error", "always"],
+    "no-sparse-arrays": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-namespace": "off"
+
   }
 }
 

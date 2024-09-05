@@ -9,10 +9,10 @@ export const validPropTypes: PropType[] = [
   'string', 'number', 'boolean', 'bigint', 'date', 'password', 'json', 'uuid'
 ]
 
-// export type ResolvedCellValue = string | number | boolean | object | Date | undefined | null
-
-export interface RowMeta {
-  worksheetName: string;
+export interface WorksheetMeta  {
+  worksheetName: string
+}
+export interface RowMeta extends WorksheetMeta {
   rowNumber: number;
 }
 
@@ -21,7 +21,6 @@ export interface DataCellMeta extends RowMeta {
   propName: string;
   propType: PropType;
 }
-
 /*
   Given an exceljs worksheet returns the parsed data as an array of objects.
   This first row is used as the key for the correspnding value to be added.
@@ -29,16 +28,23 @@ export interface DataCellMeta extends RowMeta {
   The contents of the remaining rows hold values to be parsed
 */
 
-export interface ParseWorksheetOptions {
-  reportProgress?: boolean // defaults to false
-  reportWarnings?: boolean // defaults to true
+export interface WorksheetParseOptions {
+  reportProgress?: boolean
+    // defaults to false
+  reportWarnings?: boolean
+    // defaults to true
+}
+
+export interface ParsedWorksheetResult {
+  dataTypes: Record<string, any>
+  data: any[]
 }
 
 export type ParseWorksheet = (
   ws: Worksheet,
-  startingRow: number, // default 1
-  parseOpts: ParseWorksheetOptions
-) => any;
+  startingRow: number,
+  parseOpts?: WorksheetParseOptions
+) => ParsedWorksheetResult;
 
 /*
   Given a workbook, returns an array of worksheets that pass all filter functions

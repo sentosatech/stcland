@@ -8,12 +8,10 @@ import { v4 as uuidv4, validate as isValidUuid4 } from 'uuid'
 import { isStringOrNumber } from '@stcland/utils'
 
 
-import { validPropTypes } from './SpreadSheetLoaderTypes'
+import { validPropTypes } from './WorksheetParserTypes'
 import type {
-  GetWorkSheetList, GetRowValues, PropType, DataCellMeta as cellMeta, GetPropTypesFromRow, ParseWorksheetOptions
-} from './SpreadSheetLoaderTypes'
-
-// export const worksheetTypeCell_DEPRECATE_ME = [2, 1]
+  GetWorkSheetList, GetRowValues, PropType, DataCellMeta as cellMeta, GetPropTypesFromRow, WorksheetParseOptions
+} from './WorksheetParserTypes'
 
 //*****************************************************************************
 // Cell value parsers
@@ -22,7 +20,7 @@ import type {
 export const cellValueToString = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ) : string | undefined => {
   const cellText = cellValue?.toString()
   return isString(cellText)
@@ -33,7 +31,7 @@ export const cellValueToString = (
 export const cellValueToNumber = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ) : number | string | undefined => {
   const result = Number(cellValue)
   return isNotNaN(result)
@@ -44,15 +42,17 @@ export const cellValueToNumber = (
 export const cellValueToPasswordHash = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
-) : string | undefined => isStringOrNumber(cellValue)
-  ? sha256().update(cellValue?.toString).digest('hex')
-  : cellWarning(`Invalid password: ${cellValue}`, cellMeta, parseOpts)
+  parseOpts?: WorksheetParseOptions
+) : string | undefined =>
+  isStringOrNumber(cellValue)
+    ? passwordHash(cellValue.toString())
+    // ? sha256().update(cellValue?.toString()).digest('hex')
+    : cellWarning(`Invalid password: ${cellValue}`, cellMeta, parseOpts)
 
 export const cellValueToBool = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions) : boolean | string | undefined =>
+  parseOpts?: WorksheetParseOptions) : boolean | string | undefined =>
 {
   if (cellValueIsNotBoolean(cellValue))
     return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta, parseOpts)
@@ -62,14 +62,14 @@ export const cellValueToBool = (
     return boolText === 'true'
   }
   // shoud not get here
-  return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta, parseOpts)
+  return cellWarning(`Invalid boolean value: ${cellValue}`, cellMeta, parseOpts)
 }
 
 // If the cell has text, then we will prepend it to the uuid
 export const cellValueToUuid = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ) : string | undefined => {
   if (isNil(cellValue) || isNil(cellValue.valueOf())) return undefined
   const cellText = cellValue?.toString() || ''
@@ -86,14 +86,14 @@ export const cellValueToUuid = (
 export const cellValueToDate = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ) : Date | string | undefined =>
   isDate(cellValue) ? cellValue : cellWarning(`Invalid date: ${cellValue}`, cellMeta, parseOpts)
 
 export const cellValueFromJson = (
   cellValue: CellValue,
   cellMeta: cellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ): any | undefined => {
   if (cellValue) {
     try {
@@ -109,7 +109,7 @@ export const cellValueFromJson = (
 // Logging
 //*****************************************************************************
 
-export const parserWarning = (msg: string, parseOpts?: ParseWorksheetOptions) => {
+export const parserWarning = (msg: string, parseOpts?: WorksheetParseOptions) => {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {
     console.warn(`\nParsing warning: ${msg}`)
@@ -117,7 +117,7 @@ export const parserWarning = (msg: string, parseOpts?: ParseWorksheetOptions) =>
 }
 
 export const cellWarning = (
-  msg: string, cellMeta: cellMeta, parseOpts?: ParseWorksheetOptions
+  msg: string, cellMeta: cellMeta, parseOpts?: WorksheetParseOptions
 ) =>  {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {
@@ -135,6 +135,9 @@ export const cellWarning = (
 //*****************************************************************************
 // General Parsing Utils
 //*****************************************************************************
+
+export const passwordHash = (password: string) =>
+  sha256().update(password).digest('hex')
 
 export const cellValueIsFormula = (cell: Cell) =>
   isObject(cell) && cell?.formula && cell?.result

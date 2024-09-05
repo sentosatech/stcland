@@ -1,8 +1,8 @@
 import { CellValue, Row } from 'exceljs'
 
 import {
-  ParseWorksheet, PropType, RowMeta, DataCellMeta, ParseWorksheetOptions
-} from './SpreadSheetLoaderTypes'
+  ParseWorksheet, PropType, RowMeta, DataCellMeta, WorksheetParseOptions
+} from './WorksheetParserTypes'
 
 import {
   getRowValues,
@@ -20,12 +20,14 @@ import {
   parserWarning,
   cellValueHasError,
   getCellError
-} from './spreadSheetUtils'
+} from './spreadSheetParseUtils'
 
-export const parseWorksheet: ParseWorksheet = (ws, startingRow=1, parseOpts): any => {
+
+export const parseWorksheet: ParseWorksheet = (ws, startingRow, parseOpts): any => {
+
   const { reportProgress } = parseOpts || {}
 
-  if (reportProgress) console.log(`\n... Parsing worksheet '${ws.name}'`)
+  if (reportProgress) console.log(`... Parsing worksheet '${ws.name}'`)
 
   const propNames = getPropNamesFromRow(ws.getRow(startingRow))
   const propTypes = getPropTypesFromRow(ws.getRow(startingRow+1))
@@ -35,12 +37,19 @@ export const parseWorksheet: ParseWorksheet = (ws, startingRow=1, parseOpts): an
     return
   }
 
+  const data: any[] = []
   ws.eachRow(async (row, rowNumber) => {
     const rowMeta: RowMeta = { worksheetName: ws.name, rowNumber }
     if (rowNumber < startingRow+2 ) return
     const rowData = parseDataRow(propNames, propTypes, row, rowMeta, parseOpts)
-    console.log('rowData: ', rowData)
+    data.push(rowData)
   })
+
+  const dataTypes = propNames.reduce((acc, propName, i) => {
+    return { ...acc, [propName]: propTypes[i] }
+  }, {})
+
+  return { data, dataTypes }
 }
 
 const parseDataRow = (
@@ -48,7 +57,7 @@ const parseDataRow = (
   propTypes: PropType[],
   row: Row,
   rowMeta: RowMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ) => {
 
   const propValues = getRowValues(row)
@@ -67,6 +76,7 @@ const parseDataRow = (
     const dataValue = parseDataCell(
       propTypes[i], propValues[i], cellMeta, parseOpts
     )
+
     return {
       ...accData, [propName]: dataValue
     }
@@ -79,7 +89,7 @@ export const parseDataCell = (
   propType: PropType,
   cellValue: CellValue,
   cellMeta: DataCellMeta,
-  parseOpts?: ParseWorksheetOptions
+  parseOpts?: WorksheetParseOptions
 ): any => {
 
 
