@@ -92,7 +92,6 @@ const Table = ({
   }
   const cn  = withCustomStyles<CustomStylesShape>( defaultStyles, customStyles)
 
-
   return (
     <div className={cn.root}>
       <table className={cn.table}>
