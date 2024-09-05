@@ -10,3 +10,7 @@ export const pipeAsync = (...funcs: PipeFunc[]) =>
 
 export const composeAsync = (...funcs: PipeFunc[]) =>
   (x: unknown) => reverse(funcs).reduce(_applyAsync, Promise.resolve(x))
+
+export type PredFn<TData> = (arg: TData) => boolean
+
+export const passthrough = (v: any) => v
