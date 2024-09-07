@@ -1,20 +1,18 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { equals, keys, omit } from 'ramda'
-import { describe, test, expect, beforeEach, assert } from 'vitest'
+import { keys, omit } from 'ramda'
+import { describe, test, expect, beforeEach, } from 'vitest'
 import { Workbook, Worksheet } from 'exceljs'
 
-import { objectsHaveSameKeys, passthrough, toJson } from '@stcland/utils'
+import { objectsHaveSameKeys, toJson } from '@stcland/utils'
 
-import { expectedWorkbookData } from './expectedTestWorkbookData'
-import { ParsedWorksheetResult, PropType, WorksheetParseOptions } from '../src/WorksheetParserTypes'
+import { expectedTestWorkbookResults } from './expectedParsedWorkbookResults'
+import { DataType, WorksheetParseOptions } from '../src/WorksheetParserTypes'
 import { getWorksheetList } from '../src/spreadSheetParseUtils'
 import { parseWorksheet } from '../src/parseWorksheet'
-import {
-  uuidEquals, dateEquals, passwordToHashEquals, expectedPasswordHashStr, ValidateFn,
-  expectedUuidString
-} from './testUtils'
+import type { ValidateOpts } from './testUtils'
+import { propTypeToTestFns } from './testUtils'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -29,10 +27,7 @@ beforeEach(async () => {
   worksheets = getWorksheetList(workbook)
 })
 
-interface ValidateOpts {
-  expectAllUndefined: boolean | undefined,
-  expectAllErrors: boolean | undefined
-}
+//-------------------------------------------------------------------------
 
 describe('Test Worksheet Parser', () => {
   test('Basic Parsing', () => {
@@ -41,7 +36,7 @@ describe('Test Worksheet Parser', () => {
     expect(worksheets).toBeDefined()
 
     const parseOpts: WorksheetParseOptions = {
-      reportProgress: true,
+      reportProgress: false,
       reportWarnings: false
     }
 
@@ -49,119 +44,257 @@ describe('Test Worksheet Parser', () => {
     for (const sheet of worksheets) {
 
       const parsedWorksheet = parseWorksheet(sheet, firstRowOffset, parseOpts)
-      const expectedWorksheetData = expectedWorkbookData[sheet.name]
+      const expectedParsedWorksheet = expectedTestWorkbookResults[sheet.name]
 
-      if (!expectedWorksheetData) {
+      if (!expectedParsedWorksheet) {
         console.log(`    No expected data for worksheet: ${sheet.name} (skipping)`)
         continue
       }
 
-      // console.log('parsedWorksheet: ', parsedWorksheet)
-      assertParsedWorksheet(expectedWorksheetData, parsedWorksheet, sheet.name)
+      const {
+        data: expectedData,
+        dataTypes: expectedDataTypes,
+        meta: expectedMeta,
+        metaTypes: expectedMetaTypes
+      } = expectedParsedWorksheet
+
+      const {
+        data: parsedData,
+        dataTypes: parsedDataTypes,
+        meta: parsedMeta,
+        metaTypes: parsedMetaTypes
+      } = parsedWorksheet
+
+      assertParsedWorkSheetMetaTypes(
+        expectedMetaTypes, parsedMetaTypes, sheet.name
+      )
+
+      assertParsedWorkSheetMeta(
+        expectedMeta, parsedMeta, parsedMetaTypes, sheet.name
+      )
+
+      assertParsedWorksheetDataTypes(
+        expectedDataTypes, parsedDataTypes, sheet.name
+      )
+
+      assertParsedWorksheetData(
+        expectedData, parsedData, parsedDataTypes, sheet.name
+      )
+
     }
   })
 })
 
-const assertParsedWorksheet = (
-  expectedWorksheetData: any[],
-  parsedWorksheet: ParsedWorksheetResult,
+//-------------------------------------------------------------------------
+
+const assertParsedWorkSheetMetaTypes = (
+  expectedMetaTypes: Record<string, DataType> | undefined,
+  parsedMetaTypes: Record<string, DataType> | undefined,
   worksheetName: string
 ) => {
 
+  if (!expectedMetaTypes) {
+    expect(parsedMetaTypes,
+      `WS:${worksheetName}: \n` +
+      '  Expected metaTypes is undefined but parsed metaTypes is defined'
+    ).toBeUndefined()
+    return
+  }
 
-  const { data: parsedData, dataTypes } = parsedWorksheet
+  if (!parsedMetaTypes) {
+    expect(parsedMetaTypes,
+      `WS:${worksheetName}: \n` +
+      '  Expected metaTypes is defined but parsed metaTypes is undefined'
+    ).toBeDefined()
+    return
+  }
 
-  expect(parsedData.length).toEqual(expectedWorksheetData.length)
+  const expectedMetaTypeKeys = keys(expectedMetaTypes)
+  const parsedMetaTypeKeys = keys(parsedMetaTypes)
 
-  for (const [idx, expectedRowEntry] of expectedWorksheetData.entries()) {
+  expect(
+    parsedMetaTypeKeys.length,
+    `WS:${worksheetName}: \n` +
+    `  Number of parsed metaType keys ${parsedMetaTypeKeys.length} does not match expected ${expectedMetaTypeKeys.length}\n` +
+    `  Parsed keys: ${toJson(parsedMetaTypeKeys)}\n` +
+    `  Expected keys: ${toJson(expectedMetaTypeKeys)}\n`
+  ).toEqual(expectedMetaTypeKeys.length)
+
+  for (const expectedKey of expectedMetaTypeKeys) {
+
+    expect(
+      parsedMetaTypeKeys,
+      `WS:${worksheetName}: \n` +
+      `  Expected metaTypes key ${expectedKey} data is missing in from parsed metaTypes`
+    ).toContain(expectedKey)
+
+    expect(
+      parsedMetaTypes[expectedKey],
+      `WS:${worksheetName}: \n` +
+      `  Expected metaTypes type for key ${expectedKey}: ${parsedMetaTypes[expectedKey]}\n` +
+      `  does not match parsed metaType type: ${parsedMetaTypes[expectedKey]}`
+    ).toEqual(expectedMetaTypes[expectedKey])
+  }
+}
+
+//-------------------------------------------------------------------------
+
+const assertParsedWorksheetDataTypes = (
+  expectedDataTypes: Record<string, DataType>,
+  parsedDataTypes: Record<string, DataType>,
+  worksheetName: string
+) => {
+
+  const expectedDataKeys = keys(expectedDataTypes)
+  const parsedDataKeys = keys(parsedDataTypes)
+
+  expect(
+    parsedDataKeys.length,
+    `WS:${worksheetName}: \n` +
+    `  Number of parsed dataType keys ${parsedDataKeys.length} does not match expected ${expectedDataKeys.length}\n` +
+    `  Parsed keys: ${toJson(parsedDataKeys)}\n` +
+    `  Expected keys: ${toJson(expectedDataKeys)}\n`
+  ).toEqual(expectedDataKeys.length)
+
+  for (const expectedKey of expectedDataKeys) {
+
+    expect(
+      parsedDataKeys,
+      `WS:${worksheetName}: \n` +
+      `  Expected data key ${expectedKey} data is missing in from parsed data`
+    ).toContain(expectedKey)
+
+    expect(
+      parsedDataTypes[expectedKey],
+      `WS:${worksheetName}: \n` +
+      `  Expected data type for key ${expectedKey}: ${parsedDataTypes[expectedKey]}\n` +
+      `  does not match parsed data type: ${parsedDataTypes[expectedKey]}`
+    ).toEqual(expectedDataTypes[expectedKey])
+
+  }
+}
+
+//-------------------------------------------------------------------------
+
+const assertParsedWorkSheetMeta = (
+  expectedMeta: Record<string, any> | undefined,
+  parsedMeta: Record<string, any> | undefined,
+  parsedMetaTypes: Record<string, DataType> | undefined = {},
+  worksheetName: string
+) => {
+
+  if (!expectedMeta) {
+    expect(
+      parsedMeta,
+      `WS:${worksheetName}: \n` +
+      '  Expected meta is undefined but parsed meta is defined\n' +
+      `  parseMeta: ${toJson(parsedMeta)}`
+    ).toBeUndefined()
+    return
+  }
+
+  if (!parsedMeta) {
+    expect(
+      parsedMeta,
+      `WS:${worksheetName}: \n` +
+      '  Expected meta is defined but parsed meta is undefined\n' +
+      `  expectedMeta: ${toJson(expectedMeta)}`
+    ).toBeDefined()
+    return
+  }
+
+  expect(
+    objectsHaveSameKeys(expectedMeta, parsedMeta),
+    `WS:${worksheetName}: \n` +
+    '  Expected meta does not have same keys as parsed meta\n' +
+    `  expected meta keys: ${toJson(keys(expectedMeta))}` +
+    `  parsed meta keys: ${toJson(keys(parsedMeta))}`
+  ).toEqual(true)
+
+  const expectedMetaKeys = keys(expectedMeta)
+  const parsedMetaKeys = keys(parsedMeta || {})
+
+
+  for (const expectedKey of expectedMetaKeys) {
+
+    const propType = parsedMetaTypes[expectedKey]
+    const expectedVal = expectedMeta[expectedKey]
+    const parsedVal = parsedMeta[expectedKey]
+
+    const {
+      validateFn, expectedValForLoggingFn, parsedValForLoggingFn
+    } = propTypeToTestFns(propType)
+
+    expect(
+      validateFn(expectedVal, parsedVal),
+      `\nWS:${worksheetName}, meta key: ${expectedKey}\n` +
+      `  expected meta value: ${expectedValForLoggingFn(expectedVal)}\n` +
+      `  parsed meta value: ${parsedValForLoggingFn(parsedVal)}`
+    ).toEqual(true)
+  }
+}
+
+//-------------------------------------------------------------------------
+
+const assertParsedWorksheetData = (
+  expectedData: any[],
+  data: any[],
+  dataTypes: Record<string, DataType>,
+  worksheetName: string
+) => {
+
+  expect(data.length).toEqual(expectedData.length)
+
+  for (const [idx, expectedRowEntry] of expectedData.entries()) {
 
     const { expectAllUndefined, expectAllErrors } = expectedRowEntry
     const validateOpts: ValidateOpts = { expectAllUndefined,  expectAllErrors }
 
-    const parsedRow = parsedData[idx]
-    const expectedRow = omit(['expectAllUndefined', 'expectAllErrors'], expectedRowEntry)
-
-    // Make sure that we have exact match in expected vs parsed properties
-    const failureMsg =
-      `\nWS:${worksheetName}: Parsed data does not have same keys as expected` +
-      `\nexpected data keys: ${toJson(keys(expectedRow))}` +
-      `\nparsed data keys: ${toJson(keys(parsedRow))}`
+    const parsedRowData = data[idx]
+    const expectedRowData = omit(['expectAllUndefined', 'expectAllErrors'], expectedRowEntry)
 
     expect(
-      objectsHaveSameKeys(expectedRow, parsedRow), failureMsg
+      objectsHaveSameKeys(expectedRowData, parsedRowData),
+      `\nWS:${worksheetName}: Parsed data does not have same keys as expected\n` +
+      `  expected data keys: ${toJson(keys(expectedRowData))}\n` +
+      `  parsed data keys: ${toJson(keys(parsedRowData))}\n`
+
     ).toEqual(true)
 
     assertParsedRow(
-      parsedRow, expectedRow, dataTypes, worksheetName, validateOpts
+      parsedRowData, expectedRowData, dataTypes, worksheetName, validateOpts
     )
   }
 }
 
 const assertParsedRow = (
-  parsedRow: any,
-  expectedRow: any,
-  dataTypes: Record<string, any>,
+  parsedRowData: any,
+  expectedRowData: any,
+  dataTypes: Record<string, DataType>,
   worksheetName: string,
   validateOpts: ValidateOpts,
 ) => {
 
-  const entryKey = expectedRow.key
+  const entryKey = expectedRowData.key
 
   // loop through each key in the expected data entry and validate the parsed data
-  for (const propName of keys(expectedRow).map(String)) {
+  for (const propName of keys(expectedRowData).map(String)) {
 
-    const expectedProp = expectedRow[propName]
-    const parsed = parsedRow[propName]
+    const expectedProp = expectedRowData[propName]
+    const parsedProp = parsedRowData[propName]
 
     const propType = dataTypes[propName]
     const {
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
     } = propTypeToTestFns(propType, validateOpts)
 
-
-    const failureMsg =
+    expect(
+      validateFn(expectedProp, parsedProp),
       `\nWS:${worksheetName}, entry:${entryKey}, prop: ${propName}` +
       `\n  expected value: ${expectedValForLoggingFn(expectedProp)}` +
-      `\n  parsed value: ${parsedValForLoggingFn(parsed)}\n`
-
-    expect(
-      validateFn(expectedProp, parsed), failureMsg
+      `\n  parsed value: ${parsedValForLoggingFn(parsedProp)}\n`
     ).toEqual(true)
   }
 }
 
-const propTypeToTestFns = (propType: PropType, validateOpts: ValidateOpts) => {
 
-  const { expectAllUndefined, expectAllErrors } = validateOpts
-
-  // defaults
-  let validateFn: ValidateFn = equals
-  let expectedValForLoggingFn = passthrough
-  let parsedValForLoggingFn = passthrough
-
-  // For special test casee defaults are correct
-  if ( expectAllUndefined || expectAllErrors)
-    return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
-
-  switch (propType) {
-
-  case 'date':
-    validateFn = dateEquals
-    parsedValForLoggingFn = (d: Date) => d.toISOString()
-    break
-  case 'password':
-    validateFn = passwordToHashEquals
-    expectedValForLoggingFn = expectedPasswordHashStr
-    break
-  case 'json':
-    parsedValForLoggingFn = toJson
-    expectedValForLoggingFn = toJson
-    break
-  case 'uuid':
-    validateFn = uuidEquals
-    expectedValForLoggingFn = expectedUuidString
-    break
-  }
-
-  return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
-}

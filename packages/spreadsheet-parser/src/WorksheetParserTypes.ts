@@ -2,10 +2,10 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
-export type PropType =
+export type DataType =
   'string' | 'number' | 'boolean' | 'bigint' | 'date' | 'password' | 'json' | 'uuid';
 
-export const validPropTypes: PropType[] = [
+export const validDataTypes: DataType[] = [
   'string', 'number', 'boolean', 'bigint', 'date', 'password', 'json', 'uuid'
 ]
 
@@ -16,11 +16,15 @@ export interface RowMeta extends WorksheetMeta {
   rowNumber: number;
 }
 
-export interface DataCellMeta extends RowMeta {
+export interface CellMeta extends RowMeta {
   colNumber: number;
-  propName: string;
-  propType: PropType;
 }
+
+export interface DataCellMeta extends CellMeta {
+  propName: string;
+  propType: DataType;
+}
+
 /*
   Given an exceljs worksheet returns the parsed data as an array of objects.
   This first row is used as the key for the correspnding value to be added.
@@ -36,15 +40,30 @@ export interface WorksheetParseOptions {
 }
 
 export interface ParsedWorksheetResult {
-  dataTypes: Record<string, any>
   data: any[]
+  dataTypes: Record<string, DataType>
+  meta?: Record<string, any>
+  metaTypes?: Record<string, DataType>
 }
 
 export type ParseWorksheet = (
   ws: Worksheet,
-  startingRow: number,
+  startingRowNum: number,
   parseOpts?: WorksheetParseOptions
 ) => ParsedWorksheetResult;
+
+
+export interface ParseFrontMatterResult {
+  meta?: Record<string, any>
+  metaTypes?: Record<string, DataType>
+  dataStartRowNum: number
+}
+
+export type ParseFrontMatter = (
+  ws: Worksheet,
+  startingRowNum: number,
+  parseOpts?: WorksheetParseOptions
+) => ParseFrontMatterResult;
 
 /*
   Given a workbook, returns an array of worksheets that pass all filter functions
@@ -58,7 +77,7 @@ export type GetWorkSheetList = (
   filterFns?: PredFn<Worksheet>[] // list of functions to filter unwante worksheets
 ) => Worksheet[];
 
-export type GetPropTypesFromRow = (row: Row) => PropType[];
+export type GetPropTypesFromRow = (row: Row) => DataType[];
 
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];

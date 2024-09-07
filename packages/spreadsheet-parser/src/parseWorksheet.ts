@@ -1,7 +1,8 @@
-import { CellValue, Row } from 'exceljs'
+import { CellValue, Row, Worksheet } from 'exceljs'
 
 import {
-  ParseWorksheet, PropType, RowMeta, DataCellMeta, WorksheetParseOptions
+  ParseWorksheet, DataType, RowMeta, DataCellMeta, WorksheetParseOptions,
+  ParseFrontMatter
 } from './WorksheetParserTypes'
 
 import {
@@ -16,31 +17,44 @@ import {
   cellValueToPasswordHash,
   cellValueFromJson,
   cellValueToUuid,
-  cellWarning,
+  dataCellWarning,
   parserWarning,
   cellValueHasError,
-  getCellError
+  getCellError,
+  doesNotHaveFrontMatter,
+  rowIsNotFrontMatterDelimiter,
+  getPropNameFromCallValue,
+  getPropTypeFromCallValue,
 } from './spreadSheetParseUtils'
+import { toJson } from '@stcland/utils'
 
 
-export const parseWorksheet: ParseWorksheet = (ws, startingRow, parseOpts): any => {
+export const parseWorksheet: ParseWorksheet = (ws, startingRowNum, parseOpts) => {
 
   const { reportProgress } = parseOpts || {}
 
   if (reportProgress) console.log(`... Parsing worksheet '${ws.name}'`)
 
-  const propNames = getPropNamesFromRow(ws.getRow(startingRow))
-  const propTypes = getPropTypesFromRow(ws.getRow(startingRow+1))
+  const { meta, metaTypes, dataStartRowNum } = parseFrontMatter(ws, startingRowNum, parseOpts)
+
+  const propNames = getPropNamesFromRow(ws.getRow(dataStartRowNum))
+  const propTypes = getPropTypesFromRow(ws.getRow(dataStartRowNum+1))
 
   if (propNames.length !== propTypes.length) {
     parserWarning('Number of property names does not match number of property types', parseOpts)
-    return
+    return { data: [], dataTypes: {} }
   }
 
   const data: any[] = []
-  ws.eachRow(async (row, rowNumber) => {
-    const rowMeta: RowMeta = { worksheetName: ws.name, rowNumber }
-    if (rowNumber < startingRow+2 ) return
+  ws.eachRow((row, rowNumber) => {
+
+    // skip propName and propType rows
+    if (rowNumber < dataStartRowNum+2 )
+      return
+
+    const rowMeta: RowMeta = {
+      worksheetName: ws.name, rowNumber
+    }
     const rowData = parseDataRow(propNames, propTypes, row, rowMeta, parseOpts)
     data.push(rowData)
   })
@@ -49,12 +63,12 @@ export const parseWorksheet: ParseWorksheet = (ws, startingRow, parseOpts): any 
     return { ...acc, [propName]: propTypes[i] }
   }, {})
 
-  return { data, dataTypes }
+  return { data, dataTypes, meta, metaTypes }
 }
 
 const parseDataRow = (
   propNames: string[],
-  propTypes: PropType[],
+  propTypes: DataType[],
   row: Row,
   rowMeta: RowMeta,
   parseOpts?: WorksheetParseOptions
@@ -63,18 +77,15 @@ const parseDataRow = (
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, i) => {
 
-    const cellMeta = {
-      ...rowMeta,
-      colNumber: i,
-      propName,
-      propType: propTypes[i]
+    const dataCellMeta = {
+      ...rowMeta, colNumber: i, propName, propType: propTypes[i]
     }
 
     if (propValues[i]?.toString().trim() === '_skip_')
       return accData
 
     const dataValue = parseDataCell(
-      propTypes[i], propValues[i], cellMeta, parseOpts
+      propTypes[i], propValues[i], dataCellMeta, parseOpts
     )
 
     return {
@@ -86,28 +97,83 @@ const parseDataRow = (
 }
 
 export const parseDataCell = (
-  propType: PropType,
+  propType: DataType,
   cellValue: CellValue,
-  cellMeta: DataCellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ): any => {
-
 
   if (isEmptyCell(cellValue)) return undefined
 
   if (cellValueHasError(cellValue)) {
     const errorStr: string = getCellError(cellValue)
-    return cellWarning(`Cell has an error: ${errorStr}`, cellMeta, parseOpts)
+    return dataCellWarning(`Cell has an error: ${errorStr}`, dataCellMeta, parseOpts)
   }
 
   switch (propType) {
-  case 'string': return cellValueToString(cellValue, cellMeta, parseOpts)
-  case 'number': return cellValueToNumber(cellValue, cellMeta, parseOpts)
-  case 'boolean':return cellValueToBool(cellValue, cellMeta, parseOpts)
-  case 'date': return cellValueToDate(cellValue, cellMeta, parseOpts)
-  case 'password': return cellValueToPasswordHash(cellValue, cellMeta, parseOpts)
-  case 'json': return cellValueFromJson(cellValue, cellMeta, parseOpts)
-  case 'uuid': return cellValueToUuid(cellValue, cellMeta, parseOpts)
-  default: return cellWarning(`Invalid property type: '${propType}'`, cellMeta, parseOpts)
+  case 'string': return cellValueToString(cellValue, dataCellMeta, parseOpts)
+  case 'number': return cellValueToNumber(cellValue, dataCellMeta, parseOpts)
+  case 'boolean':return cellValueToBool(cellValue, dataCellMeta, parseOpts)
+  case 'date': return cellValueToDate(cellValue, dataCellMeta, parseOpts)
+  case 'password': return cellValueToPasswordHash(cellValue, dataCellMeta, parseOpts)
+  case 'json': return cellValueFromJson(cellValue, dataCellMeta, parseOpts)
+  case 'uuid': return cellValueToUuid(cellValue, dataCellMeta, parseOpts)
+  default: return dataCellWarning(`Invalid property type: '${propType}'`, dataCellMeta, parseOpts)
   }
+}
+
+export const parseFrontMatter: ParseFrontMatter = (
+  ws: Worksheet,
+  startingRowNumber: number,
+  parseOpts?: WorksheetParseOptions
+): any => {
+
+  if (doesNotHaveFrontMatter(ws, startingRowNumber))
+    return { dataStartRowNum: startingRowNumber }
+
+  let meta: Record<string, any> = {}
+  let metaTypes: Record<string, DataType> = {}
+
+  // skip the intiial '---'
+  let curRowNumber = startingRowNumber + 1
+  let curRow = ws.getRow(curRowNumber)
+
+  while(rowIsNotFrontMatterDelimiter(curRow)) {
+
+    const rowMeta: RowMeta = {
+      worksheetName: ws.name,
+      rowNumber: curRowNumber
+    }
+
+    const rowValues = getRowValues(curRow)
+
+    if (rowValues.length !== 3) {
+      parserWarning(
+        `WS: ${ws.name}: Invalid front matter row ${curRowNumber}\n` +
+        `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
+        `  ${toJson(rowValues)}`
+      )
+      continue
+    }
+
+    curRowNumber++
+    curRow = ws.getRow(curRowNumber)
+    const propName = getPropNameFromCallValue(rowValues[0], {
+      ...rowMeta, colNumber: 0
+    })
+    const propType = getPropTypeFromCallValue(rowValues[1], {
+      ...rowMeta, colNumber: 1
+    })
+
+    const propValue = parseDataCell(
+      propType, rowValues[2],
+      { ...rowMeta, colNumber: 2, propName, propType },
+      parseOpts
+    )
+
+    meta = { ...meta, [propName]: propValue }
+    metaTypes = { ...metaTypes, [propName]: propType }
+  }
+
+  return { meta, metaTypes, dataStartRowNum: curRowNumber + 1 }
 }

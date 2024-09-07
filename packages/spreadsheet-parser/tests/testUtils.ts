@@ -1,9 +1,17 @@
-import { validate as isValidUuid4 } from 'uuid'
-import { passwordHash } from '../src/spreadSheetParseUtils'
+import { equals } from 'ramda'
 import { isNotDate, isNotString } from 'ramda-adjunct'
+import { validate as isValidUuid4 } from 'uuid'
+
+import { passwordHash } from '../src/spreadSheetParseUtils'
+import { passthrough, toJson } from '@stcland/utils'
+import { DataType } from '../src/WorksheetParserTypes'
 
 export type ValidateFn = (expected: any, parsed: any) => boolean
 
+export interface ValidateOpts {
+  expectAllUndefined: boolean | undefined,
+  expectAllErrors: boolean | undefined
+}
 export const dateEquals: ValidateFn = (
   execptedDataStr: string,
   date: Date
@@ -44,3 +52,45 @@ export const expectedUuidString = (modifiers: [string, string]) => {
   const [pre, post] = modifiers
   return `${pre || ''}[vaiid-uuid]${post || ''}`
 }
+
+export const propTypeToTestFns = (
+  propType: DataType,
+  validateOpts?: ValidateOpts
+) => {
+
+  const { expectAllUndefined = false, expectAllErrors = false } = validateOpts || {}
+
+  // defaults
+  let validateFn: ValidateFn = equals
+  let expectedValForLoggingFn = passthrough
+  let parsedValForLoggingFn = passthrough
+
+  // For special test casee defaults are correct
+  if ( expectAllUndefined || expectAllErrors)
+    return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
+
+  switch (propType) {
+
+  case 'date':
+    validateFn = dateEquals
+    parsedValForLoggingFn = (d: Date) => d.toISOString()
+    break
+  case 'password':
+    validateFn = passwordToHashEquals
+    expectedValForLoggingFn = expectedPasswordHashStr
+    break
+  case 'json':
+    parsedValForLoggingFn = toJson
+    expectedValForLoggingFn = toJson
+    break
+  case 'uuid':
+    validateFn = uuidEquals
+    expectedValForLoggingFn = expectedUuidString
+    break
+  }
+
+  return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
+}
+
+
+
