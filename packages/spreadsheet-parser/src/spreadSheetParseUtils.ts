@@ -5,12 +5,17 @@ import { Worksheet, Row, Cell, CellValue } from 'exceljs'
 import sha256 from 'hash.js/lib/hash/sha/256'
 import { v4 as uuidv4, validate as isValidUuid4 } from 'uuid'
 
-import { isStringOrNumber } from '@stcland/utils'
+import { isStringOrNumber, isNonEmptyStr, strIsValidObjectKey, toJson } from '@stcland/utils'
 
-
-import { validPropTypes } from './WorksheetParserTypes'
+import { validDataTypes } from './WorksheetParserTypes'
 import type {
-  GetWorkSheetList, GetRowValues, PropType, DataCellMeta as cellMeta, GetPropTypesFromRow, WorksheetParseOptions
+  GetWorkSheetList,
+  GetRowValues,
+  DataType,
+  GetPropTypesFromRow,
+  WorksheetParseOptions,
+  DataCellMeta,
+  CellMeta
 } from './WorksheetParserTypes'
 
 //*****************************************************************************
@@ -19,55 +24,55 @@ import type {
 
 export const cellValueToString = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ) : string | undefined => {
   const cellText = cellValue?.toString()
   return isString(cellText)
     ? cellText
-    : cellWarning(`Invalid string value: '${cellValue}'`, cellMeta, parseOpts)
+    : dataCellWarning(`Invalid string value: '${cellValue}'`, dataCellMeta, parseOpts)
 }
 
 export const cellValueToNumber = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ) : number | string | undefined => {
   const result = Number(cellValue)
   return isNotNaN(result)
     ? result
-    : cellWarning(`Invalid number: ${cellValue}`, cellMeta, parseOpts)
+    : dataCellWarning(`Invalid number: ${cellValue}`, dataCellMeta, parseOpts)
 }
 
 export const cellValueToPasswordHash = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ) : string | undefined =>
   isStringOrNumber(cellValue)
     ? passwordHash(cellValue?.toString() || '')
-    : cellWarning(`Invalid password: ${cellValue}`, cellMeta, parseOpts)
+    : dataCellWarning(`Invalid password: ${cellValue}`, dataCellMeta, parseOpts)
 
 export const cellValueToBool = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions) : boolean | string | undefined =>
 {
   if (cellValueIsNotBoolean(cellValue))
-    return cellWarning(`Invalid boolean value: '${cellValue}'`, cellMeta, parseOpts)
+    return dataCellWarning(`Invalid boolean value: '${cellValue}'`, dataCellMeta, parseOpts)
   if (isBoolean(cellValue)) return cellValue
   if (isString(cellValue)) {
     const boolText = cellValue.toLowerCase()
     return boolText === 'true'
   }
   // shoud not get here
-  return cellWarning(`Invalid boolean value: ${cellValue}`, cellMeta, parseOpts)
+  return dataCellWarning(`Invalid boolean value: ${cellValue}`, dataCellMeta, parseOpts)
 }
 
 // If the cell has text, then we will prepend it to the uuid
 export const cellValueToUuid = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ) : string | undefined => {
   if (isNil(cellValue) || isNil(cellValue.valueOf())) return undefined
@@ -78,30 +83,32 @@ export const cellValueToUuid = (
   } else if (isValidUuid4(cellText)) {
     return cellText
   } else {
-    return cellWarning(`Invalid UUID: ${cellValue}`, cellMeta, parseOpts)
+    return dataCellWarning(`Invalid UUID: ${cellValue}`, dataCellMeta, parseOpts)
   }
 }
 
 export const cellValueToDate = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ) : Date | string | undefined =>
-  isDate(cellValue) ? cellValue : cellWarning(`Invalid date: ${cellValue}`, cellMeta, parseOpts)
+  isDate(cellValue)
+    ? cellValue
+    : dataCellWarning(`Invalid date: ${cellValue}`, dataCellMeta, parseOpts)
 
 export const cellValueFromJson = (
   cellValue: CellValue,
-  cellMeta: cellMeta,
+  dataCellMeta: DataCellMeta,
   parseOpts?: WorksheetParseOptions
 ): any | undefined => {
   if (cellValue) {
     try {
       return JSON.parse(cellValue.toString())
     } catch (e) {
-      return cellWarning(`Invalid JSON: ${cellValue}`, cellMeta, parseOpts)
+      return dataCellWarning(`Invalid JSON: ${cellValue}`, dataCellMeta, parseOpts)
     }
   }
-  return cellWarning(`Cell had no JSON content: ${cellValue}`, cellMeta)
+  return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
 }
 
 //*****************************************************************************
@@ -115,8 +122,28 @@ export const parserWarning = (msg: string, parseOpts?: WorksheetParseOptions) =>
   }
 }
 
+export const dataCellWarning = (
+  msg: string,
+  dataCellMeta: DataCellMeta,
+  parseOpts?: WorksheetParseOptions
+) =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${dataCellMeta.worksheetName}\n` +
+      `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
+      `   propName = '${dataCellMeta.propName}' | propType = '${dataCellMeta.propType}'\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${dataCellMeta.worksheetName}, Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}`
+}
+
 export const cellWarning = (
-  msg: string, cellMeta: cellMeta, parseOpts?: WorksheetParseOptions
+  msg: string,
+  cellMeta: CellMeta,
+  parseOpts?: WorksheetParseOptions
 ) =>  {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {
@@ -124,16 +151,28 @@ export const cellWarning = (
       '\nParsing error:\n' +
       `   Worksheet: ${cellMeta.worksheetName}\n` +
       `   Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}\n` +
-      `   propName = '${cellMeta.propName}' | propType = '${cellMeta.propType}'\n` +
       `   ${msg}\n`
     )
   }
   return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
 }
 
+
+
 //*****************************************************************************
 // General Parsing Utils
 //*****************************************************************************
+
+export const rowIsFrontMatterDelimiter = (row: Row) =>
+  row.getCell(1).value === '---'
+
+export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
+  const row = ws.getRow(startingRow)
+  return rowIsFrontMatterDelimiter(row)
+}
+
+export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
+export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
 
 export const passwordHash = (password: string) =>
   sha256().update(password).digest('hex')
@@ -189,9 +228,14 @@ export const getRowValues: GetRowValues = row => {
   return cellValues
 }
 
+export const getRowValuesAsStrings = (row: Row): string[] => {
+  const cellValues = getRowValues(row)
+  return cellValues.map(cv => cv?.toString() || '')
+}
+
 export const getPropNamesFromRow = (row: Row): string[] => {
 
-  const propNames = getRowValues(row) || []
+  const propNames = getRowValuesAsStrings(row)
 
   if (propNames.length === 0 )
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
@@ -205,36 +249,80 @@ export const getPropNamesFromRow = (row: Row): string[] => {
   return propNames as string[]
 }
 
+export const getPropNameFromCallValue = (
+  cellValue: CellValue,
+  cellMeta: CellMeta,
+) => {
+
+  if (isNil(cellValue))
+    throw new Error(cellWarning('Empty property name', cellMeta))
+
+  const propName = cellValue.toString()
+  if (isNotValidPropName(propName)) {
+    throw new Error(cellWarning(`Invalid property name: ${propName}`, cellMeta))
+  }
+
+  return propName
+}
+
+export const getPropTypeFromCallValue = (
+  cellValue: CellValue,
+  cellMeta: CellMeta,
+) => {
+
+  if (isNil(cellValue))
+    throw new Error(cellWarning('Empty property type', cellMeta))
+
+  const propType = cellValue.toString() as DataType
+  if (isNotValidPropName(propType)) {
+    throw new Error(cellWarning(
+      `Invalid property type: ${propType}, should be one of ${toJson(validDataTypes)}`, cellMeta))
+  }
+
+  return propType
+}
+
+
 export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
 
-  const propTypes = getRowValues(row)
+  const propTypes = getRowValuesAsStrings(row) as DataType[]
 
   if (propTypes.length === 0 )
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
 
-  if (isNotValidPropNameList(propTypes)) {
+  if (isNotValidPropTypeList(propTypes)) {
     throw new Error(
-      `Invalid property name(s) found in worksheet ${row.worksheet.name}\n  ` +
-      'one or more property names are empty or not strings\n  ' +
-      propTypes.join(', '))
+      `Invalid property types(s) found in worksheet ${row.worksheet.name}\n  ` +
+      `  sould be one of ${toJson(validDataTypes.join(', '))}\n  ` +
+      `  found: ${toJson(propTypes.join(', '))})`
+    )
   }
-  return propTypes as PropType[]
+  return propTypes as DataType[]
 }
 
-export const isValidPropType = (propType: PropType) =>
-  isString(propType) && validPropTypes.includes(propType)
+export const isValidPropType = (propType: string) =>
+  isString(propType) && validDataTypes.includes(propType as DataType)
 
-export const isValidPropTypeList = (propTypes: PropType[]) : {
+export const isValidPropTypeList = (propTypes: DataType[]) : {
   valid: boolean;
-  invalidTypes: PropType[];
+  invalidTypes: DataType[];
 } => {
   const valid = propTypes.every(isValidPropType)
-  const invalidTypes = propTypes.filter(dt => !validPropTypes.includes(dt))
+  const invalidTypes = propTypes.filter(dt => !validDataTypes.includes(dt))
   return { valid, invalidTypes }
 }
 
-export const isValidPropName = (propName: string) => isString(propName) && propName.length > 0
-export const isValidPropNameList = (propNames: CellValue[]) => propNames.every(isValidPropName)
+export const isNotValidPropType = complement(isValidPropType)
+export const isNotValidPropTypeList = complement(isValidPropTypeList)
+
+
+export const isValidPropName = (propName: string) =>
+  isNonEmptyStr(propName) && strIsValidObjectKey(propName)
+
+export const isValidPropNameList = (propNames: CellValue[]) =>
+  propNames.every(isValidPropName)
+
+export const isNotValidPropName = complement(isValidPropName)
 export const isNotValidPropNameList = complement(isValidPropNameList)
 
 export const colNumToText = (colNum: number) =>

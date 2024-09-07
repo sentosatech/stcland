@@ -163,9 +163,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.2.0
         version: 8.3.0(eslint@8.57.0)(typescript@5.5.4)
-      arangojs:
-        specifier: ^9.0.0
-        version: 9.0.0
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0
@@ -188,9 +185,6 @@ importers:
         specifier: ^2.0.5
         version: 2.0.5(@types/node@20.16.2)(jsdom@24.1.3)
     devDependencies:
-      '@types/exceljs':
-        specifier: ^1.3.0
-        version: 1.3.0
       '@types/node':
         specifier: ^20.14.10
         version: 20.16.2
@@ -2137,10 +2131,6 @@ packages:
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
-  '@types/exceljs@1.3.0':
-    resolution: {integrity: sha512-V3BOkD+eQVEFuYACksKiNEDP3QumTMMrPeXef/F5EAT/MquojQzUwEJt6vwsEwTOZFPfponJMyvdZ0NL71K76Q==}
-    deprecated: This is a stub types definition. exceljs provides its own type definitions, so you do not need this installed.
-
   '@types/express-serve-static-core@4.19.5':
     resolution: {integrity: sha512-y6W03tvrACO72aijJ5uF02FRq5cgDR9lUxddQ8vyF+GvmjJQqbzDcJngEjURc+ZsG31VI3hODNZJ2URj86pzmg==}
 
@@ -2586,10 +2576,6 @@ packages:
   anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
-
-  arangojs@9.0.0:
-    resolution: {integrity: sha512-nFpMTGsb7Vt76pfqR7M5cbKM+FfmTIc+MiMVZ0FDfPYM0tYfrVj9fqk3QDY7F1ZhURPp9SJeLqfx8/H2bsmOIg==}
-    engines: {node: '>=18'}
 
   archiver-utils@2.1.0:
     resolution: {integrity: sha512-bEL/yUb/fNNiNTuUz979Z0Yg5L+LzLxGJz8x79lYmR54fmTIb6ob/hNQgkQnIUDWIFjZVQwl9Xs356I6BAMHfw==}
@@ -7932,10 +7918,6 @@ snapshots:
 
   '@types/estree@1.0.5': {}
 
-  '@types/exceljs@1.3.0':
-    dependencies:
-      exceljs: 4.4.0
-
   '@types/express-serve-static-core@4.19.5':
     dependencies:
       '@types/node': 20.16.2
@@ -8569,10 +8551,6 @@ snapshots:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.1
-
-  arangojs@9.0.0:
-    dependencies:
-      '@types/node': 20.16.2
 
   archiver-utils@2.1.0:
     dependencies:

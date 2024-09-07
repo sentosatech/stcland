@@ -1,6 +1,6 @@
 import stringify from 'json-stringify-safe'
 import { isNotNaN, isString } from 'ramda-adjunct'
-import { endsWith, toLower } from 'ramda'
+import { toLower } from 'ramda'
 
 export const toJson  = (v: unknown) => stringify(v, null, 2)
 export const str = (v: unknown) => stringify(v)
@@ -20,9 +20,12 @@ export const numDots = (str: string) =>
 export const strRepresentsFloat = (strToCheck: string) =>
   isNotNaN(Number.parseFloat(strToCheck))
 
-export const endWith = (
-  subList: readonly unknown[] | string,
-  list: readonly unknown[] | string,
-) =>
-  // @ts-expect-error ramda takes either string or array
-  endsWith(subList, [list])
+export const strIsValidObjectKey = (str: string) => {
+  try {
+    // @ts-expect-error unused obj
+    const obj = { [str]: null }
+    return true
+  } catch (e) {
+    return false
+  }
+}
