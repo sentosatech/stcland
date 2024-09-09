@@ -341,7 +341,7 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3(@types/node@20.16.2)(rollup@4.21.1)(typescript@5.3.3)(vite@5.4.2(@types/node@20.16.2))
 
-  packages/template-node-package:
+  packages/template-package:
     dependencies:
       '@eslint/js':
         specifier: ^9.8.0

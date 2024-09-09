@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["../config/eslint.base.json"],
+  "extends": ["../config/eslint.react.base.json"],
   "env": {
     "node": true,
     "es6": true

@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "plugin:react/recommended",
+    "./eslint.base.json"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
+
