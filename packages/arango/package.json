@@ -1,7 +1,7 @@
 {
-  "name": "@stcland/new-package-name",
+  "name": "@stcland/arango",
   "version": "0.0.1",
-  "description": "Add description here",
+  "description": "Arango DB utilities",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -23,10 +23,11 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@stcland/utils": "workspace:^",
     "@eslint/js": "^9.8.0",
+    "@stcland/utils": "workspace:^",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
+    "arangojs": "^9.0.0",
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1",
     "typescript-eslint": "^7.18.0",
@@ -41,6 +42,10 @@
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist && mkdir dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "adb:up": "docker run -d --name arangodb -p 8529:8529 -e ARANGO_ROOT_PASSWORD=pw arangodb",
+    "adb:down": "docker stop arangodb && docker rm arangodb",
+    "adb:terminal": "docker exec -it arangodb sh",
+    "adb:shell": "docker exec -it arangodb sh -c 'arangosh --server.password pw'"
   }
 }

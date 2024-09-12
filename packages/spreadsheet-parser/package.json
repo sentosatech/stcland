@@ -1,5 +1,5 @@
 {
-  "name": "@stcland/spreadsheet-loaders",
+  "name": "@stcland/spreadsheet-parser",
   "version": "0.0.1",
   "description": "",
   "type": "module",
