@@ -36,11 +36,12 @@ export type DbExists = {
   (hostConfig: ArangoHostConfig, dbName: string): Promise<boolean>;
   (sysDb: Database, dbName: string): Promise<boolean>;
   }
+
 export type DbDoesNotExist = DbExists
 
 export type DataBaseUser = CreateDatabaseUser
 
-export enum IfDbExists {
+export enum IfDbExistsOnCreate {
   ThrowError = 'throw-error',
   Overwrite = 'overwrite',
   ReturnExisting = 'return-existing',
@@ -50,12 +51,33 @@ export enum IfDbExists {
 export type CreateDb = {
   ( hostConfig: ArangoHostConfig,
     dbName: string,
-    dbUsers: CreateDatabaseUser[],
-    ifDbExists: IfDbExists): Promise<Database>;
+    dbUsers: DataBaseUser[],
+    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
   ( sysDb: Database,
     dbName: string,
-    dbUsers: CreateDatabaseUser[],
-    ifDbExists: IfDbExists): Promise<Database>;
+    dbUsers: DataBaseUser[],
+    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
+}
+
+// export type GetDb
+
+export enum IfDbDoesNotExistOnGet {
+  ThrowError = 'throw-error',
+  Create = 'create',
+}
+
+export type GetDb = {
+  (
+    hostConfig: ArangoHostConfig,
+    dbName: string,
+    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
+    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+  ) : Promise<Database>;
+  ( sysDb: Database,
+    dbName: string,
+    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
+    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+  ) : Promise<Database>;
 }
 
 // if database does not exist, returns false
@@ -84,7 +106,7 @@ export type CollectionDoesNotExist = CollectionExists
 
 export { CollectionType }
 
-export enum IfCollectionExists {
+export enum IfCollectionExistsOnCreate {
   ThrowError = 'throw-error',
   Overwrite = 'overwrite',
   ReturnExisting = 'return-existing',
@@ -92,7 +114,7 @@ export enum IfCollectionExists {
 
 export interface CreateCollectionOpts {
   type?: CollectionType // defaults to EDGE_COLLECTION
-  ifExists?: IfCollectionExists // defaults to ThrowError
+  ifExists?: IfCollectionExistsOnCreate // defaults to ThrowError
 }
 
 // Create a new arango database, throws error if connection to db server fails
@@ -105,14 +127,34 @@ export type CreateCollection = (
 export type CreateDocumentCollection = (
   db: Database,
   collectionName: string,
-  ifExists?: IfCollectionExists
+  ifExists?: IfCollectionExistsOnCreate
 ) => Promise<DocumentCollection>;
 
 export type CreateEdgeCollection = (
   db: Database,
   collectionName: string,
-  ifExists?: IfCollectionExists
+  ifExists?: IfCollectionExistsOnCreate
 ) => Promise<EdgeCollection>;
+
+export enum IfCollectionDoesNotExistOnGet {
+  ThrowError = 'throw-error',
+  Create = 'create',
+}
+
+export type GetCollection = {
+  ( db: Database,
+    collectionName: string,
+    ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet // default is ThrowError
+  ) : Promise<DocumentCollection | EdgeCollection>;
+  ( db: Database,
+    collectionName: string,
+    ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet // default is ThrowError
+  ) : Promise<DocumentCollection | EdgeCollection>;
+}
+
+// returns true if collection was dropped, false if collection does not exist
+// reports warning if collection does not exist
+export type DropCollection =( db: Database, collectionName: string ) => Promise<boolean>
 
 export type CollectionDocCount = (
   collection: DocumentCollection | EdgeCollection

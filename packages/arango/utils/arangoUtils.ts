@@ -9,19 +9,20 @@ import type {
 import { asyncComplement } from '@stcland/utils'
 
 import {
-  IfDbExists, IfCollectionExists, CollectionType
+  CollectionType,
+  IfDbExistsOnCreate, IfDbDoesNotExistOnGet,
+  IfCollectionExistsOnCreate,   IfCollectionDoesNotExistOnGet,
 } from './ArangoUtilsTypes'
 
 import type {
   ArangoHostConfig, DataBaseUser, GetSysDb,
   CanConnectToDbServer, CanNotConnectToDbServer,
   DbIsConnected, DbIsNotConnected,
-  CreateDb, DropDb, DropAllDatabases,
+  CreateDb, DropDb, GetDb, DropAllDatabases,
   DbExists, DbDoesNotExist, NonSystemDbsExists,
-  CreateCollectionOpts, CreateCollection, CreateDocumentCollection,
-  CollectionExists, CollectionDoesNotExist,
-  CollectionDocCount,
-  CreateEdgeCollection
+  CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
+  CollectionExists, CollectionDoesNotExist, CollectionDocCount,
+  DropCollection,
 } from './ArangoUtilsTypes'
 
 //*****************************************************************************
@@ -81,7 +82,7 @@ export const createDb: CreateDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,
   dbName: string,
   dbUsers: DataBaseUser[],
-  ifDbExists: IfDbExists = IfDbExists.ThrowError
+  ifDbExists: IfDbExistsOnCreate = IfDbExistsOnCreate.ThrowError
 ) => {
   const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
   if (isNotSysDb(sysDb))
@@ -89,13 +90,35 @@ export const createDb: CreateDb = async (
 
   let requestedDbExists = await dbExists(sysDb, dbName)
 
-  if (requestedDbExists && ifDbExists === IfDbExists.ThrowError)
+  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.ThrowError)
     throw new Error(`Attempting to create arango database '${dbName}', but it already exists`)
 
-  if (requestedDbExists && ifDbExists === IfDbExists.Overwrite) {
+  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.Overwrite) {
     await sysDb.dropDatabase(dbName)
     requestedDbExists = false
   }
+
+  if (!requestedDbExists)
+    await sysDb.createDatabase(dbName, { users: dbUsers })
+
+  return sysDb.database(dbName)
+}
+
+export const getDb: GetDb = async (
+  sysDbOrArangoHostConfig: ArangoHostConfig | Database,
+  dbName: string,
+  ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.ThrowError,
+  dbUsers?: DataBaseUser[],
+) => {
+  const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
+
+  if (isNotSysDb(sysDb))
+    throw new Error('getArangoDb(): non system DB provided: ' + sysDb.name)
+
+  const requestedDbExists = await dbExists(sysDb, dbName)
+
+  if (!requestedDbExists && ifDbDoesNotExist === IfDbDoesNotExistOnGet.ThrowError)
+    throw new Error(`Attempting to fetch database '${dbName}', but it does not exit`)
 
   if (!requestedDbExists)
     await sysDb.createDatabase(dbName, { users: dbUsers })
@@ -183,23 +206,52 @@ export const createCollection: CreateCollection = async (
   opts: CreateCollectionOpts
 ) => {
   const {
-    ifExists = IfCollectionExists.ThrowError,
+    ifExists = IfCollectionExistsOnCreate.ThrowError,
     type = CollectionType.EDGE_COLLECTION
   } = opts || {}
 
   const collection = db.collection(collectionName)
   let collectionExists = await collection.exists()
 
-  if (collectionExists && ifExists === IfCollectionExists.ThrowError)
+  if (collectionExists && ifExists === IfCollectionExistsOnCreate.ThrowError)
     throw new Error(`DB ${db.name}: Attempting to create collection '${collectionName}', but it already exists`)
 
-  if (collectionExists && ifExists === IfCollectionExists.Overwrite) {
+  if (collectionExists && ifExists === IfCollectionExistsOnCreate.Overwrite) {
     await collection.drop()
     collectionExists = false
   }
 
   if (!collectionExists) await collection.create({ type })
   return collection
+}
+
+export const getCollection = async (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError
+) => {
+  const collection = db.collection(collectionName)
+
+  const collectionExists = await collection.exists()
+
+  if (!collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.ThrowError)
+    throw new Error(`DB ${db.name}: Attempting to fetch collection '${collectionName}', but it does not exist`)
+
+  if (!collectionExists) await collection.create()
+  return collection
+}
+
+export const dropCollection: DropCollection = async (
+  db: Database,
+  collectionName: string
+) => {
+  const collection = db.collection(collectionName)
+  if (await collection.exists()) {
+    await collection.drop()
+    return true
+  }
+  console.warn(`DB ${db.name}: Attempting to drop collection '${collectionName}', but it does not exist`)
+  return false
 }
 
 export const collectionDocCount: CollectionDocCount = async (
@@ -212,7 +264,7 @@ export const collectionDocCount: CollectionDocCount = async (
 export const createDocCollection: CreateDocumentCollection = async (
   db: Database,
   collectionName: string,
-  ifExists: IfCollectionExists = IfCollectionExists.ThrowError
+  ifExists: IfCollectionExistsOnCreate = IfCollectionExistsOnCreate.ThrowError
 ) => {
   const opts = { ifExists, type: CollectionType.DOCUMENT_COLLECTION }
   return createCollection(db, collectionName, opts) as Promise<DocumentCollection>
@@ -221,7 +273,7 @@ export const createDocCollection: CreateDocumentCollection = async (
 export const createEdgeCollection: CreateEdgeCollection = async (
   db: Database,
   collectionName: string,
-  ifExists: IfCollectionExists = IfCollectionExists.ThrowError
+  ifExists: IfCollectionExistsOnCreate = IfCollectionExistsOnCreate.ThrowError
 ) => {
   const opts = { ifExists, type: CollectionType.EDGE_COLLECTION }
   return createCollection(db, collectionName, opts) as Promise<EdgeCollection>

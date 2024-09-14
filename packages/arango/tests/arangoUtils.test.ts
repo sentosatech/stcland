@@ -1,20 +1,24 @@
 import {
-  describe, test, beforeEach, afterEach, beforeAll, afterAll, expect
+  describe, test, beforeEach, afterEach, beforeAll, expect
 } from 'vitest'
 
 import type { ArangoHostConfig, DataBaseUser } from '../utils'
 import {
-  IfDbExists, IfCollectionExists,
-  getSysDb, createDb, dropAllDatabases,
-  dbExists, dbDoesNotExist,
+  getSysDb, nonSystemDbsExists,
   canConnectToDbServer, canNotConnectToDbServer,
+  dbExists, dbDoesNotExist,
   dbIsConnected, dbIsNotConnected,
-  collectionExists, collectionDoesNotExist, createCollection,
-  nonSystemDbsExists,
-  CollectionType,
+  IfDbExistsOnCreate, createDb,
+  IfDbDoesNotExistOnGet, getDb,
+  dropDb,
+  dropAllDatabases,
+  collectionExists, collectionDoesNotExist,
+  IfCollectionExistsOnCreate, CollectionType,
+  createCollection, createDocCollection, createEdgeCollection,
+  IfCollectionDoesNotExistOnGet,
   collectionDocCount,
-  createDocCollection,
-  createEdgeCollection,
+  getCollection,
+  dropCollection
 } from '../utils'
 
 import { Database } from 'arangojs'
@@ -42,16 +46,12 @@ beforeAll(async () => {
   }
 })
 
-afterAll(async () => {
-  // await dropAllDatabases(sysDb)
-})
-
 beforeEach(async () => {
   await dropAllDatabases(sysDb)
 })
 
 afterEach(async () => {
-  // await dropAllDatabases(sysDb)
+  await dropAllDatabases(sysDb)
 })
 
 describe('Test @stcland/arango/utils', async () => {
@@ -60,7 +60,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // First creation
 
-    let ifDbExists = IfDbExists.ThrowError
+    let ifDbExists = IfDbExistsOnCreate.ThrowError
 
     let db1 = await createDb(hostConfig, 'testDb', dbUsers, ifDbExists)
     let db1Info = await db1.get()
@@ -81,7 +81,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // 2nd creation w/o delete should throw error
 
-    ifDbExists = IfDbExists.ThrowError
+    ifDbExists = IfDbExistsOnCreate.ThrowError
 
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
     expect(createDb(hostConfig, 'testDb', dbUsers, ifDbExists)).rejects.toThrow(Error)
@@ -90,7 +90,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // OK now lets just ask to have the existing db returned
 
-    ifDbExists = IfDbExists.ReturnExisting
+    ifDbExists = IfDbExistsOnCreate.ReturnExisting
 
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
     let dbReturned = await createDb(hostConfig, 'testDb', dbUsers, ifDbExists)
@@ -115,7 +115,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // OK, now lets ask to overwrite the existing db
 
-    ifDbExists = IfDbExists.Overwrite
+    ifDbExists = IfDbExistsOnCreate.Overwrite
 
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
     const db2 = await createDb(hostConfig, 'testDb', dbUsers, ifDbExists)
@@ -137,15 +137,30 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await dbIsNotConnected(db3)).toBe(false)
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
     expect(await dbDoesNotExist(hostConfig, 'testDb')).toBe(false)
-  })
 
+    // Lets test database fetch
+
+    const db4 = await getDb(hostConfig, 'testDb')
+    const db4Info = await db4.get()
+    expect(db4Info.name).toBe('testDb')
+    expect(db4Info.id).toBe(db3Info.id)
+
+    await dropDb(hostConfig, 'testDb')
+    expect(await dbExists(hostConfig, 'testDb')).toBe(false)
+    expect(getDb(hostConfig, 'testDb')).rejects.toThrow(Error)
+
+    const db5 = await getDb(hostConfig, 'testDb', IfDbDoesNotExistOnGet.Create, dbUsers)
+    const db5Info = await db5.get()
+    expect(db5Info.name).toBe('testDb')
+    expect(db5Info.id).not.toBe(db4Info.id)
+  })
 
   test('Document Collection creation', async () => {
 
     const name = 'testDocCollection'
     const type = CollectionType.DOCUMENT_COLLECTION
 
-    const db = await createDb(hostConfig, 'testDb', dbUsers, IfDbExists.ThrowError)
+    const db = await createDb(hostConfig, 'testDb', dbUsers, IfDbExistsOnCreate.ThrowError)
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
 
     expect(await collectionExists(db, name)).toBe(false)
@@ -153,7 +168,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // First creation
 
-    let ifExists = IfCollectionExists.ThrowError
+    let ifExists = IfCollectionExistsOnCreate.ThrowError
     const collection1 = await createDocCollection(db, name, ifExists)
     expect(await collectionExists(db, name)).toBe(true)
     expect(await collectionDoesNotExist(db, name)).toBe(false)
@@ -164,20 +179,36 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Error if collection aready exists
 
-    ifExists = IfCollectionExists.ThrowError
+    ifExists = IfCollectionExistsOnCreate.ThrowError
     expect(createCollection(db, name, { type, ifExists })).rejects.toThrow(Error)
     expect(createDocCollection(db, name, ifExists)).rejects.toThrow(Error)
 
-    ifExists = IfCollectionExists.Overwrite
+    ifExists = IfCollectionExistsOnCreate.Overwrite
     const collection2 = await createDocCollection(db, name, ifExists)
     expect(await collectionExists(db, name)).toBe(true)
     expect(await collectionDoesNotExist(db, name)).toBe(false)
     expect(await collectionDocCount(collection2)).toBe(0)
+
+    await collection1.save({ name: 'doc2' })
+    expect(await collectionDocCount(collection2)).toBe(1)
+
+    // Fetch collections
+
+    const collection3 = await getCollection(db, name)
+    expect(await collectionDocCount(collection3)).toBe(1)
+
+    expect(await dropCollection(db, name)).toBe(true)
+    expect(await collectionDoesNotExist(db, name)).toBe(true)
+    expect(getCollection(db, name)).rejects.toThrow(Error)
+
+    const collection4 = await getCollection(db, name, IfCollectionDoesNotExistOnGet.Create)
+    expect(await collectionExists(db, name)).toBe(true)
+    expect(await collectionDocCount(collection4)).toBe(0)
   })
 
   test('Edge Collection creation', async () => {
 
-    const db = await createDb(hostConfig, 'testDb', dbUsers, IfDbExists.ThrowError)
+    const db = await createDb(hostConfig, 'testDb', dbUsers, IfDbExistsOnCreate.ThrowError)
     expect(await dbExists(hostConfig, 'testDb')).toBe(true)
 
     // Create source and target collections and docs for edge creation
@@ -203,7 +234,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // First creation
 
-    let ifExists = IfCollectionExists.ThrowError
+    let ifExists = IfCollectionExistsOnCreate.ThrowError
     const edgeCollection1 = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
@@ -217,13 +248,13 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Error if collection aready exists
 
-    ifExists = IfCollectionExists.ThrowError
+    ifExists = IfCollectionExistsOnCreate.ThrowError
     expect(createEdgeCollection(db, edgeCollectionName, ifExists)).rejects.toThrow(Error)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
 
     // Return existing collection
 
-    ifExists = IfCollectionExists.ReturnExisting
+    ifExists = IfCollectionExistsOnCreate.ReturnExisting
     const returnedEdgeCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(edgeCollection1).toBe(returnedEdgeCollection)
@@ -237,7 +268,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // overwrite existing collection
 
-    ifExists = IfCollectionExists.Overwrite
+    ifExists = IfCollectionExistsOnCreate.Overwrite
     const overwrittenCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
