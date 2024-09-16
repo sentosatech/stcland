@@ -8,11 +8,11 @@ import { Database } from 'arangojs'
 
 import {
   type ArangoHostConfig, // type DataBaseUser,
-  getSysDb, nonSystemDbsExists, canConnectToDbServer, dropAllDatabases,
+  getSysDb, dbExists, dropDb, canConnectToDbServer
 } from '../utils'
 
 // import {
-//   IfTargertDbDoesNotExist, loadSpreadsheetData
+//   IfTargertDbDoesNotExist, // loadSpreadsheetData
 // } from '../data-loader'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -29,7 +29,7 @@ const hostConfig: ArangoHostConfig = {
 //   { username: 'root', passwd: 'pw' },
 // ]
 
-// const dbName = 'testDb'
+const dbName = 'arangoDataLoaderTestDb'
 
 let sysDb: Database
 
@@ -37,21 +37,20 @@ beforeAll(async () => {
 
   expect(await canConnectToDbServer(hostConfig)).toBe(true)
 
-  sysDb = await getSysDb(hostConfig)
-  if (await nonSystemDbsExists(sysDb)) {
-    console.warn('WARNING: test start: non system databases exist, dropping them')
-    await dropAllDatabases(sysDb)
+  sysDb = await getSysDb(hostConfig, { checkConnection: true })
+  if (await dbExists(sysDb, dbName)) {
+    console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
+    await dropDb(sysDb, dbName)
   }
 
   assert(
     pathExistsSync(spreadsheetPath),
     `Arango spreadsheet loader: Spreadsheet file not found: ${spreadsheetPath}`
   )
-
 })
 
 afterAll(async () => {
-  await dropAllDatabases(sysDb)
+  await dropDb(sysDb, dbName)
 })
 
 describe('Test @stcland/arango/spreadsheet-loader', async () => {
