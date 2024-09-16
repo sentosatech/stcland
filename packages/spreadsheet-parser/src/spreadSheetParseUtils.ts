@@ -7,7 +7,7 @@ import { v4 as uuidv4, validate as isValidUuid4 } from 'uuid'
 
 import { isStringOrNumber, isNonEmptyStr, strIsValidObjectKey, toJson } from '@stcland/utils'
 
-import { validDataTypes } from './WorksheetParserTypes'
+import { validDataTypes } from './SpreadsheetParserTypes'
 import type {
   GetWorkSheetList,
   GetRowValues,
@@ -16,7 +16,7 @@ import type {
   WorksheetParseOptions,
   DataCellMeta,
   CellMeta
-} from './WorksheetParserTypes'
+} from './SpreadsheetParserTypes'
 
 //*****************************************************************************
 // Cell value parsers

@@ -1,4 +1,4 @@
-import { DataType } from '../src/WorksheetParserTypes'
+import { DataType } from '../src/SpreadsheetParserTypes'
 
 export interface ExpectedParsedWorksheetResult {
   data: any[]
@@ -7,10 +7,10 @@ export interface ExpectedParsedWorksheetResult {
   metaTypes?: Record<string, DataType>
 }
 
-export type ExpectedTestWorkbookResults =
+export type ExpectedParsedSpreadsheetResults =
   Record<string, ExpectedParsedWorksheetResult>
 
-export const expectedTestWorkbookResults: ExpectedTestWorkbookResults = {
+export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   BasicParsing: {
     metaTypes: {
       name: 'string',

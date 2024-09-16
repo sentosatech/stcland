@@ -1,9 +1,9 @@
 import { CellValue, Row, Worksheet } from 'exceljs'
 
-import {
+import type {
   ParseWorksheet, DataType, RowMeta, DataCellMeta, WorksheetParseOptions,
   ParseFrontMatter
-} from './WorksheetParserTypes'
+} from './SpreadsheetParserTypes'
 
 import {
   getRowValues,
@@ -25,24 +25,32 @@ import {
   rowIsNotFrontMatterDelimiter,
   getPropNameFromCallValue,
   getPropTypeFromCallValue,
-} from './spreadSheetParseUtils'
+} from './spreadsheetParseUtils'
 import { toJson } from '@stcland/utils'
 
+export const parseWorksheet: ParseWorksheet = (
+  ws, parseOpts = {}, startingRowNum = 1
+) => {
 
-export const parseWorksheet: ParseWorksheet = (ws, startingRowNum, parseOpts) => {
+  const { reportProgress = true } = parseOpts || {}
 
-  const { reportProgress } = parseOpts || {}
-
-  if (reportProgress) console.log(`... Parsing worksheet '${ws.name}'`)
+  const sheetName = ws.name
+  if (reportProgress) console.log(`... Parsing worksheet '${sheetName}'`)
 
   const { meta, metaTypes, dataStartRowNum } = parseFrontMatter(ws, startingRowNum, parseOpts)
 
   const propNames = getPropNamesFromRow(ws.getRow(dataStartRowNum))
   const propTypes = getPropTypesFromRow(ws.getRow(dataStartRowNum+1))
 
+
   if (propNames.length !== propTypes.length) {
-    parserWarning('Number of property names does not match number of property types', parseOpts)
-    return { data: [], dataTypes: {} }
+    parserWarning(
+      `WS: ${sheetName}: Number of property names does not match number of property types (skipping)\n` +
+      `  property names: ${toJson(propNames)}\n` +
+      `  property types: ${toJson(propTypes)}`,
+      parseOpts
+    )
+    return { sheetName, rowsParsed: 0, data: [], dataTypes: {} }
   }
 
   const data: any[] = []
@@ -63,7 +71,8 @@ export const parseWorksheet: ParseWorksheet = (ws, startingRowNum, parseOpts) =>
     return { ...acc, [propName]: propTypes[i] }
   }, {})
 
-  return { data, dataTypes, meta, metaTypes }
+  const rowsParsed = data.length
+  return { sheetName, rowsParsed, data, dataTypes, meta, metaTypes }
 }
 
 const parseDataRow = (

@@ -1,0 +1,53 @@
+{
+  "name": "@stcland/arango",
+  "version": "0.0.1",
+  "description": "Arango DB utilities",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "STC"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/ramda": "^0.30.1",
+    "eslint": "^8.57.0",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.8.0",
+    "@stcland/spreadsheet-parser": "workspace:^",
+    "@stcland/utils": "workspace:^",
+    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/parser": "^8.2.0",
+    "arangojs": "^9.0.0",
+    "path-exists": "^5.0.0",
+    "ramda": "^0.29.1",
+    "ramda-adjunct": "^4.1.1",
+    "typescript-eslint": "^7.18.0",
+    "vitest": "^2.0.5"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts",
+    "build": "pnpm run clean && tsup",
+    "clean": "rimraf ./dist",
+    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
+    "test": "vitest --run",
+    "arango:up": "docker run -d --name arangodb -p 8529:8529 -e ARANGO_ROOT_PASSWORD=pw arangodb",
+    "arango:down": "docker stop arangodb && docker rm arangodb",
+    "arango:terminal": "docker exec -it arangodb sh",
+    "arango:shell": "docker exec -it arangodb sh -c 'arangosh --server.password pw'"
+  }
+}
