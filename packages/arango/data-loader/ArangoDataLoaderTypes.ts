@@ -1,6 +1,9 @@
 import { ParsedSpreadheetCallBack, WorksheetParseOptions } from '@stcland/spreadsheet-parser'
 import {
-  ArangoHostConfig, IfDbDoesNotExistOnGet, IfCollectionDoesNotExistOnGet, DataBaseUser as ArangoDataBaseUser
+  ArangoHostConfig,
+  IfDbDoesNotExistOnGet,
+  IfCollectionDoesNotExistOnGet,
+  DataBaseUser as ArangoDataBaseUser
 } from '../utils/ArangoUtilsTypes'
 
 export enum IfTargertDbDoesNotExist {

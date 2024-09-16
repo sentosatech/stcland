@@ -10,7 +10,7 @@ import {
 
 import { forEachSheet } from '@stcland/spreadsheet-parser'
 
-export const loadExcelData: LoadSpreadsheetData = async (
+export const loadSpreadsheetData: LoadSpreadsheetData = async (
   excelFilePath, arangoHostConfig, dbName, opts
 ) => {
 
