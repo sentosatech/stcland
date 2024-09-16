@@ -11,6 +11,7 @@
     "lint-staged": "^15.2.10"
   },
   "scripts": {
+    "sanity": "pnpm clean:all && pnpm install && pnpm build:all  && pnpm lint:all && pnpm test:all",
     "lint:all": "pnpm run -r --filter=./packages/* lint",
     "build:all": "pnpm run -r --filter=./packages/* build",
     "clean:all": "pnpm run -r clean:all",
