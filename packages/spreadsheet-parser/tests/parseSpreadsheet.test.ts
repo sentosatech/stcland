@@ -58,7 +58,7 @@ describe('Test Spreadsheet Parser', () => {
 
       const {
         sheetName,
-        rowsParsed,
+        numDataRowsParsed,
         data: parsedData,
         dataTypes: parsedDataTypes,
         meta: parsedMeta,
@@ -80,7 +80,7 @@ describe('Test Spreadsheet Parser', () => {
       }
 
       expect(clientData.message).toEqual(testMeta.message)
-      expect(rowsParsed).toEqual(expectedData.length)
+      expect(numDataRowsParsed).toEqual(expectedData.length)
       expect(sheetName).toEqual(sheetName)
 
       assertParsedWorkSheetMetaTypes(

@@ -59,8 +59,6 @@ export type CreateDb = {
     ifDbExists: IfDbExistsOnCreate): Promise<Database>;
 }
 
-// export type GetDb
-
 export const enum IfDbDoesNotExistOnGet {
   ThrowError = 'throw-error',
   Create = 'create',

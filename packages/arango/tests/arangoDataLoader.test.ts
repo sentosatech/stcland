@@ -7,17 +7,17 @@ import { pathExistsSync } from 'path-exists'
 import { Database } from 'arangojs'
 
 import {
-  type ArangoHostConfig, // type DataBaseUser,
+  type ArangoHostConfig, type DataBaseUser,
   getSysDb, dbExists, dropDb, canConnectToDbServer
 } from '../utils'
 
-// import {
-//   IfTargetDbExistsDelMe, loadSpreadsheetData
-// } from '../data-loader'
+import {
+  IfTargetDbDoesNotExist, loadSpreadsheetData
+} from '../data-loader'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const spreadsheetPath = path.join(__dirname, 'test-data-loading.xlsx')
+const spreadsheetPath = path.join(__dirname, 'test-arango-data-loading.xlsx')
 
 const hostConfig: ArangoHostConfig = {
   url: 'http://localhost:8529',
@@ -25,9 +25,9 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-// const dbUsers: DataBaseUser[] = [
-//   { username: 'root', passwd: 'pw' },
-// ]
+const dbUsers: DataBaseUser[] = [
+  { username: 'root', passwd: 'pw' },
+]
 
 const dbName = 'arangoDataLoaderTestDb'
 
@@ -48,20 +48,22 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  // TODO tie this to a flag
   // await dropDb(sysDb, dbName)
 })
 
 describe('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
-    // const ifTargetDbExists = IfTargetDbExistsDelMe.ThrowError
-    // const opts = {
-    //   dbUsers, ifTargetDbExists, reportWarnings: true
-    // }
+    const ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create
+    const opts = {
+      dbUsers, ifTargetDbDoesNotExist, reportWarnings: true
+    }
 
-    // await loadSpreadsheetData(
-    //   spreadsheetPath, hostConfig, dbName, opts
-    // )
+    const results = await loadSpreadsheetData(
+      spreadsheetPath, hostConfig, dbName, opts
+    )
+
+    console.log('results: ', results)
+
   })
 })

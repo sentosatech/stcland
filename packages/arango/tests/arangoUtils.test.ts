@@ -233,8 +233,8 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(collection4)).toBe(CollectionType.DOCUMENT_COLLECTION)
     expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).resolves.not.toThrow()
     expect(await collectionDocCount(collection4)).toBe(0)
-    // expect(await getCollectionType(collection3)).toBe(CollectionType.DOCUMENT_COLLECTION)
-    // expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(collection3)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
     // SHould throw if we attempt to get colleciton of wrong type
     expect(getEdgeCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
@@ -267,8 +267,8 @@ describe('Test @stcland/arango/utils', async () => {
 
     const srcDocCollection = await createDocCollection(db, srcDocCollectionName)
     expect(await collectionExists(db, srcDocCollectionName)).toBe(true)
-    // expect(await getCollectionType(srcDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
-    // expect(await getCollectionType(db, srcDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(srcDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, srcDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
     await srcDocCollection.save({ _key: 'sourceDoc1', name: 'sourceDoc1' })
     expect(await collectionDocCount(srcDocCollection)).toBe(1)
@@ -276,8 +276,8 @@ describe('Test @stcland/arango/utils', async () => {
 
     const destDocCollection = await createDocCollection(db, destDocCollectionName)
     expect(await collectionExists(db, destDocCollectionName)).toBe(true)
-    // expect(await getCollectionType(destDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
-    // expect(await getCollectionType(db, destDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(destDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, destDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
     await destDocCollection.save({ _key: 'destDoc1', name: 'destDoc1' })
     expect(await collectionDocCount(destDocCollection)).toBe(1)

@@ -50,7 +50,7 @@ export const parseWorksheet: ParseWorksheet = (
       `  property types: ${toJson(propTypes)}`,
       parseOpts
     )
-    return { sheetName, rowsParsed: 0, data: [], dataTypes: {} }
+    return { sheetName, numDataRowsParsed: 0, data: [], dataTypes: {} }
   }
 
   const data: any[] = []
@@ -71,8 +71,8 @@ export const parseWorksheet: ParseWorksheet = (
     return { ...acc, [propName]: propTypes[i] }
   }, {})
 
-  const rowsParsed = data.length
-  return { sheetName, rowsParsed, data, dataTypes, meta, metaTypes }
+  const numDataRowsParsed = data.length
+  return { sheetName, numDataRowsParsed, data, dataTypes, meta, metaTypes }
 }
 
 const parseDataRow = (
@@ -162,6 +162,8 @@ export const parseFrontMatter: ParseFrontMatter = (
         `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
         `  ${toJson(rowValues)}`
       )
+      curRowNumber++
+      curRow = ws.getRow(curRowNumber)
       continue
     }
 

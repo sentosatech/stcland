@@ -1,24 +1,29 @@
 
 import { pathExists } from 'path-exists'
 
-import { canConnectToDbServer, createDb } from '../utils/arangoUtils'
+import { canConnectToDbServer, getDb } from '../utils/arangoUtils'
 
 import {
-  type LoadWorksheetData, type LoadSpreadsheetData,
-  // IfTargetDbDoesNotExist,
-   // IfTargetCollectionDoesNotExist,
+  type LoadWorksheetData, type LoadSpreadsheetData, type ArangoDataLoaderMeta,
+  IfTargetDbDoesNotExist, IfTargetCollectionDoesNotExist, ValidWorksheetTypes,
 } from './ArangoDataLoaderTypes'
 
 import { forEachSheet } from '@stcland/spreadsheet-parser'
-import { IfDbExistsOnCreate } from '../utils'
+import {
+  // CollectionType,
+  // IfCollectionDoesNotExistOnGet,
+  IfDbDoesNotExistOnGet
+} from '../utils'
+import { throwIf } from '@stcland/errors'
+import { toJson } from '@stcland/utils'
 
 export const loadSpreadsheetData: LoadSpreadsheetData = async (
   excelFilePath, arangoHostConfig, dbName, opts
 ) => {
 
   const {
-    // ifTargetDbExistsDelMe = IfTargetDbExistsDelMe.Append,
-    // ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
+    ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
+    ifTargetCollectionDoesNotEist = IfTargetCollectionDoesNotExist.Create,
     dbUsers = [],
   } = opts
 
@@ -33,12 +38,13 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
 
   // @ts-expect-error cause TS is a pain in the ass
-  const ifDbExistsOnCreate = ifTargetDbExistsDelMe as IfDbExistsOnCreate
-  const db = await createDb(
-    arangoHostConfig, dbName, dbUsers, ifDbExistsOnCreate
-  )
+  const ifDbExistsOnGet = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
+  const db = await getDb(arangoHostConfig, dbName, ifDbExistsOnGet, dbUsers)
 
-  const clientData: any = { db }
+  const clientData: any = {
+    db,
+    ifTargetCollectionDoesNotEist
+  }
 
   // OK, loop through the worksheets and load the data appropriratly
   await forEachSheet(excelFilePath, loadWorksheetData, clientData, opts)
@@ -50,12 +56,30 @@ export const loadWorksheetData: LoadWorksheetData = async (
   parsedWorksheet, clientData
 ) => {
 
-  // const {
-  //   rowsParsed, data, meta, sheetName: collectionName
-  // } = parsedWorksheet
+  const {
+    meta = {}, sheetName,
+  } = parsedWorksheet
 
-  // const { db } = clientData
+  const { type } = meta as ArangoDataLoaderMeta
+  console.log('meta: ', meta)
+  console.log('type: ', type)
 
-  // get the collection
+
+  throwIf(!type,
+    `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+    'does note have property "type" in its metadata section (or is missing metadata section)'
+  )
+
+  throwIf(!ValidWorksheetTypes.includes(type),
+    `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+    `  Invaaid worksheet type '${type}'\n` +
+    `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
+  )
+
+
+
+  // const { db, ifTargetCollectionDoesNotEist } = clientData
+
+
 
 }

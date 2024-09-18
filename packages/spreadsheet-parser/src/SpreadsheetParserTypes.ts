@@ -41,7 +41,7 @@ export interface WorksheetParseOptions {
 
 export interface ParsedWorksheetResult {
   sheetName: string,
-  rowsParsed: number,
+  numDataRowsParsed: number,
   data: any[]
   dataTypes: Record<string, DataType>
   meta?: Record<string, any>
