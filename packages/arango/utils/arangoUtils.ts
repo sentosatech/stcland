@@ -7,6 +7,7 @@ import type {
 } from 'arangojs/collection'
 
 import { asyncComplement } from '@stcland/utils'
+import { throwIf } from '@stcland/errors'
 
 import {
   CollectionType,
@@ -22,7 +23,7 @@ import type {
   DbExists, DbDoesNotExist, NonSystemDbsExists,
   CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
-  DropCollection,
+  GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType
 } from './ArangoUtilsTypes'
 
 //*****************************************************************************
@@ -225,20 +226,70 @@ export const createCollection: CreateCollection = async (
   return collection
 }
 
-export const getCollection = async (
+const collectionTypeToString = (type: CollectionType): string =>
+  type === CollectionType.DOCUMENT_COLLECTION ? 'document' : 'edge'
+
+export const getCollection: GetCollection = async (
   db: Database,
   collectionName: string,
-  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError
+  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+  collectionType: CollectionType
 ) => {
-  const collection = db.collection(collectionName)
 
+  const collection = db.collection(collectionName)
   const collectionExists = await collection.exists()
 
-  if (!collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.ThrowError)
-    throw new Error(`DB ${db.name}: Attempting to fetch collection '${collectionName}', but it does not exist`)
+  const existingCollectionType =
+    collectionExists ? (await collection.properties()).type : null
 
-  if (!collectionExists) await collection.create()
+  throwIf(
+    !collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.ThrowError,
+    `getCollection() DB ${db.name}: Attempting to fetch collection '${collectionName}', but it does not exist`
+  )
+
+  throwIf(
+    !collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.Create && !collectionType,
+    `getCollection() DB ${db.name}: Need to create '${collectionName}', but collection type not provided`
+  )
+
+  throwIf(
+    collectionExists && collectionType && collectionType !== existingCollectionType,
+    'getCollection()\n' +
+    `  DB ${db.name}: fetching collection '${collectionName}' \n` +
+    `  Collection exists, but not of requested type: ${collectionTypeToString(collectionType)} collection`
+  )
+
+  if (!collectionExists) await collection.create({ type: collectionType })
+
   return collection
+}
+
+export const getDocCollection: GetDocCollection = async (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+) => getCollection(
+  db, collectionName, ifCollectionDoesNotExist, CollectionType.DOCUMENT_COLLECTION
+)
+
+export const getEdgeCollection: GetEdgeCollection = async (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+) => getCollection(
+  db, collectionName, ifCollectionDoesNotExist, CollectionType.EDGE_COLLECTION
+)
+
+export const getCollectionType: GetCollectionType = async (
+  collectionOrDb: DocumentCollection | EdgeCollection | Database,
+  collectionNameOrUndefined?: string
+) => {
+  // if only 1 argument, then first argument is a collection
+  const collection = collectionNameOrUndefined
+    ? (collectionOrDb as Database).collection(collectionNameOrUndefined)
+    : collectionOrDb as DocumentCollection | EdgeCollection
+  const type = (await collection.properties()).type
+  return type
 }
 
 export const dropCollection: DropCollection = async (

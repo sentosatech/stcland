@@ -5,18 +5,18 @@ import { canConnectToDbServer, createDb } from '../utils/arangoUtils'
 
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
-  IfTargertDbDoesNotExist, // IfTargetCollectionDoesNotExist,
+  IfTargetDbExists, // IfTargetCollectionDoesNotExist,
 } from './ArangoDataLoaderTypes'
 
 import { forEachSheet } from '@stcland/spreadsheet-parser'
+import { IfDbExistsOnCreate } from '../utils'
 
 export const loadSpreadsheetData: LoadSpreadsheetData = async (
   excelFilePath, arangoHostConfig, dbName, opts
 ) => {
 
   const {
-    ifTargetDbDoesNotExist = IfTargertDbDoesNotExist.Create,
-    // ifTargetCollectionExists = IfTargetCollectionDoesNotExist.Create,
+    ifTargetDbExists = IfTargetDbExists.Append,
     dbUsers = [],
   } = opts
 
@@ -25,14 +25,15 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   if (!spreadsheetExists)
     throw new Error(`Arango spreadsheet loader: Spreadsheet file not found: ${excelFilePath}`)
 
-  // lets make surfe that we can connect to the arango host
+  // lets make sure that we can connect to the arango host
   const canConnect = await canConnectToDbServer(arangoHostConfig)
   if (!canConnect)
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
 
-  // get the requeseted db
+  // @ts-expect-error cause TS is a pain in the ass
+  const ifDbExistsOnCreate = ifTargetDbExists as IfDbExistsOnCreate
   const db = await createDb(
-    arangoHostConfig, dbName, dbUsers, IfTargertDbDoesNotExist[ifTargetDbDoesNotExist]
+    arangoHostConfig, dbName, dbUsers, ifDbExistsOnCreate
   )
 
   const clientData: any = { db }
@@ -46,6 +47,13 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 export const loadWorksheetData: LoadWorksheetData = async (
   parsedWorksheet, clientData
 ) => {
-  console.log('~~> loadWorksheetData()')
+
+  // const {
+  //   rowsParsed, data, meta, sheetName: collectionName
+  // } = parsedWorksheet
+
+  // const { db } = clientData
+
+  // get the collection
 
 }

@@ -41,7 +41,7 @@ export type DbDoesNotExist = DbExists
 
 export type DataBaseUser = CreateDatabaseUser
 
-export enum IfDbExistsOnCreate {
+export const enum IfDbExistsOnCreate {
   ThrowError = 'throw-error',
   Overwrite = 'overwrite',
   ReturnExisting = 'return-existing',
@@ -61,14 +61,13 @@ export type CreateDb = {
 
 // export type GetDb
 
-export enum IfDbDoesNotExistOnGet {
+export const enum IfDbDoesNotExistOnGet {
   ThrowError = 'throw-error',
   Create = 'create',
 }
 
 export type GetDb = {
-  (
-    hostConfig: ArangoHostConfig,
+  ( hostConfig: ArangoHostConfig,
     dbName: string,
     ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
     dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
@@ -106,7 +105,7 @@ export type CollectionDoesNotExist = CollectionExists
 
 export { CollectionType }
 
-export enum IfCollectionExistsOnCreate {
+export const enum IfCollectionExistsOnCreate {
   ThrowError = 'throw-error',
   Overwrite = 'overwrite',
   ReturnExisting = 'return-existing',
@@ -136,20 +135,36 @@ export type CreateEdgeCollection = (
   ifExists?: IfCollectionExistsOnCreate
 ) => Promise<EdgeCollection>;
 
-export enum IfCollectionDoesNotExistOnGet {
+export const enum IfCollectionDoesNotExistOnGet {
   ThrowError = 'throw-error',
   Create = 'create',
 }
 
-export type GetCollection = {
-  ( db: Database,
-    collectionName: string,
-    ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet // default is ThrowError
-  ) : Promise<DocumentCollection | EdgeCollection>;
-  ( db: Database,
-    collectionName: string,
-    ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet // default is ThrowError
-  ) : Promise<DocumentCollection | EdgeCollection>;
+export type GetCollection = (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet, // default is ThrowError
+  collectionType?: CollectionType,
+    // If provided will throw error if collection exists but is not of the specified type
+    // Mut be provided if collection does not exist and ifCollectionDoesNotExist is Create
+    // defaults to DOCUMENT_COLLECTION
+  ) => Promise<DocumentCollection | EdgeCollection>;
+
+export type GetDocCollection = (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet, // default is ThrowError
+  ) => Promise<DocumentCollection>;
+
+export type GetEdgeCollection = (
+  db: Database,
+  collectionName: string,
+  ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet, // default is ThrowError
+  ) => Promise<DocumentCollection>;
+
+export type GetCollectionType = {
+  (collection: DocumentCollection | EdgeCollection) : Promise<CollectionType>;
+  (db: Database, collectionName: string): Promise<CollectionType>
 }
 
 // returns true if collection was dropped, false if collection does not exist

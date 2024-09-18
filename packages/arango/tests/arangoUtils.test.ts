@@ -14,9 +14,8 @@ import {
   IfCollectionExistsOnCreate, CollectionType,
   createCollection, createDocCollection, createEdgeCollection,
   IfCollectionDoesNotExistOnGet,
-  collectionDocCount,
-  getCollection,
-  dropCollection
+  getCollection, getDocCollection, getEdgeCollection, getCollectionType,
+  collectionDocCount, dropCollection
 } from '../utils'
 
 import { Database } from 'arangojs'
@@ -31,32 +30,29 @@ const dbUsers: DataBaseUser[] = [
   { username: 'root', passwd: 'pw' },
 ]
 
-const dbName = 'arangoUtilsTestDb'
-
 let sysDb: Database
 
 beforeAll(async () => {
-
   expect(await canConnectToDbServer(hostConfig)).toBe(true)
   expect(await canNotConnectToDbServer(hostConfig)).toBe(false)
-
   sysDb = await getSysDb(hostConfig, { checkConnection: true })
-  if (await dbExists(sysDb, dbName)) {
-    console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
-    await dropDb(sysDb, dbName)
-  }
 })
 
 beforeEach(async () => {
 })
 
 afterEach(async () => {
-  await dropDb(sysDb, dbName)
 })
 
 describe('Test @stcland/arango/utils', async () => {
 
   test('DB creation', async () => {
+
+    const dbName = 'arangoUtilsTestDbCreate'
+    if (await dbExists(sysDb, dbName)) {
+      console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
+      await dropDb(sysDb, dbName)
+    }
 
     // First creation
 
@@ -157,21 +153,30 @@ describe('Test @stcland/arango/utils', async () => {
 
   test('Document Collection creation', async () => {
 
-    const name = 'testDocCollection'
-    const type = CollectionType.DOCUMENT_COLLECTION
+    const dbName = 'arangoUtilsTestDocCollectionCreate'
+    if (await dbExists(sysDb, dbName)) {
+      console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
+      await dropDb(sysDb, dbName)
+    }
+
+    const collectionName = 'testDocCollection'
+    const collectionType = CollectionType.DOCUMENT_COLLECTION
 
     const db = await createDb(hostConfig, dbName, dbUsers, IfDbExistsOnCreate.ThrowError)
     expect(await dbExists(hostConfig, dbName)).toBe(true)
 
-    expect(await collectionExists(db, name)).toBe(false)
-    expect(await collectionDoesNotExist(db, name)).toBe(true)
+    expect(await collectionExists(db, collectionName)).toBe(false)
+    expect(await collectionDoesNotExist(db, collectionName)).toBe(true)
 
     // First creation
 
     let ifExists = IfCollectionExistsOnCreate.ThrowError
-    const collection1 = await createDocCollection(db, name, ifExists)
-    expect(await collectionExists(db, name)).toBe(true)
-    expect(await collectionDoesNotExist(db, name)).toBe(false)
+    const collection1 = await createDocCollection(db, collectionName, ifExists)
+    expect(await collectionExists(db, collectionName)).toBe(true)
+    expect(await collectionDoesNotExist(db, collectionName)).toBe(false)
+    expect(await collectionDocCount(collection1)).toBe(0)
+    expect(await getCollectionType(collection1)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
 
     await collection1.save({ name: 'doc1' })
@@ -180,33 +185,64 @@ describe('Test @stcland/arango/utils', async () => {
     // Error if collection aready exists
 
     ifExists = IfCollectionExistsOnCreate.ThrowError
-    expect(createCollection(db, name, { type, ifExists })).rejects.toThrow(Error)
-    expect(createDocCollection(db, name, ifExists)).rejects.toThrow(Error)
+    expect(createCollection(db, collectionName, { type: collectionType, ifExists })).rejects.toThrow(Error)
+    expect(createDocCollection(db, collectionName, ifExists)).rejects.toThrow(Error)
 
     ifExists = IfCollectionExistsOnCreate.Overwrite
-    const collection2 = await createDocCollection(db, name, ifExists)
-    expect(await collectionExists(db, name)).toBe(true)
-    expect(await collectionDoesNotExist(db, name)).toBe(false)
+    const collection2 = await createDocCollection(db, collectionName, ifExists)
+    expect(await collectionExists(db, collectionName)).toBe(true)
+    expect(await collectionDoesNotExist(db, collectionName)).toBe(false)
     expect(await collectionDocCount(collection2)).toBe(0)
+    expect(await getCollectionType(collection2)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+
+    // Fetch collections
 
     await collection1.save({ name: 'doc2' })
     expect(await collectionDocCount(collection2)).toBe(1)
 
-    // Fetch collections
-
-    const collection3 = await getCollection(db, name)
+    const collection3 = await getCollection(db, collectionName)
     expect(await collectionDocCount(collection3)).toBe(1)
+    expect(await getCollectionType(collection3)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
-    expect(await dropCollection(db, name)).toBe(true)
-    expect(await collectionDoesNotExist(db, name)).toBe(true)
-    expect(getCollection(db, name)).rejects.toThrow(Error)
+    expect(await dropCollection(db, collectionName)).toBe(true)
+    expect(await collectionDoesNotExist(db, collectionName)).toBe(true)
 
-    const collection4 = await getCollection(db, name, IfCollectionDoesNotExistOnGet.Create)
-    expect(await collectionExists(db, name)).toBe(true)
+    // When collection does not exist, and you specify create, but no type, it should throw
+    let ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+
+    // Throw on non existance is default
+    expect(getDocCollection(db, collectionName)).rejects.toThrow()
+
+    // OK lets specify create when collection does not exist
+    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    const collection4 = await getDocCollection(db, collectionName, ifCollectionDoesNotExist)
+    expect(await collectionExists(db, collectionName)).toBe(true)
+    expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(await getCollectionType(collection4)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).resolves.not.toThrow()
     expect(await collectionDocCount(collection4)).toBe(0)
+    // expect(await getCollectionType(collection3)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    // expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+
+    // SHould throw if we attempt to get colleciton of wrong type
+    expect(getEdgeCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+
+    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.ThrowError
+    expect(await dropCollection(db, collectionName)).toBe(true)
+    expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+    expect(getDocCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
   })
 
   test('Edge Collection creation', async () => {
+
+    const dbName = 'arangoUtilsTestEdgeCollectionCreate'
+    if (await dbExists(sysDb, dbName)) {
+      console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
+      await dropDb(sysDb, dbName)
+    }
 
     const db = await createDb(hostConfig, dbName, dbUsers, IfDbExistsOnCreate.ThrowError)
     expect(await dbExists(hostConfig, dbName)).toBe(true)
@@ -215,16 +251,24 @@ describe('Test @stcland/arango/utils', async () => {
 
     const srcDocCollectionName = 'sourceDocs'
     const destDocCollectionName = 'destDocs'
+
     expect(await collectionExists(db, srcDocCollectionName)).toBe(false)
     expect(await collectionExists(db, destDocCollectionName)).toBe(false)
 
     const srcDocCollection = await createDocCollection(db, srcDocCollectionName)
     expect(await collectionExists(db, srcDocCollectionName)).toBe(true)
+    // expect(await getCollectionType(srcDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    // expect(await getCollectionType(db, srcDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+
     await srcDocCollection.save({ _key: 'sourceDoc1', name: 'sourceDoc1' })
     expect(await collectionDocCount(srcDocCollection)).toBe(1)
 
+
     const destDocCollection = await createDocCollection(db, destDocCollectionName)
     expect(await collectionExists(db, destDocCollectionName)).toBe(true)
+    // expect(await getCollectionType(destDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
+    // expect(await getCollectionType(db, destDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
+
     await destDocCollection.save({ _key: 'destDoc1', name: 'destDoc1' })
     expect(await collectionDocCount(destDocCollection)).toBe(1)
 
@@ -238,6 +282,8 @@ describe('Test @stcland/arango/utils', async () => {
     const edgeCollection1 = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
+    expect(await getCollectionType(edgeCollection1)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
 
     await edgeCollection1.save({
       _from: srcDocCollectionName + '/sourceDoc1',
@@ -258,6 +304,8 @@ describe('Test @stcland/arango/utils', async () => {
     const returnedEdgeCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(edgeCollection1).toBe(returnedEdgeCollection)
+    expect(await getCollectionType(returnedEdgeCollection)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
 
     expect(await collectionDocCount(returnedEdgeCollection)).toBe(1)
     await edgeCollection1.save({
@@ -269,9 +317,53 @@ describe('Test @stcland/arango/utils', async () => {
     // overwrite existing collection
 
     ifExists = IfCollectionExistsOnCreate.Overwrite
-    const overwrittenCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
+    const overwrittenEdgeCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
-    expect(await collectionDocCount(overwrittenCollection)).toBe(0)
+    expect(await collectionDocCount(overwrittenEdgeCollection)).toBe(0)
+    expect(await getCollectionType(overwrittenEdgeCollection)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
+
+    // Fetch collections
+
+    await edgeCollection1.save({
+      _from: srcDocCollectionName + '/sourceDoc1',
+      _to: destDocCollectionName + '/destDoc1'
+    })
+
+    expect(await collectionDocCount(overwrittenEdgeCollection)).toBe(1)
+
+    const edgeCollection2 = await getCollection(db, edgeCollectionName)
+    expect(await collectionDocCount(edgeCollection2)).toBe(1)
+    expect(await getCollectionType(edgeCollection2)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
+
+    expect(await dropCollection(db, edgeCollectionName)).toBe(true)
+    expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(true)
+
+    // When collection does not exist, and you specify create, but no type, it should throw
+    let ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    expect(getCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+
+    // Throw on non existance is default
+    expect(getEdgeCollection(db, edgeCollectionName)).rejects.toThrow()
+
+    // OK lets specify create when collection does not exist
+    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    const edgeCollection3 = await getEdgeCollection(db, edgeCollectionName, ifCollectionDoesNotExist)
+    expect(await collectionExists(db, edgeCollectionName)).toBe(true)
+    expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(await getCollectionType(edgeCollection3)).toBe(CollectionType.EDGE_COLLECTION)
+    expect(getCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).resolves.not.toThrow()
+    expect(await collectionDocCount(edgeCollection3)).toBe(0)
+
+    // SHould throw if we attempt to get colleciton of wrong type
+    expect(getDocCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+
+    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.ThrowError
+    expect(await dropCollection(db, edgeCollectionName)).toBe(true)
+    expect(getCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+    expect(getEdgeCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
+
   })
 })
