@@ -2,9 +2,9 @@ import { equals } from 'ramda'
 import { isNotDate, isNotString } from 'ramda-adjunct'
 import { validate as isValidUuid4 } from 'uuid'
 
-import { passwordHash } from '../src/spreadSheetParseUtils'
+import { passwordHash } from '../src/spreadsheetParseUtils'
 import { passthrough, toJson } from '@stcland/utils'
-import { DataType } from '../src/WorksheetParserTypes'
+import { DataType } from '../src/SpreadsheetParserTypes'
 
 export type ValidateFn = (expected: any, parsed: any) => boolean
 

@@ -1,55 +1,71 @@
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { pathExists } from 'path-exists'
 import { keys, omit } from 'ramda'
-import { describe, test, expect, beforeEach, } from 'vitest'
+
+import { describe, test, expect, beforeEach, beforeAll } from 'vitest'
 import { Workbook, Worksheet } from 'exceljs'
 
 import { objectsHaveSameKeys, toJson } from '@stcland/utils'
 
-import { expectedTestWorkbookResults } from './expectedParsedWorkbookResults'
-import { DataType, WorksheetParseOptions } from '../src/WorksheetParserTypes'
-import { getWorksheetList } from '../src/spreadSheetParseUtils'
-import { parseWorksheet } from '../src/parseWorksheet'
+import { expectedSpreadsheetResults } from './expectedParsedSpreadsheetResults'
+import { DataType, WorksheetParseOptions } from '../src/SpreadsheetParserTypes'
+import { getWorksheetList } from '../src/spreadsheetParseUtils'
 import type { ValidateOpts } from './testUtils'
 import { propTypeToTestFns } from './testUtils'
+import { forEachSheet } from '../src/parseSpreadsheet'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const workbookPath = path.join(__dirname, 'test-ws-parsing.xlsx')
+const spreadsheetPath = path.join(__dirname, 'test-parsing.xlsx')
 
 let workbook: Workbook
 let worksheets: Worksheet[] = []
 
+
+beforeAll(async () => {
+  const spreadsheetExists = await pathExists(spreadsheetPath)
+  if (!spreadsheetExists)
+    throw new Error(`Spreadsheet file not found: ${spreadsheetPath}`)
+})
+
+
 beforeEach(async () => {
   workbook = new Workbook()
-  await workbook.xlsx.readFile(workbookPath)
+  await workbook.xlsx.readFile(spreadsheetPath)
   worksheets = getWorksheetList(workbook)
 })
 
 //-------------------------------------------------------------------------
 
-describe('Test Worksheet Parser', () => {
-  test('Basic Parsing', () => {
+describe('Test Spreadsheet Parser', () => {
 
-    expect(workbook).toBeDefined()
-    expect(worksheets).toBeDefined()
+  test('forEach worksheet', async () => {
 
     const parseOpts: WorksheetParseOptions = {
       reportProgress: false,
       reportWarnings: false
     }
 
-    const firstRowOffset = 1
-    for (const sheet of worksheets) {
+    interface TestMeta {
+      message: string
+    }
 
-      const parsedWorksheet = parseWorksheet(sheet, firstRowOffset, parseOpts)
-      const expectedParsedWorksheet = expectedTestWorkbookResults[sheet.name]
+    const testMeta: TestMeta = { message: 'Im testing over here' }
 
-      if (!expectedParsedWorksheet) {
-        console.log(`    No expected data for worksheet: ${sheet.name} (skipping)`)
-        continue
-      }
+    await forEachSheet(spreadsheetPath, async (parsedWorksheet, clientData: TestMeta) => {
+
+      const {
+        sheetName,
+        numDataRowsParsed,
+        data: parsedData,
+        dataTypes: parsedDataTypes,
+        meta: parsedMeta,
+        metaTypes: parsedMetaTypes
+      } = parsedWorksheet
+
+      const expectedParsedWorksheet = expectedSpreadsheetResults[sheetName]
 
       const {
         data: expectedData,
@@ -58,30 +74,34 @@ describe('Test Worksheet Parser', () => {
         metaTypes: expectedMetaTypes
       } = expectedParsedWorksheet
 
-      const {
-        data: parsedData,
-        dataTypes: parsedDataTypes,
-        meta: parsedMeta,
-        metaTypes: parsedMetaTypes
-      } = parsedWorksheet
+      if (!expectedParsedWorksheet) {
+        console.log(`No expected data for worksheet: ${sheetName} (skipping)`)
+        return true
+      }
+
+      expect(clientData.message).toEqual(testMeta.message)
+      expect(numDataRowsParsed).toEqual(expectedData.length)
+      expect(sheetName).toEqual(sheetName)
 
       assertParsedWorkSheetMetaTypes(
-        expectedMetaTypes, parsedMetaTypes, sheet.name
+        expectedMetaTypes, parsedMetaTypes, sheetName
       )
 
       assertParsedWorkSheetMeta(
-        expectedMeta, parsedMeta, parsedMetaTypes, sheet.name
+        expectedMeta, parsedMeta, parsedMetaTypes, sheetName
       )
 
       assertParsedWorksheetDataTypes(
-        expectedDataTypes, parsedDataTypes, sheet.name
+        expectedDataTypes, parsedDataTypes, sheetName
       )
 
       assertParsedWorksheetData(
-        expectedData, parsedData, parsedDataTypes, sheet.name
+        expectedData, parsedData, parsedDataTypes, sheetName
       )
 
-    }
+      return true
+
+    }, testMeta, parseOpts)
   })
 })
 

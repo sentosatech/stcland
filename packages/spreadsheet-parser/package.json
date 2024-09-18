@@ -1,14 +1,21 @@
 {
-  "name": "@stcland/spreadsheet-loaders",
+  "name": "@stcland/spreadsheet-parser",
   "version": "0.0.1",
-  "description": "",
+  "description": "Utility to parse spreadsheet data",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
   "keywords": [
     "STC"
   ],
@@ -18,7 +25,7 @@
     "@types/node": "^20.14.10",
     "@types/ramda": "^0.30.1",
     "eslint": "^8.57.0",
-    "rimraf": "^5.0.9",
+    "rimraf": "^6.0.1",
     "tsup": "^8.1.0",
     "typescript": "^5.5.3"
   },
@@ -30,6 +37,7 @@
     "@typescript-eslint/parser": "^8.2.0",
     "exceljs": "^4.4.0",
     "hash.js": "^1.1.7",
+    "path-exists": "^5.0.0",
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1",
     "typescript-eslint": "^7.18.0",
@@ -43,7 +51,7 @@
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
     "build": "pnpm run clean && tsup",
-    "clean": "rimraf ./dist && mkdir dist",
+    "clean": "rimraf ./dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
     "test": "vitest --run"
   }

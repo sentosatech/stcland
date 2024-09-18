@@ -34,12 +34,14 @@ export interface DataCellMeta extends CellMeta {
 
 export interface WorksheetParseOptions {
   reportProgress?: boolean
-    // defaults to false
+    // defaults to true
   reportWarnings?: boolean
     // defaults to true
 }
 
 export interface ParsedWorksheetResult {
+  sheetName: string,
+  numDataRowsParsed: number,
   data: any[]
   dataTypes: Record<string, DataType>
   meta?: Record<string, any>
@@ -48,10 +50,9 @@ export interface ParsedWorksheetResult {
 
 export type ParseWorksheet = (
   ws: Worksheet,
-  startingRowNum: number,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: WorksheetParseOptions,
+  startingRowNum?: number, // defaults to 1
 ) => ParsedWorksheetResult;
-
 
 export interface ParseFrontMatterResult {
   meta?: Record<string, any>
@@ -64,6 +65,35 @@ export type ParseFrontMatter = (
   startingRowNum: number,
   parseOpts?: WorksheetParseOptions
 ) => ParseFrontMatterResult;
+
+export type ParsedSpreadheetCallBack = (
+  parsedWorksheet: ParsedWorksheetResult,
+    // parsed worksheet data for your callback to proccess
+  clientData?: any
+    // data that you your cb may need
+) => Promise<false | any>
+    // client can return anything they want
+    // client can return false if they want to stop the iteration
+
+/**
+ loads a spreadsheet from disk, iterates over each worksheet,
+ and calls the callback for each parsed worksheet
+
+ Throws Error if the spreadsheet does not exist
+ */
+export type ForEachSheet = (
+  spreadsheetPath: string,
+    // path and filename for the spreadsheet to be parsed
+  cb: ParsedSpreadheetCallBack,
+    // called for each parsed worksheet, passed the parsed worksheet data
+  clientData?: any,
+    // data that you your cb may need, will be passed as 2nd argument to cb
+  parseOpts?: WorksheetParseOptions,
+    // options to control parsing
+  startingRowNum?: number,
+    // if your data starts on a row other than 1
+    // must the the same for all worksheets
+) => Promise<void>
 
 /*
   Given a workbook, returns an array of worksheets that pass all filter functions
@@ -82,3 +112,6 @@ export type GetPropTypesFromRow = (row: Row) => DataType[];
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];
 
+// TODO:
+// - version of parseWorksheet that takes spreadsheet path and worksheet name
+// - parseSpreadsheet by both spreadsheet path and workbook

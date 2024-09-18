@@ -14,3 +14,11 @@ export const composeAsync = (...funcs: PipeFunc[]) =>
 export type PredFn<TData> = (arg: TData) => boolean
 
 export const passthrough = (v: any) => v
+
+// Custom async complement function
+export const asyncComplement = <T extends any[]>(fn: (...args: T) => Promise<boolean>) => {
+  return async (...args: T): Promise<boolean> => {
+    const result = await fn(...args)
+    return !result
+  }
+}
