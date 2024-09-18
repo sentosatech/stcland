@@ -4,15 +4,17 @@ import { pathExists } from 'path-exists'
 import { canConnectToDbServer, getDb } from '../utils/arangoUtils'
 
 import {
-  type LoadWorksheetData, type LoadSpreadsheetData, type ArangoDataLoaderMeta,
+  type LoadWorksheetData, type LoadSpreadsheetData,
+  type ArangoDataLoaderMeta, type ArangoDataLoaderClientData,
   IfTargetDbDoesNotExist, IfTargetCollectionDoesNotExist, ValidWorksheetTypes,
 } from './ArangoDataLoaderTypes'
 
 import { forEachSheet } from '@stcland/spreadsheet-parser'
 import {
-  // CollectionType,
-  // IfCollectionDoesNotExistOnGet,
-  IfDbDoesNotExistOnGet
+  CollectionType,
+  IfCollectionDoesNotExistOnGet,
+  IfDbDoesNotExistOnGet,
+  getCollection
 } from '../utils'
 import { throwIf } from '@stcland/errors'
 import { toJson } from '@stcland/utils'
@@ -41,7 +43,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   const ifDbExistsOnGet = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
   const db = await getDb(arangoHostConfig, dbName, ifDbExistsOnGet, dbUsers)
 
-  const clientData: any = {
+  const clientData: ArangoDataLoaderClientData = {
     db,
     ifTargetCollectionDoesNotEist
   }
@@ -53,17 +55,16 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 }
 
 export const loadWorksheetData: LoadWorksheetData = async (
-  parsedWorksheet, clientData
+  parsedWorksheet,
+  clientData: ArangoDataLoaderClientData,
 ) => {
 
   const {
-    meta = {}, sheetName,
+    meta = {}, data, sheetName,
   } = parsedWorksheet
 
   const { type } = meta as ArangoDataLoaderMeta
-  console.log('meta: ', meta)
-  console.log('type: ', type)
-
+  const { db, ifTargetCollectionDoesNotEist } = clientData
 
   throwIf(!type,
     `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
@@ -76,10 +77,28 @@ export const loadWorksheetData: LoadWorksheetData = async (
     `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
   )
 
+  if ( type === 'graph ') {
+    console.warn(
+      `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+      'Graphs are not yet supported'
+    )
+  }
 
+  const collectionName = sheetName
 
-  // const { db, ifTargetCollectionDoesNotEist } = clientData
+  const ifCollectionDoesNotExistOnGet =
+    // @ts-expect-error cause TS is a pain in the ass
+    ifTargetCollectionDoesNotEist as IfCollectionDoesNotExistOnGet
 
+  const typeMap: Record<'docCollection' | 'edgeCollection', CollectionType> = {
+    docCollection: CollectionType.DOCUMENT_COLLECTION,
+    edgeCollection: CollectionType.EDGE_COLLECTION,
+  }
 
+  const collection = await getCollection(
+    db, collectionName, ifCollectionDoesNotExistOnGet, typeMap[type]
+  )
+
+  await collection.import(data)
 
 }

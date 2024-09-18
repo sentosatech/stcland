@@ -62,8 +62,6 @@ describe('Test @stcland/arango/spreadsheet-loader', async () => {
     const results = await loadSpreadsheetData(
       spreadsheetPath, hostConfig, dbName, opts
     )
-
     console.log('results: ', results)
-
   })
 })

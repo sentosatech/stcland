@@ -5,6 +5,7 @@ import {
   IfCollectionDoesNotExistOnGet,
   DataBaseUser as ArangoDataBaseUser
 } from '../utils/ArangoUtilsTypes'
+import { Database } from 'arangojs'
 
 export const enum IfTargetDbDoesNotExist {
   ThrowError = IfDbDoesNotExistOnGet.ThrowError,
@@ -42,6 +43,12 @@ export type LoadWorksheetData = ParsedSpreadheetCallBack
 export interface ArangoDataLoaderMeta {
   type: 'docCollection' | 'edgeCollection' | 'graph '
 }
+
+export interface ArangoDataLoaderClientData {
+  db: Database
+  ifTargetCollectionDoesNotEist: IfTargetCollectionDoesNotExist
+}
+
 
 export const ValidWorksheetTypes = [
   'docCollection',
