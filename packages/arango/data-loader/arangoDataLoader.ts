@@ -5,7 +5,8 @@ import { canConnectToDbServer, createDb } from '../utils/arangoUtils'
 
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
-  IfTargetDbExists, // IfTargetCollectionDoesNotExist,
+  // IfTargetDbDoesNotExist,
+   // IfTargetCollectionDoesNotExist,
 } from './ArangoDataLoaderTypes'
 
 import { forEachSheet } from '@stcland/spreadsheet-parser'
@@ -16,7 +17,8 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 ) => {
 
   const {
-    ifTargetDbExists = IfTargetDbExists.Append,
+    // ifTargetDbExistsDelMe = IfTargetDbExistsDelMe.Append,
+    // ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
     dbUsers = [],
   } = opts
 
@@ -31,7 +33,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
 
   // @ts-expect-error cause TS is a pain in the ass
-  const ifDbExistsOnCreate = ifTargetDbExists as IfDbExistsOnCreate
+  const ifDbExistsOnCreate = ifTargetDbExistsDelMe as IfDbExistsOnCreate
   const db = await createDb(
     arangoHostConfig, dbName, dbUsers, ifDbExistsOnCreate
   )

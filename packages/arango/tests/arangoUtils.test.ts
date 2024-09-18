@@ -1,6 +1,8 @@
 import {
-  describe, test, beforeEach, afterEach, beforeAll, expect
+  describe, test, beforeAll, afterAll, expect
 } from 'vitest'
+
+import { values } from 'ramda'
 
 import type { ArangoHostConfig, DataBaseUser } from '../utils'
 import {
@@ -32,23 +34,29 @@ const dbUsers: DataBaseUser[] = [
 
 let sysDb: Database
 
+const dbNames = {
+  db: 'arangoUtilsTestDb',
+  docCollections: 'arangoUtilsTestDocCollections',
+  getEdgeCollections: 'arangoUtilsTestEdgeCollections',
+}
+
 beforeAll(async () => {
   expect(await canConnectToDbServer(hostConfig)).toBe(true)
   expect(await canNotConnectToDbServer(hostConfig)).toBe(false)
   sysDb = await getSysDb(hostConfig, { checkConnection: true })
 })
 
-beforeEach(async () => {
-})
-
-afterEach(async () => {
+afterAll(async () => {
+  for (const dbName of values(dbNames)) {
+    await dropDb(sysDb, dbName)
+  }
 })
 
 describe('Test @stcland/arango/utils', async () => {
 
   test('DB creation', async () => {
 
-    const dbName = 'arangoUtilsTestDbCreate'
+    const dbName = dbNames.db
     if (await dbExists(sysDb, dbName)) {
       console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
       await dropDb(sysDb, dbName)
@@ -153,7 +161,8 @@ describe('Test @stcland/arango/utils', async () => {
 
   test('Document Collection creation', async () => {
 
-    const dbName = 'arangoUtilsTestDocCollectionCreate'
+    const dbName = dbNames.docCollections
+
     if (await dbExists(sysDb, dbName)) {
       console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
       await dropDb(sysDb, dbName)
@@ -238,7 +247,8 @@ describe('Test @stcland/arango/utils', async () => {
 
   test('Edge Collection creation', async () => {
 
-    const dbName = 'arangoUtilsTestEdgeCollectionCreate'
+    const dbName = dbNames.getEdgeCollections
+
     if (await dbExists(sysDb, dbName)) {
       console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
       await dropDb(sysDb, dbName)

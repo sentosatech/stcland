@@ -7,13 +7,13 @@ import { pathExistsSync } from 'path-exists'
 import { Database } from 'arangojs'
 
 import {
-  type ArangoHostConfig, type DataBaseUser,
+  type ArangoHostConfig, // type DataBaseUser,
   getSysDb, dbExists, dropDb, canConnectToDbServer
 } from '../utils'
 
-import {
-  IfTargetDbExists, loadSpreadsheetData
-} from '../data-loader'
+// import {
+//   IfTargetDbExistsDelMe, loadSpreadsheetData
+// } from '../data-loader'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -25,18 +25,16 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-const dbUsers: DataBaseUser[] = [
-  { username: 'root', passwd: 'pw' },
-]
+// const dbUsers: DataBaseUser[] = [
+//   { username: 'root', passwd: 'pw' },
+// ]
 
 const dbName = 'arangoDataLoaderTestDb'
 
 let sysDb: Database
 
 beforeAll(async () => {
-
   expect(await canConnectToDbServer(hostConfig)).toBe(true)
-
   sysDb = await getSysDb(hostConfig, { checkConnection: true })
   if (await dbExists(sysDb, dbName)) {
     console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
@@ -50,22 +48,20 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  // TODO tie this to a flag
   // await dropDb(sysDb, dbName)
 })
 
-describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
+describe('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
-    const ifTargetDbExists = IfTargetDbExists.ThrowError
-    const opts = {
-      dbUsers, ifTargetDbExists, reportWarnings: true
-    }
+    // const ifTargetDbExists = IfTargetDbExistsDelMe.ThrowError
+    // const opts = {
+    //   dbUsers, ifTargetDbExists, reportWarnings: true
+    // }
 
-    await loadSpreadsheetData(
-      spreadsheetPath, hostConfig, dbName, opts
-    )
-
-
-
+    // await loadSpreadsheetData(
+    //   spreadsheetPath, hostConfig, dbName, opts
+    // )
   })
 })
