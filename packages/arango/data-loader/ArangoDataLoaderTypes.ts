@@ -41,7 +41,7 @@ export type LoadSpreadsheetData = (
 export type LoadWorksheetData = ParsedSpreadheetCallBack
 
 export interface ArangoDataLoaderMeta {
-  type: 'docCollection' | 'edgeCollection' | 'graph '
+  type: 'docCollection' | 'edgeCollection' | 'graph'
 }
 
 export interface ArangoDataLoaderClientData {

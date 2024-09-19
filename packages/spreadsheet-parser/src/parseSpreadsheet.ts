@@ -6,7 +6,7 @@ import { getWorksheetList } from './spreadsheetParseUtils'
 import { parseWorksheet } from './parseWorksheet'
 
 export const forEachSheet: ForEachSheet = async (
-  spreadSheetPath, cb, clientDatas, parseOpts = {}, firstRowNum = 1
+  cb, spreadSheetPath, clientDatas, parseOpts = {}, firstRowNum = 1
 ) => {
 
   const spreadsheetExists = await pathExists(spreadSheetPath)

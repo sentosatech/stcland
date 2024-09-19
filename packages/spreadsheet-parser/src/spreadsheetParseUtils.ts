@@ -241,10 +241,13 @@ export const getPropNamesFromRow = (row: Row): string[] => {
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
 
   if (isNotValidPropNameList(propNames)) {
+    const invalidPropIdx = invalidPropNameIdx(propNames)
+    const invalidPropCol = colNumToText(invalidPropIdx)
+    const invalidPropName = propNames[invalidPropIdx]
     throw new Error(
-      `Invalid property name(s) found in worksheet ${row.worksheet.name}\n  ` +
-      'one or more property names are empty or not strings\n  ' +
-      propNames.join(', '))
+      `Invalid property name found in worksheet ${row.worksheet.name}\n` +
+      `Property name is empty or not strings: '${invalidPropName}' (Column ${invalidPropCol})\n`
+    )
   }
   return propNames as string[]
 }
@@ -291,10 +294,13 @@ export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
 
   if (isNotValidPropTypeList(propTypes)) {
+    const invalidPropIdx = invalidPropTypeIdx(propTypes)
+    const invalidPropCol = colNumToText(invalidPropIdx)
+    const invalidPropType = propTypes[invalidPropIdx]
     throw new Error(
-      `Invalid property types(s) found in worksheet ${row.worksheet.name}\n  ` +
-      `  sould be one of ${toJson(validDataTypes.join(', '))}\n  ` +
-      `  found: ${toJson(propTypes.join(', '))})`
+      `Invalid property type found in worksheet ${row.worksheet.name}:\n` +
+      `  found: ${invalidPropType} (Column ${invalidPropCol})\n` +
+      `  should be one of ${toJson(validDataTypes.join(', '))}`
     )
   }
   return propTypes as DataType[]
@@ -315,6 +321,8 @@ export const isValidPropTypeList = (propTypes: DataType[]) : {
 export const isNotValidPropType = complement(isValidPropType)
 export const isNotValidPropTypeList = complement(isValidPropTypeList)
 
+export const invalidPropTypeIdx = (propTypes: DataType[]) =>
+  propTypes.findIndex(isNotValidPropType)
 
 export const isValidPropName = (propName: string) =>
   isNonEmptyStr(propName) && strIsValidObjectKey(propName)
@@ -324,6 +332,9 @@ export const isValidPropNameList = (propNames: CellValue[]) =>
 
 export const isNotValidPropName = complement(isValidPropName)
 export const isNotValidPropNameList = complement(isValidPropNameList)
+
+export const invalidPropNameIdx = (propNames: CellValue[]) =>
+  propNames.findIndex(isNotValidPropName)
 
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`

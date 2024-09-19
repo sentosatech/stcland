@@ -49,7 +49,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   }
 
   // OK, loop through the worksheets and load the data appropriratly
-  await forEachSheet(excelFilePath, loadWorksheetData, clientData, opts)
+  await forEachSheet(loadWorksheetData, excelFilePath, clientData, opts)
 
   return 0
 }
@@ -77,7 +77,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
     `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
   )
 
-  if ( type === 'graph ') {
+  if ( type === 'graph') {
     console.warn(
       `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
       'Graphs are not yet supported'

@@ -10,7 +10,7 @@ import { Workbook, Worksheet } from 'exceljs'
 import { objectsHaveSameKeys, toJson } from '@stcland/utils'
 
 import { expectedSpreadsheetResults } from './expectedParsedSpreadsheetResults'
-import { DataType, WorksheetParseOptions } from '../src/SpreadsheetParserTypes'
+import { DataType, ParsedWorksheetResult, WorksheetParseOptions } from '../src/SpreadsheetParserTypes'
 import { getWorksheetList } from '../src/spreadsheetParseUtils'
 import type { ValidateOpts } from './testUtils'
 import { propTypeToTestFns } from './testUtils'
@@ -39,6 +39,10 @@ beforeEach(async () => {
 
 //-------------------------------------------------------------------------
 
+interface TestMeta { message: string }
+
+const testMeta: TestMeta = { message: 'Im testing over here' }
+
 describe('Test Spreadsheet Parser', () => {
 
   test('forEach worksheet', async () => {
@@ -48,62 +52,63 @@ describe('Test Spreadsheet Parser', () => {
       reportWarnings: false
     }
 
-    interface TestMeta {
-      message: string
-    }
+    await forEachSheet(assertParsedWorksheet, spreadsheetPath, testMeta, parseOpts)
 
-    const testMeta: TestMeta = { message: 'Im testing over here' }
-
-    await forEachSheet(spreadsheetPath, async (parsedWorksheet, clientData: TestMeta) => {
-
-      const {
-        sheetName,
-        numDataRowsParsed,
-        data: parsedData,
-        dataTypes: parsedDataTypes,
-        meta: parsedMeta,
-        metaTypes: parsedMetaTypes
-      } = parsedWorksheet
-
-      const expectedParsedWorksheet = expectedSpreadsheetResults[sheetName]
-
-      const {
-        data: expectedData,
-        dataTypes: expectedDataTypes,
-        meta: expectedMeta,
-        metaTypes: expectedMetaTypes
-      } = expectedParsedWorksheet
-
-      if (!expectedParsedWorksheet) {
-        console.log(`No expected data for worksheet: ${sheetName} (skipping)`)
-        return true
-      }
-
-      expect(clientData.message).toEqual(testMeta.message)
-      expect(numDataRowsParsed).toEqual(expectedData.length)
-      expect(sheetName).toEqual(sheetName)
-
-      assertParsedWorkSheetMetaTypes(
-        expectedMetaTypes, parsedMetaTypes, sheetName
-      )
-
-      assertParsedWorkSheetMeta(
-        expectedMeta, parsedMeta, parsedMetaTypes, sheetName
-      )
-
-      assertParsedWorksheetDataTypes(
-        expectedDataTypes, parsedDataTypes, sheetName
-      )
-
-      assertParsedWorksheetData(
-        expectedData, parsedData, parsedDataTypes, sheetName
-      )
-
-      return true
-
-    }, testMeta, parseOpts)
   })
 })
+
+//-------------------------------------------------------------------------
+
+const assertParsedWorksheet = async (
+  parsedWorksheet: ParsedWorksheetResult,
+  clientData: TestMeta
+) => {
+
+  const {
+    sheetName,
+    numDataRowsParsed,
+    data: parsedData,
+    dataTypes: parsedDataTypes,
+    meta: parsedMeta,
+    metaTypes: parsedMetaTypes
+  } = parsedWorksheet
+
+  const expectedParsedWorksheet = expectedSpreadsheetResults[sheetName]
+
+  const {
+    data: expectedData,
+    dataTypes: expectedDataTypes,
+    meta: expectedMeta,
+    metaTypes: expectedMetaTypes
+  } = expectedParsedWorksheet
+
+  if (!expectedParsedWorksheet) {
+    console.log(`No expected data for worksheet: ${sheetName} (skipping)`)
+    return true
+  }
+
+  expect(clientData.message).toEqual(testMeta.message)
+  expect(numDataRowsParsed).toEqual(expectedData.length)
+  expect(sheetName).toEqual(sheetName)
+
+  assertParsedWorkSheetMetaTypes(
+    expectedMetaTypes, parsedMetaTypes, sheetName
+  )
+
+  assertParsedWorkSheetMeta(
+    expectedMeta, parsedMeta, parsedMetaTypes, sheetName
+  )
+
+  assertParsedWorksheetDataTypes(
+    expectedDataTypes, parsedDataTypes, sheetName
+  )
+
+  assertParsedWorksheetData(
+    expectedData, parsedData, parsedDataTypes, sheetName
+  )
+
+  return true
+}
 
 //-------------------------------------------------------------------------
 

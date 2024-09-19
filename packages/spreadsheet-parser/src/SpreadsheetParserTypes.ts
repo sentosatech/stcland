@@ -82,10 +82,10 @@ export type ParsedSpreadheetCallBack = (
  Throws Error if the spreadsheet does not exist
  */
 export type ForEachSheet = (
-  spreadsheetPath: string,
-    // path and filename for the spreadsheet to be parsed
   cb: ParsedSpreadheetCallBack,
     // called for each parsed worksheet, passed the parsed worksheet data
+  spreadsheetPath: string,
+    // path and filename for the spreadsheet to be parsed
   clientData?: any,
     // data that you your cb may need, will be passed as 2nd argument to cb
   parseOpts?: WorksheetParseOptions,
