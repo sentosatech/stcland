@@ -172,3 +172,26 @@ export type DropCollection =( db: Database, collectionName: string ) => Promise<
 export type CollectionDocCount = (
   collection: DocumentCollection | EdgeCollection
 ) => Promise<number>
+
+export type DocumentExists = (
+  db: Database,
+  collectionName: string,
+  documentKey: string
+) => Promise<boolean>
+
+export type DocumentDoesNotExist = (
+  db: Database,
+  collectionName: string,
+  documentKey: string
+) => Promise<boolean>
+
+
+export type DocumentExistsById = (
+  db: Database,
+  documentId: string
+) => Promise<boolean>
+
+export type DocumentDoesNotExistById = (
+  db: Database,
+  documentId: string
+) => Promise<boolean>

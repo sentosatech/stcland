@@ -25,7 +25,6 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 
   const {
     ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
-    ifTargetCollectionDoesNotEist = IfTargetCollectionDoesNotExist.Create,
     dbUsers = [],
   } = opts
 
@@ -43,10 +42,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   const ifDbExistsOnGet = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
   const db = await getDb(arangoHostConfig, dbName, ifDbExistsOnGet, dbUsers)
 
-  const clientData: ArangoDataLoaderClientData = {
-    db,
-    ifTargetCollectionDoesNotEist
-  }
+  const clientData: ArangoDataLoaderClientData = { db, opts }
 
   // OK, loop through the worksheets and load the data appropriratly
   await forEachSheet(loadWorksheetData, excelFilePath, clientData, opts)
@@ -64,7 +60,12 @@ export const loadWorksheetData: LoadWorksheetData = async (
   } = parsedWorksheet
 
   const { type } = meta as ArangoDataLoaderMeta
-  const { db, ifTargetCollectionDoesNotEist } = clientData
+  const { db, opts } = clientData
+
+  const {
+    ifTargetCollectionDoesNotEist = IfTargetCollectionDoesNotExist.Create,
+    validateEdgeTargets = true
+  } = opts
 
   throwIf(!type,
     `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
@@ -94,10 +95,25 @@ export const loadWorksheetData: LoadWorksheetData = async (
     docCollection: CollectionType.DOCUMENT_COLLECTION,
     edgeCollection: CollectionType.EDGE_COLLECTION,
   }
+  const collectionType: CollectionType = typeMap[type]
 
   const collection = await getCollection(
-    db, collectionName, ifCollectionDoesNotExistOnGet, typeMap[type]
+    db, collectionName, ifCollectionDoesNotExistOnGet, collectionType
   )
+
+  console.log('validateEdgeTargets: ', validateEdgeTargets)
+  if (collectionType == CollectionType.EDGE_COLLECTION && validateEdgeTargets) {
+    for (const { _from, _to } of data) {
+      console.log('_from: ', _from)
+      console.log('_to: ', _to)
+      if (!collection) console.log('null connection dude')
+      // const fromExists = await collection.documentExists(_from)
+      // const toExists = await collection.documentExists(_to)
+      // console.log('fromExists: ', fromExists)
+      // console.log('toExists: ', toExists)
+    }
+  }
+
 
   await collection.import(data)
 

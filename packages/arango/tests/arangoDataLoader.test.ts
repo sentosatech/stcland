@@ -64,4 +64,6 @@ describe('Test @stcland/arango/spreadsheet-loader', async () => {
     )
     console.log('results: ', results)
   })
+  test.todo('DB/Collection existance cases', async () => {})
+  test.todo('Invalid Edges', async () => {})
 })

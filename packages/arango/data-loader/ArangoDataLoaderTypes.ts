@@ -26,8 +26,11 @@ export interface LoadSpreadsheetDataOpts extends
   dbUsers?: DataBaseUser[]
     // only needed if IfTargertDbDoesNotExist is Create
     // defaults to []
-    ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
+  ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
     // defaults to Append
+  validateEdgeTargets?: boolean
+    // For edge collections, validate that the _from and _to docs exist
+    // defaults to true
 }
 
 export type LoadSpreadsheetData = (
@@ -46,7 +49,7 @@ export interface ArangoDataLoaderMeta {
 
 export interface ArangoDataLoaderClientData {
   db: Database
-  ifTargetCollectionDoesNotEist: IfTargetCollectionDoesNotExist
+  opts: LoadSpreadsheetDataOpts
 }
 
 
