@@ -25,7 +25,7 @@ import {
   rowIsNotFrontMatterDelimiter,
   getPropNameFromCallValue,
   getPropTypeFromCallValue,
-} from './spreadsheetParseUtils'
+} from './spreadSheetParseUtils'
 import { toJson } from '@stcland/utils'
 
 export const parseWorksheet: ParseWorksheet = (
