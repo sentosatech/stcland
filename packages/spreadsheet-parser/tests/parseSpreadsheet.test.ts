@@ -18,7 +18,7 @@ import { forEachSheet } from '../src/parseSpreadsheet'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const spreadsheetPath = path.join(__dirname, 'test-parsing.xlsx')
+const spreadsheetPath = path.join(__dirname, 'test-spreadsheet-parsing.xlsx')
 
 let workbook: Workbook
 let worksheets: Worksheet[] = []
@@ -49,7 +49,7 @@ describe('Test Spreadsheet Parser', () => {
 
     const parseOpts: WorksheetParseOptions = {
       reportProgress: false,
-      reportWarnings: false
+      reportWarnings: false,
     }
 
     await forEachSheet(assertParsedWorksheet, spreadsheetPath, testMeta, parseOpts)

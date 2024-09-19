@@ -1,7 +1,7 @@
 
 import { pathExists } from 'path-exists'
 
-import { canConnectToDbServer, getDb } from '../utils/arangoUtils'
+import { canConnectToDbServer, documentDoesNotExistById, getDb } from '../utils/arangoUtils'
 
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
@@ -68,19 +68,19 @@ export const loadWorksheetData: LoadWorksheetData = async (
   } = opts
 
   throwIf(!type,
-    `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+    `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
     'does note have property "type" in its metadata section (or is missing metadata section)'
   )
 
   throwIf(!ValidWorksheetTypes.includes(type),
-    `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+    `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
     `  Invaaid worksheet type '${type}'\n` +
     `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
   )
 
   if ( type === 'graph') {
     console.warn(
-      `ArangoSpreadSheet loader -> worksheet ${sheetName}:\n` +
+      `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
       'Graphs are not yet supported'
     )
   }
@@ -101,16 +101,23 @@ export const loadWorksheetData: LoadWorksheetData = async (
     db, collectionName, ifCollectionDoesNotExistOnGet, collectionType
   )
 
-  console.log('validateEdgeTargets: ', validateEdgeTargets)
   if (collectionType == CollectionType.EDGE_COLLECTION && validateEdgeTargets) {
     for (const { _from, _to } of data) {
-      console.log('_from: ', _from)
-      console.log('_to: ', _to)
-      if (!collection) console.log('null connection dude')
-      // const fromExists = await collection.documentExists(_from)
-      // const toExists = await collection.documentExists(_to)
-      // console.log('fromExists: ', fromExists)
-      // console.log('toExists: ', toExists)
+
+      throwIf(
+        await documentDoesNotExistById(db, _from),
+        `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+        `  Attempting to create edge ${_from} -> ${_to}\n` +
+        `  Source document does not exist '${_from}'`
+      )
+
+      throwIf(
+        await documentDoesNotExistById(db, _to),
+        `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+        `  attempting to create edge ${_from}  -> ${_to}\n` +
+        `  destination document does not exist ${_to}`
+      )
+
     }
   }
 
