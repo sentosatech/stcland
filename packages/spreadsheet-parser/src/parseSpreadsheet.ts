@@ -2,7 +2,7 @@ import { Workbook } from 'exceljs'
 import { pathExists } from 'path-exists'
 
 import type { ForEachSheet } from './SpreadsheetParserTypes'
-import { getWorksheetList } from './spreadsheetParseUtils'
+import { getWorksheetList } from './spreadSheetParseUtils'
 import { parseWorksheet } from './parseWorksheet'
 
 export const forEachSheet: ForEachSheet = async (
