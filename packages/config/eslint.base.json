@@ -11,7 +11,10 @@
   "rules": {
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
-    "indent": ["error", 2, { "flatTernaryExpressions": true }],
+    "indent": ["error", 2, {
+      "flatTernaryExpressions": true,
+      "ignoreComments": true
+    }],
     "no-trailing-spaces": "error",
     "object-curly-spacing": ["error", "always"],
     "no-sparse-arrays": "off",

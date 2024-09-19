@@ -20,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",
-    "rimraf": "^5.0.5",
+    "rimraf": "^6.0.1",
     "tailwind-merge": "^2.5.2",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
@@ -31,14 +31,14 @@
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1"
   },
-  "scripts": {
-    "lint": "eslint . --ext .js,.ts",
-    "build": "pnpm run clean && tsup",
-    "clean": "rimraf ./dist && mkdir dist",
-    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
-  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js,.ts",
+    "build": "pnpm run clean && tsup",
+    "clean": "rimraf ./dist",
+    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
   }
 }
