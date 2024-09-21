@@ -1,32 +1,26 @@
 import { CellValue, Row, Worksheet } from 'exceljs'
 
 import type {
-  ParseWorksheet, DataType, RowMeta, DataCellMeta, WorksheetParseOptions,
-  ParseFrontMatter
+  ParseWorksheet, DataType, RowMeta, DataCellMeta, ParseOptions,
+  ParseFrontMatter, ParseDataLayout, ParseDataTableResult, ParseDataListResult,
+  ParseDataTable, Meta, MetaTypes, ParsedWorksheetResult
 } from './SpreadsheetParserTypes'
 
+import { validDataLayouts } from './SpreadsheetParserTypes'
+
 import {
-  getRowValues,
-  isEmptyCell,
-  cellValueToDate,
-  getPropNamesFromRow,
-  getPropTypesFromRow,
-  cellValueToBool,
-  cellValueToString,
-  cellValueToNumber,
-  cellValueToPasswordHash,
-  cellValueFromJson,
-  cellValueToUuid,
-  dataCellWarning,
-  parserWarning,
-  cellValueHasError,
-  getCellError,
-  doesNotHaveFrontMatter,
-  rowIsNotFrontMatterDelimiter,
-  getPropNameFromCallValue,
-  getPropTypeFromCallValue,
+  isEmptyCell, getRowValues, cellValueToDate, colNumToText,
+  cellValueToBool, cellValueToString, cellValueToNumber,
+  cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
+  getPropNamesFromRow, getPropTypesFromRow,
+  dataCellWarning, parserWarning, cellValueHasError, getCellError,
+  doesNotHaveFrontMatter, rowIsNotFrontMatterDelimiter,
+  getPropNameFromCallValue, getPropTypeFromCallValue,
 } from './spreadsheetParseUtils'
+
 import { toJson } from '@stcland/utils'
+
+//-----------------------------------------------------------------------------
 
 export const parseWorksheet: ParseWorksheet = (
   ws, parseOpts = {}, startingRowNum = 1
@@ -37,11 +31,60 @@ export const parseWorksheet: ParseWorksheet = (
   const sheetName = ws.name
   if (reportProgress) console.log(`... Parsing worksheet '${sheetName}'`)
 
-  const { meta, metaTypes, dataStartRowNum } = parseFrontMatter(ws, startingRowNum, parseOpts)
+  let meta: Meta | undefined = undefined
+  let metaTypes: MetaTypes | undefined = undefined
+  let parsedData: ParseDataListResult | ParseDataTableResult | undefined
 
-  const propNames = getPropNamesFromRow(ws.getRow(dataStartRowNum))
-  const propTypes = getPropTypesFromRow(ws.getRow(dataStartRowNum+1))
+  let nextRowNum = startingRowNum
 
+  const dataLayoutResult = parseDataLayout(ws, nextRowNum, parseOpts)
+  const { dataLayout } = dataLayoutResult
+
+  nextRowNum = dataLayoutResult.nextRowNum
+
+  // any data format may start with front matter
+  const frontMatterResult = parseFrontMatter(ws, nextRowNum, parseOpts)
+  meta = frontMatterResult.meta
+  metaTypes = frontMatterResult.metaTypes
+
+  nextRowNum = frontMatterResult.nextRowNum
+
+  switch (dataLayout) {
+  case 'dataList':
+    break
+  case 'dataTable':
+    parsedData = parseDataTable(ws, nextRowNum, parseOpts)
+    break
+  default:
+    break // ok to have no data
+  }
+
+  const result: ParsedWorksheetResult = {
+    worksheetName: sheetName,
+    dataLayout,
+    numDataRowsParsed: parsedData?.numDataRowsParsed || 0,
+    meta,
+    metaTypes,
+    data: parsedData?.data,
+    dataTypes: parsedData?.dataTypes,
+  }
+
+  return result
+}
+
+//-----------------------------------------------------------------------------
+
+const parseDataTable: ParseDataTable = (
+  ws: Worksheet,
+  startingRowNum: number,
+  parseOpts?: ParseOptions
+
+) => {
+
+  const sheetName = ws.name
+
+  const propNames = getPropNamesFromRow(ws.getRow(startingRowNum))
+  const propTypes = getPropTypesFromRow(ws.getRow(startingRowNum+1))
 
   if (propNames.length !== propTypes.length) {
     parserWarning(
@@ -50,14 +93,14 @@ export const parseWorksheet: ParseWorksheet = (
       `  property types: ${toJson(propTypes)}`,
       parseOpts
     )
-    return { sheetName, numDataRowsParsed: 0, data: [], dataTypes: {} }
+    return { numDataRowsParsed: 0, data: [], dataTypes: {} }
   }
 
   const data: any[] = []
   ws.eachRow((row, rowNumber) => {
 
     // skip propName and propType rows
-    if (rowNumber < dataStartRowNum+2 )
+    if (rowNumber < startingRowNum+2 )
       return
 
     const rowMeta: RowMeta = {
@@ -71,16 +114,17 @@ export const parseWorksheet: ParseWorksheet = (
     return { ...acc, [propName]: propTypes[i] }
   }, {})
 
-  const numDataRowsParsed = data.length
-  return { sheetName, numDataRowsParsed, data, dataTypes, meta, metaTypes }
+  return { numDataRowsParsed: data.length, data, dataTypes }
 }
+
+//-----------------------------------------------------------------------------
 
 const parseDataRow = (
   propNames: string[],
   propTypes: DataType[],
   row: Row,
   rowMeta: RowMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) => {
 
   const propValues = getRowValues(row)
@@ -105,11 +149,13 @@ const parseDataRow = (
   return data
 }
 
+//-----------------------------------------------------------------------------
+
 export const parseDataCell = (
   propType: DataType,
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ): any => {
 
   if (isEmptyCell(cellValue)) return undefined
@@ -131,14 +177,16 @@ export const parseDataCell = (
   }
 }
 
+//-----------------------------------------------------------------------------
+
 export const parseFrontMatter: ParseFrontMatter = (
   ws: Worksheet,
   startingRowNumber: number,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ): any => {
 
   if (doesNotHaveFrontMatter(ws, startingRowNumber))
-    return { dataStartRowNum: startingRowNumber }
+    return { nextRowNum: startingRowNumber }
 
   let meta: Record<string, any> = {}
   let metaTypes: Record<string, DataType> = {}
@@ -186,5 +234,60 @@ export const parseFrontMatter: ParseFrontMatter = (
     metaTypes = { ...metaTypes, [propName]: propType }
   }
 
-  return { meta, metaTypes, dataStartRowNum: curRowNumber + 1 }
+  return { meta, metaTypes, nextRowNum: curRowNumber + 1 }
+}
+
+//-----------------------------------------------------------------------------
+
+export const parseDataLayout: ParseDataLayout = (
+  ws: Worksheet,
+  rowNumber: number,
+  parseOpts?: ParseOptions
+) => {
+
+  const row = ws.getRow(rowNumber)
+  const rowValues = getRowValues(row)
+
+  if (rowValues.length !== 2) {
+    parserWarning(
+      `WS: ${ws.name}: Invalid data format row ${rowNumber}\n` +
+      `  Expected 2 cells [dataLayout][list | table], found ${rowValues.length}\n` +
+      `  acually read: ${toJson(rowValues)}`
+    )
+  }
+
+  const dataCellMeta: DataCellMeta = {
+    worksheetName: ws.name,
+    rowNumber,
+    colNumber: 0,
+    propName: 'dataLayout',
+    propType: 'string'
+  }
+
+  // check the label
+  let colNumber = 0
+  const label = parseDataCell('string', rowValues[colNumber], dataCellMeta, parseOpts)
+  if (label !== 'dataLayout') {
+    parserWarning(
+      `WS: ${ws.name}: Invalid dataLayout row ${rowNumber}, col ${colNumToText(colNumber)}\n` +
+      `  Expected lable string 'dataLayout', found '${label}'\n` +
+      '  This is just a warning, will still look in next cell over for data format'
+    )
+  }
+
+  // get the data format type
+  colNumber = 1
+  const dataLayout = parseDataCell('string', rowValues[colNumber], dataCellMeta, parseOpts)
+  if (!validDataLayouts.includes(dataLayout)) {
+    throw new Error(
+      `WS: ${ws.name}: Invalid dataLayout '${dataLayout}'\n` +
+      `  row ${rowNumber}, col ${colNumToText(colNumber)}\n` +
+      `  Expected one of ${toJson(validDataLayouts)}`
+    )
+  }
+
+  return {
+    dataLayout,
+    nextRowNum: rowNumber + 1,
+  }
 }

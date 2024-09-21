@@ -2,6 +2,9 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
+
+//--- common -------------------------------------------------------------=====
+
 export type DataType =
   'string' | 'number' | 'boolean' | 'bigint' | 'date' | 'password' | 'json' | 'uuid';
 
@@ -25,46 +28,101 @@ export interface DataCellMeta extends CellMeta {
   propType: DataType;
 }
 
-/*
-  Given an exceljs worksheet returns the parsed data as an array of objects.
-  This first row is used as the key for the correspnding value to be added.
-  The second row is used to define the data type for that column
-  The contents of the remaining rows hold values to be parsed
-*/
-
-export interface WorksheetParseOptions {
+export interface ParseOptions {
   reportProgress?: boolean
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
 }
 
-export interface ParsedWorksheetResult {
-  sheetName: string,
-  numDataRowsParsed: number,
-  data: any[]
-  dataTypes: Record<string, DataType>
-  meta?: Record<string, any>
-  metaTypes?: Record<string, DataType>
+export type DataTypes = Record<string, DataType>
+export type Meta = Record<string, any>
+export type MetaTypes = Record<string, DataType>
+
+//--- data layout -------------------------------------------------------------
+
+export type DataLayout = 'dataList' | 'dataTable' | 'frontMatterOnly'
+
+export const validDataLayouts: DataLayout[] = ['dataList', 'dataTable', 'frontMatterOnly']
+
+export interface ParseDataLayoutResult {
+  dataLayout: DataLayout
+  nextRowNum: number
 }
 
-export type ParseWorksheet = (
+export type ParseDataLayout = (
   ws: Worksheet,
-  parseOpts?: WorksheetParseOptions,
-  startingRowNum?: number, // defaults to 1
-) => ParsedWorksheetResult;
+  rowNumber: number,
+  parseOpts?: ParseOptions
+) => ParseDataLayoutResult
+
+
+//--- front matter ------------------------------------------------------------
 
 export interface ParseFrontMatterResult {
-  meta?: Record<string, any>
-  metaTypes?: Record<string, DataType>
-  dataStartRowNum: number
+  meta?: Meta
+  metaTypes?: MetaTypes
+  nextRowNum: number
 }
 
 export type ParseFrontMatter = (
   ws: Worksheet,
   startingRowNum: number,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) => ParseFrontMatterResult;
+
+
+//--- data table --------------------------------------------------------------
+
+export type DataTableData = Record<string, any>[]
+
+export interface ParseDataTableResult {
+  data: DataTableData
+  dataTypes: DataTypes
+  numDataRowsParsed: number
+}
+
+export type ParseDataTable = (
+  ws: Worksheet,
+  startingRowNum: number,
+  parseOpts?: ParseOptions
+) => ParseDataTableResult;
+
+
+// --- data list --------------------------------------------------------------
+
+export type DataListData = Record<string, any>
+
+export interface ParseDataListResult {
+  data: DataListData
+  dataTypes: DataTypes
+  numDataRowsParsed: number
+}
+
+export type ParseDataList = (
+  ws: Worksheet,
+  startingRowNum: number,
+  parseOpts?: ParseOptions
+) => DataListData;
+
+
+// --- worksheet parsing ------------------------------------------------------
+
+export interface ParsedWorksheetResult {
+  worksheetName: string,
+  dataLayout: DataLayout,
+  numDataRowsParsed: number,
+  meta?: Meta
+  metaTypes?: MetaTypes
+  data?: DataListData | DataTableData
+  dataTypes?: DataTypes
+}
+
+export type ParseWorksheet = (
+  ws: Worksheet,
+  parseOpts?: ParseOptions,
+  startingRowNum?: number, // defaults to 1
+) => ParsedWorksheetResult;
 
 export type ParsedSpreadheetCallBack = (
   parsedWorksheet: ParsedWorksheetResult,
@@ -74,6 +132,8 @@ export type ParsedSpreadheetCallBack = (
 ) => Promise<false | any>
     // client can return anything they want
     // client can return false if they want to stop the iteration
+
+//--- spreadsheet (workbook) parsing -----------------------------------------
 
 /**
  loads a spreadsheet from disk, iterates over each worksheet,
@@ -88,12 +148,19 @@ export type ForEachSheet = (
     // path and filename for the spreadsheet to be parsed
   clientData?: any,
     // data that you your cb may need, will be passed as 2nd argument to cb
-  parseOpts?: WorksheetParseOptions,
+  parseOpts?: ParseOptions,
     // options to control parsing
   startingRowNum?: number,
     // if your data starts on a row other than 1
     // must the the same for all worksheets
 ) => Promise<void>
+
+// TODO:
+// - version of parseWorksheet that takes spreadsheet path and worksheet name
+// - parseSpreadsheet by both spreadsheet path and workbook
+
+
+// --- utility functions ------------------------------------------------------
 
 /*
   Given a workbook, returns an array of worksheets that pass all filter functions
@@ -112,6 +179,3 @@ export type GetPropTypesFromRow = (row: Row) => DataType[];
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];
 
-// TODO:
-// - version of parseWorksheet that takes spreadsheet path and worksheet name
-// - parseSpreadsheet by both spreadsheet path and workbook

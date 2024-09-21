@@ -16,7 +16,6 @@ export const forEachSheet: ForEachSheet = async (
   const workbook = new Workbook()
   await workbook.xlsx.readFile(spreadSheetPath)
   const worksheets = getWorksheetList(workbook)
-  console.log('worksheets.length: ', worksheets.length)
 
   for (const ws of worksheets) {
     const parsedWorksheet = parseWorksheet(ws, parseOpts, firstRowNum)

@@ -13,7 +13,7 @@ import type {
   GetRowValues,
   DataType,
   GetPropTypesFromRow,
-  WorksheetParseOptions,
+  ParseOptions,
   DataCellMeta,
   CellMeta
 } from './SpreadsheetParserTypes'
@@ -25,7 +25,7 @@ import type {
 export const cellValueToString = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) : string | undefined => {
   const cellText = cellValue?.toString()
   return isString(cellText)
@@ -36,7 +36,7 @@ export const cellValueToString = (
 export const cellValueToNumber = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) : number | string | undefined => {
   const result = Number(cellValue)
   return isNotNaN(result)
@@ -47,7 +47,7 @@ export const cellValueToNumber = (
 export const cellValueToPasswordHash = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) : string | undefined =>
   isStringOrNumber(cellValue)
     ? passwordHash(cellValue?.toString() || '')
@@ -56,7 +56,7 @@ export const cellValueToPasswordHash = (
 export const cellValueToBool = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions) : boolean | string | undefined =>
+  parseOpts?: ParseOptions) : boolean | string | undefined =>
 {
   if (cellValueIsNotBoolean(cellValue))
     return dataCellWarning(`Invalid boolean value: '${cellValue}'`, dataCellMeta, parseOpts)
@@ -73,7 +73,7 @@ export const cellValueToBool = (
 export const cellValueToUuid = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) : string | undefined => {
   if (isNil(cellValue) || isNil(cellValue.valueOf())) return undefined
   const cellText = cellValue?.toString() || ''
@@ -90,7 +90,7 @@ export const cellValueToUuid = (
 export const cellValueToDate = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) : Date | string | undefined =>
   isDate(cellValue)
     ? cellValue
@@ -99,7 +99,7 @@ export const cellValueToDate = (
 export const cellValueFromJson = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ): any | undefined => {
   if (cellValue) {
     try {
@@ -115,7 +115,7 @@ export const cellValueFromJson = (
 // Logging
 //*****************************************************************************
 
-export const parserWarning = (msg: string, parseOpts?: WorksheetParseOptions) => {
+export const parserWarning = (msg: string, parseOpts?: ParseOptions) => {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {
     console.warn(`\nParsing warning: ${msg}`)
@@ -125,7 +125,7 @@ export const parserWarning = (msg: string, parseOpts?: WorksheetParseOptions) =>
 export const dataCellWarning = (
   msg: string,
   dataCellMeta: DataCellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) =>  {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {
@@ -143,7 +143,7 @@ export const dataCellWarning = (
 export const cellWarning = (
   msg: string,
   cellMeta: CellMeta,
-  parseOpts?: WorksheetParseOptions
+  parseOpts?: ParseOptions
 ) =>  {
   const { reportWarnings = true } = parseOpts || {}
   if (reportWarnings) {

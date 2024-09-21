@@ -1,13 +1,14 @@
 {
   "name": "@stcland/utils",
   "version": "0.0.4",
-  "description": "",
-  "main": "./dist/index.js",
+  "description": "General Utils",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
   "keywords": [
     "STC"
   ],
@@ -23,7 +24,8 @@
     "rimraf": "^6.0.1",
     "tailwind-merge": "^2.5.2",
     "tsup": "^8.0.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.0.5"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -38,6 +40,7 @@
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
     "build": "pnpm run clean && tsup",
+    "test": "vitest --run",
     "clean": "rimraf ./dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
   }

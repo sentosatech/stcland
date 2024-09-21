@@ -1,17 +1,13 @@
-import { DataType } from '../src/SpreadsheetParserTypes'
-
-export interface ExpectedParsedWorksheetResult {
-  data: any[]
-  dataTypes: Record<string, DataType>
-  meta?: Record<string, any>
-  metaTypes?: Record<string, DataType>
-}
+import { ParsedWorksheetResult } from '../src/SpreadsheetParserTypes'
 
 export type ExpectedParsedSpreadsheetResults =
-  Record<string, ExpectedParsedWorksheetResult>
+  Record<string, ParsedWorksheetResult>
 
 export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   BasicParsing: {
+    worksheetName: 'BasicParsing',
+    dataLayout: 'dataTable',
+    numDataRowsParsed: 10,
     metaTypes: {
       name: 'string',
       someNumber: 'number',
@@ -120,15 +116,18 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       {
         expectAllErrors: true,
         key: 'invalid',
-        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:17 Col:B',
-        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:17 Col:D',
-        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:17 Col:E',
-        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:17 Col:G',
-        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:17 Col:H'
+        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:18 Col:B',
+        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:18 Col:D',
+        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:18 Col:E',
+        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:18 Col:G',
+        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:18 Col:H'
       }
     ],
   },
   FormulaAndRefParsing: {
+    worksheetName: 'FormulaAndRefParsing',
+    dataLayout: 'dataTable',
+    numDataRowsParsed: 1,
     dataTypes: {
       key: 'string',
       formulaProp: 'number',
@@ -145,6 +144,9 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     ],
   },
   ErrorCasesParsing: {
+    worksheetName: 'ErrorCasesParsing',
+    dataLayout: 'dataTable',
+    numDataRowsParsed: 1,
     metaTypes: {
       created: 'date',
     },
@@ -160,9 +162,25 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       {
         expectAllErrors: true,
         key: 'errors',
-        divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:6 Col:B',
-        badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:6 Col:C',
+        divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
+        badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
       }
     ],
+  },
+  FrontMatterOnly: {
+    worksheetName: 'FrontMatterOnly',
+    dataLayout: 'frontMatterOnly',
+    numDataRowsParsed: 0,
+    metaTypes: {
+      thisParserRocks: 'boolean',
+      oneHundred: 'number',
+      percent: 'string',
+
+    },
+    meta: {
+      thisParserRocks: true,
+      oneHundred: 100,
+      percent: 'percent!',
+    },
   }
 }

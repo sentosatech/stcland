@@ -1,5 +1,7 @@
+import { assert } from 'vitest'
+
 import { equals } from 'ramda'
-import { isNotDate, isNotString } from 'ramda-adjunct'
+import { isNotDate, isNotString, isUndefined, isNotUndefined } from 'ramda-adjunct'
 import { validate as isValidUuid4 } from 'uuid'
 
 import { passwordHash } from '../src/spreadsheetParseUtils'
@@ -92,5 +94,23 @@ export const propTypeToTestFns = (
   return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
 }
 
+export const assertConsistentDefinedState = (
+  worksheetName: string,
+  first: any | undefined,
+  second: any | undefined,
+  errMessages : {
+    firstDefinedButNotSecondMsg: string,
+    secondDefinedButNotFirstMsg: string
+  }
+) => {
+  if (isNotUndefined(first) && isNotUndefined(second)) return
+  if (isUndefined(first) && isUndefined(second)) return
 
+  const { firstDefinedButNotSecondMsg, secondDefinedButNotFirstMsg } = errMessages
+  if (isNotUndefined(first))
+    assert(false, firstDefinedButNotSecondMsg)
+
+  if (isNotUndefined(second))
+    assert(false, `WS:${worksheetName}: \n` + secondDefinedButNotFirstMsg)
+}
 
