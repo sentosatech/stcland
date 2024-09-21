@@ -28,8 +28,8 @@ export const parseWorksheet: ParseWorksheet = (
 
   const { reportProgress = true } = parseOpts || {}
 
-  const sheetName = ws.name
-  if (reportProgress) console.log(`... Parsing worksheet '${sheetName}'`)
+  const worksheetName = ws.name
+  if (reportProgress) console.log(`... Parsing worksheet '${worksheetName}'`)
 
   let meta: Meta | undefined = undefined
   let metaTypes: MetaTypes | undefined = undefined
@@ -60,7 +60,7 @@ export const parseWorksheet: ParseWorksheet = (
   }
 
   const result: ParsedWorksheetResult = {
-    worksheetName: sheetName,
+    worksheetName,
     dataLayout,
     numDataRowsParsed: parsedData?.numDataRowsParsed || 0,
     meta,
@@ -81,14 +81,14 @@ const parseDataTable: ParseDataTable = (
 
 ) => {
 
-  const sheetName = ws.name
+  const worksheetName = ws.name
 
   const propNames = getPropNamesFromRow(ws.getRow(startingRowNum))
   const propTypes = getPropTypesFromRow(ws.getRow(startingRowNum+1))
 
   if (propNames.length !== propTypes.length) {
     parserWarning(
-      `WS: ${sheetName}: Number of property names does not match number of property types (skipping)\n` +
+      `WS: ${worksheetName}: Number of property names does not match number of property types (skipping)\n` +
       `  property names: ${toJson(propNames)}\n` +
       `  property types: ${toJson(propTypes)}`,
       parseOpts

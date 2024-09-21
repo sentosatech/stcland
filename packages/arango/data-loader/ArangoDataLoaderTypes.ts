@@ -1,4 +1,4 @@
-import { ParsedSpreadheetCallBack, WorksheetParseOptions } from '@stcland/spreadsheet-parser'
+import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
 import {
   ArangoHostConfig,
   IfDbDoesNotExistOnGet, // IfDbExistsOnCreate,
@@ -20,7 +20,7 @@ export const enum IfTargetCollectionDoesNotExist {
 export type DataBaseUser = Pick<ArangoDataBaseUser, 'username' | 'passwd'>
 
 export interface LoadSpreadsheetDataOpts extends
-  Pick<WorksheetParseOptions, 'reportProgress' | 'reportWarnings'> {
+  Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
   ifTargetDbDoesNotExist?: IfTargetDbDoesNotExist
     // defaults to create
   dbUsers?: DataBaseUser[]

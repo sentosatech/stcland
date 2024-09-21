@@ -9,7 +9,7 @@ import {
   IfTargetDbDoesNotExist, IfTargetCollectionDoesNotExist, ValidWorksheetTypes,
 } from './ArangoDataLoaderTypes'
 
-import { forEachSheet } from '@stcland/spreadsheet-parser'
+import { DataTableData, forEachSheet } from '@stcland/spreadsheet-parser'
 import {
   CollectionType,
   IfCollectionDoesNotExistOnGet,
@@ -56,8 +56,17 @@ export const loadWorksheetData: LoadWorksheetData = async (
 ) => {
 
   const {
-    meta = {}, data, sheetName,
+    dataLayout, meta, data, worksheetName,
   } = parsedWorksheet
+
+  // it is possible to have no data for front matter only worksheets
+  if (dataLayout === 'frontMatterOnly') {
+    console.warn(`Worsheet ${worksheetName} is front matter only, skipping`)
+    return
+  }
+
+  throwIf(!data, `Worsheet ${worksheetName}: data not found`)
+  throwIf(!meta, `Worsheet ${worksheetName}: metadata not found`)
 
   const { type } = meta as ArangoDataLoaderMeta
   const { db, opts } = clientData
@@ -68,24 +77,24 @@ export const loadWorksheetData: LoadWorksheetData = async (
   } = opts
 
   throwIf(!type,
-    `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+    `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
     'does note have property "type" in its metadata section (or is missing metadata section)'
   )
 
   throwIf(!ValidWorksheetTypes.includes(type),
-    `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+    `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
     `  Invaaid worksheet type '${type}'\n` +
     `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
   )
 
   if ( type === 'graph') {
     console.warn(
-      `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+      `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
       'Graphs are not yet supported'
     )
   }
 
-  const collectionName = sheetName
+  const collectionName = worksheetName
 
   const ifCollectionDoesNotExistOnGet =
     // @ts-expect-error cause TS is a pain in the ass
@@ -102,18 +111,18 @@ export const loadWorksheetData: LoadWorksheetData = async (
   )
 
   if (collectionType == CollectionType.EDGE_COLLECTION && validateEdgeTargets) {
-    for (const { _from, _to } of data) {
+    for (const { _from, _to } of data as DataTableData) { // TODO: temp typecast
 
       throwIf(
         await documentDoesNotExistById(db, _from),
-        `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+        `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
         `  Attempting to create edge ${_from} -> ${_to}\n` +
         `  Source document does not exist '${_from}'`
       )
 
       throwIf(
         await documentDoesNotExistById(db, _to),
-        `ArangoSpreadSheet loader, worksheet ${sheetName}:\n` +
+        `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
         `  attempting to create edge ${_from}  -> ${_to}\n` +
         `  destination document does not exist ${_to}`
       )
@@ -122,6 +131,6 @@ export const loadWorksheetData: LoadWorksheetData = async (
   }
 
 
-  await collection.import(data)
+  await collection.import(data as DataTableData) // TODO: temp typecast
 
 }
