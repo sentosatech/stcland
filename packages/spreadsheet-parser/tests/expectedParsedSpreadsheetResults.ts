@@ -1,3 +1,4 @@
+import { prop } from 'ramda'
 import { ParsedWorksheetResult } from '../src/SpreadsheetParserTypes'
 
 export type ExpectedParsedSpreadsheetResults =
@@ -132,7 +133,8 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       key: 'string',
       formulaProp: 'number',
       refProp1: 'number',
-      refProp2: 'number'
+      refProp2: 'number',
+      note: 'string',
     },
     data: [
       {
@@ -140,6 +142,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         formulaProp: 51,
         refProp1: 49,
         refProp2: 100,
+        note: 'Note no front matter on this sheet'
       }
     ],
   },
@@ -166,6 +169,30 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
       }
     ],
+  },
+  DataListParsing: {
+    worksheetName: 'DataListParsing',
+    dataLayout: 'dataList',
+    numDataRowsParsed: 4,
+    metaTypes: {
+      note: 'string',
+    },
+    meta: {
+      note: 'This spreadsheet represents a data list instead of a data table, returned as an object',
+    },
+    dataTypes: {
+      prop1: 'string',
+      prop2: 'number',
+      prop3: 'json',
+      prop4: 'uuid'
+    },
+    data:     {
+      prop1: 'first prop in data list',
+      prop2: 2,
+      prop3:  { my: 'dude' },
+      prop4: []
+    }
+
   },
   FrontMatterOnly: {
     worksheetName: 'FrontMatterOnly',

@@ -33,6 +33,8 @@ export interface ParseOptions {
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
+  dataTerminationRow? : '---'
+  // undefined means no termination data parsing on empty row or end of file
 }
 
 export type DataTypes = Record<string, DataType>
@@ -56,6 +58,7 @@ export type ParseDataLayout = (
   parseOpts?: ParseOptions
 ) => ParseDataLayoutResult
 
+export type Data = Record<string, any>
 
 //--- front matter ------------------------------------------------------------
 
@@ -74,7 +77,8 @@ export type ParseFrontMatter = (
 
 //--- data table --------------------------------------------------------------
 
-export type DataTableData = Record<string, any>[]
+// list of objects
+export type DataTableData = Data[]
 
 export interface ParseDataTableResult {
   data: DataTableData
@@ -91,11 +95,12 @@ export type ParseDataTable = (
 
 // --- data list --------------------------------------------------------------
 
-export type DataListData = Record<string, any>
+// object
+export type DataListData = Data
 
 export interface ParseDataListResult {
-  data: DataListData
-  dataTypes: DataTypes
+  data: DataListData | undefined
+  dataTypes: DataTypes | undefined
   numDataRowsParsed: number
 }
 
@@ -103,7 +108,7 @@ export type ParseDataList = (
   ws: Worksheet,
   startingRowNum: number,
   parseOpts?: ParseOptions
-) => DataListData;
+) => ParseDataListResult;
 
 
 // --- worksheet parsing ------------------------------------------------------

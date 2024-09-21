@@ -3,7 +3,12 @@ import { CellValue, Row, Worksheet } from 'exceljs'
 import type {
   ParseWorksheet, DataType, RowMeta, DataCellMeta, ParseOptions,
   ParseFrontMatter, ParseDataLayout, ParseDataTableResult, ParseDataListResult,
-  ParseDataTable, Meta, MetaTypes, ParsedWorksheetResult
+  ParseDataTable, Meta, MetaTypes, ParsedWorksheetResult,
+  ParseDataList,
+  Data,
+  DataTableData,
+  DataTypes,
+  ParseFrontMatterResult
 } from './SpreadsheetParserTypes'
 
 import { validDataLayouts } from './SpreadsheetParserTypes'
@@ -14,11 +19,11 @@ import {
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
   getPropNamesFromRow, getPropTypesFromRow,
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
-  doesNotHaveFrontMatter, rowIsNotFrontMatterDelimiter,
-  getPropNameFromCallValue, getPropTypeFromCallValue,
+  doesNotHaveFrontMatter, getPropNameFromCallValue, getPropTypeFromCallValue,
 } from './spreadsheetParseUtils'
 
 import { toJson } from '@stcland/utils'
+import { keys } from 'ramda'
 
 //-----------------------------------------------------------------------------
 
@@ -44,6 +49,7 @@ export const parseWorksheet: ParseWorksheet = (
 
   // any data format may start with front matter
   const frontMatterResult = parseFrontMatter(ws, nextRowNum, parseOpts)
+
   meta = frontMatterResult.meta
   metaTypes = frontMatterResult.metaTypes
 
@@ -51,6 +57,7 @@ export const parseWorksheet: ParseWorksheet = (
 
   switch (dataLayout) {
   case 'dataList':
+    parsedData = parseDataList(ws, nextRowNum, parseOpts)
     break
   case 'dataTable':
     parsedData = parseDataTable(ws, nextRowNum, parseOpts)
@@ -96,12 +103,16 @@ const parseDataTable: ParseDataTable = (
     return { numDataRowsParsed: 0, data: [], dataTypes: {} }
   }
 
-  const data: any[] = []
+  const data: DataTableData = []
   ws.eachRow((row, rowNumber) => {
 
     // skip propName and propType rows
-    if (rowNumber < startingRowNum+2 )
+    if (rowNumber < startingRowNum+2)
       return
+
+    // keep an eye out for data termination row (if any)
+    if ( parseOpts?.dataTerminationRow === '---' && row.getCell(1).value === '---')
+      return false // terminates the eachRow interation loop
 
     const rowMeta: RowMeta = {
       worksheetName: ws.name, rowNumber
@@ -125,7 +136,7 @@ const parseDataRow = (
   row: Row,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions
-) => {
+): Data => {
 
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, i) => {
@@ -147,6 +158,75 @@ const parseDataRow = (
   }, {})
 
   return data
+}
+
+//-----------------------------------------------------------------------------
+
+export const parseDataList: ParseDataList = (
+  ws, startingRowNum, parseOpts?
+) => {
+  const worksheetName = ws.name
+
+  let data: Data | undefined = undefined
+  let dataTypes: DataTypes | undefined = undefined
+
+  let stopParsing = false
+
+  ws.eachRow((curRow, curRowNumber) => {
+
+    if (stopParsing) return
+
+    const rowMeta: RowMeta = {
+      worksheetName: ws.name,
+      rowNumber: curRowNumber
+    }
+
+    // Get to our target row
+    if (curRowNumber < startingRowNum)
+      return
+
+    // keep an eye out for data termination row (if any)
+    if ( parseOpts?.dataTerminationRow === '---' && curRow.getCell(1).value === '---') {
+      stopParsing = true
+      return
+    }
+
+    const rowValues = getRowValues(curRow)
+
+    if (rowValues.length !== 3) {
+      parserWarning(
+        `WS: ${worksheetName}: Invalid front matter row ${curRowNumber}\n` +
+        `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
+        `  ${toJson(rowValues)}`
+      )
+    }
+
+    const propName = getPropNameFromCallValue(rowValues[0], {
+      ...rowMeta, colNumber: 0
+    })
+
+    const propType = getPropTypeFromCallValue(rowValues[1], {
+      ...rowMeta, colNumber: 1
+    })
+
+    const propValue = parseDataCell(
+      propType, rowValues[2],
+      { ...rowMeta, colNumber: 2, propName, propType },
+      parseOpts
+    )
+
+    data = { ...(data || {}), [propName]: propValue }
+    dataTypes = { ...(dataTypes || {}), [propName]: propType }
+  })
+
+  const result: ParseDataListResult = {
+    data,
+    dataTypes,
+    numDataRowsParsed: keys(data || {}).length,
+  }
+
+  return result
+
 }
 
 //-----------------------------------------------------------------------------
@@ -188,53 +268,23 @@ export const parseFrontMatter: ParseFrontMatter = (
   if (doesNotHaveFrontMatter(ws, startingRowNumber))
     return { nextRowNum: startingRowNumber }
 
-  let meta: Record<string, any> = {}
-  let metaTypes: Record<string, DataType> = {}
+  // +1 to skip the intial '---'
+  const curRowNumber = startingRowNumber + 1
 
-  // skip the intiial '---'
-  let curRowNumber = startingRowNumber + 1
-  let curRow = ws.getRow(curRowNumber)
 
-  while(rowIsNotFrontMatterDelimiter(curRow)) {
+  const parsedData =  parseDataList(ws, curRowNumber, {
+    ...parseOpts, dataTerminationRow: '---'
+  })
 
-    const rowMeta: RowMeta = {
-      worksheetName: ws.name,
-      rowNumber: curRowNumber
-    }
+  const { data, dataTypes, numDataRowsParsed } = parsedData
 
-    const rowValues = getRowValues(curRow)
-
-    if (rowValues.length !== 3) {
-      parserWarning(
-        `WS: ${ws.name}: Invalid front matter row ${curRowNumber}\n` +
-        `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
-        `  ${toJson(rowValues)}`
-      )
-      curRowNumber++
-      curRow = ws.getRow(curRowNumber)
-      continue
-    }
-
-    curRowNumber++
-    curRow = ws.getRow(curRowNumber)
-    const propName = getPropNameFromCallValue(rowValues[0], {
-      ...rowMeta, colNumber: 0
-    })
-    const propType = getPropTypeFromCallValue(rowValues[1], {
-      ...rowMeta, colNumber: 1
-    })
-
-    const propValue = parseDataCell(
-      propType, rowValues[2],
-      { ...rowMeta, colNumber: 2, propName, propType },
-      parseOpts
-    )
-
-    meta = { ...meta, [propName]: propValue }
-    metaTypes = { ...metaTypes, [propName]: propType }
+  const result: ParseFrontMatterResult = {
+    meta: data,
+    metaTypes: dataTypes,
+    nextRowNum: curRowNumber + numDataRowsParsed + 1 // +1 to skip terminating '---'
   }
 
-  return { meta, metaTypes, nextRowNum: curRowNumber + 1 }
+  return result
 }
 
 //-----------------------------------------------------------------------------
