@@ -6,7 +6,7 @@ import type { PredFn } from '@stcland/utils'
 //--- common -------------------------------------------------------------=====
 
 export type DataType =
-  'string' | 'number' | 'boolean' | 'bigint' | 'date' | 'password' | 'json' | 'uuid';
+  'string' | 'number' | 'boolean' | 'bigint' | 'date' | 'password' | 'json' | 'uuid' | 'string:list';
 
 export const validDataTypes: DataType[] = [
   'string', 'number', 'boolean', 'bigint', 'date', 'password', 'json', 'uuid'
@@ -43,9 +43,9 @@ export type MetaTypes = Record<string, DataType>
 
 //--- data layout -------------------------------------------------------------
 
-export type DataLayout = 'dataList' | 'dataTable' | 'frontMatterOnly'
+export type DataLayout = 'dataList' | 'dataTable' | 'frontMatterOnly' | 'any'
 
-export const validDataLayouts: DataLayout[] = ['dataList', 'dataTable', 'frontMatterOnly']
+export const validDataLayouts: DataLayout[] = ['dataList', 'dataTable', 'frontMatterOnly', 'any']
 
 export interface ParseDataLayoutResult {
   dataLayout: DataLayout

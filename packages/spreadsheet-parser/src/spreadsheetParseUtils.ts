@@ -15,7 +15,8 @@ import type {
   GetPropTypesFromRow,
   ParseOptions,
   DataCellMeta,
-  CellMeta
+  CellMeta,
+  DataLayout
 } from './SpreadsheetParserTypes'
 
 //*****************************************************************************
@@ -109,6 +110,27 @@ export const cellValueFromJson = (
     }
   }
   return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
+}
+
+
+// TODO: eventually will want cellValueFromList, where we pass in the type, and
+//       that is able to handle list:number, list:uuid, etc ...
+export const cellValueFromStringList = (
+  dataLayout: DataLayout,
+  colStart: number,
+  rowStart: number,
+  dataCellMeta: DataCellMeta,
+  parseOpts?: ParseOptions
+) : string[] => {
+
+  if (dataLayout !== 'dataList') {
+    const warningMsg = dataCellWarning(
+      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataList' dataLayout`,
+      dataCellMeta, parseOpts
+    )
+    return [warningMsg]
+  }
+  return ['']
 }
 
 //*****************************************************************************

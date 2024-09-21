@@ -159,7 +159,8 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     dataTypes: {
       key: 'string',
       divZeroProp: 'number',
-      badRefProp: 'number'
+      badRefProp: 'number',
+      badStringList: 'string:list'
     },
     data: [
       {
@@ -167,6 +168,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         key: 'errors',
         divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
         badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
+        badStringList: ['Invalid property type \'string:list\' for dataLayout \'dataTable\'.  string:list\' is only valid for \'dataList\' dataLayout -> WS:ErrorCasesParsing, Row:7 Col:D'],
       }
     ],
   },
