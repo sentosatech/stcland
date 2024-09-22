@@ -9,7 +9,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     worksheetName: 'BasicParsing',
     dataLayout: 'dataTable',
     numDataRowsParsed: 10,
-    metaTypes: {
+    metaTypeMap: {
       name: 'string',
       someNumber: 'number',
       someBool: 'boolean'
@@ -19,7 +19,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       someNumber: 100,
       someBool: true
     },
-    dataTypes : {
+    dataTypeMap : {
       key: 'string',
       numProp: 'number',
       stringProp: 'string',
@@ -129,7 +129,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     worksheetName: 'FormulaAndRefParsing',
     dataLayout: 'dataTable',
     numDataRowsParsed: 1,
-    dataTypes: {
+    dataTypeMap: {
       key: 'string',
       formulaProp: 'number',
       refProp1: 'number',
@@ -150,13 +150,13 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     worksheetName: 'ErrorCasesParsing',
     dataLayout: 'dataTable',
     numDataRowsParsed: 1,
-    metaTypes: {
+    metaTypeMap: {
       created: 'date',
     },
     meta: {
       created: '2024-09-07T00:00:00.000Z'
     },
-    dataTypes: {
+    dataTypeMap: {
       key: 'string',
       divZeroProp: 'number',
       badRefProp: 'number',
@@ -176,13 +176,13 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     worksheetName: 'DataListParsing',
     dataLayout: 'dataList',
     numDataRowsParsed: 4,
-    metaTypes: {
+    metaTypeMap: {
       note: 'string',
     },
     meta: {
       note: 'This spreadsheet represents a data list instead of a data table, returned as an object',
     },
-    dataTypes: {
+    dataTypeMap: {
       prop1: 'string',
       prop2: 'number',
       prop3: 'json',
@@ -200,7 +200,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     worksheetName: 'FrontMatterOnly',
     dataLayout: 'frontMatterOnly',
     numDataRowsParsed: 0,
-    metaTypes: {
+    metaTypeMap: {
       thisParserRocks: 'boolean',
       oneHundred: 'number',
       percent: 'string',

@@ -60,9 +60,9 @@ export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataListDataTypes
 ]))
 
-export type DataTypes = Record<string, DataType>
+export type DataTypeMap = Record<string, DataType>
 export type Meta = Record<string, any>
-export type MetaTypes = Record<string, DataType>
+export type MetaTypeMap = Record<string, DataType>
 
 
 //--- data layout -------------------------------------------------------------
@@ -88,7 +88,7 @@ export type Data = Record<string, any>
 
 export interface ParseFrontMatterResult {
   meta?: Meta
-  metaTypes?: MetaTypes
+  metaTypeMap?: MetaTypeMap
   nextRowNum: number
 }
 
@@ -106,7 +106,7 @@ export type DataTableData = Data[]
 
 export interface ParseDataTableResult {
   data: DataTableData
-  dataTypes: DataTypes
+  dataTypeMap: DataTypeMap
   numDataRowsParsed: number
 }
 
@@ -124,7 +124,7 @@ export type DataListData = Data
 
 export interface ParseDataListResult {
   data: DataListData | undefined
-  dataTypes: DataTypes | undefined
+  dataTypeMap: DataTypeMap | undefined
   numDataRowsParsed: number
 }
 
@@ -142,9 +142,9 @@ export interface ParsedWorksheetResult {
   dataLayout: DataLayout,
   numDataRowsParsed: number,
   meta?: Meta
-  metaTypes?: MetaTypes
+  metaTypeMap?: MetaTypeMap
   data?: DataListData | DataTableData
-  dataTypes?: DataTypes
+  dataTypeMap?: DataTypeMap
 }
 
 export type ParseWorksheet = (

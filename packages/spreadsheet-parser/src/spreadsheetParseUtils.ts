@@ -20,7 +20,7 @@ import type {
   CellMeta, DataCellMeta,
   DataTableDataType, HorizontalValueListType, DataListDataType,
   // Data, DataTableData, DataListData,
-  DataType, // DataTypes,
+  DataType,
 } from './SpreadsheetParserTypes'
 
 

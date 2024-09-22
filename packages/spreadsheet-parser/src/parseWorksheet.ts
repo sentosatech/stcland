@@ -5,15 +5,14 @@ import type {
   ParseFrontMatter,   ParseFrontMatterResult,
   ParseDataLayout, ParseDataTable, ParseDataList,
   ParseDataTableResult, ParseDataListResult, ParsedWorksheetResult,
-  RowMeta, DataCellMeta, Meta, MetaTypes,
+  RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData, // DataListData,    DataLayout,
-  DataType, DataTypes, // DataTableDataType, HorizontalValueListType, DataListDataType,
+  DataType, DataTypeMap, // DataTableDataType, HorizontalValueListType, DataListDataType,
 } from './SpreadsheetParserTypes'
 
 
 import {
   validDataLayouts,
-  // validDataTypes,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -41,7 +40,7 @@ export const parseWorksheet: ParseWorksheet = (
   if (reportProgress) console.log(`... Parsing worksheet '${worksheetName}'`)
 
   let meta: Meta | undefined = undefined
-  let metaTypes: MetaTypes | undefined = undefined
+  let metaTypeMap: MetaTypeMap | undefined = undefined
   let parsedData: ParseDataListResult | ParseDataTableResult | undefined
 
   let nextRowNum = startingRowNum
@@ -55,7 +54,7 @@ export const parseWorksheet: ParseWorksheet = (
   const frontMatterResult = parseFrontMatter(ws, nextRowNum, parseOpts)
 
   meta = frontMatterResult?.meta
-  metaTypes = frontMatterResult?.metaTypes
+  metaTypeMap = frontMatterResult?.metaTypeMap
 
   nextRowNum = frontMatterResult.nextRowNum
 
@@ -81,9 +80,9 @@ export const parseWorksheet: ParseWorksheet = (
     dataLayout,
     numDataRowsParsed: parsedData?.numDataRowsParsed || 0,
     meta,
-    metaTypes,
+    metaTypeMap,
     data: parsedData?.data,
-    dataTypes: parsedData?.dataTypes,
+    dataTypeMap: parsedData?.dataTypeMap,
   }
 
   return result
@@ -109,7 +108,7 @@ const parseDataTable: ParseDataTable = (
       `  property types: ${toJson(propTypes)}`,
       parseOpts
     )
-    return { numDataRowsParsed: 0, data: [], dataTypes: {} }
+    return { numDataRowsParsed: 0, data: [], dataTypeMap: {} }
   }
 
   const data: DataTableData = []
@@ -131,11 +130,11 @@ const parseDataTable: ParseDataTable = (
     data.push(rowData)
   })
 
-  const dataTypes = propNames.reduce((acc, propName, i) => {
+  const dataTypeMap = propNames.reduce((acc, propName, i) => {
     return { ...acc, [propName]: propTypes[i] }
   }, {})
 
-  return { numDataRowsParsed: data.length, data, dataTypes }
+  return { numDataRowsParsed: data.length, data, dataTypeMap }
 }
 
 //-----------------------------------------------------------------------------
@@ -183,7 +182,7 @@ export const parseDataList: ParseDataList = (
   const worksheetName = ws.name
 
   let data: Data | undefined = undefined
-  let dataTypes: DataTypes | undefined = undefined
+  let dataTypeMap: DataTypeMap | undefined = undefined
 
   let stopParsing = false
 
@@ -234,12 +233,12 @@ export const parseDataList: ParseDataList = (
     )
 
     data = { ...(data || {}), [propName]: propValue }
-    dataTypes = { ...(dataTypes || {}), [propName]: propType }
+    dataTypeMap = { ...(dataTypeMap || {}), [propName]: propType }
   })
 
   const result: ParseDataListResult = {
     data,
-    dataTypes,
+    dataTypeMap,
     numDataRowsParsed: keys(data || {}).length,
   }
 
@@ -319,11 +318,11 @@ export const parseFrontMatter: ParseFrontMatter = (
     ...parseOpts, dataTerminationRow: '---'
   })
 
-  const { data, dataTypes, numDataRowsParsed } = parsedData
+  const { data, dataTypeMap, numDataRowsParsed } = parsedData
 
   const result: ParseFrontMatterResult = {
     meta: data,
-    metaTypes: dataTypes,
+    metaTypeMap: dataTypeMap,
     nextRowNum: curRowNumber + numDataRowsParsed + 1 // +1 to skip terminating '---'
   }
 

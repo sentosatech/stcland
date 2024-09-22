@@ -12,7 +12,7 @@ import {  allDefinedOrAllUndefined, objectsHaveSameKeys, toJson } from '@stcland
 
 import { expectedSpreadsheetResults } from './expectedParsedSpreadsheetResults'
 import {
-  DataType, ParsedWorksheetResult, ParseOptions, MetaTypes, DataTypes,
+  DataType, ParsedWorksheetResult, ParseOptions, MetaTypeMap, DataTypeMap,
   DataTableData, DataListData, Meta, Data
 } from '../src/SpreadsheetParserTypes'
 
@@ -71,9 +71,9 @@ const assertParsedWorksheet = async (
     dataLayout,
     numDataRowsParsed,
     data: parsedData,
-    dataTypes: parsedDataTypes,
+    dataTypeMap: parsedDataTypeMap,
     meta: parsedMeta,
-    metaTypes: parsedMetaTypes
+    metaTypeMap: parsedMetaTypeMap
   } = parsedWorksheet
 
   const expectedParsedWorksheet = expectedSpreadsheetResults[worksheetName]
@@ -88,9 +88,9 @@ const assertParsedWorksheet = async (
     dataLayout: expectedDataLayout,
     numDataRowsParsed: expectedNumDataRowsParsed,
     data: expectedData,
-    dataTypes: expectedDataTypes,
+    dataTypeMap: expectedDataTypeMap,
     meta: expectedMeta,
-    metaTypes: expectedMetaTypes
+    metaTypeMap: expectedMetaTypeMap
   } = expectedParsedWorksheet
 
   expect(clientData.message).toEqual(testMeta.message)
@@ -98,16 +98,16 @@ const assertParsedWorksheet = async (
   expect(dataLayout).toEqual(expectedDataLayout)
   expect(numDataRowsParsed).toEqual(expectedNumDataRowsParsed)
 
-  assertParsedWorkSheetMetaTypes(
-    expectedMetaTypes, parsedMetaTypes, worksheetName
+  assertParsedWorkSheetMetaTypeMaps(
+    expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
   )
 
   assertParsedWorkSheetMeta(
-    expectedMeta, expectedMetaTypes, parsedMeta, parsedMetaTypes, worksheetName
+    expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
   )
 
-  assertParsedWorksheetDataTypes(
-    expectedDataTypes, parsedDataTypes, worksheetName
+  assertParsedWorksheetDataTypeMaps(
+    expectedDataTypeMap, parsedDataTypeMap, worksheetName
   )
 
   switch (dataLayout) {
@@ -115,14 +115,14 @@ const assertParsedWorksheet = async (
     assertParsedWorksheetListData(
       expectedData as DataListData,
       parsedData as DataListData,
-      expectedDataTypes, parsedDataTypes, worksheetName
+      expectedDataTypeMap, parsedDataTypeMap, worksheetName
     )
     break
   case 'dataTable':
     assertParsedWorksheetTableData(
       expectedData as DataTableData,
       parsedData as DataTableData,
-      expectedDataTypes, parsedDataTypes, worksheetName
+      expectedDataTypeMap, parsedDataTypeMap, worksheetName
     )
     break
   case 'frontMatterOnly':
@@ -134,20 +134,20 @@ const assertParsedWorksheet = async (
 
 //-------------------------------------------------------------------------
 
-const assertParsedWorkSheetMetaTypes = (
-  expectedMetaTypes: MetaTypes | undefined,
-  parsedMetaTypes: MetaTypes | undefined,
+const assertParsedWorkSheetMetaTypeMaps = (
+  expectedMetaTypeMap: MetaTypeMap | undefined,
+  parsedMetaTypeMap: MetaTypeMap | undefined,
   worksheetName: string
 ) => {
 
   assertConsistentDefinedState(
-    worksheetName, expectedMetaTypes, parsedMetaTypes, {
-      firstDefinedButNotSecondMsg: 'expectedMetaTypes is defined but parsedMetaTypes is undefined',
-      secondDefinedButNotFirstMsg: 'expectedMetaTypes is undefined but parsed metaTypes is defined'
+    worksheetName, expectedMetaTypeMap, parsedMetaTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedMetaTypeMap is defined but parsedMetaTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedMetaTypeMap is undefined but parsed MetaTypeMap is defined'
     })
 
-  const expectedMetaTypeKeys = keys(expectedMetaTypes || {})
-  const parsedMetaTypeKeys = keys(parsedMetaTypes  || {})
+  const expectedMetaTypeKeys = keys(expectedMetaTypeMap || {})
+  const parsedMetaTypeKeys = keys(parsedMetaTypeMap  || {})
 
   expect(
     parsedMetaTypeKeys.length,
@@ -162,36 +162,36 @@ const assertParsedWorkSheetMetaTypes = (
     expect(
       parsedMetaTypeKeys,
       `WS:${worksheetName}: \n` +
-      `  Expected metaTypes key ${expectedKey} data is missing in from parsed metaTypes`
+      `  Expected MetaTypeMap key ${expectedKey} data is missing in from parsed MetaTypeMap`
     ).toContain(expectedKey)
 
     expect(
-      parsedMetaTypes![expectedKey],
+      parsedMetaTypeMap![expectedKey],
       `WS:${worksheetName}: \n` +
-      `  Expected metaTypes type for key ${expectedKey}: ${parsedMetaTypes![expectedKey]}\n` +
-      `  does not match parsed metaType type: ${parsedMetaTypes![expectedKey]}`
-    ).toEqual(expectedMetaTypes![expectedKey])
+      `  Expected MetaTypeMap type for key ${expectedKey}: ${parsedMetaTypeMap![expectedKey]}\n` +
+      `  does not match parsed metaType type: ${parsedMetaTypeMap![expectedKey]}`
+    ).toEqual(expectedMetaTypeMap![expectedKey])
   }
 }
 
 //-------------------------------------------------------------------------
 
-const assertParsedWorksheetDataTypes = (
-  expectedDataTypes: DataTypes | undefined,
-  parsedDataTypes: DataTypes | undefined,
+const assertParsedWorksheetDataTypeMaps = (
+  expectedDataTypeMap: DataTypeMap | undefined,
+  parsedDataTypeMap: DataTypeMap | undefined,
   worksheetName: string
 ) => {
 
   assertConsistentDefinedState(
-    worksheetName, expectedDataTypes, parsedDataTypes, {
-      firstDefinedButNotSecondMsg: 'expectedDataTypes is defined but parsedDataTypes is undefined',
-      secondDefinedButNotFirstMsg: 'expectedDataTypes is undefined but parsed dataTypes is defined'
+    worksheetName, expectedDataTypeMap, parsedDataTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but parsedDataTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but parsed DataTypeMap is defined'
     })
 
-  if (!expectedDataTypes) return
+  if (!expectedDataTypeMap) return
 
-  const expectedDataKeys = keys(expectedDataTypes!)
-  const parsedDataKeys = keys(parsedDataTypes!)
+  const expectedDataKeys = keys(expectedDataTypeMap!)
+  const parsedDataKeys = keys(parsedDataTypeMap!)
 
   expect(
     parsedDataKeys.length,
@@ -210,11 +210,11 @@ const assertParsedWorksheetDataTypes = (
     ).toContain(expectedKey)
 
     expect(
-      parsedDataTypes![expectedKey],
+      parsedDataTypeMap![expectedKey],
       `WS:${worksheetName}: \n` +
-      `  Expected data type for key ${expectedKey}: ${parsedDataTypes![expectedKey]}\n` +
-      `  does not match parsed data type: ${parsedDataTypes![expectedKey]}`
-    ).toEqual(expectedDataTypes![expectedKey])
+      `  Expected data type for key ${expectedKey}: ${parsedDataTypeMap![expectedKey]}\n` +
+      `  does not match parsed data type: ${parsedDataTypeMap![expectedKey]}`
+    ).toEqual(expectedDataTypeMap![expectedKey])
   }
 }
 
@@ -222,9 +222,9 @@ const assertParsedWorksheetDataTypes = (
 
 const assertParsedWorkSheetMeta = (
   expectedMeta: Meta | undefined,
-  expectedMetaTypes: MetaTypes | undefined,
+  expectedMetaTypeMap: MetaTypeMap | undefined,
   parsedMeta: Meta | undefined,
-  parsedMetaTypes: MetaTypes | undefined,
+  parsedMetaTypeMap: MetaTypeMap | undefined,
   worksheetName: string
 ) => {
 
@@ -236,17 +236,17 @@ const assertParsedWorkSheetMeta = (
     })
 
   assertConsistentDefinedState(
-    worksheetName, expectedMetaTypes, parsedMetaTypes, {
-      firstDefinedButNotSecondMsg: 'expectedMetaTypes is defined but parsedMetaTypes is undefined',
-      secondDefinedButNotFirstMsg: 'expectedMetaTypes is undefined but parsedMetaTypes is defined'
+    worksheetName, expectedMetaTypeMap, parsedMetaTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedMetaTypeMap is defined but parsedMetaTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedMetaTypeMap is undefined but parsedMetaTypeMap is defined'
     })
 
   // all inputs should be eithyer all defined or all undefined
-  const testInputs = [expectedMeta, parsedMeta, expectedMetaTypes, parsedMetaTypes]
+  const testInputs = [expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap]
   if (!allDefinedOrAllUndefined(...testInputs)) {
     assert(false,
       `assertParsedWorkSheetMeta(): WS:${worksheetName}: \n` +
-      'All expectedMeta, parsedMeta, expectedMetaTypes, parsedMetaTypes ' +
+      'All expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap ' +
       'should be defined or all should be undefined')
   }
 
@@ -265,7 +265,7 @@ const assertParsedWorkSheetMeta = (
 
   for (const expectedKey of expectedMetaKeys) {
 
-    const propType = parsedMetaTypes![expectedKey]
+    const propType = parsedMetaTypeMap![expectedKey]
     const expectedVal = expectedMeta![expectedKey]
     const parsedVal = parsedMeta![expectedKey]
 
@@ -287,8 +287,8 @@ const assertParsedWorkSheetMeta = (
 const assertParsedWorksheetTableData = (
   expectedData: DataTableData | undefined,
   pasredData: DataTableData | undefined,
-  expectedDataTypes: DataTypes | undefined,
-  parsedDataTypes: DataTypes | undefined,
+  expectedDataTypeMap: DataTypeMap | undefined,
+  parsedDataTypeMap: DataTypeMap | undefined,
   worksheetName: string
 ) => {
 
@@ -299,17 +299,17 @@ const assertParsedWorksheetTableData = (
     })
 
   assertConsistentDefinedState(
-    worksheetName, expectedDataTypes, expectedDataTypes, {
-      firstDefinedButNotSecondMsg: 'expectedDataTypes is defined but expectedDataTypes is undefined',
-      secondDefinedButNotFirstMsg: 'expectedDataTypes is undefined but expectedDataTypes is defined'
+    worksheetName, expectedDataTypeMap, expectedDataTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but expectedDataTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but expectedDataTypeMap is defined'
     })
 
   // all inputs should be eithyer all defined or all undefined
-  const testInputs = [expectedData, pasredData, expectedDataTypes, parsedDataTypes]
+  const testInputs = [expectedData, pasredData, expectedDataTypeMap, parsedDataTypeMap]
   if (!allDefinedOrAllUndefined(...testInputs)) {
     assert(false,
       `assertParsedWorksheetTableData(): WS:${worksheetName}: \n` +
-      'All expectedMeta, parsedMeta, expectedMetaTypes, parsedMetaTypes ' +
+      'All expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap ' +
       'should be defined or all should be undefined')
   }
 
@@ -334,7 +334,7 @@ const assertParsedWorksheetTableData = (
     ).toEqual(true)
 
     assertParsedData(
-      parsedRowData, expectedRowData, expectedDataTypes, worksheetName, validateOpts
+      parsedRowData, expectedRowData, expectedDataTypeMap, worksheetName, validateOpts
     )
   }
 }
@@ -344,13 +344,13 @@ const assertParsedWorksheetTableData = (
 const assertParsedData = (
   parsedRowData: Data | undefined,
   expectedRowData: Data | undefined,
-  dataTypes: DataTypes | undefined,
+  DataTypeMap: DataTypeMap | undefined,
   worksheetName: string,
   validateOpts: ValidateOpts,
 ) => {
 
 
-  if (any(isUndefined, [parsedRowData, expectedRowData, dataTypes]))
+  if (any(isUndefined, [parsedRowData, expectedRowData, DataTypeMap]))
     throw new Error('assertParsedRow(): All inputs should be defined')
 
   const entryKey = expectedRowData!.key
@@ -361,7 +361,7 @@ const assertParsedData = (
     const expectedProp = expectedRowData![propName]
     const parsedProp = parsedRowData![propName]
 
-    const propType = dataTypes![propName]
+    const propType = DataTypeMap![propName]
     const {
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
     } = propTypeToTestFns(propType, validateOpts)
@@ -380,8 +380,8 @@ const assertParsedData = (
 const assertParsedWorksheetListData = (
   expectedData: DataListData | undefined,
   parsedData: DataListData | undefined,
-  expectedDataTypes: DataTypes | undefined,
-  parsedDataTypes: DataTypes | undefined,
+  expectedDataTypeMap: DataTypeMap | undefined,
+  parsedDataTypeMap: DataTypeMap | undefined,
   worksheetName: string
 ) => {
 
@@ -392,17 +392,17 @@ const assertParsedWorksheetListData = (
     })
 
   assertConsistentDefinedState(
-    worksheetName, expectedDataTypes, expectedDataTypes, {
-      firstDefinedButNotSecondMsg: 'expectedDataTypes is defined but expectedDataTypes is undefined',
-      secondDefinedButNotFirstMsg: 'expectedDataTypes is undefined but expectedDataTypes is defined'
+    worksheetName, expectedDataTypeMap, expectedDataTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but expectedDataTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but expectedDataTypeMap is defined'
     })
 
   // all inputs should be either all defined or all undefined
-  const testInputs = [expectedData, parsedData, expectedDataTypes, parsedDataTypes]
+  const testInputs = [expectedData, parsedData, expectedDataTypeMap, parsedDataTypeMap]
   if (!allDefinedOrAllUndefined(...testInputs)) {
     assert(false,
       `assertParsedWorksheetListData(): WS:${worksheetName}: \n` +
-      'All expectedMeta, parsedMeta, expectedMetaTypes, parsedMetaTypes ' +
+      'All expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap ' +
       'should be defined or all should be undefined')
   }
 
@@ -418,6 +418,6 @@ const assertParsedWorksheetListData = (
   const { expectAllUndefined, expectAllErrors } = expectedData
   const validateOpts: ValidateOpts = { expectAllUndefined,  expectAllErrors }
   assertParsedData(
-    parsedData, expectedData, expectedDataTypes, worksheetName, validateOpts
+    parsedData, expectedData, expectedDataTypeMap, worksheetName, validateOpts
   )
 }
