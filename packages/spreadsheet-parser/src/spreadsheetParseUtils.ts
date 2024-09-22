@@ -5,23 +5,26 @@ import { Worksheet, Row, Cell, CellValue } from 'exceljs'
 import sha256 from 'hash.js/lib/hash/sha/256'
 import { v4 as uuidv4, validate as isValidUuid4 } from 'uuid'
 
-import { isStringOrNumber, isNonEmptyStr, strIsValidObjectKey, toJson } from '@stcland/utils'
+import {
+  isStringOrNumber, isNonEmptyStr, strIsValidObjectKey, toJson
+} from '@stcland/utils'
 
-import { validDataTypes } from './SpreadsheetParserTypes'
-import type {
-  GetWorkSheetList,
-  GetRowValues,
-  DataType,
-  GetPropTypesFromRow,
-  ParseOptions,
-  DataCellMeta,
-  CellMeta,
-  DataLayout
+import {
+  validDataTableDataTypes, validHorizontalDataListTypes,
+  validDataListDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
-//*****************************************************************************
-// Cell value parsers
-//*****************************************************************************
+import type {
+  ParseOptions, DataLayout,
+  GetWorkSheetList, GetRowValues, GetPropTypesFromRow,
+  CellMeta, DataCellMeta,
+  DataTableDataType, HorizontalDataListType, DataListDataType,
+  // Data, DataTableData, DataListData,
+  DataType, // DataTypes,
+} from './SpreadsheetParserTypes'
+
+
+// --- Cell value parsers -----------------------------------------------------
 
 export const cellValueToString = (
   cellValue: CellValue,
@@ -112,7 +115,6 @@ export const cellValueFromJson = (
   return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
 }
 
-
 // TODO: eventually will want cellValueFromList, where we pass in the type, and
 //       that is able to handle list:number, list:uuid, etc ...
 export const cellValueFromStringList = (
@@ -133,119 +135,17 @@ export const cellValueFromStringList = (
   return ['']
 }
 
-//*****************************************************************************
-// Logging
-//*****************************************************************************
 
-export const parserWarning = (msg: string, parseOpts?: ParseOptions) => {
-  const { reportWarnings = true } = parseOpts || {}
-  if (reportWarnings) {
-    console.warn(`\nParsing warning: ${msg}`)
-  }
-}
+//--- data/data-info getters --------------------------------------------------
 
-export const dataCellWarning = (
-  msg: string,
-  dataCellMeta: DataCellMeta,
-  parseOpts?: ParseOptions
-) =>  {
-  const { reportWarnings = true } = parseOpts || {}
-  if (reportWarnings) {
-    console.warn(
-      '\nParsing error:\n' +
-      `   Worksheet: ${dataCellMeta.worksheetName}\n` +
-      `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
-      `   propName = '${dataCellMeta.propName}' | propType = '${dataCellMeta.propType}'\n` +
-      `   ${msg}\n`
-    )
-  }
-  return `${msg} -> WS:${dataCellMeta.worksheetName}, Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}`
-}
-
-export const cellWarning = (
-  msg: string,
-  cellMeta: CellMeta,
-  parseOpts?: ParseOptions
-) =>  {
-  const { reportWarnings = true } = parseOpts || {}
-  if (reportWarnings) {
-    console.warn(
-      '\nParsing error:\n' +
-      `   Worksheet: ${cellMeta.worksheetName}\n` +
-      `   Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}\n` +
-      `   ${msg}\n`
-    )
-  }
-  return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
-}
-
-
-
-//*****************************************************************************
-// General Parsing Utils
-//*****************************************************************************
-
-export const rowIsFrontMatterDelimiter = (row: Row) =>
-  row.getCell(1).value === '---'
-
-export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
-  const row = ws.getRow(startingRow)
-  return rowIsFrontMatterDelimiter(row)
-}
-
-export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
-export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
-
-export const passwordHash = (password: string) =>
-  sha256().update(password).digest('hex')
-
-export const cellValueIsFormula = (cell: Cell) =>
-  isObject(cell) && cell?.formula && cell?.result
-
-export const cellValueIsBoolean = (cellValue: CellValue) => {
-  if (isBoolean(cellValue)) return true
-  if (isString(cellValue)) {
-    const boolText = cellValue.toLowerCase()
-    if (['true', 'false'].includes(boolText)) return true
-  }
-  return false
-}
-export const cellValueIsNotBoolean = complement(cellValueIsBoolean)
-
-export const isEmptyCell = (cellValue: CellValue) => {
-  if (isNil(cellValue)) return true
-  if (isNil(cellValue.valueOf())) return true
-  return false
-}
-
-export const cellValueHasError = (cellValue: CellValue) =>
-  isObject(cellValue) && isNotNil((cellValue as any)?.error)
-
-export const getCellError = (cellValue: CellValue): string =>
-  cellValueHasError(cellValue) ? (cellValue as any).error : ''
-
-export const cellValue = (cell: Cell): CellValue =>
+export const getCellValue = (cell: Cell): CellValue =>
   cellValueIsFormula(cell) ? cell?.result : cell?.value
-
-// Allows usser to add worksheets to the file that won't be parsed
-export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
-
-// excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
-export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
-  const workSheets: Worksheet[] = []
-  const withHiddenFilter = [...filterFns, worksheetNotHidden]
-  wb.eachSheet((ws) => {
-    if (withHiddenFilter.every(fn => fn(ws)))
-      workSheets.push(ws)
-  })
-  return workSheets
-}
 
 // Returnn values from a worksheet row
 export const getRowValues: GetRowValues = row => {
   const cellValues: any[] = []
   row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-    cellValues.push(cellValue(cell))
+    cellValues.push(getCellValue(cell))
   })
   return cellValues
 }
@@ -307,7 +207,6 @@ export const getPropTypeFromCallValue = (
   return propType
 }
 
-
 export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
 
   const propTypes = getRowValuesAsStrings(row) as DataType[]
@@ -328,15 +227,53 @@ export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
   return propTypes as DataType[]
 }
 
-export const isValidPropType = (propType: string) =>
-  isString(propType) && validDataTypes.includes(propType as DataType)
+// excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
+export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
+  const workSheets: Worksheet[] = []
+  const withHiddenFilter = [...filterFns, worksheetNotHidden]
+  wb.eachSheet((ws) => {
+    if (withHiddenFilter.every(fn => fn(ws)))
+      workSheets.push(ws)
+  })
+  return workSheets
+}
+
+// returns data type if valid or false if not a valid list
+export const getHorizontalDataListType = (
+  dataType: DataType
+): DataType | boolean => {
+
+  if (!dataType.includes(':')) return false
+  const [subType] = dataType.split(':') as [DataType]
+  return validDataTypes.includes(subType) ?
+    subType : false
+}
+
+export const getCellError = (cellValue: CellValue): string =>
+  cellValueHasError(cellValue) ? (cellValue as any).error : ''
+
+//--- data validation ---------------------------------------------------------
+
+export const isValidDataTableDataType = (dataType: DataType) =>
+  isString(dataType) && validDataTableDataTypes.includes(dataType as DataTableDataType)
+
+export const isValidHorizontalDataListType = (dataType: DataType) =>
+  isString(dataType) && validHorizontalDataListTypes.includes(dataType as HorizontalDataListType)
+
+export const isValidDataListDataType = (dataType: DataType) =>
+  isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
+
+export const isValidDataType = (dataType: DataType) =>
+  isString(dataType) && validDataTypes.includes(dataType)
+
+export const isValidPropType = isValidDataType
 
 export const isValidPropTypeList = (propTypes: DataType[]) : {
   valid: boolean;
   invalidTypes: DataType[];
 } => {
   const valid = propTypes.every(isValidPropType)
-  const invalidTypes = propTypes.filter(dt => !validDataTypes.includes(dt))
+  const invalidTypes = propTypes.filter(propType => !validDataTypes.includes(propType))
   return { valid, invalidTypes }
 }
 
@@ -357,6 +294,97 @@ export const isNotValidPropNameList = complement(isValidPropNameList)
 
 export const invalidPropNameIdx = (propNames: CellValue[]) =>
   propNames.findIndex(isNotValidPropName)
+
+export const typeIsHorizontalDataList = (dataType: DataType) => {
+  return getHorizontalDataListType(dataType) !== false
+}
+
+export const cellValueIsFormula = (cell: Cell) =>
+  isObject(cell) && cell?.formula && cell?.result
+
+export const cellValueIsBoolean = (cellValue: CellValue) => {
+  if (isBoolean(cellValue)) return true
+  if (isString(cellValue)) {
+    const boolText = cellValue.toLowerCase()
+    if (['true', 'false'].includes(boolText)) return true
+  }
+  return false
+}
+export const cellValueIsNotBoolean = complement(cellValueIsBoolean)
+
+export const isEmptyCell = (cellValue: CellValue) => {
+  if (isNil(cellValue)) return true
+  if (isNil(cellValue.valueOf())) return true
+  return false
+}
+
+export const cellValueHasError = (cellValue: CellValue) =>
+  isObject(cellValue) && isNotNil((cellValue as any)?.error)
+
+
+//--- Logging -----------------------------------------------------------------
+
+export const parserWarning = (msg: string, parseOpts?: ParseOptions) => {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(`\nParsing warning: ${msg}`)
+  }
+}
+
+export const dataCellWarning = (
+  msg: string,
+  dataCellMeta: DataCellMeta,
+  parseOpts?: ParseOptions
+): string =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${dataCellMeta.worksheetName}\n` +
+      `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
+      `   propName = '${dataCellMeta.propName}' | propType = '${dataCellMeta.propType}'\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${dataCellMeta.worksheetName}, Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}`
+}
+
+export const cellWarning = (
+  msg: string,
+  cellMeta: CellMeta,
+  parseOpts?: ParseOptions
+): string =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${cellMeta.worksheetName}\n` +
+      `   Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
+}
+
+//--- General Parsing Utils ---------------------------------------------------
+
+export const rowIsFrontMatterDelimiter = (row: Row) =>
+  row.getCell(1).value === '---'
+
+export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
+  const row = ws.getRow(startingRow)
+  return rowIsFrontMatterDelimiter(row)
+}
+
+export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
+export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
+
+export const passwordHash = (password: string) =>
+  sha256().update(password).digest('hex')
+
+
+// Allows usser to add worksheets to the file that won't be parsed
+export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`

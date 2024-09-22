@@ -5,13 +5,6 @@ import type { PredFn } from '@stcland/utils'
 
 //--- common -------------------------------------------------------------=====
 
-export type DataType =
-  'string' | 'number' | 'boolean' | 'bigint' | 'date' | 'password' | 'json' | 'uuid' | 'string:list';
-
-export const validDataTypes: DataType[] = [
-  'string', 'number', 'boolean', 'bigint', 'date', 'password', 'json', 'uuid'
-]
-
 export interface WorksheetMeta  {
   worksheetName: string
 }
@@ -33,13 +26,44 @@ export interface ParseOptions {
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
-  dataTerminationRow? : '---'
+  dataTerminationRow? : '---' | undefined
   // undefined means no termination data parsing on empty row or end of file
 }
+
+//--- data types --------------------------------------------------------------
+
+export type DataTableDataType =
+'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid'
+
+export const validDataTableDataTypes: DataTableDataType[] = [
+  'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid'
+]
+
+export type HorizontalDataListType =
+  'string:list' | 'number:list' | 'boolean:list' | 'date:list' | 'password:list' | 'json:list' | 'uuid:list'
+
+export const validHorizontalDataListTypes: HorizontalDataListType[] = [
+  'string:list', 'number:list', 'boolean:list', 'date:list', 'password:list', 'json:list', 'uuid:list'
+]
+
+export type DataListDataType =  HorizontalDataListType | DataTableDataType
+
+export const validDataListDataTypes: DataListDataType[] = [
+  ...validHorizontalDataListTypes, ...validDataTableDataTypes
+]
+
+export type DataType = DataTableDataType | DataListDataType
+
+// using a set to remove duplicates
+export const validDataTypes: DataType[] = Array.from(new Set([
+  ...validDataTableDataTypes,
+  ...validDataListDataTypes
+]))
 
 export type DataTypes = Record<string, DataType>
 export type Meta = Record<string, any>
 export type MetaTypes = Record<string, DataType>
+
 
 //--- data layout -------------------------------------------------------------
 

@@ -1,23 +1,22 @@
 import { CellValue, Row, Worksheet } from 'exceljs'
 
 import type {
-  ParseWorksheet, DataType, RowMeta, DataCellMeta, ParseOptions,
-  ParseFrontMatter, ParseDataLayout, ParseDataTableResult, ParseDataListResult,
-  ParseDataTable, Meta, MetaTypes, ParsedWorksheetResult,
-  ParseDataList,
-  Data,
-  DataTableData,
-  DataTypes,
-  ParseFrontMatterResult,
-  DataLayout
+  ParseOptions, ParseWorksheet,
+  ParseFrontMatter,   ParseFrontMatterResult,
+  ParseDataLayout, ParseDataTable, ParseDataList,
+  ParseDataTableResult, ParseDataListResult, ParsedWorksheetResult,
+  RowMeta, DataCellMeta, Meta, MetaTypes,
+  Data, DataTableData, // DataListData,    DataLayout,
+  DataType, DataTypes, // DataTableDataType, HorizontalDataListType, DataListDataType,
 } from './SpreadsheetParserTypes'
+
 
 import { validDataLayouts } from './SpreadsheetParserTypes'
 
 import {
   isEmptyCell, getRowValues, cellValueToDate, colNumToText,
   cellValueToBool, cellValueToString,
-  cellValueToNumber, cellValueFromStringList,
+  cellValueToNumber,
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
   getPropNamesFromRow, getPropTypesFromRow,
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
@@ -58,11 +57,11 @@ export const parseWorksheet: ParseWorksheet = (
   nextRowNum = frontMatterResult.nextRowNum
 
   switch (dataLayout) {
-  case 'dataList':
-    parsedData = parseDataList(ws, nextRowNum, parseOpts)
-    break
   case 'dataTable':
     parsedData = parseDataTable(ws, nextRowNum, parseOpts)
+    break
+  case 'dataList':
+    parsedData = parseDataList(ws, nextRowNum, parseOpts)
     break
   default:
     break // ok to have no data
@@ -141,17 +140,17 @@ const parseTableDataRow = (
 ): Data => {
 
   const propValues = getRowValues(row)
-  const data = propNames.reduce((accData, propName, i) => {
+  const data = propNames.reduce((accData, propName, colNumber) => {
 
     const dataCellMeta = {
-      ...rowMeta, colNumber: i, propName, propType: propTypes[i]
+      ...rowMeta, colNumber, propName, propType: propTypes[colNumber]
     }
 
-    if (propValues[i]?.toString().trim() === '_skip_')
+    if (propValues[colNumber]?.toString().trim() === '_skip_')
       return accData
 
     const dataValue = parseDataCell(
-      'dataTable', propTypes[i], propValues[i], dataCellMeta, parseOpts
+      propTypes[colNumber], propValues[colNumber], dataCellMeta, parseOpts
     )
 
     return {
@@ -197,11 +196,14 @@ export const parseDataList: ParseDataList = (
 
     if (rowValues.length !== 3) {
       parserWarning(
-        `WS: ${worksheetName}: Invalid front matter row ${curRowNumber}\n` +
+        `WS: ${worksheetName}: Invalid Data List property row ${curRowNumber}\n` +
         `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
         `  ${toJson(rowValues)}`
       )
     }
+
+    if (rowValues[2]?.toString().trim() === '_skip_')
+      return
 
     const propName = getPropNameFromCallValue(rowValues[0], {
       ...rowMeta, colNumber: 0
@@ -212,7 +214,7 @@ export const parseDataList: ParseDataList = (
     })
 
     const propValue = parseDataCell(
-      'dataList', propType, rowValues[2],
+      propType, rowValues[2],
       { ...rowMeta, colNumber: 2, propName, propType },
       parseOpts
     )
@@ -234,7 +236,6 @@ export const parseDataList: ParseDataList = (
 //-----------------------------------------------------------------------------
 
 export const parseDataCell = (
-  dataLayout: DataLayout,
   propType: DataType,
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
@@ -256,11 +257,34 @@ export const parseDataCell = (
   case 'password': return cellValueToPasswordHash(cellValue, dataCellMeta, parseOpts)
   case 'json': return cellValueFromJson(cellValue, dataCellMeta, parseOpts)
   case 'uuid': return cellValueToUuid(cellValue, dataCellMeta, parseOpts)
-  case 'string:list': return cellValueFromStringList(dataLayout, 1, 1, dataCellMeta, parseOpts)
   default:
     return dataCellWarning(`Invalid property type: '${propType}'`, dataCellMeta, parseOpts)
   }
 }
+
+//-----------------------------------------------------------------------------
+
+export const parseHorizontalDataList = (
+  rowValues: CellValue[],
+  dataCellMeta: DataCellMeta,
+  parseOpts?: ParseOptions
+) => {
+
+  // get prop name and data type
+  // const propName = getPropNameFromCallValue(rowValues[0], dataCellMeta)
+  // const propType = getPropTypeFromCallValue(rowValues[1], dataCellMeta)
+
+  // make sure it is a list
+  // iteratte over the the rowValues and parse each cell
+  // const propValues = rowValues.slice(2).map((cellValue, i) => {
+  //   return parseDataCell('dataList', propType, cellValue, {
+  //     ...dataCellMeta, colNumber: i+2, propName, propType
+  //   }, parseOpts)
+  // })
+
+
+}
+
 
 //-----------------------------------------------------------------------------
 
@@ -321,7 +345,7 @@ export const parseDataLayout: ParseDataLayout = (
 
   // check the label
   let colNumber = 0
-  const label = parseDataCell('any', 'string', rowValues[colNumber], dataCellMeta, parseOpts)
+  const label = parseDataCell('string', rowValues[colNumber], dataCellMeta, parseOpts)
   if (label !== 'dataLayout') {
     parserWarning(
       `WS: ${ws.name}: Invalid dataLayout row ${rowNumber}, col ${colNumToText(colNumber)}\n` +
@@ -332,7 +356,7 @@ export const parseDataLayout: ParseDataLayout = (
 
   // get the data format type
   colNumber = 1
-  const dataLayout = parseDataCell('any', 'string', rowValues[colNumber], dataCellMeta, parseOpts)
+  const dataLayout = parseDataCell('string', rowValues[colNumber], dataCellMeta, parseOpts)
   if (!validDataLayouts.includes(dataLayout)) {
     throw new Error(
       `WS: ${ws.name}: Invalid dataLayout '${dataLayout}'\n` +
