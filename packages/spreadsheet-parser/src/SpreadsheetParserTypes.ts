@@ -18,7 +18,7 @@ export interface CellMeta extends RowMeta {
 
 export interface DataCellMeta extends CellMeta {
   propName: string;
-  propType: DataType;
+  dataType: DataType;
 }
 
 export interface ParseOptions {
@@ -203,7 +203,7 @@ export type GetWorkSheetList = (
   filterFns?: PredFn<Worksheet>[] // list of functions to filter unwante worksheets
 ) => Worksheet[];
 
-export type GetPropTypesFromRow = (row: Row) => DataType[];
+export type GetDataTypesFromRow = (row: Row) => DataType[];
 
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];

@@ -18,10 +18,9 @@ import {
 import {
   cellValueToDate, cellValueToBool, cellValueToString, cellValueToNumber,
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
-  getPropNameFromCallValue, getPropTypeFromCallValue,
-  getRowValues, getPropNamesFromRow, getPropTypesFromRow,
+  getPropNameFromCallValue, getDataTypeFromCallValue,
+  getRowValues, getPropNamesFromRow, getDataTypesFromRow,
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
-  // isValidDataTableDataType,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
 } from './spreadsheetParseUtils'
 
@@ -99,13 +98,13 @@ const parseDataTable: ParseDataTable = (
   const worksheetName = ws.name
 
   const propNames = getPropNamesFromRow(ws.getRow(startingRowNum))
-  const propTypes = getPropTypesFromRow(ws.getRow(startingRowNum+1))
+  const dataTypes = getDataTypesFromRow(ws.getRow(startingRowNum+1))
 
-  if (propNames.length !== propTypes.length) {
+  if (propNames.length !== dataTypes.length) {
     parserWarning(
       `WS: ${worksheetName}: Number of property names does not match number of property types (skipping)\n` +
       `  property names: ${toJson(propNames)}\n` +
-      `  property types: ${toJson(propTypes)}`,
+      `  property types: ${toJson(dataTypes)}`,
       parseOpts
     )
     return { numDataRowsParsed: 0, data: [], dataTypeMap: {} }
@@ -114,7 +113,7 @@ const parseDataTable: ParseDataTable = (
   const data: DataTableData = []
   ws.eachRow((row, rowNumber) => {
 
-    // skip propName and propType rows
+    // skip propName and dataType rows
     if (rowNumber < startingRowNum+2)
       return
 
@@ -126,12 +125,12 @@ const parseDataTable: ParseDataTable = (
       worksheetName: ws.name, rowNumber
     }
 
-    const rowData = parseTableDataRow(propNames, propTypes, row, rowMeta, parseOpts)
+    const rowData = parseTableDataRow(propNames, dataTypes, row, rowMeta, parseOpts)
     data.push(rowData)
   })
 
   const dataTypeMap = propNames.reduce((acc, propName, i) => {
-    return { ...acc, [propName]: propTypes[i] }
+    return { ...acc, [propName]: dataTypes[i] }
   }, {})
 
   return { numDataRowsParsed: data.length, data, dataTypeMap }
@@ -141,7 +140,7 @@ const parseDataTable: ParseDataTable = (
 
 const parseTableDataRow = (
   propNames: string[],
-  propTypes: DataType[],
+  dataTypes: DataType[],
   row: Row,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions
@@ -150,21 +149,21 @@ const parseTableDataRow = (
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, colNumber) => {
 
-    const propType = propTypes[colNumber]
+    const dataType = dataTypes[colNumber]
     const propValue = propValues[colNumber]
 
     const dataCellMeta = {
-      ...rowMeta, colNumber, propName, propType
+      ...rowMeta, colNumber, propName, dataType
     }
 
-    // if (isValidDataTableDataType(propType)) {
+    // if (isValidDataTableDataType(dataType)) {
     // }
 
 
     if (propValue?.toString().trim() === '_skip_')
       return accData
 
-    const dataValue = parseDataCell(propType, propValue, dataCellMeta, parseOpts)
+    const dataValue = parseDataCell(dataType, propValue, dataCellMeta, parseOpts)
 
     return {
       ...accData, [propName]: dataValue
@@ -210,7 +209,7 @@ export const parseDataList: ParseDataList = (
     if (rowValues.length !== 3) {
       parserWarning(
         `WS: ${worksheetName}: Invalid Data List property row ${curRowNumber}\n` +
-        `  Expected 3 cells [propName, propType, propValue], found ${rowValues.length}\n` +
+        `  Expected 3 cells [propName, dataType, propValue], found ${rowValues.length}\n` +
         `  ${toJson(rowValues)}`
       )
     }
@@ -222,18 +221,18 @@ export const parseDataList: ParseDataList = (
       ...rowMeta, colNumber: 0
     })
 
-    const propType = getPropTypeFromCallValue(rowValues[1], {
+    const dataType = getDataTypeFromCallValue(rowValues[1], {
       ...rowMeta, colNumber: 1
     })
 
     const propValue = parseDataCell(
-      propType, rowValues[2],
-      { ...rowMeta, colNumber: 2, propName, propType },
+      dataType, rowValues[2],
+      { ...rowMeta, colNumber: 2, propName, dataType },
       parseOpts
     )
 
     data = { ...(data || {}), [propName]: propValue }
-    dataTypeMap = { ...(dataTypeMap || {}), [propName]: propType }
+    dataTypeMap = { ...(dataTypeMap || {}), [propName]: dataType }
   })
 
   const result: ParseDataListResult = {
@@ -249,7 +248,7 @@ export const parseDataList: ParseDataList = (
 //-----------------------------------------------------------------------------
 
 export const parseDataCell = (
-  propType: DataType,
+  dataType: DataType,
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
   parseOpts?: ParseOptions
@@ -262,7 +261,7 @@ export const parseDataCell = (
     return dataCellWarning(`Cell has an error: ${errorStr}`, dataCellMeta, parseOpts)
   }
 
-  switch (propType) {
+  switch (dataType) {
   case 'string': return cellValueToString(cellValue, dataCellMeta, parseOpts)
   case 'number': return cellValueToNumber(cellValue, dataCellMeta, parseOpts)
   case 'boolean':return cellValueToBool(cellValue, dataCellMeta, parseOpts)
@@ -271,7 +270,7 @@ export const parseDataCell = (
   case 'json': return cellValueFromJson(cellValue, dataCellMeta, parseOpts)
   case 'uuid': return cellValueToUuid(cellValue, dataCellMeta, parseOpts)
   default:
-    return dataCellWarning(`Invalid property type: '${propType}'`, dataCellMeta, parseOpts)
+    return dataCellWarning(`Invalid property type: '${dataType}'`, dataCellMeta, parseOpts)
   }
 }
 
@@ -285,13 +284,13 @@ export const parseHorizontalValueList = (
 
   // get prop name and data type
   // const propName = getPropNameFromCallValue(rowValues[0], dataCellMeta)
-  // const propType = getPropTypeFromCallValue(rowValues[1], dataCellMeta)
+  // const dataType = getDataTypeFromCallValue(rowValues[1], dataCellMeta)
 
   // make sure it is a list
   // iteratte over the the rowValues and parse each cell
   // const propValues = rowValues.slice(2).map((cellValue, i) => {
-  //   return parseDataCell('dataList', propType, cellValue, {
-  //     ...dataCellMeta, colNumber: i+2, propName, propType
+  //   return parseDataCell('dataList', dataType, cellValue, {
+  //     ...dataCellMeta, colNumber: i+2, propName, dataType
   //   }, parseOpts)
   // })
 
@@ -353,7 +352,7 @@ export const parseDataLayout: ParseDataLayout = (
     rowNumber,
     colNumber: 0,
     propName: 'dataLayout',
-    propType: 'string'
+    dataType: 'string'
   }
 
   // check the label

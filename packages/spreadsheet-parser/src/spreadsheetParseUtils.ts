@@ -16,7 +16,7 @@ import {
 
 import type {
   ParseOptions, DataLayout,
-  GetWorkSheetList, GetRowValues, GetPropTypesFromRow,
+  GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
   CellMeta, DataCellMeta,
   DataTableDataType, HorizontalValueListType, DataListDataType,
   // Data, DataTableData, DataListData,
@@ -190,7 +190,7 @@ export const getPropNameFromCallValue = (
   return propName
 }
 
-export const getPropTypeFromCallValue = (
+export const getDataTypeFromCallValue = (
   cellValue: CellValue,
   cellMeta: CellMeta,
 ) => {
@@ -198,33 +198,33 @@ export const getPropTypeFromCallValue = (
   if (isNil(cellValue))
     throw new Error(cellWarning('Empty property type', cellMeta))
 
-  const propType = cellValue.toString() as DataType
-  if (isNotValidPropName(propType)) {
+  const dataType = cellValue.toString() as DataType
+  if (isNotValidPropName(dataType)) {
     throw new Error(cellWarning(
-      `Invalid property type: ${propType}, should be one of ${toJson(validDataTypes)}`, cellMeta))
+      `Invalid property type: ${dataType}, should be one of ${toJson(validDataTypes)}`, cellMeta))
   }
 
-  return propType
+  return dataType
 }
 
-export const getPropTypesFromRow: GetPropTypesFromRow = (row: Row) => {
+export const getDataTypesFromRow: GetDataTypesFromRow = (row: Row) => {
 
-  const propTypes = getRowValuesAsStrings(row) as DataType[]
+  const dataTypes = getRowValuesAsStrings(row) as DataType[]
 
-  if (propTypes.length === 0 )
+  if (dataTypes.length === 0 )
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
 
-  if (isNotValidPropTypeList(propTypes)) {
-    const invalidPropIdx = invalidPropTypeIdx(propTypes)
+  if (isNotValidDataTypeList(dataTypes)) {
+    const invalidPropIdx = invalidDataTypeIdx(dataTypes)
     const invalidPropCol = colNumToText(invalidPropIdx)
-    const invalidPropType = propTypes[invalidPropIdx]
+    const invalidDataType = dataTypes[invalidPropIdx]
     throw new Error(
       `Invalid property type found in worksheet ${row.worksheet.name}:\n` +
-      `  found: ${invalidPropType} (Column ${invalidPropCol})\n` +
+      `  found: ${invalidDataType} (Column ${invalidPropCol})\n` +
       `  should be one of ${toJson(validDataTypes.join(', '))}`
     )
   }
-  return propTypes as DataType[]
+  return dataTypes as DataType[]
 }
 
 // excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
@@ -266,14 +266,12 @@ export const isValidDataListDataType = (dataType: DataType) =>
 export const isValidDataType = (dataType: DataType) =>
   isString(dataType) && validDataTypes.includes(dataType)
 
-export const isValidPropType = isValidDataType
-
-export const isValidDataTypeList = (propTypes: DataType[]) : {
+export const isValidDataTypeList = (dataTypes: DataType[]) : {
   valid: boolean;
   invalidTypes: DataType[];
 } => {
-  const valid = propTypes.every(isValidPropType)
-  const invalidTypes = propTypes.filter(propType => !validDataTypes.includes(propType))
+  const valid = dataTypes.every(isValidDataType)
+  const invalidTypes = dataTypes.filter(dataType => !validDataTypes.includes(dataType))
   return { valid, invalidTypes }
 }
 
@@ -281,14 +279,10 @@ export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
 export const isNotValidHorizontalValueListType = complement(isValidHorizontalValueListType)
 export const isNotValidDataListDataType = complement(isValidDataListDataType)
 export const isNotValidDataType = complement(isValidDataType)
+export const isNotValidDataTypeList = complement(isValidDataTypeList)
 
-// Fix this up when I make the variable name change
-const isValidPropTypeList = isValidDataTypeList
-export const isNotValidPropType = complement(isValidPropType)
-export const isNotValidPropTypeList = complement(isValidPropTypeList)
-
-export const invalidPropTypeIdx = (propTypes: DataType[]) =>
-  propTypes.findIndex(isNotValidPropType)
+export const invalidDataTypeIdx = (dataTypes: DataType[]) =>
+  dataTypes.findIndex(isNotValidDataType)
 
 export const isValidPropName = (propName: string) =>
   isNonEmptyStr(propName) && strIsValidObjectKey(propName)
@@ -349,7 +343,7 @@ export const dataCellWarning = (
       '\nParsing error:\n' +
       `   Worksheet: ${dataCellMeta.worksheetName}\n` +
       `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
-      `   propName = '${dataCellMeta.propName}' | propType = '${dataCellMeta.propType}'\n` +
+      `   propName = '${dataCellMeta.propName}' | dataType = '${dataCellMeta.dataType}'\n` +
       `   ${msg}\n`
     )
   }

@@ -18,7 +18,7 @@ import {
 
 import { getWorksheetList } from '../src/spreadsheetParseUtils'
 import type { ValidateOpts } from './testUtils'
-import { assertConsistentDefinedState, propTypeToTestFns } from './testUtils'
+import { assertConsistentDefinedState, dataTypeToTestFns } from './testUtils'
 import { forEachSheet } from '../src/parseSpreadsheet'
 import { isUndefined } from 'ramda-adjunct'
 
@@ -265,13 +265,13 @@ const assertParsedWorkSheetMeta = (
 
   for (const expectedKey of expectedMetaKeys) {
 
-    const propType = parsedMetaTypeMap![expectedKey]
+    const dataType = parsedMetaTypeMap![expectedKey]
     const expectedVal = expectedMeta![expectedKey]
     const parsedVal = parsedMeta![expectedKey]
 
     const {
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
-    } = propTypeToTestFns(propType)
+    } = dataTypeToTestFns(dataType)
 
     expect(
       validateFn(expectedVal, parsedVal),
@@ -361,10 +361,10 @@ const assertParsedData = (
     const expectedProp = expectedRowData![propName]
     const parsedProp = parsedRowData![propName]
 
-    const propType = DataTypeMap![propName]
+    const dataType = DataTypeMap![propName]
     const {
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
-    } = propTypeToTestFns(propType, validateOpts)
+    } = dataTypeToTestFns(dataType, validateOpts)
 
     expect(
       validateFn(expectedProp, parsedProp),

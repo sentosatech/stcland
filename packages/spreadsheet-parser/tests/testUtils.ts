@@ -55,8 +55,8 @@ export const expectedUuidString = (modifiers: [string, string]) => {
   return `${pre || ''}[vaiid-uuid]${post || ''}`
 }
 
-export const propTypeToTestFns = (
-  propType: DataType,
+export const dataTypeToTestFns = (
+  dataType: DataType,
   validateOpts?: ValidateOpts
 ) => {
 
@@ -71,7 +71,7 @@ export const propTypeToTestFns = (
   if ( expectAllUndefined || expectAllErrors)
     return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
 
-  switch (propType) {
+  switch (dataType) {
 
   case 'date':
     validateFn = dateEquals
