@@ -268,7 +268,7 @@ export const isValidDataType = (dataType: DataType) =>
 
 export const isValidPropType = isValidDataType
 
-export const isValidPropTypeList = (propTypes: DataType[]) : {
+export const isValidDataTypeList = (propTypes: DataType[]) : {
   valid: boolean;
   invalidTypes: DataType[];
 } => {
@@ -277,6 +277,13 @@ export const isValidPropTypeList = (propTypes: DataType[]) : {
   return { valid, invalidTypes }
 }
 
+export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
+export const isNotValidHorizontalValueListType = complement(isValidHorizontalValueListType)
+export const isNotValidDataListDataType = complement(isValidDataListDataType)
+export const isNotValidDataType = complement(isValidDataType)
+
+// Fix this up when I make the variable name change
+const isValidPropTypeList = isValidDataTypeList
 export const isNotValidPropType = complement(isValidPropType)
 export const isNotValidPropTypeList = complement(isValidPropTypeList)
 

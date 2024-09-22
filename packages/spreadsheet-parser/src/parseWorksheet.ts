@@ -11,16 +11,19 @@ import type {
 } from './SpreadsheetParserTypes'
 
 
-import { validDataLayouts } from './SpreadsheetParserTypes'
+import {
+  validDataLayouts,
+  // validDataTypes,
+} from './SpreadsheetParserTypes'
 
 import {
-  isEmptyCell, getRowValues, cellValueToDate, colNumToText,
-  cellValueToBool, cellValueToString,
-  cellValueToNumber,
+  cellValueToDate, cellValueToBool, cellValueToString, cellValueToNumber,
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
-  getPropNamesFromRow, getPropTypesFromRow,
+  getPropNameFromCallValue, getPropTypeFromCallValue,
+  getRowValues, getPropNamesFromRow, getPropTypesFromRow,
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
-  doesNotHaveFrontMatter, getPropNameFromCallValue, getPropTypeFromCallValue,
+  // isValidDataTableDataType,
+  isEmptyCell, colNumToText, doesNotHaveFrontMatter,
 } from './spreadsheetParseUtils'
 
 import { toJson } from '@stcland/utils'
@@ -51,8 +54,8 @@ export const parseWorksheet: ParseWorksheet = (
   // any data format may start with front matter
   const frontMatterResult = parseFrontMatter(ws, nextRowNum, parseOpts)
 
-  meta = frontMatterResult.meta
-  metaTypes = frontMatterResult.metaTypes
+  meta = frontMatterResult?.meta
+  metaTypes = frontMatterResult?.metaTypes
 
   nextRowNum = frontMatterResult.nextRowNum
 
@@ -63,8 +66,14 @@ export const parseWorksheet: ParseWorksheet = (
   case 'dataList':
     parsedData = parseDataList(ws, nextRowNum, parseOpts)
     break
+  case 'frontMatterOnly':
+    break // ok to have no data,
   default:
-    break // ok to have no data
+    throw new Error(
+      `WS: ${worksheetName}: Invalid dataLayout '${dataLayout}'\n` +
+      `  Expected one of ${toJson(validDataLayouts)}`
+    )
+
   }
 
   const result: ParsedWorksheetResult = {
@@ -86,7 +95,6 @@ const parseDataTable: ParseDataTable = (
   ws: Worksheet,
   startingRowNum: number,
   parseOpts?: ParseOptions
-
 ) => {
 
   const worksheetName = ws.name
@@ -118,6 +126,7 @@ const parseDataTable: ParseDataTable = (
     const rowMeta: RowMeta = {
       worksheetName: ws.name, rowNumber
     }
+
     const rowData = parseTableDataRow(propNames, propTypes, row, rowMeta, parseOpts)
     data.push(rowData)
   })
@@ -142,16 +151,21 @@ const parseTableDataRow = (
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, colNumber) => {
 
+    const propType = propTypes[colNumber]
+    const propValue = propValues[colNumber]
+
     const dataCellMeta = {
-      ...rowMeta, colNumber, propName, propType: propTypes[colNumber]
+      ...rowMeta, colNumber, propName, propType
     }
 
-    if (propValues[colNumber]?.toString().trim() === '_skip_')
+    // if (isValidDataTableDataType(propType)) {
+    // }
+
+
+    if (propValue?.toString().trim() === '_skip_')
       return accData
 
-    const dataValue = parseDataCell(
-      propTypes[colNumber], propValues[colNumber], dataCellMeta, parseOpts
-    )
+    const dataValue = parseDataCell(propType, propValue, dataCellMeta, parseOpts)
 
     return {
       ...accData, [propName]: dataValue
