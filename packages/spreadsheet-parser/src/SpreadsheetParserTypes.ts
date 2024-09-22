@@ -39,17 +39,17 @@ export const validDataTableDataTypes: DataTableDataType[] = [
   'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid'
 ]
 
-export type HorizontalDataListType =
+export type HorizontalValueListType =
   'string:list' | 'number:list' | 'boolean:list' | 'date:list' | 'password:list' | 'json:list' | 'uuid:list'
 
-export const validHorizontalDataListTypes: HorizontalDataListType[] = [
+export const validHorizontalValueListTypes: HorizontalValueListType[] = [
   'string:list', 'number:list', 'boolean:list', 'date:list', 'password:list', 'json:list', 'uuid:list'
 ]
 
-export type DataListDataType =  HorizontalDataListType | DataTableDataType
+export type DataListDataType =  HorizontalValueListType | DataTableDataType
 
 export const validDataListDataTypes: DataListDataType[] = [
-  ...validHorizontalDataListTypes, ...validDataTableDataTypes
+  ...validHorizontalValueListTypes, ...validDataTableDataTypes
 ]
 
 export type DataType = DataTableDataType | DataListDataType

@@ -10,7 +10,7 @@ import {
 } from '@stcland/utils'
 
 import {
-  validDataTableDataTypes, validHorizontalDataListTypes,
+  validDataTableDataTypes, validHorizontalValueListTypes,
   validDataListDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
@@ -18,7 +18,7 @@ import type {
   ParseOptions, DataLayout,
   GetWorkSheetList, GetRowValues, GetPropTypesFromRow,
   CellMeta, DataCellMeta,
-  DataTableDataType, HorizontalDataListType, DataListDataType,
+  DataTableDataType, HorizontalValueListType, DataListDataType,
   // Data, DataTableData, DataListData,
   DataType, // DataTypes,
 } from './SpreadsheetParserTypes'
@@ -239,7 +239,7 @@ export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
 }
 
 // returns data type if valid or false if not a valid list
-export const getHorizontalDataListType = (
+export const getHorizontalValueListType = (
   dataType: DataType
 ): DataType | boolean => {
 
@@ -257,8 +257,8 @@ export const getCellError = (cellValue: CellValue): string =>
 export const isValidDataTableDataType = (dataType: DataType) =>
   isString(dataType) && validDataTableDataTypes.includes(dataType as DataTableDataType)
 
-export const isValidHorizontalDataListType = (dataType: DataType) =>
-  isString(dataType) && validHorizontalDataListTypes.includes(dataType as HorizontalDataListType)
+export const isValidHorizontalValueListType = (dataType: DataType) =>
+  isString(dataType) && validHorizontalValueListTypes.includes(dataType as HorizontalValueListType)
 
 export const isValidDataListDataType = (dataType: DataType) =>
   isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
@@ -295,8 +295,8 @@ export const isNotValidPropNameList = complement(isValidPropNameList)
 export const invalidPropNameIdx = (propNames: CellValue[]) =>
   propNames.findIndex(isNotValidPropName)
 
-export const typeIsHorizontalDataList = (dataType: DataType) => {
-  return getHorizontalDataListType(dataType) !== false
+export const typeIsHorizontalValueList = (dataType: DataType) => {
+  return getHorizontalValueListType(dataType) !== false
 }
 
 export const cellValueIsFormula = (cell: Cell) =>

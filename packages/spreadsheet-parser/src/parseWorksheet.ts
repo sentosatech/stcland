@@ -7,7 +7,7 @@ import type {
   ParseDataTableResult, ParseDataListResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypes,
   Data, DataTableData, // DataListData,    DataLayout,
-  DataType, DataTypes, // DataTableDataType, HorizontalDataListType, DataListDataType,
+  DataType, DataTypes, // DataTableDataType, HorizontalValueListType, DataListDataType,
 } from './SpreadsheetParserTypes'
 
 
@@ -264,7 +264,7 @@ export const parseDataCell = (
 
 //-----------------------------------------------------------------------------
 
-export const parseHorizontalDataList = (
+export const parseHorizontalValueList = (
   rowValues: CellValue[],
   dataCellMeta: DataCellMeta,
   parseOpts?: ParseOptions

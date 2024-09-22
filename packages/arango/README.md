@@ -5,3 +5,9 @@ Some notes to include
   - put doc collectionsp test first
   - then edge collections
   - then graphs
+* _skip_
+* uuid and password types are special
+* prefix tab (worksheetname) with . to skip
+* data tables (data list type not valid)
+* data lists
+* horiontal data lists (only for data lists)
