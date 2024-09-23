@@ -1,10 +1,11 @@
-import { ParsedSpreadheetCallBack, WorksheetParseOptions } from '@stcland/spreadsheet-parser'
+import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
 import {
   ArangoHostConfig,
   IfDbDoesNotExistOnGet, // IfDbExistsOnCreate,
   IfCollectionDoesNotExistOnGet,
   DataBaseUser as ArangoDataBaseUser
 } from '../utils/ArangoUtilsTypes'
+import { Database } from 'arangojs'
 
 export const enum IfTargetDbDoesNotExist {
   ThrowError = IfDbDoesNotExistOnGet.ThrowError,
@@ -19,14 +20,17 @@ export const enum IfTargetCollectionDoesNotExist {
 export type DataBaseUser = Pick<ArangoDataBaseUser, 'username' | 'passwd'>
 
 export interface LoadSpreadsheetDataOpts extends
-  Pick<WorksheetParseOptions, 'reportProgress' | 'reportWarnings'> {
+  Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
   ifTargetDbDoesNotExist?: IfTargetDbDoesNotExist
     // defaults to create
   dbUsers?: DataBaseUser[]
     // only needed if IfTargertDbDoesNotExist is Create
     // defaults to []
-    ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
+  ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
     // defaults to Append
+  validateEdgeTargets?: boolean
+    // For edge collections, validate that the _from and _to docs exist
+    // defaults to true
 }
 
 export type LoadSpreadsheetData = (
@@ -40,8 +44,14 @@ export type LoadSpreadsheetData = (
 export type LoadWorksheetData = ParsedSpreadheetCallBack
 
 export interface ArangoDataLoaderMeta {
-  type: 'docCollection' | 'edgeCollection' | 'graph '
+  type: 'docCollection' | 'edgeCollection' | 'graph'
 }
+
+export interface ArangoDataLoaderClientData {
+  db: Database
+  opts: LoadSpreadsheetDataOpts
+}
+
 
 export const ValidWorksheetTypes = [
   'docCollection',

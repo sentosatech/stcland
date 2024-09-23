@@ -17,14 +17,6 @@
     },
     "./dist/style.css": "./dist/style.css"
   },
-  "scripts": {
-    "dev": "vite",
-    "lint": "eslint . --ext .js,.ts",
-    "ts-check": "tsc --noEmit --skipLibCheck",
-    "build": "vite build",
-    "serve": "vite serve",
-    "clean": "rimraf ./dist && mkdir dist"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -56,5 +48,14 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint . --ext .js,.ts",
+    "ts-check": "tsc --noEmit --skipLibCheck",
+    "build": "vite build",
+    "serve": "vite serve",
+    "clean": "rimraf ./dist && mkdir dist",
+    "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml"
   }
 }

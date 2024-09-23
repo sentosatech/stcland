@@ -23,7 +23,10 @@ import type {
   DbExists, DbDoesNotExist, NonSystemDbsExists,
   CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
-  GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType
+  GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType,
+  DocumentExistsById,
+  DocumentExists,
+  DocumentDoesNotExist
 } from './ArangoUtilsTypes'
 
 //*****************************************************************************
@@ -188,6 +191,34 @@ export const nonSystemDbsExists: NonSystemDbsExists = async (
   const existingDbs = await sysDb.listDatabases()
   return existingDbs.some(dbName => !dbName.startsWith('_'))
 }
+
+export const documentExists: DocumentExists = async (
+  db: Database,
+  collectionName: string,
+  documentKey: string
+) => {
+  try {
+    const collection = db.collection(collectionName)
+    const exists = await collection.documentExists(documentKey)
+    return exists
+  } catch (error) {
+    return false
+  }
+}
+
+export const documentDoesNotExist: DocumentDoesNotExist =
+  asyncComplement(documentExists)
+
+export const documentExistsById: DocumentExistsById = async (
+  db, documentId
+) => {
+  const [collectionName, documentKey] = documentId.split('/')
+  return documentExists(db, collectionName, documentKey)
+}
+
+
+export const documentDoesNotExistById: DocumentExistsById =
+  asyncComplement(documentExistsById)
 
 //*****************************************************************************
 // Collcection Utils

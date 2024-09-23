@@ -1,4 +1,4 @@
 export * from './SpreadsheetParserTypes'
-export * from './spreadSheetParseUtils'
+export * from './spreadsheetParseUtils'
 export * from './parseWorksheet'
 export * from './parseSpreadsheet'
