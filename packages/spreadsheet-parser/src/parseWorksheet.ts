@@ -1,4 +1,7 @@
-import { CellValue, Row, Worksheet } from 'exceljs'
+import { CellValue, Row, RowValues, Worksheet } from 'exceljs'
+
+import { toJson } from '@stcland/utils'
+import { keys, isNil, isNotNil } from 'ramda'
 
 import type {
   ParseOptions, ParseWorksheet,
@@ -6,13 +9,13 @@ import type {
   ParseDataLayout, ParseDataTable, ParseDataList,
   ParseDataTableResult, ParseDataListResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
-  Data, DataTableData, // DataListData,    DataLayout,
-  DataType, DataTypeMap, // DataTableDataType, HorizontalValueListType, DataListDataType,
+  Data, DataTableData,
+  DataType, DataTypeMap, DataTableDataType,
 } from './SpreadsheetParserTypes'
-
 
 import {
   validDataLayouts,
+  // validRowValueListTypes,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -22,10 +25,12 @@ import {
   getRowValues, getPropNamesFromRow, getDataTypesFromRow,
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
+  isNotValidDataTableDataType, isRowValueListType,
+  shouldSkipDataListRow,
+  shouldSkipDataTableValue,
+  getBaseDataType
 } from './spreadsheetParseUtils'
 
-import { toJson } from '@stcland/utils'
-import { keys } from 'ramda'
 
 //-----------------------------------------------------------------------------
 
@@ -71,7 +76,6 @@ export const parseWorksheet: ParseWorksheet = (
       `WS: ${worksheetName}: Invalid dataLayout '${dataLayout}'\n` +
       `  Expected one of ${toJson(validDataLayouts)}`
     )
-
   }
 
   const result: ParsedWorksheetResult = {
@@ -149,18 +153,24 @@ const parseTableDataRow = (
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, colNumber) => {
 
-    const dataType = dataTypes[colNumber]
+    const dataType = dataTypes[colNumber] as DataTableDataType
     const propValue = propValues[colNumber]
 
     const dataCellMeta = {
       ...rowMeta, colNumber, propName, dataType
     }
 
-    // if (isValidDataTableDataType(dataType)) {
-    // }
+    if (isNotValidDataTableDataType(dataType)) {
+      const warning =
+        `Invalid data type for table data: '${dataType}'` +
+        `${isRowValueListType(dataType) ? ', row data lists not valid for table data' : ''}`
 
+      return {
+        ...accData, [propName]: dataCellWarning(warning, dataCellMeta, parseOpts)
+      }
+    }
 
-    if (propValue?.toString().trim() === '_skip_')
+    if (shouldSkipDataTableValue(propValue))
       return accData
 
     const dataValue = parseDataCell(dataType, propValue, dataCellMeta, parseOpts)
@@ -178,6 +188,7 @@ const parseTableDataRow = (
 export const parseDataList: ParseDataList = (
   ws, startingRowNum, parseOpts?
 ) => {
+
   const worksheetName = ws.name
 
   let data: Data | undefined = undefined
@@ -206,17 +217,6 @@ export const parseDataList: ParseDataList = (
 
     const rowValues = getRowValues(curRow)
 
-    if (rowValues.length !== 3) {
-      parserWarning(
-        `WS: ${worksheetName}: Invalid Data List property row ${curRowNumber}\n` +
-        `  Expected 3 cells [propName, dataType, propValue], found ${rowValues.length}\n` +
-        `  ${toJson(rowValues)}`
-      )
-    }
-
-    if (rowValues[2]?.toString().trim() === '_skip_')
-      return
-
     const propName = getPropNameFromCallValue(rowValues[0], {
       ...rowMeta, colNumber: 0
     })
@@ -225,11 +225,39 @@ export const parseDataList: ParseDataList = (
       ...rowMeta, colNumber: 1
     })
 
-    const propValue = parseDataCell(
-      dataType, rowValues[2],
-      { ...rowMeta, colNumber: 2, propName, dataType },
-      parseOpts
-    )
+    let propValue: any
+
+    // are we delaing with a list of row values?
+    if (isRowValueListType(dataType)) {
+
+      if (rowValues.length < 3) {
+        parserWarning(
+          `WS: ${worksheetName}: Invalid Data List row value list ${curRowNumber}\n` +
+          `  Expected 3+ cells [propName, dataType, ...propValueList], found ${rowValues.length}\n` +
+          `  ${toJson(rowValues)}`
+        )}
+
+      propValue = parseRowValueList(
+        propName, dataType, rowValues.slice(2), rowMeta, parseOpts
+      )
+    }
+
+    // nomral propName, dataType, propValue row
+    else {
+
+      if (rowValues.length !== 3) {
+        parserWarning(
+          `WS: ${worksheetName}: Invalid Data List property row ${curRowNumber}\n` +
+        `  Expected 3 cells [propName, dataType, propValue], found ${rowValues.length}\n` +
+        `  ${toJson(rowValues)}`
+        )}
+
+      if (shouldSkipDataListRow(rowValues)) return
+
+      propValue = parseDataCell(
+        dataType, rowValues[2], { ...rowMeta, colNumber: 2, propName, dataType }, parseOpts
+      )
+    }
 
     data = { ...(data || {}), [propName]: propValue }
     dataTypeMap = { ...(dataTypeMap || {}), [propName]: dataType }
@@ -242,13 +270,46 @@ export const parseDataList: ParseDataList = (
   }
 
   return result
-
 }
 
 //-----------------------------------------------------------------------------
 
-export const parseDataCell = (
+export const parseRowValueList = (
+  propName: string,
   dataType: DataType,
+  rowValuesList: RowValues,
+  rowMeta: RowMeta,
+  parseOpts?: ParseOptions
+): any[]  => {
+
+  const dataCellMeta: DataCellMeta = {
+    ...rowMeta, dataType, propName, colNumber: 1,
+  }
+  if (isNil(rowValuesList))
+    return [dataCellWarning('Row value list is undefined', dataCellMeta, parseOpts)]
+
+  const baseDataType = getBaseDataType(dataType)
+  if (baseDataType === 'invalid-data-type') return [
+    dataCellWarning(
+      `Invalid data type for row value list: '${dataType}'`,
+      dataCellMeta, parseOpts
+    )]
+
+  // loop through the rowValuesList and parse each cell
+  const cleanRowValues = (rowValuesList as CellValue[]).filter(isNotNil)
+  const data = cleanRowValues.map((cellValue, colNum) =>
+    parseDataCell(baseDataType, cellValue, {
+      ...dataCellMeta, colNumber: colNum+2 // +2 to accomodate propName / dataType cells
+    }, parseOpts)
+  )
+
+  return data
+}
+
+ //-----------------------------------------------------------------------------
+
+export const parseDataCell = (
+  dataType: DataType | 'invalid-data-type' | 'invalid-list-type', // put invalid-xxx these in type def?
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
   parseOpts?: ParseOptions
@@ -273,30 +334,6 @@ export const parseDataCell = (
     return dataCellWarning(`Invalid property type: '${dataType}'`, dataCellMeta, parseOpts)
   }
 }
-
-//-----------------------------------------------------------------------------
-
-export const parseHorizontalValueList = (
-  rowValues: CellValue[],
-  dataCellMeta: DataCellMeta,
-  parseOpts?: ParseOptions
-) => {
-
-  // get prop name and data type
-  // const propName = getPropNameFromCallValue(rowValues[0], dataCellMeta)
-  // const dataType = getDataTypeFromCallValue(rowValues[1], dataCellMeta)
-
-  // make sure it is a list
-  // iteratte over the the rowValues and parse each cell
-  // const propValues = rowValues.slice(2).map((cellValue, i) => {
-  //   return parseDataCell('dataList', dataType, cellValue, {
-  //     ...dataCellMeta, colNumber: i+2, propName, dataType
-  //   }, parseOpts)
-  // })
-
-
-}
-
 
 //-----------------------------------------------------------------------------
 

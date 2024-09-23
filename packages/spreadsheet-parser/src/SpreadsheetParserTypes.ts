@@ -2,6 +2,10 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
+// TODO
+// - better name for DataList
+// - RowValueList -> RowList
+// - DataType = basd data type, forget the uinion with :list
 
 //--- common -------------------------------------------------------------=====
 
@@ -39,17 +43,21 @@ export const validDataTableDataTypes: DataTableDataType[] = [
   'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid'
 ]
 
-export type HorizontalValueListType =
+export type RowValueListType =
   'string:list' | 'number:list' | 'boolean:list' | 'date:list' | 'password:list' | 'json:list' | 'uuid:list'
 
-export const validHorizontalValueListTypes: HorizontalValueListType[] = [
+export const validRowValueListTypes: RowValueListType[] = [
   'string:list', 'number:list', 'boolean:list', 'date:list', 'password:list', 'json:list', 'uuid:list'
 ]
 
-export type DataListDataType =  HorizontalValueListType | DataTableDataType
+export type InvalidDataTypeWarning = 'invalid-data-type'
+export type InvalidListTypeWarning = 'invalid-list-type'
+export type InvalidTypeWarning = InvalidDataTypeWarning | InvalidListTypeWarning
+
+export type DataListDataType =  RowValueListType | DataTableDataType
 
 export const validDataListDataTypes: DataListDataType[] = [
-  ...validHorizontalValueListTypes, ...validDataTableDataTypes
+  ...validRowValueListTypes, ...validDataTableDataTypes
 ]
 
 export type DataType = DataTableDataType | DataListDataType

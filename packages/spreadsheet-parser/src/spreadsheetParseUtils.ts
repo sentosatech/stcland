@@ -10,7 +10,7 @@ import {
 } from '@stcland/utils'
 
 import {
-  validDataTableDataTypes, validHorizontalValueListTypes,
+  validDataTableDataTypes, validRowValueListTypes,
   validDataListDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
@@ -18,9 +18,10 @@ import type {
   ParseOptions, DataLayout,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
   CellMeta, DataCellMeta,
-  DataTableDataType, HorizontalValueListType, DataListDataType,
+  DataTableDataType, RowValueListType, DataListDataType,
   // Data, DataTableData, DataListData,
   DataType,
+  InvalidTypeWarning,
 } from './SpreadsheetParserTypes'
 
 
@@ -239,15 +240,18 @@ export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
 }
 
 // returns data type if valid or false if not a valid list
-export const getHorizontalValueListType = (
+export const getRowValueListBaseType = (
   dataType: DataType
-): DataType | boolean => {
+): DataType | 'invalid-list-type' => {
 
-  if (!dataType.includes(':')) return false
+  if (!dataType.includes(':')) return 'invalid-list-type'
   const [subType] = dataType.split(':') as [DataType]
-  return validDataTypes.includes(subType) ?
-    subType : false
+  return validDataTypes.includes(subType) ? subType : 'invalid-list-type'
 }
+
+export const getBaseDataType = (dataType: DataType): DataType | InvalidTypeWarning =>
+  isValidRowValueListType(dataType) ? getRowValueListBaseType(dataType) :
+  isValidDataTableDataType(dataType) ? dataType : 'invalid-data-type'
 
 export const getCellError = (cellValue: CellValue): string =>
   cellValueHasError(cellValue) ? (cellValue as any).error : ''
@@ -257,8 +261,10 @@ export const getCellError = (cellValue: CellValue): string =>
 export const isValidDataTableDataType = (dataType: DataType) =>
   isString(dataType) && validDataTableDataTypes.includes(dataType as DataTableDataType)
 
-export const isValidHorizontalValueListType = (dataType: DataType) =>
-  isString(dataType) && validHorizontalValueListTypes.includes(dataType as HorizontalValueListType)
+export const isValidRowValueListType = (dataType: DataType) =>
+  isString(dataType) && validRowValueListTypes.includes(dataType as RowValueListType)
+
+export const isRowValueListType = isValidRowValueListType
 
 export const isValidDataListDataType = (dataType: DataType) =>
   isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
@@ -276,7 +282,8 @@ export const isValidDataTypeList = (dataTypes: DataType[]) : {
 }
 
 export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
-export const isNotValidHorizontalValueListType = complement(isValidHorizontalValueListType)
+export const isNotValidRowValueListType = complement(isValidRowValueListType)
+export const isNotRowValueListType = isNotValidRowValueListType
 export const isNotValidDataListDataType = complement(isValidDataListDataType)
 export const isNotValidDataType = complement(isValidDataType)
 export const isNotValidDataTypeList = complement(isValidDataTypeList)
@@ -296,9 +303,9 @@ export const isNotValidPropNameList = complement(isValidPropNameList)
 export const invalidPropNameIdx = (propNames: CellValue[]) =>
   propNames.findIndex(isNotValidPropName)
 
-export const typeIsHorizontalValueList = (dataType: DataType) => {
-  return getHorizontalValueListType(dataType) !== false
-}
+export const typeIsRowValueList = (dataType: DataType) =>
+  getRowValueListBaseType(dataType) !== 'invalid-list-type'
+
 
 export const cellValueIsFormula = (cell: Cell) =>
   isObject(cell) && cell?.formula && cell?.result
@@ -322,6 +329,8 @@ export const isEmptyCell = (cellValue: CellValue) => {
 export const cellValueHasError = (cellValue: CellValue) =>
   isObject(cellValue) && isNotNil((cellValue as any)?.error)
 
+export const dataTypeFromRowValueListType = (rowListType: RowValueListType) =>
+  `list:${rowListType}`
 
 //--- Logging -----------------------------------------------------------------
 
@@ -389,6 +398,12 @@ export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`
+
+export const shouldSkipDataListRow = (rowValues: CellValue[]) =>
+  rowValues[2]?.toString().trim() === '_skip_'
+
+export const shouldSkipDataTableValue = (callValue: CellValue) =>
+  callValue?.toString().trim() === '_skip_'
 
 // currently supports A-BZ
 export const colNumToTextMap: { [key: number]: string } = {

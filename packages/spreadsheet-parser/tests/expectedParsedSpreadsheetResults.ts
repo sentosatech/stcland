@@ -160,7 +160,9 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       key: 'string',
       divZeroProp: 'number',
       badRefProp: 'number',
-      // badStringList: 'string:list'
+      badStringList: 'string:list',
+      badBoolList: 'boolean:list',
+      badUuidList: 'uuid:list',
     },
     data: [
       {
@@ -168,7 +170,9 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         key: 'errors',
         divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
         badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
-        // badStringList: ['Invalid property type \'string:list\' for dataLayout \'dataTable\'.  string:list\' is only valid for \'dataList\' dataLayout -> WS:ErrorCasesParsing, Row:7 Col:D'],
+        badStringList: 'Invalid data type for table data: \'string:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:D',
+        badBoolList: 'Invalid data type for table data: \'boolean:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:E',
+        badUuidList: 'Invalid data type for table data: \'uuid:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:F',
       }
     ],
   },
@@ -195,6 +199,38 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       prop4: []
     }
 
+  },
+  RowValueListParsingHold : {
+    worksheetName: 'RowValueListParsing',
+    dataLayout: 'dataList',
+    numDataRowsParsed: 7,
+    meta: {
+      note: 'This spreadsheet test row value list parsing'
+    },
+    metaTypeMap: {
+      note: 'string'
+    },
+    dataTypeMap: {
+      stringList: 'string:list',
+      numberList: 'number:list',
+      boolList: 'boolean:list',
+      dateList: 'date:list',
+      passwordList: 'password:list',
+      jsonList: 'json:list',
+      uuidList: 'uuid:list'
+    },
+    data: {
+      stringList: [ 'a', 'b', 'c', 'd' ],
+      numberList: [1, 2, 3 ],
+      boolList: [ true, true, false, true, true ],
+      dateList: [
+        '2024-08-22T00:00:00.000Z',
+        '2024-08-23T00:00:00.000Z'
+      ],
+      passwordList: [ 'pw1', 'pw2', 'pw3' ],
+      jsonList: [ 'jlist' ],
+      uuidList: [[],[],[],[],[],]
+    },
   },
   FrontMatterOnly: {
     worksheetName: 'FrontMatterOnly',

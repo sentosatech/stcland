@@ -93,10 +93,10 @@ const assertParsedWorksheet = async (
     metaTypeMap: expectedMetaTypeMap
   } = expectedParsedWorksheet
 
-  expect(clientData.message).toEqual(testMeta.message)
   expect(worksheetName).toEqual(expectedSheetName)
   expect(dataLayout).toEqual(expectedDataLayout)
   expect(numDataRowsParsed).toEqual(expectedNumDataRowsParsed)
+  expect(clientData.message).toEqual(testMeta.message)
 
   assertParsedWorkSheetMetaTypeMaps(
     expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
