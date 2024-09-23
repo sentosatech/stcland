@@ -3,7 +3,8 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 import type { PredFn } from '@stcland/utils'
 
 // TODO
-// - better name for DataList
+// - support _skip_ in data list
+// - better name for DataList (DabaObject?  DataCollection?, if collection could have multiple --- seperated entires)
 // - RowValueList -> RowList
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
 
