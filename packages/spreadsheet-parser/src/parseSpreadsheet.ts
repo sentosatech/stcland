@@ -6,15 +6,15 @@ import { getWorksheetList } from './spreadsheetParseUtils'
 import { parseWorksheet } from './parseWorksheet'
 
 export const forEachSheet: ForEachSheet = async (
-  cb, spreadSheetPath, clientDatas, parseOpts = {}, firstRowNum = 1
+  cb, spreadsheetPath, clientDatas, parseOpts = {}, firstRowNum = 1
 ) => {
 
-  const spreadsheetExists = await pathExists(spreadSheetPath)
+  const spreadsheetExists = await pathExists(spreadsheetPath)
   if (!spreadsheetExists)
-    throw new Error(`forEachSheet(): Spreadsheet file not found: ${spreadSheetPath}`)
+    throw new Error(`forEachSheet(): Spreadsheet file not found: ${spreadsheetPath}`)
 
   const workbook = new Workbook()
-  await workbook.xlsx.readFile(spreadSheetPath)
+  await workbook.xlsx.readFile(spreadsheetPath)
   const worksheets = getWorksheetList(workbook)
 
   for (const ws of worksheets) {
