@@ -4,7 +4,7 @@ import { equals } from 'ramda'
 import { isNotDate, isNotString, isUndefined, isNotUndefined } from 'ramda-adjunct'
 import { validate as isValidUuid4 } from 'uuid'
 
-import { passwordHash } from '../src/spreadsheetParseUtils'
+import { getBaseDataType, passwordHash } from '../src/spreadsheetParseUtils'
 import { passthrough, toJson } from '@stcland/utils'
 import { DataType } from '../src/SpreadsheetParserTypes'
 
@@ -71,7 +71,9 @@ export const dataTypeToTestFns = (
   if ( expectAllUndefined || expectAllErrors)
     return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
 
-  switch (dataType) {
+  const baseDataType = getBaseDataType(dataType)
+
+  switch (baseDataType) {
 
   case 'date':
     validateFn = dateEquals

@@ -170,9 +170,9 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         key: 'errors',
         divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
         badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
-        badStringList: 'Invalid data type for table data: \'string:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:D',
-        badBoolList: 'Invalid data type for table data: \'boolean:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:E',
-        badUuidList: 'Invalid data type for table data: \'uuid:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:F',
+        badStringList: ['Invalid data type for table data: \'string:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:D'],
+        badBoolList: ['Invalid data type for table data: \'boolean:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:E'],
+        badUuidList: ['Invalid data type for table data: \'uuid:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:F'],
       }
     ],
   },
@@ -200,7 +200,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     }
 
   },
-  RowValueListParsingHold : {
+  RowValueListParsing : {
     worksheetName: 'RowValueListParsing',
     dataLayout: 'dataList',
     numDataRowsParsed: 7,

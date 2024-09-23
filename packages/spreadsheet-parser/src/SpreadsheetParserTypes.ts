@@ -5,9 +5,9 @@ import type { PredFn } from '@stcland/utils'
 // TODO
 // - better name for DataList
 // - RowValueList -> RowList
-// - DataType = basd data type, forget the uinion with :list
+// - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
 
-//--- common -------------------------------------------------------------=====
+//--- common -------------------------------------------------------------------
 
 export interface WorksheetMeta  {
   worksheetName: string

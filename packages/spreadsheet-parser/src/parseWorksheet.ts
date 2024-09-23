@@ -161,12 +161,15 @@ const parseTableDataRow = (
     }
 
     if (isNotValidDataTableDataType(dataType)) {
+      const propTypeIsList = isRowValueListType(dataType)
       const warning =
         `Invalid data type for table data: '${dataType}'` +
-        `${isRowValueListType(dataType) ? ', row data lists not valid for table data' : ''}`
+        `${propTypeIsList ? ', row data lists not valid for table data' : ''}`
 
       return {
-        ...accData, [propName]: dataCellWarning(warning, dataCellMeta, parseOpts)
+        ...accData, [propName]: propTypeIsList
+          ? [dataCellWarning(warning, dataCellMeta, parseOpts) ]
+          : dataCellWarning(warning, dataCellMeta, parseOpts)
       }
     }
 

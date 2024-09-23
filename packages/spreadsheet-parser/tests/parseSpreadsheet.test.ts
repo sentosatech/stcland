@@ -16,11 +16,11 @@ import {
   DataTableData, DataListData, Meta, Data
 } from '../src/SpreadsheetParserTypes'
 
-import { getWorksheetList } from '../src/spreadsheetParseUtils'
+import { getBaseDataType, getWorksheetList, isRowValueListType } from '../src/spreadsheetParseUtils'
 import type { ValidateOpts } from './testUtils'
 import { assertConsistentDefinedState, dataTypeToTestFns } from './testUtils'
 import { forEachSheet } from '../src/parseSpreadsheet'
-import { isUndefined } from 'ramda-adjunct'
+import { isArray, isUndefined } from 'ramda-adjunct'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -366,12 +366,30 @@ const assertParsedData = (
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
     } = dataTypeToTestFns(dataType, validateOpts)
 
-    expect(
-      validateFn(expectedProp, parsedProp),
-      `\nWS:${worksheetName}, entry:${entryKey}, prop: ${propName}` +
-      `\n  expected value: ${expectedValForLoggingFn(expectedProp)}` +
-      `\n  parsed value: ${parsedValForLoggingFn(parsedProp)}\n`
-    ).toEqual(true)
+    if (isRowValueListType(dataType)) {
+      expect(isArray(parsedProp)).toEqual(true)
+      expect(isArray(parsedProp)).toEqual(true)
+      expect(parsedProp.length).toEqual(expectedProp.length)
+
+      const baseDataType = getBaseDataType(dataType)
+      for (const [idx, expectedListEntry] of expectedProp.entries()) {
+        const parsedListProp = parsedProp[idx]
+        expect(
+          validateFn(expectedListEntry, parsedListProp),
+          `\nWS:${worksheetName}, entry:${entryKey}, prop: ${propName}\n` +
+          `  expected value: ${expectedValForLoggingFn(expectedListEntry)}\n` +
+          `  parsed value  : ${parsedValForLoggingFn(parsedListProp)}\n`
+        ).toEqual(true)
+      }
+    }
+    else {
+      expect(
+        validateFn(expectedProp, parsedProp),
+        `\nWS:${worksheetName}, entry:${entryKey}, prop: ${propName}` +
+        `\n  expected value: ${expectedValForLoggingFn(expectedProp)}` +
+        `\n  parsed value  : ${parsedValForLoggingFn(parsedProp)}\n`
+      ).toEqual(true)
+    }
   }
 }
 
