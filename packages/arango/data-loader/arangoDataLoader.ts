@@ -1,4 +1,3 @@
-
 import { pathExists } from 'path-exists'
 
 import { canConnectToDbServer, documentDoesNotExistById, getDb } from '../utils/arangoUtils'
@@ -16,6 +15,7 @@ import {
   IfDbDoesNotExistOnGet,
   getCollection
 } from '../utils'
+
 import { throwIf } from '@stcland/errors'
 import { toJson } from '@stcland/utils'
 
@@ -68,7 +68,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
   throwIf(!data, `Worsheet ${worksheetName}: data not found`)
   throwIf(!meta, `Worsheet ${worksheetName}: metadata not found`)
 
-  const { type } = meta as ArangoDataLoaderMeta
+  const { arangoType } = meta as ArangoDataLoaderMeta
   const { db, opts } = clientData
 
   const {
@@ -76,18 +76,18 @@ export const loadWorksheetData: LoadWorksheetData = async (
     validateEdgeTargets = true
   } = opts
 
-  throwIf(!type,
+  throwIf(!arangoType,
     `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
     'does note have property "type" in its metadata section (or is missing metadata section)'
   )
 
-  throwIf(!ValidWorksheetTypes.includes(type),
+  throwIf(!ValidWorksheetTypes.includes(arangoType),
     `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
-    `  Invaaid worksheet type '${type}'\n` +
+    `  Invaaid worksheet type '${arangoType}'\n` +
     `  Must be one of ${toJson(ValidWorksheetTypes.join(', '))}`
   )
 
-  if ( type === 'graph') {
+  if ( arangoType === 'graph') {
     console.warn(
       `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
       'Graphs are not yet supported'
@@ -104,7 +104,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
     docCollection: CollectionType.DOCUMENT_COLLECTION,
     edgeCollection: CollectionType.EDGE_COLLECTION,
   }
-  const collectionType: CollectionType = typeMap[type]
+  const collectionType: CollectionType = typeMap[arangoType]
 
   const collection = await getCollection(
     db, collectionName, ifCollectionDoesNotExistOnGet, collectionType

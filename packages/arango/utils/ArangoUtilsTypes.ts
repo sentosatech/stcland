@@ -6,15 +6,14 @@ import {
   EdgeCollection
 } from 'arangojs/collection'
 
+
+// --- General utils ----------------------------------------------------------
+
 export interface ArangoHostConfig {
   url: string
   username?: string
   password?: string
 }
-
-//*****************************************************************************
-// General utils
-//*****************************************************************************
 
 // Fetch the arango system database, throws error if connection fails
 export type GetSysDb = (
@@ -25,9 +24,7 @@ export type GetSysDb = (
 export type CanConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
 export type CanNotConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
 
-//*****************************************************************************
-// DB utils
-//*****************************************************************************
+// --- DB utils ----------------------------------------------------------------
 
 export type DbIsConnected = ( db: Database ) => Promise<boolean>
 export type DbIsNotConnected = ( db: Database ) => Promise<boolean>
@@ -94,14 +91,16 @@ export type NonSystemDbsExists = {
   ( sysDb: Database ) : Promise<boolean>;
 }
 
-//*****************************************************************************
-// Collection utils
-//*****************************************************************************
+// --- Collection utils -------------------------------------------------------
 
 export type CollectionExists =  (db: Database, collectionName: string) => Promise<boolean>;
 export type CollectionDoesNotExist = CollectionExists
 
-export { CollectionType }
+
+// re-export arango types
+export { Database, CollectionType }
+export type { DocumentCollection, EdgeCollection }
+
 
 export const enum IfCollectionExistsOnCreate {
   ThrowError = 'throw-error',

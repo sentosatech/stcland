@@ -1,11 +1,14 @@
 import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
+
 import {
   ArangoHostConfig,
   IfDbDoesNotExistOnGet, // IfDbExistsOnCreate,
   IfCollectionDoesNotExistOnGet,
   DataBaseUser as ArangoDataBaseUser
 } from '../utils/ArangoUtilsTypes'
+
 import { Database } from 'arangojs'
+import { CollectionType } from '../utils'
 
 export const enum IfTargetDbDoesNotExist {
   ThrowError = IfDbDoesNotExistOnGet.ThrowError,
@@ -44,7 +47,8 @@ export type LoadSpreadsheetData = (
 export type LoadWorksheetData = ParsedSpreadheetCallBack
 
 export interface ArangoDataLoaderMeta {
-  type: 'docCollection' | 'edgeCollection' | 'graph'
+  arangoType : 'docCollection' | 'edgeCollection' | 'graph'
+  [key: string]: any
 }
 
 export interface ArangoDataLoaderClientData {
@@ -52,9 +56,11 @@ export interface ArangoDataLoaderClientData {
   opts: LoadSpreadsheetDataOpts
 }
 
-
 export const ValidWorksheetTypes = [
-  'docCollection',
-  'edgeCollection',
-  'graph'
+  'docCollection', 'edgeCollection','graph'
 ]
+
+export const collectionTypeMap: Record<'docCollection' | 'edgeCollection', CollectionType> = {
+  docCollection: CollectionType.DOCUMENT_COLLECTION,
+  edgeCollection: CollectionType.EDGE_COLLECTION,
+}
