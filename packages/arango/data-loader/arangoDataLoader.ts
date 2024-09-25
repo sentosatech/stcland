@@ -1,7 +1,7 @@
 import { pathExists } from 'path-exists'
 
 // import { canConnectToDbServer, documentDoesNotExistById, getDb } from '../utils/arangoUtils'
-import { canConnectToDbServer, documentDoesNotExistById } from '../utils/arangoUtils'
+import { canConnectToServer, documentDoesNotExistById } from '../utils/arangoUtils'
 
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
@@ -15,7 +15,7 @@ import { DataTableData } from '@stcland/spreadsheet-parser'
 import {
   CollectionType,
   IfCollectionDoesNotExistOnGet,
-  IfDbDoesNotExistOnGet,
+  IfDbDoesNotExistOnGetOld,
   getCollection
 } from '../utils'
 
@@ -38,12 +38,12 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     throw new Error(`Arango spreadsheet loader: Spreadsheet file not found: ${excelFilePath}`)
 
   // lets make sure that we can connect to the arango host
-  const canConnect = await canConnectToDbServer(arangoHostConfig)
+  const canConnect = await canConnectToServer(arangoHostConfig)
   if (!canConnect)
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
 
   // @ts-expect-error cause TS is a pain in the ass
-  const ifDbDoesNotExist = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
+  const ifDbDoesNotExist = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGetOld
 
   // // TEMP TEMP TEMP until I improve spreadsheet loading opttions
   // const ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.Create

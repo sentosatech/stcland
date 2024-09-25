@@ -8,7 +8,7 @@ import { Database } from 'arangojs'
 
 import {
   type ArangoHostConfig, type CreateDatabaseUser,
-  getSysDb, dbExists, dropDb, canConnectToDbServer
+  getSysDb, dbExists, dropDb, canConnectToServer
 } from '../utils'
 
 import {
@@ -34,7 +34,7 @@ const dbName = 'arangoDataLoaderTestDb'
 let sysDb: Database
 
 beforeAll(async () => {
-  expect(await canConnectToDbServer(hostConfig)).toBe(true)
+  expect(await canConnectToServer(hostConfig)).toBe(true)
   sysDb = await getSysDb(hostConfig, { checkConnection: true })
   if (await dbExists(sysDb, dbName)) {
     console.warn(`WARNING: test start: ${dbName} exists, dropping it`)

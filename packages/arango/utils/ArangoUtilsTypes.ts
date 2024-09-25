@@ -29,8 +29,8 @@ export type GetSysDb = (
   opts?: { checkConnection: boolean }
 ) => Promise<Database>
 
-export type CanConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
-export type CanNotConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
+export type CanConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
+export type CanNotConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
 
 // --- DB utils ----------------------------------------------------------------
 
@@ -44,11 +44,7 @@ export type DbExists = {
 
 export type DbDoesNotExist = DbExists
 
-export const enum IfDbExistsOnCreate {
-  ThrowError = 'throw-error',
-  Overwrite = 'overwrite',
-  ReturnExisting = 'return-existing',
-}
+export type IfDbExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
 
 export type CreateDbOptions = CreateDatabaseOptions & {
   ifDbExists?: IfDbExistsOnCreate // defaults to ThrowError
@@ -65,14 +61,33 @@ export type CreateDb = {
   ): Promise<Database>;
 }
 
-export const enum IfDbDoesNotExistOnGet {
+
+export const enum IfDbDoesNotExistOnGetOld {
   ThrowError = 'throw-error',
   Create = 'create',
+}
+export type IfDbDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+
+export type GetDbOptionsOld = CreateDatabaseOptions & {
+  // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
+  ifDbDoesNotExist?: IfDbDoesNotExistOnGetOld, // default is ThrowError
 }
 
 export type GetDbOptions = CreateDatabaseOptions & {
   // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
   ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
+}
+
+export type GetDbOld = {
+  ( hostConfig: ArangoHostConfig,
+    dbName: string,
+    getDbOpts?: GetDbOptionsOld, // only needed if IfDbDoesNotExistOnGet is Create
+  ) : Promise<Database>;
+  ( sysDb: Database,
+    dbName: string,
+    getDbOpts?: GetDbOptionsOld, // only needed if IfDbDoesNotExistOnGet is Create
+  ) : Promise<Database>;
 }
 
 export type GetDb = {
@@ -85,6 +100,7 @@ export type GetDb = {
     getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
 }
+
 
 // if database does not exist, returns false
 export type DropDb = {

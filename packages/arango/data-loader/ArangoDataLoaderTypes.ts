@@ -1,7 +1,7 @@
 import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
 
 import {
-  IfDbDoesNotExistOnGet, // IfDbExistsOnCreate,
+  IfDbDoesNotExistOnGetOld, // IfDbExistsOnCreate,
   IfCollectionDoesNotExistOnGet,
 } from '../utils/ArangoUtilsTypes'
 
@@ -15,8 +15,8 @@ import { Database } from 'arangojs'
 import { CollectionType } from '../utils'
 
 export const enum IfTargetDbDoesNotExist {
-  ThrowError = IfDbDoesNotExistOnGet.ThrowError,
-  Create =  IfDbDoesNotExistOnGet.Create
+  ThrowError = IfDbDoesNotExistOnGetOld.ThrowError,
+  Create =  IfDbDoesNotExistOnGetOld.Create
 }
 
 export const enum IfTargetCollectionDoesNotExist {

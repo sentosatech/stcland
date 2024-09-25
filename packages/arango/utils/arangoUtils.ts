@@ -11,34 +11,33 @@ import { throwIf } from '@stcland/errors'
 
 import {
   CollectionType,
-  IfDbExistsOnCreate, IfDbDoesNotExistOnGet,
+  IfDbDoesNotExistOnGet,
   IfCollectionExistsOnCreate,   IfCollectionDoesNotExistOnGet,
 } from './ArangoUtilsTypes'
 
 import type {
   ArangoHostConfig, GetSysDb,
-  CanConnectToDbServer, CanNotConnectToDbServer,
+  CanConnectToServer, CanNotConnectToServer,
   DbIsConnected, DbIsNotConnected,
   CreateDb, CreateDbOptions, DropDb, GetDb, DropAllDatabases, GetDbOptions,
   DbExists, DbDoesNotExist, NonSystemDbsExists,
   CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
   GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType,
-  DocumentExistsById,
-  DocumentExists,
-  DocumentDoesNotExist,
+  DocumentExistsById, DocumentExists, DocumentDoesNotExist,
 } from './ArangoUtilsTypes'
+import { IfDbExistsOnCreate } from '../dist'
 
 //*****************************************************************************
 // General Utils
 //*****************************************************************************
 
-export const canConnectToDbServer : CanConnectToDbServer = async (hostConfig: ArangoHostConfig) => {
+export const canConnectToServer : CanConnectToServer = async (hostConfig: ArangoHostConfig) => {
   const sysDb = await getSysDb(hostConfig)
   return dbIsConnected(sysDb)
 }
-export const canNotConnectToDbServer: CanNotConnectToDbServer =
-  asyncComplement(canConnectToDbServer)
+export const canNotConnectToServer: CanNotConnectToServer =
+  asyncComplement(canConnectToServer)
 
 // throws error if connection fails
 export const getSysDb: GetSysDb = async (
@@ -91,14 +90,14 @@ export const createDb: CreateDb = async (
   if (isNotSysDb(sysDb))
     throw new Error('createArangoDb(): non system DB provided: ' + sysDb.name)
 
-  const { ifDbExists = IfDbExistsOnCreate.ThrowError } = createDbOpts || {}
+  const ifDbExists: IfDbExistsOnCreate = createDbOpts?.ifDbExists || 'ThrowError'
 
   let requestedDbExists = await dbExists(sysDb, dbName)
 
-  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.ThrowError)
+  if (requestedDbExists && ifDbExists === 'ThrowError')
     throw new Error(`Attempting to create arango database '${dbName}', but it already exists`)
 
-  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.Overwrite) {
+  if (requestedDbExists && ifDbExists === 'Overwrite') {
     await sysDb.dropDatabase(dbName)
     requestedDbExists = false
   }
@@ -121,16 +120,17 @@ export const getDb: GetDb = async (
   if (isNotSysDb(sysDb))
     throw new Error('getArangoDb(): non system DB provided: ' + sysDb.name)
 
-  const { ifDbDoesNotExist = IfDbDoesNotExistOnGet.ThrowError } = getDbOpts || {}
-  const createDbOpts = getDbOpts as CreateDbOptions // this is OK, getDbOpts extends CreateDbOptions
-
+  const ifDbDoesNotExist: IfDbDoesNotExistOnGet = getDbOpts?.ifDbDoesNotExist || 'ThrowError'
   const requestedDbExists = await dbExists(sysDb, dbName)
 
-  if (!requestedDbExists && ifDbDoesNotExist === IfDbDoesNotExistOnGet.ThrowError)
+  if (!requestedDbExists && ifDbDoesNotExist === 'ThrowError' )
     throw new Error(`Attempting to fetch database '${dbName}', but it does not exit`)
 
-  if (!requestedDbExists)
+  if (!requestedDbExists) {
+    // this is OK, getDbOpts extends CreateDbOptions
+    const createDbOpts = getDbOpts as CreateDbOptions
     await sysDb.createDatabase(dbName, createDbOpts)
+  }
 
   return sysDb.database(dbName)
 }
