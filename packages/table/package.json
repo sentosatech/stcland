@@ -1,6 +1,6 @@
 {
   "name": "@stcland/table",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "",
   "type": "module",
   "main": "./dist/index.umd.js",
