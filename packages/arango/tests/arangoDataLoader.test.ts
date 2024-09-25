@@ -7,7 +7,7 @@ import { pathExistsSync } from 'path-exists'
 import { Database } from 'arangojs'
 
 import {
-  type ArangoHostConfig, type DataBaseUser,
+  type ArangoHostConfig, type CreateDatabaseUser,
   getSysDb, dbExists, dropDb, canConnectToDbServer
 } from '../utils'
 
@@ -25,7 +25,7 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-const dbUsers: DataBaseUser[] = [
+const dbUsers: CreateDatabaseUser[] = [
   { username: 'root', passwd: 'pw' },
 ]
 

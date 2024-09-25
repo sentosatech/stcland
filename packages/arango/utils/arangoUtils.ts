@@ -16,17 +16,17 @@ import {
 } from './ArangoUtilsTypes'
 
 import type {
-  ArangoHostConfig, DataBaseUser, GetSysDb,
+  ArangoHostConfig, GetSysDb,
   CanConnectToDbServer, CanNotConnectToDbServer,
   DbIsConnected, DbIsNotConnected,
-  CreateDb, DropDb, GetDb, DropAllDatabases,
+  CreateDb, CreateDbOptions, DropDb, GetDb, DropAllDatabases, GetDbOptions,
   DbExists, DbDoesNotExist, NonSystemDbsExists,
   CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
   GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType,
   DocumentExistsById,
   DocumentExists,
-  DocumentDoesNotExist
+  DocumentDoesNotExist,
 } from './ArangoUtilsTypes'
 
 //*****************************************************************************
@@ -85,12 +85,13 @@ export const dbDoesNotExist: DbDoesNotExist = asyncComplement(dbExists)
 export const createDb: CreateDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,
   dbName: string,
-  dbUsers: DataBaseUser[],
-  ifDbExists: IfDbExistsOnCreate = IfDbExistsOnCreate.ThrowError
+  createDbOpts?: CreateDbOptions
 ) => {
   const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
   if (isNotSysDb(sysDb))
     throw new Error('createArangoDb(): non system DB provided: ' + sysDb.name)
+
+  const { ifDbExists = IfDbExistsOnCreate.ThrowError } = createDbOpts || {}
 
   let requestedDbExists = await dbExists(sysDb, dbName)
 
@@ -103,21 +104,25 @@ export const createDb: CreateDb = async (
   }
 
   if (!requestedDbExists)
-    await sysDb.createDatabase(dbName, { users: dbUsers })
+    // actually create the database
+    await sysDb.createDatabase(dbName, createDbOpts)
 
+  // returns instance of already created database
   return sysDb.database(dbName)
 }
 
 export const getDb: GetDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,
   dbName: string,
-  ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.ThrowError,
-  dbUsers?: DataBaseUser[],
+  getDbOpts?: GetDbOptions
 ) => {
   const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
 
   if (isNotSysDb(sysDb))
     throw new Error('getArangoDb(): non system DB provided: ' + sysDb.name)
+
+  const { ifDbDoesNotExist = IfDbDoesNotExistOnGet.ThrowError } = getDbOpts || {}
+  const createDbOpts = getDbOpts as CreateDbOptions // this is OK, getDbOpts extends CreateDbOptions
 
   const requestedDbExists = await dbExists(sysDb, dbName)
 
@@ -125,7 +130,7 @@ export const getDb: GetDb = async (
     throw new Error(`Attempting to fetch database '${dbName}', but it does not exit`)
 
   if (!requestedDbExists)
-    await sysDb.createDatabase(dbName, { users: dbUsers })
+    await sysDb.createDatabase(dbName, createDbOpts)
 
   return sysDb.database(dbName)
 }

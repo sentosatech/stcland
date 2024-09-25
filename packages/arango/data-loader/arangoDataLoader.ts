@@ -1,6 +1,7 @@
 import { pathExists } from 'path-exists'
 
-import { canConnectToDbServer, documentDoesNotExistById, getDb } from '../utils/arangoUtils'
+// import { canConnectToDbServer, documentDoesNotExistById, getDb } from '../utils/arangoUtils'
+import { canConnectToDbServer, documentDoesNotExistById } from '../utils/arangoUtils'
 
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
@@ -8,7 +9,9 @@ import {
   IfTargetDbDoesNotExist, IfTargetCollectionDoesNotExist, ValidWorksheetTypes,
 } from './ArangoDataLoaderTypes'
 
-import { DataTableData, forEachSheet } from '@stcland/spreadsheet-parser'
+// import { DataTableData, forEachSheet } from '@stcland/spreadsheet-parser'
+import { DataTableData } from '@stcland/spreadsheet-parser'
+
 import {
   CollectionType,
   IfCollectionDoesNotExistOnGet,
@@ -18,6 +21,7 @@ import {
 
 import { throwIf } from '@stcland/errors'
 import { toJson } from '@stcland/utils'
+// import { GetDbOptions } from '../dist'
 
 export const loadSpreadsheetData: LoadSpreadsheetData = async (
   excelFilePath, arangoHostConfig, dbName, opts
@@ -25,7 +29,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 
   const {
     ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
-    dbUsers = [],
+    // dbUsers = [],
   } = opts
 
   // Lets make sure the file actually exists
@@ -39,13 +43,19 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
 
   // @ts-expect-error cause TS is a pain in the ass
-  const ifDbExistsOnGet = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
-  const db = await getDb(arangoHostConfig, dbName, ifDbExistsOnGet, dbUsers)
+  const ifDbDoesNotExist = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGet
 
-  const clientData: ArangoDataLoaderClientData = { db, opts }
+  // // TEMP TEMP TEMP until I improve spreadsheet loading opttions
+  // const ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.Create
+  // const tempGetDbOpts: GetDbOptions = {
+  //   ifDbDoesNotExist: 'create'
+  // }
+  // const db = await getDb(arangoHostConfig, dbName, ifDbExistsOnGet, dbUsers)
+
+  // const clientData: ArangoDataLoaderClientData = { db, opts }
 
   // OK, loop through the worksheets and load the data appropriratly
-  await forEachSheet(loadWorksheetData, excelFilePath, clientData, opts)
+  // await forEachSheet(loadWorksheetData, excelFilePath, clientData, opts)
 
   return 0
 }

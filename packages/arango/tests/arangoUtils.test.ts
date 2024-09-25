@@ -4,7 +4,7 @@ import {
 
 import { values } from 'ramda'
 
-import type { ArangoHostConfig, DataBaseUser } from '../utils'
+import type { ArangoHostConfig } from '../utils'
 import {
   getSysDb, dropDb,
   canConnectToDbServer, canNotConnectToDbServer,
@@ -30,7 +30,7 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-const dbUsers: DataBaseUser[] = [
+const users = [
   { username: 'root', passwd: 'pw' },
 ]
 
@@ -68,7 +68,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     let ifDbExists = IfDbExistsOnCreate.ThrowError
 
-    let db1 = await createDb(hostConfig, dbName, dbUsers, ifDbExists)
+    let db1 = await createDb(hostConfig, dbName, { users, ifDbExists })
     let db1Info = await db1.get()
     expect(await db1.exists()).toBe(true)
     expect(db1Info.name).toBe(dbName)
@@ -76,7 +76,7 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await dbDoesNotExist(hostConfig, dbName)).toBe(false)
     await sysDb.dropDatabase(dbName)
 
-    db1 = await createDb(sysDb, dbName, dbUsers, ifDbExists)
+    db1 = await createDb(sysDb, dbName, { users, ifDbExists })
     db1Info = await db1.get()
     expect(await db1.exists()).toBe(true)
     expect(db1Info.name).toBe(dbName)
@@ -90,16 +90,16 @@ describe('Test @stcland/arango/utils', async () => {
     ifDbExists = IfDbExistsOnCreate.ThrowError
 
     expect(await dbExists(hostConfig, dbName)).toBe(true)
-    expect(createDb(hostConfig, dbName, dbUsers, ifDbExists)).rejects.toThrow(Error)
+    expect(createDb(hostConfig, dbName, { users, ifDbExists })).rejects.toThrow(Error)
     expect(await dbExists(sysDb, dbName)).toBe(true)
-    expect(createDb(sysDb, dbName, dbUsers, ifDbExists)).rejects.toThrow(Error)
+    expect(createDb(sysDb, dbName, { users, ifDbExists })).rejects.toThrow(Error)
 
     // OK now lets just ask to have the existing db returned
 
     ifDbExists = IfDbExistsOnCreate.ReturnExisting
 
     expect(await dbExists(hostConfig, dbName)).toBe(true)
-    let dbReturned = await createDb(hostConfig, dbName, dbUsers, ifDbExists)
+    let dbReturned = await createDb(hostConfig, dbName, { users, ifDbExists })
     let firstDbInfoReturedInfo = await dbReturned.get()
     expect(firstDbInfoReturedInfo.name).toBe(dbName)
     expect(firstDbInfoReturedInfo.id).toBe(db1Info.id)
@@ -109,7 +109,7 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await dbDoesNotExist(hostConfig, dbName)).toBe(false)
 
     expect(await dbExists(sysDb, dbName)).toBe(true)
-    dbReturned = await createDb(sysDb, dbName, dbUsers, ifDbExists)
+    dbReturned = await createDb(sysDb, dbName, { users, ifDbExists })
     firstDbInfoReturedInfo = await dbReturned.get()
     expect(firstDbInfoReturedInfo.id).toBe(db1Info.id)
     expect(firstDbInfoReturedInfo.name).toBe(dbName)
@@ -124,7 +124,7 @@ describe('Test @stcland/arango/utils', async () => {
     ifDbExists = IfDbExistsOnCreate.Overwrite
 
     expect(await dbExists(hostConfig, dbName)).toBe(true)
-    const db2 = await createDb(hostConfig, dbName, dbUsers, ifDbExists)
+    const db2 = await createDb(hostConfig, dbName, { users, ifDbExists })
     expect(await db2.exists()).toBe(true)
     const db2Info = await db2.get()
     expect(db2Info.name).toBe(dbName)
@@ -135,7 +135,7 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await dbDoesNotExist(hostConfig, dbName)).toBe(false)
 
     expect(await dbExists(sysDb, dbName)).toBe(true)
-    const db3 = await createDb(sysDb, dbName, dbUsers, ifDbExists)
+    const db3 = await createDb(sysDb, dbName, { users, ifDbExists })
     const db3Info = await db3.get()
     expect(db3Info.name).toBe(dbName)
     expect(db3Info.id).not.toBe(db2Info.id)
@@ -155,7 +155,9 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await dbExists(hostConfig, dbName)).toBe(false)
     expect(getDb(hostConfig, dbName)).rejects.toThrow(Error)
 
-    const db5 = await getDb(hostConfig, dbName, IfDbDoesNotExistOnGet.Create, dbUsers)
+    // create db if it does not exist
+    const ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.Create
+    const db5 = await getDb(hostConfig, dbName, { users, ifDbDoesNotExist })
     const db5Info = await db5.get()
     expect(db5Info.name).toBe(dbName)
     expect(db5Info.id).not.toBe(db4Info.id)
@@ -173,7 +175,8 @@ describe('Test @stcland/arango/utils', async () => {
     const collectionName = 'testDocCollection'
     const collectionType = CollectionType.DOCUMENT_COLLECTION
 
-    const db = await createDb(hostConfig, dbName, dbUsers, IfDbExistsOnCreate.ThrowError)
+    const ifDbExists = IfDbExistsOnCreate.ThrowError
+    const db = await createDb(hostConfig, dbName, { users, ifDbExists })
     expect(await dbExists(hostConfig, dbName)).toBe(true)
 
     expect(await collectionExists(db, collectionName)).toBe(false)
@@ -263,8 +266,8 @@ describe('Test @stcland/arango/utils', async () => {
       console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
       await dropDb(sysDb, dbName)
     }
-
-    const db = await createDb(hostConfig, dbName, dbUsers, IfDbExistsOnCreate.ThrowError)
+    const ifDbExists = IfDbExistsOnCreate.ThrowError
+    const db = await createDb(hostConfig, dbName, { users, ifDbExists })
     expect(await dbExists(hostConfig, dbName)).toBe(true)
 
     // Create source and target collections and docs for edge creation

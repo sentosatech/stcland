@@ -1,11 +1,19 @@
+// TODO:
+// * convert enum options to string unions?
+// * rename any raw 'opts' to be more descriptive of thier purspose, for example 'createDbOpts'
+
 import type { Database } from 'arangojs'
-import { CreateDatabaseUser } from 'arangojs/database'
-import {
-  CollectionType,
+import type { CreateDatabaseUser, CreateDatabaseOptions } from 'arangojs/database'
+
+import  { CollectionType } from 'arangojs/collection'
+import type {
   DocumentCollection,
   EdgeCollection
 } from 'arangojs/collection'
 
+// re-export arango types so clients can use directly
+export { Database, CollectionType }
+export type { DocumentCollection, EdgeCollection, CreateDatabaseUser }
 
 // --- General utils ----------------------------------------------------------
 
@@ -36,24 +44,25 @@ export type DbExists = {
 
 export type DbDoesNotExist = DbExists
 
-export type DataBaseUser = CreateDatabaseUser
-
 export const enum IfDbExistsOnCreate {
   ThrowError = 'throw-error',
   Overwrite = 'overwrite',
   ReturnExisting = 'return-existing',
 }
 
-// Create a new arango database, throws error if connection to db server fails
+export type CreateDbOptions = CreateDatabaseOptions & {
+  ifDbExists?: IfDbExistsOnCreate // defaults to ThrowError
+}
+
 export type CreateDb = {
   ( hostConfig: ArangoHostConfig,
     dbName: string,
-    dbUsers: DataBaseUser[],
-    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
+    createDbOpts?: CreateDbOptions
+  ): Promise<Database>;
   ( sysDb: Database,
     dbName: string,
-    dbUsers: DataBaseUser[],
-    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
+    createDbOpts?: CreateDbOptions
+  ): Promise<Database>;
 }
 
 export const enum IfDbDoesNotExistOnGet {
@@ -61,16 +70,19 @@ export const enum IfDbDoesNotExistOnGet {
   Create = 'create',
 }
 
+export type GetDbOptions = CreateDatabaseOptions & {
+  // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
+  ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
+}
+
 export type GetDb = {
   ( hostConfig: ArangoHostConfig,
     dbName: string,
-    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
-    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+    getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
   ( sysDb: Database,
     dbName: string,
-    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
-    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+    getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
 }
 
@@ -95,12 +107,6 @@ export type NonSystemDbsExists = {
 
 export type CollectionExists =  (db: Database, collectionName: string) => Promise<boolean>;
 export type CollectionDoesNotExist = CollectionExists
-
-
-// re-export arango types
-export { Database, CollectionType }
-export type { DocumentCollection, EdgeCollection }
-
 
 export const enum IfCollectionExistsOnCreate {
   ThrowError = 'throw-error',
