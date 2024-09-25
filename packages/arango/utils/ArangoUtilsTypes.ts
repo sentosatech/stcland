@@ -1,6 +1,3 @@
-// TODO:
-// * convert enum options to string unions?
-// * rename any raw 'opts' to be more descriptive of thier purspose, for example 'createDbOpts'
 
 import type { Database } from 'arangojs'
 import type { CreateDatabaseUser, CreateDatabaseOptions } from 'arangojs/database'
@@ -14,6 +11,7 @@ import type {
 // re-export arango types so clients can use directly
 export { Database, CollectionType }
 export type { DocumentCollection, EdgeCollection, CreateDatabaseUser }
+
 
 // --- General utils ----------------------------------------------------------
 
@@ -31,6 +29,7 @@ export type GetSysDb = (
 
 export type CanConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
 export type CanNotConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
+
 
 // --- DB utils ----------------------------------------------------------------
 
@@ -96,27 +95,23 @@ export type NonSystemDbsExists = {
   ( sysDb: Database ) : Promise<boolean>;
 }
 
+
 // --- Collection utils -------------------------------------------------------
 
 export type CollectionExists =  (db: Database, collectionName: string) => Promise<boolean>;
 export type CollectionDoesNotExist = CollectionExists
 
-export const enum IfCollectionExistsOnCreate {
-  ThrowError = 'throw-error',
-  Overwrite = 'overwrite',
-  ReturnExisting = 'return-existing',
-}
+export type IfCollectionExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
 
 export interface CreateCollectionOpts {
   type?: CollectionType // defaults to EDGE_COLLECTION
   ifExists?: IfCollectionExistsOnCreate // defaults to ThrowError
 }
 
-// Create a new arango database, throws error if connection to db server fails
 export type CreateCollection = (
   db: Database,
   collectionName: string,
-  opts: CreateCollectionOpts
+  createCollectionOpts: CreateCollectionOpts
 ) => Promise<DocumentCollection | EdgeCollection>;
 
 export type CreateDocumentCollection = (
@@ -131,10 +126,7 @@ export type CreateEdgeCollection = (
   ifExists?: IfCollectionExistsOnCreate
 ) => Promise<EdgeCollection>;
 
-export const enum IfCollectionDoesNotExistOnGet {
-  ThrowError = 'throw-error',
-  Create = 'create',
-}
+export type IfCollectionDoesNotExistOnGet = 'ThrowError' | 'Create'
 
 export type GetCollection = (
   db: Database,

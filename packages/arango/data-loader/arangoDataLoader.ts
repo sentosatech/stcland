@@ -6,7 +6,7 @@ import { canConnectToServer, documentDoesNotExistById } from '../utils/arangoUti
 import {
   type LoadWorksheetData, type LoadSpreadsheetData,
   type ArangoDataLoaderMeta, type ArangoDataLoaderClientData,
-  IfTargetDbDoesNotExist, IfTargetCollectionDoesNotExist, ValidWorksheetTypes,
+  ValidWorksheetTypes,
 } from './ArangoDataLoaderTypes'
 
 // import { DataTableData, forEachSheet } from '@stcland/spreadsheet-parser'
@@ -26,8 +26,6 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
 ) => {
 
   // const {dbUsers = [] } = loadDataOpts
-  const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist
-    = loadDataOpts?.ifTargetDbDoesNotExist || 'Create'
 
   // Lets make sure the file actually exists
   const spreadsheetExists = await pathExists(excelFilePath)
@@ -38,9 +36,6 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   const canConnect = await canConnectToServer(arangoHostConfig)
   if (!canConnect)
     throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
-
-  // @ts-expect-error cause TS is a pain in the ass
-  const ifDbDoesNotExist = ifTargetDbDoesNotExist as IfDbDoesNotExistOnGetOld
 
   // // TEMP TEMP TEMP until I improve spreadsheet loading opttions
   // const ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.Create
@@ -78,10 +73,8 @@ export const loadWorksheetData: LoadWorksheetData = async (
   const { arangoType } = meta as ArangoDataLoaderMeta
   const { db, loadDataOpts } = clientData
 
-  const {
-    ifTargetCollectionDoesNotEist = IfTargetCollectionDoesNotExist.Create,
-    validateEdgeTargets = true
-  } = loadDataOpts
+  const { validateEdgeTargets = true } = loadDataOpts
+  const ifTargetCollectionDoesNotEist: IfCollectionDoesNotExistOnGet  = 'Create'
 
   throwIf(!arangoType,
     `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
@@ -103,10 +96,6 @@ export const loadWorksheetData: LoadWorksheetData = async (
 
   const collectionName = worksheetName
 
-  const ifCollectionDoesNotExistOnGet =
-    // @ts-expect-error cause TS is a pain in the ass
-    ifTargetCollectionDoesNotEist as IfCollectionDoesNotExistOnGet
-
   const typeMap: Record<'docCollection' | 'edgeCollection', CollectionType> = {
     docCollection: CollectionType.DOCUMENT_COLLECTION,
     edgeCollection: CollectionType.EDGE_COLLECTION,
@@ -114,7 +103,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
   const collectionType: CollectionType = typeMap[arangoType]
 
   const collection = await getCollection(
-    db, collectionName, ifCollectionDoesNotExistOnGet, collectionType
+    db, collectionName, ifTargetCollectionDoesNotEist, collectionType
   )
 
   if (collectionType == CollectionType.EDGE_COLLECTION && validateEdgeTargets) {

@@ -1,4 +1,3 @@
-import { prop } from 'ramda'
 import { ParsedWorksheetResult } from '../src/SpreadsheetParserTypes'
 
 export type ExpectedParsedSpreadsheetResults =

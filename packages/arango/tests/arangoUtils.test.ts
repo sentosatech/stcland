@@ -4,18 +4,22 @@ import {
 
 import { values } from 'ramda'
 
-import type { ArangoHostConfig } from '../utils'
+import type {
+  ArangoHostConfig,
+  IfCollectionExistsOnCreate,
+  IfCollectionDoesNotExistOnGet,
+  IfDbDoesNotExistOnGet,
+} from '../utils'
+
 import {
-  getSysDb, dropDb,
+  CollectionType,
+  getSysDb,
   canConnectToServer, canNotConnectToServer,
   dbExists, dbDoesNotExist,
   dbIsConnected, dbIsNotConnected,
-  createDb,
-  IfDbDoesNotExistOnGet, getDb,
+  createDb, getDb, dropDb,
   collectionExists, collectionDoesNotExist,
-  IfCollectionExistsOnCreate, CollectionType,
   createCollection, createDocCollection, createEdgeCollection,
-  IfCollectionDoesNotExistOnGet,
   getCollection, getDocCollection, getEdgeCollection, getCollectionType,
   collectionDocCount, dropCollection,
   documentExistsById, documentDoesNotExistById,
@@ -185,7 +189,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // First creation
 
-    let ifExists = IfCollectionExistsOnCreate.ThrowError
+    let ifExists: IfCollectionExistsOnCreate = 'ThrowError'
     const collection1 = await createDocCollection(db, collectionName, ifExists)
     expect(await collectionExists(db, collectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, collectionName)).toBe(false)
@@ -204,11 +208,11 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Error if collection aready exists
 
-    ifExists = IfCollectionExistsOnCreate.ThrowError
+    ifExists = 'ThrowError'
     expect(createCollection(db, collectionName, { type: collectionType, ifExists })).rejects.toThrow(Error)
     expect(createDocCollection(db, collectionName, ifExists)).rejects.toThrow(Error)
 
-    ifExists = IfCollectionExistsOnCreate.Overwrite
+    ifExists = 'Overwrite'
     const collection2 = await createDocCollection(db, collectionName, ifExists)
     expect(await collectionExists(db, collectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, collectionName)).toBe(false)
@@ -233,14 +237,14 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await collectionDoesNotExist(db, collectionName)).toBe(true)
 
     // When collection does not exist, and you specify create, but no type, it should throw
-    let ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    let ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = 'Create'
     expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
 
     // Throw on non existance is default
     expect(getDocCollection(db, collectionName)).rejects.toThrow()
 
     // OK lets specify create when collection does not exist
-    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    ifCollectionDoesNotExist = 'Create'
     const collection4 = await getDocCollection(db, collectionName, ifCollectionDoesNotExist)
     expect(await collectionExists(db, collectionName)).toBe(true)
     expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
@@ -253,7 +257,7 @@ describe('Test @stcland/arango/utils', async () => {
     // SHould throw if we attempt to get colleciton of wrong type
     expect(getEdgeCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
 
-    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.ThrowError
+    ifCollectionDoesNotExist = 'ThrowError'
     expect(await dropCollection(db, collectionName)).toBe(true)
     expect(getCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
     expect(getDocCollection(db, collectionName, ifCollectionDoesNotExist)).rejects.toThrow()
@@ -309,7 +313,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // First creation
 
-    let ifExists = IfCollectionExistsOnCreate.ThrowError
+    let ifExists: IfCollectionExistsOnCreate = 'ThrowError'
     const edgeCollection1 = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
@@ -326,13 +330,13 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Error if collection aready exists
 
-    ifExists = IfCollectionExistsOnCreate.ThrowError
+    ifExists = 'ThrowError'
     expect(createEdgeCollection(db, edgeCollectionName, ifExists)).rejects.toThrow(Error)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
 
     // Return existing collection
 
-    ifExists = IfCollectionExistsOnCreate.ReturnExisting
+    ifExists = 'ReturnExisting'
     const returnedEdgeCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(edgeCollection1).toBe(returnedEdgeCollection)
@@ -353,7 +357,7 @@ describe('Test @stcland/arango/utils', async () => {
 
     // overwrite existing collection
 
-    ifExists = IfCollectionExistsOnCreate.Overwrite
+    ifExists = 'Overwrite'
     const overwrittenEdgeCollection = await createEdgeCollection(db, edgeCollectionName, ifExists)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(false)
@@ -380,14 +384,14 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await collectionDoesNotExist(db, edgeCollectionName)).toBe(true)
 
     // When collection does not exist, and you specify create, but no type, it should throw
-    let ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    let ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = 'Create'
     expect(getCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
 
     // Throw on non existance is default
     expect(getEdgeCollection(db, edgeCollectionName)).rejects.toThrow()
 
     // OK lets specify create when collection does not exist
-    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.Create
+    ifCollectionDoesNotExist = 'Create'
     const edgeCollection3 = await getEdgeCollection(db, edgeCollectionName, ifCollectionDoesNotExist)
     expect(await collectionExists(db, edgeCollectionName)).toBe(true)
     expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
@@ -398,7 +402,7 @@ describe('Test @stcland/arango/utils', async () => {
     // SHould throw if we attempt to get colleciton of wrong type
     expect(getDocCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
 
-    ifCollectionDoesNotExist = IfCollectionDoesNotExistOnGet.ThrowError
+    ifCollectionDoesNotExist = 'ThrowError'
     expect(await dropCollection(db, edgeCollectionName)).toBe(true)
     expect(getCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()
     expect(getEdgeCollection(db, edgeCollectionName, ifCollectionDoesNotExist)).rejects.toThrow()

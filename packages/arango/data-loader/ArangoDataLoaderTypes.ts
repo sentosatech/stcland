@@ -1,31 +1,24 @@
 import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
+import { Database } from 'arangojs'
 
-import {
+import type {
+} from '../utils/ArangoUtilsTypes'
+
+import type {
+  IfDbDoesNotExistOnGet,
   IfCollectionDoesNotExistOnGet,
-} from '../utils/ArangoUtilsTypes'
-
-import type {
-  IfDbDoesNotExistOnGet
-} from '../utils/ArangoUtilsTypes'
-
-
-import type {
   ArangoHostConfig,
   CreateDatabaseUser
 } from '../utils/ArangoUtilsTypes'
 
 
-import { Database } from 'arangojs'
 import { CollectionType } from '../utils'
 
-export type IfTargetDbDoesNotExist = IfDbDoesNotExistOnGet
-
-export const enum IfTargetCollectionDoesNotExist {
-  ThrowError = IfCollectionDoesNotExistOnGet.ThrowError,
-  Create = IfCollectionDoesNotExistOnGet.Create
-}
-
+// re-export arang types
 export { CreateDatabaseUser }
+
+export type IfTargetDbDoesNotExist = IfDbDoesNotExistOnGet
+export type IfTargetCollectionDoesNotExist = IfCollectionDoesNotExistOnGet
 
 export interface LoadSpreadsheetDataOpts extends
   Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
