@@ -1,7 +1,7 @@
-import { config as baseConfig } from '../storybook/tailwind.config'
+import { themeConfig } from '@stcland/theme'
 
 const config = {
-  ...baseConfig,
+  ...themeConfig,
   content: ['./src/**/*.tsx'],
 }
 

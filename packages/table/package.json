@@ -19,7 +19,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint . --ext .js,.ts 'src/**/*.{js,jsx,ts,tsx}' --fix",
     "ts-check": "tsc --noEmit --skipLibCheck",
     "build": "vite build",
     "serve": "vite serve",
@@ -30,7 +30,6 @@
   "license": "ISC",
   "devDependencies": {
     "@stcland/utils": "workspace:^",
-    "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
@@ -45,6 +44,7 @@
     "vite-plugin-dts": "^4.0.3"
   },
   "dependencies": {
+    "@stcland/theme": "workspace:^",
     "@tanstack/react-table": "^8.20.5"
   },
   "peerDependencies": {

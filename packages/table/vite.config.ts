@@ -14,7 +14,10 @@ export default defineConfig({
   ],
   css: {
     postcss: {
-      plugins: [tailwindcss, autoprefixer],
+      plugins: [
+        tailwindcss('./tailwind.config.ts'),
+        autoprefixer,
+      ],
     },
   },
   build: {
@@ -31,7 +34,7 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
           '@tanstack/react-table': 'ReactTable',
-          'tailwindcss': 'tailwindcss'
+          '@stcland/theme': 'STCLandTheme'
         },
       },
     },

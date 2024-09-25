@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
-import Table, { Props } from './Table'
+import { Table, TableProps } from '@stcland/table'
 import * as React from 'react'
 
 const columns: ColumnDef<any>[] = [
@@ -32,7 +32,7 @@ const meta : Meta<typeof Table> = {
 
 export default meta
 
-const Template: StoryFn<Props> = (args) => <Table {...args} />
+const Template: StoryFn<TableProps> = (args) => <Table {...args} />
 
 export const Base = Template.bind({})
 Base.args = {
@@ -56,7 +56,7 @@ WithCustomStyles.args = {
   },
 }
 
-const WithRowSelectionTemplate: StoryFn<Props> = (args) => {
+const WithRowSelectionTemplate: StoryFn<TableProps> = (args) => {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
   return (
@@ -142,7 +142,7 @@ const sampleDataExpandedRows = [
   ], },
 ]
 
-const WithExpandedRowsTemplate: StoryFn<Props> = (args) => {
+const WithExpandedRowsTemplate: StoryFn<TableProps> = (args) => {
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
   return (
