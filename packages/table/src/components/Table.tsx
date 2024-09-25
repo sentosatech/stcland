@@ -11,7 +11,6 @@ import {
 } from '@tanstack/react-table'
 import { cns, withCustomStyles } from '@stcland/utils'
 import '../index.css'
-import { ThemeProvider, useTheme } from '@stcland/theme'
 import type { TableStyles } from '@stcland/theme'
 
 //*****************************************************************************
@@ -66,9 +65,6 @@ const Table = ({
     },
   })
 
-
-  const theme = useTheme()
-
   const tableStyles: TableStyles = {
     root: cns('border border-gray-825 bg-gray-825 px-4 pt-8 pb-14', className),
     table: 'table-fixed',
@@ -82,88 +78,80 @@ const Table = ({
     subRow: 'text-secondary-main border-none',
   }
 
-
   const cn  = withCustomStyles<TableStyles>( tableStyles, customStyles)
 
-  const customTheme = {
-    ...theme,
-    tableStyles: cn
-  }
-
   return (
-    <ThemeProvider customTheme={customTheme}>
-      <div className={cn.root}>
-        <table className={cn.table}>
-          <thead className={cn.header}>
-            {tableInstance.getHeaderGroups().map(function (headerGroup) {
-              return (
+    <div className={cn.root}>
+      <table className={cn.table}>
+        <thead className={cn.header}>
+          {tableInstance.getHeaderGroups().map(function (headerGroup) {
+            return (
               /* Current header row */
-                <tr key={headerGroup.id} className={cn.headerRow}>
-                  {headerGroup.headers.map(function (column) {
-                    if (column.id === 'extraLine') return null
-                    return (
+              <tr key={headerGroup.id} className={cn.headerRow}>
+                {headerGroup.headers.map(function (column) {
+                  if (column.id === 'extraLine') return null
+                  return (
                     /* Current header cell */
-                      <th
-                        key={column.id}
-                        colSpan={column.colSpan}
-                        style={{ width: column.getSize() }}
-                        className={cn.headerCell}
-                      >
-                        {column.isPlaceholder !== null &&
+                    <th
+                      key={column.id}
+                      colSpan={column.colSpan}
+                      style={{ width: column.getSize() }}
+                      className={cn.headerCell}
+                    >
+                      {column.isPlaceholder !== null &&
                         <div>
                           {flexRender(column.column.columnDef.header, column.getContext())}
                         </div>
-                        }
-                      </th>
-                    )
-                  })}
-                </tr>
-              )
-            })}
-          </thead>
+                      }
+                    </th>
+                  )
+                })}
+              </tr>
+            )
+          })}
+        </thead>
 
-          <tbody className={cn.body}>
-            {tableInstance.getRowModel().rows.map(function (row) {
-              const isSelected = row.getIsSelected()
-              const isSubRow = row.depth > 0
-              const rowStyleVariants = {
-                [cn.selectedRow] : isSelected,
-                [cn.subRow] : isSubRow
-              }
-              return (
+        <tbody className={cn.body}>
+          {tableInstance.getRowModel().rows.map(function (row) {
+            const isSelected = row.getIsSelected()
+            const isSubRow = row.depth > 0
+            const rowStyleVariants = {
+              [cn.selectedRow] : isSelected,
+              [cn.subRow] : isSubRow
+            }
+            return (
               /* table row */
-                <tr
-                  key={row.id}
-                  className={cns(cn.row, rowStyleVariants)}
-                  onClick={() => onRowClick?.(row)}
-                >
-                  {row.getVisibleCells().map((cell) => {
+              <tr
+                key={row.id}
+                className={cns(cn.row, rowStyleVariants)}
+                onClick={() => onRowClick?.(row)}
+              >
+                {row.getVisibleCells().map((cell) => {
                   // Must be equal to undefined, otherwise may not show zeros
-                    if (cell.getValue() === undefined) return null
+                  if (cell.getValue() === undefined) return null
 
-                    return (
-                      <td
-                        key={cell.id}
-                        colSpan={row.depth > 0 ? row.getAllCells().length - 1 : undefined}
-                        style={{ width: cell.column.getSize() }}
-                        align={(cell.column.columnDef.meta as any)?.align}
-                        className={cns(
-                          (cell.column.columnDef.meta as any)?.className,
-                          cn.cell,
-                          customStyles?.cell
-                        )}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    )
-                  })}
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </ThemeProvider>
+                  return (
+                    <td
+                      key={cell.id}
+                      colSpan={row.depth > 0 ? row.getAllCells().length - 1 : undefined}
+                      style={{ width: cell.column.getSize() }}
+                      align={(cell.column.columnDef.meta as any)?.align}
+                      className={cns(
+                        (cell.column.columnDef.meta as any)?.className,
+                        cn.cell,
+                        customStyles?.cell
+                      )}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

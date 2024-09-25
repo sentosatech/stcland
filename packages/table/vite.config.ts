@@ -23,9 +23,12 @@ export default defineConfig({
   build: {
     outDir: './dist',
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        withStyles: resolve(__dirname, 'src/components/withStyles/index.ts'),
+      },
       name: 'STCLandTable',
-      fileName: (format) => `index.${format}.js`,
+      fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
       external: ['react', 'react-dom', '@tanstack/react-table', 'tailwindcss'],
@@ -34,11 +37,10 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
           '@tanstack/react-table': 'ReactTable',
-          '@stcland/theme': 'STCLandTheme'
+          '@stcland/theme': 'STCLandTheme',
         },
       },
     },
     target: 'esnext',
-    sourcemap: true,
   },
 })

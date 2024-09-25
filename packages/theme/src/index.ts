@@ -1,6 +1,6 @@
 
 import './global.css'
 
-export { ThemeProvider, useTheme, themeConfig } from './ThemeProvider'
+export { StcStylesProvider, useStyles, themeConfig } from './StylesProvider'
 
-export type { StclandTheme, TableStyles } from './ThemeProvider'
+export type { StclandStyles, TableStyles } from './StylesProvider'

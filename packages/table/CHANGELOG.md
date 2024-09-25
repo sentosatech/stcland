@@ -1,5 +1,13 @@
 # @stcland/table
 
+## 0.0.6
+
+### Patch Changes
+
+- Update context to StyleProvider
+- Updated dependencies
+  - @stcland/theme@0.0.3
+
 ## 0.0.5
 
 ### Patch Changes

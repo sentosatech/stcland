@@ -1,5 +1,11 @@
 # @stcland/theme
 
+## 0.0.3
+
+### Patch Changes
+
+- Update context to StyleProvider
+
 ## 0.0.2
 
 ### Patch Changes
