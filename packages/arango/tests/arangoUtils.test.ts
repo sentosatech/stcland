@@ -23,7 +23,7 @@ import {
 } from '../utils'
 
 import { Database } from 'arangojs'
-import { IfDbExistsOnCreate } from '../dist'
+import { IfDbExistsOnCreate } from '../utils'
 
 const hostConfig: ArangoHostConfig = {
   url: 'http://localhost:8529',

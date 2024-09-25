@@ -20,7 +20,6 @@ import {
 
 import { throwIf } from '@stcland/errors'
 import { toJson } from '@stcland/utils'
-// import { GetDbOptions } from '../dist'
 
 export const loadSpreadsheetData: LoadSpreadsheetData = async (
   excelFilePath, arangoHostConfig, dbName, loadDataOpts

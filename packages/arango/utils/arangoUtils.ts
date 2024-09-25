@@ -24,15 +24,14 @@ import type {
   CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
   GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType,
-  DocumentExistsById, DocumentExists, DocumentDoesNotExist,
+  DocumentExistsById, DocumentExists, DocumentDoesNotExist, IfDbExistsOnCreate
 } from './ArangoUtilsTypes'
-import { IfDbExistsOnCreate } from '../dist'
 
 //*****************************************************************************
 // General Utils
 //*****************************************************************************
 
-export const canConnectToServer : CanConnectToServer = async (hostConfig: ArangoHostConfig) => {
+export const canConnectToServer : CanConnectToServer = async (hostConfig) => {
   const sysDb = await getSysDb(hostConfig)
   return dbIsConnected(sysDb)
 }
@@ -41,12 +40,11 @@ export const canNotConnectToServer: CanNotConnectToServer =
 
 // throws error if connection fails
 export const getSysDb: GetSysDb = async (
-  hostConfig: ArangoHostConfig,
-  opts?: { checkConnection: boolean }
+  hostConfig, getSysDbOpts
 ) => {
   const { url = '', username = '', password = '' } = hostConfig || {}
   const sysDb = new Database({ url, auth: { username, password } })
-  if (opts?.checkConnection) {
+  if (getSysDbOpts?.checkConnection) {
     if (await dbIsNotConnected(sysDb)) throw new Error('Sys database connection failed')
   }
   return sysDb

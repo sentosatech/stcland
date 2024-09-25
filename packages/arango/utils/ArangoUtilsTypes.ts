@@ -26,7 +26,7 @@ export interface ArangoHostConfig {
 // Fetch the arango system database, throws error if connection fails
 export type GetSysDb = (
   hostConfig: ArangoHostConfig,
-  opts?: { checkConnection: boolean }
+  getSysDbOpts?: { checkConnection: boolean }
 ) => Promise<Database>
 
 export type CanConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
