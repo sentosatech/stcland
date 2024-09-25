@@ -15,7 +15,6 @@ import { DataTableData } from '@stcland/spreadsheet-parser'
 import {
   CollectionType,
   IfCollectionDoesNotExistOnGet,
-  IfDbDoesNotExistOnGetOld,
   getCollection
 } from '../utils'
 
@@ -24,13 +23,12 @@ import { toJson } from '@stcland/utils'
 // import { GetDbOptions } from '../dist'
 
 export const loadSpreadsheetData: LoadSpreadsheetData = async (
-  excelFilePath, arangoHostConfig, dbName, opts
+  excelFilePath, arangoHostConfig, dbName, loadDataOpts
 ) => {
 
-  const {
-    ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create,
-    // dbUsers = [],
-  } = opts
+  // const {dbUsers = [] } = loadDataOpts
+  const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist
+    = loadDataOpts?.ifTargetDbDoesNotExist || 'Create'
 
   // Lets make sure the file actually exists
   const spreadsheetExists = await pathExists(excelFilePath)
@@ -79,12 +77,12 @@ export const loadWorksheetData: LoadWorksheetData = async (
   throwIf(!meta, `Worsheet ${worksheetName}: metadata not found`)
 
   const { arangoType } = meta as ArangoDataLoaderMeta
-  const { db, opts } = clientData
+  const { db, loadDataOpts } = clientData
 
   const {
     ifTargetCollectionDoesNotEist = IfTargetCollectionDoesNotExist.Create,
     validateEdgeTargets = true
-  } = opts
+  } = loadDataOpts
 
   throwIf(!arangoType,
     `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +

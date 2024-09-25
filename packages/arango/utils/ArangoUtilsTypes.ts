@@ -61,33 +61,11 @@ export type CreateDb = {
   ): Promise<Database>;
 }
 
-
-export const enum IfDbDoesNotExistOnGetOld {
-  ThrowError = 'throw-error',
-  Create = 'create',
-}
 export type IfDbDoesNotExistOnGet = 'ThrowError' | 'Create'
-
-
-export type GetDbOptionsOld = CreateDatabaseOptions & {
-  // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
-  ifDbDoesNotExist?: IfDbDoesNotExistOnGetOld, // default is ThrowError
-}
 
 export type GetDbOptions = CreateDatabaseOptions & {
   // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
   ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
-}
-
-export type GetDbOld = {
-  ( hostConfig: ArangoHostConfig,
-    dbName: string,
-    getDbOpts?: GetDbOptionsOld, // only needed if IfDbDoesNotExistOnGet is Create
-  ) : Promise<Database>;
-  ( sysDb: Database,
-    dbName: string,
-    getDbOpts?: GetDbOptionsOld, // only needed if IfDbDoesNotExistOnGet is Create
-  ) : Promise<Database>;
 }
 
 export type GetDb = {
@@ -100,7 +78,6 @@ export type GetDb = {
     getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
 }
-
 
 // if database does not exist, returns false
 export type DropDb = {

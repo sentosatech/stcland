@@ -1,9 +1,13 @@
 import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
 
 import {
-  IfDbDoesNotExistOnGetOld, // IfDbExistsOnCreate,
   IfCollectionDoesNotExistOnGet,
 } from '../utils/ArangoUtilsTypes'
+
+import type {
+  IfDbDoesNotExistOnGet
+} from '../utils/ArangoUtilsTypes'
+
 
 import type {
   ArangoHostConfig,
@@ -14,10 +18,7 @@ import type {
 import { Database } from 'arangojs'
 import { CollectionType } from '../utils'
 
-export const enum IfTargetDbDoesNotExist {
-  ThrowError = IfDbDoesNotExistOnGetOld.ThrowError,
-  Create =  IfDbDoesNotExistOnGetOld.Create
-}
+export type IfTargetDbDoesNotExist = IfDbDoesNotExistOnGet
 
 export const enum IfTargetCollectionDoesNotExist {
   ThrowError = IfCollectionDoesNotExistOnGet.ThrowError,
@@ -44,7 +45,7 @@ export type LoadSpreadsheetData = (
   excelFilePath: string,
   arangoHostConfig: ArangoHostConfig,
   dbName: string,
-  opts: LoadSpreadsheetDataOpts
+  loadDataOpts: LoadSpreadsheetDataOpts
 ) => Promise<number>;
     // number of records loaded
 
@@ -57,7 +58,7 @@ export interface ArangoDataLoaderMeta {
 
 export interface ArangoDataLoaderClientData {
   db: Database
-  opts: LoadSpreadsheetDataOpts
+  loadDataOpts: LoadSpreadsheetDataOpts
 }
 
 export const ValidWorksheetTypes = [

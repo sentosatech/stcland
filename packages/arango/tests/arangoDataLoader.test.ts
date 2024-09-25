@@ -54,7 +54,7 @@ afterAll(async () => {
 describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
-    const ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create
+    const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'
     const opts = {
       dbUsers, ifTargetDbDoesNotExist, reportWarnings: true
     }
