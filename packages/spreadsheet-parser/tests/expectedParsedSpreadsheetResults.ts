@@ -175,9 +175,9 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
-  DataListParsing: {
-    worksheetName: 'DataListParsing',
-    dataLayout: 'dataList',
+  DataCollectionParsing: {
+    worksheetName: 'DataCollectionParsing',
+    dataLayout: 'dataCollection',
     numDataRowsParsed: 4,
     metaTypeMap: {
       note: 'string',
@@ -201,7 +201,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   },
   RowValueListParsing : {
     worksheetName: 'RowValueListParsing',
-    dataLayout: 'dataList',
+    dataLayout: 'dataCollection',
     numDataRowsParsed: 7,
     meta: {
       note: 'This spreadsheet test row value list parsing'

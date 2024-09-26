@@ -6,8 +6,8 @@ import { keys, isNil, isNotNil } from 'ramda'
 import type {
   ParseOptions, ParseWorksheet,
   ParseFrontMatter,   ParseFrontMatterResult,
-  ParseDataLayout, ParseDataTable, ParseDataList,
-  ParseDataTableResult, ParseDataListResult, ParsedWorksheetResult,
+  ParseDataLayout, ParseDataTable, ParseDataCollection,
+  ParseDataTableResult, ParseDataCollectionResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData,
   DataType, DataTypeMap, DataTableDataType,
@@ -26,7 +26,7 @@ import {
   dataCellWarning, parserWarning, cellValueHasError, getCellError,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
   isNotValidDataTableDataType, isRowValueListType,
-  shouldSkipDataListRow,
+  shouldSkipDataCollectionRow,
   shouldSkipDataTableValue,
   getBaseDataType
 } from './spreadsheetParseUtils'
@@ -45,7 +45,7 @@ export const parseWorksheet: ParseWorksheet = (
 
   let meta: Meta | undefined = undefined
   let metaTypeMap: MetaTypeMap | undefined = undefined
-  let parsedData: ParseDataListResult | ParseDataTableResult | undefined
+  let parsedData: ParseDataCollectionResult | ParseDataTableResult | undefined
 
   let nextRowNum = startingRowNum
 
@@ -66,8 +66,8 @@ export const parseWorksheet: ParseWorksheet = (
   case 'dataTable':
     parsedData = parseDataTable(ws, nextRowNum, parseOpts)
     break
-  case 'dataList':
-    parsedData = parseDataList(ws, nextRowNum, parseOpts)
+  case 'dataCollection':
+    parsedData = parseDataCollection(ws, nextRowNum, parseOpts)
     break
   case 'frontMatterOnly':
     break // ok to have no data,
@@ -188,7 +188,7 @@ const parseTableDataRow = (
 
 //-----------------------------------------------------------------------------
 
-export const parseDataList: ParseDataList = (
+export const parseDataCollection: ParseDataCollection = (
   ws, startingRowNum, parseOpts?
 ) => {
 
@@ -255,7 +255,7 @@ export const parseDataList: ParseDataList = (
         `  ${toJson(rowValues)}`
         )}
 
-      if (shouldSkipDataListRow(rowValues)) return
+      if (shouldSkipDataCollectionRow(rowValues)) return
 
       propValue = parseDataCell(
         dataType, rowValues[2], { ...rowMeta, colNumber: 2, propName, dataType }, parseOpts
@@ -266,7 +266,7 @@ export const parseDataList: ParseDataList = (
     dataTypeMap = { ...(dataTypeMap || {}), [propName]: dataType }
   })
 
-  const result: ParseDataListResult = {
+  const result: ParseDataCollectionResult = {
     data,
     dataTypeMap,
     numDataRowsParsed: keys(data || {}).length,
@@ -353,7 +353,7 @@ export const parseFrontMatter: ParseFrontMatter = (
   const curRowNumber = startingRowNumber + 1
 
 
-  const parsedData =  parseDataList(ws, curRowNumber, {
+  const parsedData =  parseDataCollection(ws, curRowNumber, {
     ...parseOpts, dataTerminationRow: '---'
   })
 

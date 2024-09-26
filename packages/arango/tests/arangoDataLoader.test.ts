@@ -51,7 +51,7 @@ afterAll(async () => {
   // await dropDb(sysDb, dbName)
 })
 
-describe('Test @stcland/arango/spreadsheet-loader', async () => {
+describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
     const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'

@@ -11,15 +11,15 @@ import {
 
 import {
   validDataTableDataTypes, validRowValueListTypes,
-  validDataListDataTypes, validDataTypes,
+  validDataCollectionDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
 import type {
   ParseOptions, DataLayout,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
   CellMeta, DataCellMeta,
-  DataTableDataType, RowValueListType, DataListDataType,
-  // Data, DataTableData, DataListData,
+  DataTableDataType, RowValueListType, DataCollectionDataType,
+  // Data, DataTableData, DataCollectionData,
   DataType,
   InvalidTypeWarning,
 } from './SpreadsheetParserTypes'
@@ -126,9 +126,9 @@ export const cellValueFromStringList = (
   parseOpts?: ParseOptions
 ) : string[] => {
 
-  if (dataLayout !== 'dataList') {
+  if (dataLayout !== 'dataCollection') {
     const warningMsg = dataCellWarning(
-      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataList' dataLayout`,
+      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataCollection' dataLayout`,
       dataCellMeta, parseOpts
     )
     return [warningMsg]
@@ -266,8 +266,8 @@ export const isValidRowValueListType = (dataType: DataType) =>
 
 export const isRowValueListType = isValidRowValueListType
 
-export const isValidDataListDataType = (dataType: DataType) =>
-  isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
+export const isValidDataCollectionDataType = (dataType: DataType) =>
+  isString(dataType) && validDataCollectionDataTypes.includes(dataType as DataCollectionDataType)
 
 export const isValidDataType = (dataType: DataType) =>
   isString(dataType) && validDataTypes.includes(dataType)
@@ -284,7 +284,7 @@ export const isValidDataTypeList = (dataTypes: DataType[]) : {
 export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
 export const isNotValidRowValueListType = complement(isValidRowValueListType)
 export const isNotRowValueListType = isNotValidRowValueListType
-export const isNotValidDataListDataType = complement(isValidDataListDataType)
+export const isNotValidDataCollectionDataType = complement(isValidDataCollectionDataType)
 export const isNotValidDataType = complement(isValidDataType)
 export const isNotValidDataTypeList = complement(isValidDataTypeList)
 
@@ -399,7 +399,7 @@ export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`
 
-export const shouldSkipDataListRow = (rowValues: CellValue[]) =>
+export const shouldSkipDataCollectionRow = (rowValues: CellValue[]) =>
   rowValues[2]?.toString().trim() === '_skip_'
 
 export const shouldSkipDataTableValue = (callValue: CellValue) =>

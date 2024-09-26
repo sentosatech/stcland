@@ -25,7 +25,7 @@ import {
 } from './ArangoDataLoaderTypes'
 
 import {
-  type DataTableData, type DataListData,
+  type DataTableData, type DataCollectionData,
   forEachSheet
 } from '@stcland/spreadsheet-parser'
 
@@ -111,7 +111,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
     break
   case 'graph':
     await loadGraph(
-      worksheetName, db, worksheetName, data as DataListData, dataLoadOpts
+      worksheetName, db, worksheetName, data as DataCollectionData, dataLoadOpts
     )
     break
   default:
@@ -212,7 +212,7 @@ export const loadGraph = async (
   worksheetName: string,
   db: Database,
   graphName: string,
-  data: DataListData,
+  data: DataCollectionData,
   dataLoadOpts?: LoadSpreadsheetDataOpts,
 ) => {  // TODO: what type to return
   console.warn('~~> loadGraph(), skipping')

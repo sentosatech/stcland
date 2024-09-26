@@ -13,7 +13,7 @@ import {  allDefinedOrAllUndefined, objectsHaveSameKeys, toJson } from '@stcland
 import { expectedSpreadsheetResults } from './expectedParsedSpreadsheetResults'
 import {
   DataType, ParsedWorksheetResult, ParseOptions, MetaTypeMap, DataTypeMap,
-  DataTableData, DataListData, Meta, Data
+  DataTableData, DataCollectionData, Meta, Data
 } from '../src/SpreadsheetParserTypes'
 
 import { getBaseDataType, getWorksheetList, isRowValueListType } from '../src/spreadsheetParseUtils'
@@ -111,10 +111,10 @@ const assertParsedWorksheet = async (
   )
 
   switch (dataLayout) {
-  case 'dataList':
+  case 'dataCollection':
     assertParsedWorksheetListData(
-      expectedData as DataListData,
-      parsedData as DataListData,
+      expectedData as DataCollectionData,
+      parsedData as DataCollectionData,
       expectedDataTypeMap, parsedDataTypeMap, worksheetName
     )
     break
@@ -396,8 +396,8 @@ const assertParsedData = (
 //-------------------------------------------------------------------------
 
 const assertParsedWorksheetListData = (
-  expectedData: DataListData | undefined,
-  parsedData: DataListData | undefined,
+  expectedData: DataCollectionData | undefined,
+  parsedData: DataCollectionData | undefined,
   expectedDataTypeMap: DataTypeMap | undefined,
   parsedDataTypeMap: DataTypeMap | undefined,
   worksheetName: string

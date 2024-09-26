@@ -3,7 +3,7 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 import type { PredFn } from '@stcland/utils'
 
 // TODO
-// - better name for DataList (DabaObject?  DataCollection?, if collection could have multiple --- seperated entires)
+// - multple docs per DataCollection
 // - RowValueList -> RowList
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
 // - support _skip_ in row value list
@@ -55,18 +55,18 @@ export type InvalidDataTypeWarning = 'invalid-data-type'
 export type InvalidListTypeWarning = 'invalid-list-type'
 export type InvalidTypeWarning = InvalidDataTypeWarning | InvalidListTypeWarning
 
-export type DataListDataType =  RowValueListType | DataTableDataType
+export type DataCollectionDataType =  RowValueListType | DataTableDataType
 
-export const validDataListDataTypes: DataListDataType[] = [
+export const validDataCollectionDataTypes: DataCollectionDataType[] = [
   ...validRowValueListTypes, ...validDataTableDataTypes
 ]
 
-export type DataType = DataTableDataType | DataListDataType
+export type DataType = DataTableDataType | DataCollectionDataType
 
 // using a set to remove duplicates
 export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataTableDataTypes,
-  ...validDataListDataTypes
+  ...validDataCollectionDataTypes
 ]))
 
 export type DataTypeMap = Record<string, DataType>
@@ -76,9 +76,9 @@ export type MetaTypeMap = Record<string, DataType>
 
 //--- data layout -------------------------------------------------------------
 
-export type DataLayout = 'dataList' | 'dataTable' | 'frontMatterOnly' | 'any'
+export type DataLayout = 'dataCollection' | 'dataTable' | 'frontMatterOnly' | 'any'
 
-export const validDataLayouts: DataLayout[] = ['dataList', 'dataTable', 'frontMatterOnly', 'any']
+export const validDataLayouts: DataLayout[] = ['dataCollection', 'dataTable', 'frontMatterOnly', 'any']
 
 export interface ParseDataLayoutResult {
   dataLayout: DataLayout
@@ -129,19 +129,19 @@ export type ParseDataTable = (
 // --- data list --------------------------------------------------------------
 
 // object
-export type DataListData = Data
+export type DataCollectionData = Data
 
-export interface ParseDataListResult {
-  data: DataListData | undefined
+export interface ParseDataCollectionResult {
+  data: DataCollectionData | undefined
   dataTypeMap: DataTypeMap | undefined
   numDataRowsParsed: number
 }
 
-export type ParseDataList = (
+export type ParseDataCollection = (
   ws: Worksheet,
   startingRowNum: number,
   parseOpts?: ParseOptions
-) => ParseDataListResult;
+) => ParseDataCollectionResult;
 
 
 // --- worksheet parsing ------------------------------------------------------
@@ -152,7 +152,7 @@ export interface ParsedWorksheetResult {
   numDataRowsParsed: number,
   meta?: Meta
   metaTypeMap?: MetaTypeMap
-  data?: DataListData | DataTableData
+  data?: DataCollectionData | DataTableData
   dataTypeMap?: DataTypeMap
 }
 
