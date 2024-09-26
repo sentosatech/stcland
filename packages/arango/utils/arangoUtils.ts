@@ -14,7 +14,7 @@ import { throwIf } from '@stcland/errors'
 
 import {
   CollectionType,
-  Graph,
+  // Graph,
 } from './ArangoUtilsTypes'
 
 import type {
@@ -31,9 +31,7 @@ import type {
   GetCollection, GetDocCollection, GetEdgeCollection, IfDbDoesNotExistOnGet,
   DropCollection, GetCollectionType,
   DocumentExistsById, DocumentExists, DocumentDoesNotExist,
-
-  // GraphExists, GraphDoesNotExist, IfGraphExistsOnCreate, IfGraphDoesNotExistOnGet,
-  CreateGraph,
+  GraphExists, GraphDoesNotExist, CreateGraph, CreateEmptyGraph,
 
 } from './ArangoUtilsTypes'
 
@@ -258,9 +256,7 @@ export const createCollection: CreateCollection = async (
     collectionExists = false
   }
 
-  if (!collectionExists)
-    await collection.create({ type })
-
+  if (!collectionExists) await collection.create({ type })
   return collection
 }
 
@@ -371,11 +367,13 @@ export const collectionDocCount: CollectionDocCount = async (
 
 // --- graph functions --------------------------------------------------
 
-// export type CreateGraph = (
-//   db: Database,
-//   graphName: string,
-//   createGraphOpts: CreateGraphOpts
-// ) => Promise<Graph>;
+export const graphExists: GraphExists = (
+  db: Database,
+  graphName: string
+) => db.graph(graphName).exists()
+
+export const graphDoesNotExist: GraphDoesNotExist =
+  asyncComplement(collectionExists)
 
 export const createGraph: CreateGraph = async (
   db, graphName, edgeDefinitions, createGraphOpts
@@ -394,12 +392,14 @@ export const createGraph: CreateGraph = async (
     graphExists = false
   }
 
-  if (!graphExists)
-    await db.createGraph(graphName, edgeDefinitions, createGraphOpts)
-
-  // TEMP TEMP TEMP
-  return new Graph(db, graphName)
+  if (!graphExists) await graph.create(edgeDefinitions, createGraphOpts)
+  return graph
 }
+
+export const createEmptyGraph: CreateEmptyGraph = async (
+  db, graphName, createGraphOpts
+) => createGraph(db, graphName, [], createGraphOpts)
+
 
 // --- module only functions --------------------------------------------------
 

@@ -24,7 +24,10 @@ import {
   validWorksheetTypes
 } from './ArangoDataLoaderTypes'
 
-import { type DataTableData, forEachSheet } from '@stcland/spreadsheet-parser'
+import {
+  type DataTableData, type DataListData,
+  forEachSheet
+} from '@stcland/spreadsheet-parser'
 
 import { throwIf } from '@stcland/errors'
 import { toJson } from '@stcland/utils'
@@ -94,26 +97,21 @@ export const loadWorksheetData: LoadWorksheetData = async (
     `  Must be one of ${toJson(validWorksheetTypes.join(', '))}`
   )
 
-  if ( arangoType === 'graph') {
-    console.warn(
-      `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
-      'Graphs are not yet supported'
-    )
-    return
-  }
-
-  const collectionName = worksheetName
-
   // make sure we default to create dollection if no opts are provided
   switch (arangoType) {
   case 'docCollection':
     await loadDocCollection(
-      worksheetName, db, collectionName, data as DataTableData, dataLoadOpts
+      worksheetName, db, worksheetName, data as DataTableData, dataLoadOpts
     )
     break
   case 'edgeCollection':
     await loadEdgeCollection(
-      worksheetName, db, collectionName, data as DataTableData, dataLoadOpts
+      worksheetName, db, worksheetName, data as DataTableData, dataLoadOpts
+    )
+    break
+  case 'graph':
+    await loadGraph(
+      worksheetName, db, worksheetName, data as DataListData, dataLoadOpts
     )
     break
   default:
@@ -206,4 +204,17 @@ export const loadEdgeCollection = async (
 
   // If we get here, we are good to load the data
   await collection.import(data)
+}
+
+//------------------------------------------------------------------------------
+
+export const loadGraph = async (
+  worksheetName: string,
+  db: Database,
+  graphName: string,
+  data: DataListData,
+  dataLoadOpts?: LoadSpreadsheetDataOpts,
+) => {  // TODO: what type to return
+  console.warn('~~> loadGraph(), skipping')
+  console.log('data: ', data)
 }

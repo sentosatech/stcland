@@ -8,8 +8,6 @@ import type {
   EdgeCollection
 } from 'arangojs/collection'
 
-
-
 import {
   Graph, EdgeDefinitionOptions,
   CreateGraphOptions as ArangoCreateGraphOptions
@@ -202,7 +200,6 @@ export type GraphExists =  (db: Database, graphName: string) => Promise<boolean>
 export type GraphDoesNotExist = GraphExists
 
 export type IfGraphExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
-export type IfGraphDoesNotExistOnGet = 'ThrowError' | 'Create'
 
 export type CreateGraphOptions = ArangoCreateGraphOptions & {
   ifExists?: IfGraphExistsOnCreate // defaults to ThrowError
@@ -214,3 +211,17 @@ export type CreateGraph = (
   edgeDefinitions: EdgeDefinitionOptions[],
   createGraphOpts?: CreateGraphOptions
 ) => Promise<Graph>;
+
+export type CreateEmptyGraph = (
+  db: Database,
+  graphName: string,
+  createGraphOpts?: CreateGraphOptions
+) => Promise<Graph>;
+
+// The edge definition has been added to the graph
+
+// export type IfGraphDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+// export type GetGraphOptions = {
+//   ifGraphDoesNotExist?: IfGraphDoesNotExistOnGet // default is ThrowError
+// }
