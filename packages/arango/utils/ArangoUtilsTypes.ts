@@ -8,8 +8,15 @@ import type {
   EdgeCollection
 } from 'arangojs/collection'
 
+
+
+import {
+  Graph, EdgeDefinitionOptions,
+  CreateGraphOptions as ArangoCreateGraphOptions
+} from 'arangojs/graph'
+
 // re-export arango types so clients can use directly
-export { Database, CollectionType }
+export { Graph, Database, CollectionType }
 export type { DocumentCollection, EdgeCollection, CreateDatabaseUser }
 
 
@@ -187,3 +194,23 @@ export type DocumentDoesNotExistById = (
   db: Database,
   documentId: string
 ) => Promise<boolean>
+
+
+// --- Graph Utils -------------------------------------------------------
+
+export type GraphExists =  (db: Database, graphName: string) => Promise<boolean>;
+export type GraphDoesNotExist = GraphExists
+
+export type IfGraphExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
+export type IfGraphDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+export type CreateGraphOptions = ArangoCreateGraphOptions & {
+  ifExists?: IfGraphExistsOnCreate // defaults to ThrowError
+}
+
+export type CreateGraph = (
+  db: Database,
+  graphName: string,
+  edgeDefinitions: EdgeDefinitionOptions[],
+  createGraphOpts?: CreateGraphOptions
+) => Promise<Graph>;

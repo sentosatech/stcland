@@ -1,16 +1,20 @@
 import { complement } from 'ramda'
 
 import { Database } from 'arangojs'
+
 import type {
   DocumentCollection,
   EdgeCollection,
 } from 'arangojs/collection'
+
+// import { EdgeDefinitionOptions } from 'arangojs/graph'
 
 import { asyncComplement } from '@stcland/utils'
 import { throwIf } from '@stcland/errors'
 
 import {
   CollectionType,
+  Graph,
 } from './ArangoUtilsTypes'
 
 import type {
@@ -27,8 +31,11 @@ import type {
   GetCollection, GetDocCollection, GetEdgeCollection, IfDbDoesNotExistOnGet,
   DropCollection, GetCollectionType,
   DocumentExistsById, DocumentExists, DocumentDoesNotExist,
-} from './ArangoUtilsTypes'
 
+  // GraphExists, GraphDoesNotExist, IfGraphExistsOnCreate, IfGraphDoesNotExistOnGet,
+  CreateGraph,
+
+} from './ArangoUtilsTypes'
 
 // --- General Utils ----------------------------------------------------------
 
@@ -53,7 +60,6 @@ export const getSysDb: GetSysDb = async (
 
 
 // --- Database Utils ---------------------------------------------------------
-
 
 export const dbIsConnected: DbIsConnected = async (db: Database) => {
   try { await db.get(); return true }
@@ -252,7 +258,9 @@ export const createCollection: CreateCollection = async (
     collectionExists = false
   }
 
-  if (!collectionExists) await collection.create({ type })
+  if (!collectionExists)
+    await collection.create({ type })
+
   return collection
 }
 
@@ -360,6 +368,38 @@ export const collectionDocCount: CollectionDocCount = async (
   return c.count
 }
 
+
+// --- graph functions --------------------------------------------------
+
+// export type CreateGraph = (
+//   db: Database,
+//   graphName: string,
+//   createGraphOpts: CreateGraphOpts
+// ) => Promise<Graph>;
+
+export const createGraph: CreateGraph = async (
+  db, graphName, edgeDefinitions, createGraphOpts
+) => {
+
+  const ifExists: IfCollectionExistsOnCreate = createGraphOpts?.ifExists || 'ThrowError'
+
+  const graph = db.graph(graphName)
+  let graphExists = await graph.exists()
+
+  if (graphExists && ifExists === 'ThrowError')
+    throw new Error(`DB ${db.name}: Attempting to create graph '${graphName}', but it already exists`)
+
+  if (graphExists && ifExists === 'Overwrite') {
+    await graph.drop()
+    graphExists = false
+  }
+
+  if (!graphExists)
+    await db.createGraph(graphName, edgeDefinitions, createGraphOpts)
+
+  // TEMP TEMP TEMP
+  return new Graph(db, graphName)
+}
 
 // --- module only functions --------------------------------------------------
 
