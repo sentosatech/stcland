@@ -24,7 +24,7 @@ export interface LoadSpreadsheetDataOpts extends
   Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
   ifTargetDbDoesNotExist?: IfTargetDbDoesNotExist
     // defaults to create
-  dbUsers?: CreateDatabaseUser[]
+  users?: CreateDatabaseUser[]
     // only needed if IfTargertDbDoesNotExist is Create
     // defaults to []
   ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
@@ -34,13 +34,18 @@ export interface LoadSpreadsheetDataOpts extends
     // defaults to true
 }
 
+export interface LoadSpreadsheetDataResult {
+  numDocsLaoaded: Record<string, number> // { collectionName: numDocsLoaded }
+  numGraphsCreated: number
+}
+
 export type LoadSpreadsheetData = (
   excelFilePath: string,
   arangoHostConfig: ArangoHostConfig,
   dbName: string,
-  loadDataOpts: LoadSpreadsheetDataOpts
-) => Promise<number>;
-    // number of records loaded
+  dataLoadOpts?: LoadSpreadsheetDataOpts
+// ) => Promise<LoadSpreadsheetDataResult>;
+) => Promise<any>; // TODO: figure out how to get LoadSpreadsheetDataResult when working with forEachSheet
 
 export type LoadWorksheetData = ParsedSpreadheetCallBack
 
@@ -49,16 +54,17 @@ export interface ArangoDataLoaderMeta {
   [key: string]: any
 }
 
-export interface ArangoDataLoaderClientData {
-  db: Database
-  loadDataOpts: LoadSpreadsheetDataOpts
-}
-
-export const ValidWorksheetTypes = [
-  'docCollection', 'edgeCollection','graph'
-]
-
 export const collectionTypeMap: Record<'docCollection' | 'edgeCollection', CollectionType> = {
   docCollection: CollectionType.DOCUMENT_COLLECTION,
   edgeCollection: CollectionType.EDGE_COLLECTION,
 }
+
+export interface ArangoDataLoaderClientData {
+  db: Database
+  dataLoadOpts: LoadSpreadsheetDataOpts
+}
+
+export const validWorksheetTypes = [
+  'docCollection', 'edgeCollection','graph'
+]
+

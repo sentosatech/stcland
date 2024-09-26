@@ -62,9 +62,11 @@ export type CreateDb = {
 
 export type IfDbDoesNotExistOnGet = 'ThrowError' | 'Create'
 
-export type GetDbOptions = CreateDatabaseOptions & {
-  // note CreateDatabaseOptions props only needed if IfDbDoesNotExistOnGet is Create
-  ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
+export type GetDbOptions =
+  CreateDatabaseOptions & {
+    // Note: CreateDatabaseOptions props only needed if
+    // IfDbDoesNotExistOnGet is Create and the target db does not exist
+  ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is Create
 }
 
 export type GetDb = {

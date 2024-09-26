@@ -51,19 +51,22 @@ afterAll(async () => {
   // await dropDb(sysDb, dbName)
 })
 
-describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
+describe('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
     const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'
     const opts = {
-      dbUsers, ifTargetDbDoesNotExist, reportWarnings: true
+      dbUsers, ifTargetDbDoesNotExist, reportWarnings: true, reportProgress: true
     }
 
     const results = await loadSpreadsheetData(
       spreadsheetPath, hostConfig, dbName, opts
     )
+
     console.log('results: ', results)
   })
   test.todo('DB/Collection existance cases', async () => {})
+  test.todo('Invalid worksheet contents', async () => {})
   test.todo('Invalid Edges', async () => {})
+  test.todo('Mismatch in collection type specified in spreadsheet and actual collection type', async () => {})
 })
