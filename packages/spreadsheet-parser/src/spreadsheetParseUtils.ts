@@ -378,15 +378,16 @@ export const cellWarning = (
 
 //--- General Parsing Utils ---------------------------------------------------
 
-export const rowIsFrontMatterDelimiter = (row: Row) =>
-  row.getCell(1).value === '---'
+
+export const rowIsDelimiter = (row: Row) =>
+  row.getCell(1).toString().trim().startsWith('---')
 
 export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
   const row = ws.getRow(startingRow)
-  return rowIsFrontMatterDelimiter(row)
+  return rowIsDelimiter(row)
 }
 
-export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
+export const rowIsNotFrontMatterDelimiter = complement(rowIsDelimiter)
 export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
 
 export const passwordHash = (password: string) =>

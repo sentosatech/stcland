@@ -26,13 +26,18 @@ export interface DataCellMeta extends CellMeta {
   dataType: DataType;
 }
 
+export type DelimiterActions = 'stop' | 'continue'
+
 export interface ParseOptions {
   reportProgress?: boolean
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
-  dataTerminationRow? : '---' | undefined
-  // undefined means no termination data parsing on empty row or end of file
+  onDelimiter?: DelimiterActions
+
+  // TEMP
+  dataTerminationRow_delme? : '---' | undefined
+    // undefined means no termination data parsing on empty row or end of file
 }
 
 //--- data types --------------------------------------------------------------

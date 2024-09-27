@@ -11,6 +11,7 @@ import type {
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData,
   DataType, DataTypeMap, DataTableDataType,
+  DelimiterActions,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -28,9 +29,9 @@ import {
   isNotValidDataTableDataType, isRowValueListType,
   shouldSkipDataCollectionRow,
   shouldSkipDataTableValue,
-  getBaseDataType
+  getBaseDataType,
+  rowIsDelimiter
 } from './spreadsheetParseUtils'
-
 
 //-----------------------------------------------------------------------------
 
@@ -114,16 +115,24 @@ const parseDataTable: ParseDataTable = (
     return { numDataRowsParsed: 0, data: [], dataTypeMap: {} }
   }
 
+  let stopParsing = false
+
+  // default to stop parsing for table data when we hit a delimiter row
+  const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'stop'
+
   const data: DataTableData = []
   ws.eachRow((row, rowNumber) => {
 
-    // skip propName and dataType rows
-    if (rowNumber < startingRowNum+2)
-      return
+    if (stopParsing) return
 
-    // keep an eye out for data termination row (if any)
-    if ( parseOpts?.dataTerminationRow === '---' && row.getCell(1).value === '---')
-      return false // terminates the eachRow interation loop
+    // skip propName and dataType rows
+    if (rowNumber < startingRowNum+2 ) return
+
+    // keep an eye out for delimeter row
+    if (rowIsDelimiter(row) && onDelimiter === 'stop') {
+      stopParsing = true
+      return false
+    }
 
     const rowMeta: RowMeta = {
       worksheetName: ws.name, rowNumber
@@ -199,6 +208,9 @@ export const parseDataCollection: ParseDataCollection = (
 
   let stopParsing = false
 
+  // default to continue parsing for collection data when we hit a delimiter row
+  const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'continue'
+
   ws.eachRow((curRow, curRowNumber) => {
 
     if (stopParsing) return
@@ -212,10 +224,10 @@ export const parseDataCollection: ParseDataCollection = (
     if (curRowNumber < startingRowNum)
       return
 
-    // keep an eye out for data termination row (if any)
-    if ( parseOpts?.dataTerminationRow === '---' && curRow.getCell(1).value === '---') {
+    // keep an eye out for delimeter row
+    if (rowIsDelimiter(curRow) && onDelimiter === 'stop') {
       stopParsing = true
-      return
+      return false
     }
 
     const rowValues = getRowValues(curRow)
@@ -354,7 +366,7 @@ export const parseFrontMatter: ParseFrontMatter = (
 
 
   const parsedData =  parseDataCollection(ws, curRowNumber, {
-    ...parseOpts, dataTerminationRow: '---'
+    ...parseOpts, onDelimiter: 'stop'
   })
 
   const { data, dataTypeMap, numDataRowsParsed } = parsedData
