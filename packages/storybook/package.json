@@ -15,8 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@stcland/table": "workspace:^",
-    "@stcland/theme": "workspace:^",
+    "@stcland/components": "workspace:^",
     "@storybook/addon-docs": "^8.2.9",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",

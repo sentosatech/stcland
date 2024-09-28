@@ -4,13 +4,11 @@ import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig({
   plugins: [
     react(),
     dts({ rollupTypes: true, insertTypesEntry: true }),
-    cssInjectedByJsPlugin(),
   ],
   css: {
     postcss: {
@@ -25,9 +23,9 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
-        withStyles: resolve(__dirname, 'src/components/withStyles/index.ts'),
+        withStyles: resolve(__dirname, 'src/withStyles/index.ts'),
       },
-      name: 'STCLandTable',
+      name: 'Stcland Components',
       fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
@@ -37,7 +35,7 @@ export default defineConfig({
           react: 'React',
           'react-dom': 'ReactDOM',
           '@tanstack/react-table': 'ReactTable',
-          '@stcland/theme': 'STCLandTheme',
+          tailwindcss: 'tailwindcss'
         },
       },
     },

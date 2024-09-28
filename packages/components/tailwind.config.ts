@@ -29,6 +29,9 @@ function createColorExtension(color: Record<string, string>): Record<ShadeKey, s
   }
 }
 
+// const primary = 'sky'
+// const secondary = 'orange'
+
 const appGray = twColors.zinc
 const grayWithMoreShades = createColorExtension(appGray)
 
@@ -37,7 +40,7 @@ export const config : Config = {
   mode: 'jit',
   content: [
     '../../stories/**/*.stories.@(js|jsx|ts|tsx|mdx)',
-    '../../**/components/**/*.(js|jsx|ts|tsx|mdx)',
+    './src/**/*.(js|jsx|ts|tsx|mdx)'
   ],
   theme: {
     extend: {

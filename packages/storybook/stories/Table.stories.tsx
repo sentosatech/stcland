@@ -1,8 +1,8 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
-import { TableProps, Table as TableNoCustomStyles } from '@stcland/table'
-import { Table } from '@stcland/table/withStyles'
+import { TableProps, Table as TableNoCustomStyles } from '@stcland/components'
 import * as React from 'react'
+import styles from '../stc.config'
 
 const columns: ColumnDef<any>[] = [
   {
@@ -26,9 +26,16 @@ const data = [
   ], },
 ]
 
-const meta : Meta<typeof Table> = {
+const meta : Meta<typeof TableNoCustomStyles> = {
   title: 'Components/Table',
-  component: Table,
+  component: TableNoCustomStyles,
+  // decorators: [
+  //   (Story) => (
+  //     <StcStylesProvider customStyles={styles}>
+  //       <Story />
+  //     </StcStylesProvider>
+  //   ),
+  // ],
 }
 
 export default meta
@@ -45,16 +52,16 @@ export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
   columns,
   data,
-  customStyles : {
-    root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
-    table: 'table-fixed',
-    header: 'text-s text-secondary-main text-left',
-    headerRow: '',
-    headerCell: 'font-medium pl-6 pb-4',
-    body: 'text-s text-gray-400',
-    row: 'border-t last:border-b border-secondary-main',
-    cell: 'px-6 py-6',
-  },
+  // customStyles : {
+  //   root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
+  //   table: 'table-fixed',
+  //   header: 'text-s text-secondary-main text-left',
+  //   headerRow: '',
+  //   headerCell: 'font-medium pl-6 pb-4',
+  //   body: 'text-s text-gray-400',
+  //   row: 'border-t last:border-b border-secondary-main',
+  //   cell: 'px-6 py-6',
+  // },
 }
 
 const WithRowSelectionTemplate: StoryFn<TableProps> = (args) => {

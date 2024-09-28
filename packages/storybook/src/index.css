@@ -1,1 +1,5 @@
-@import "@stcland/theme/dist/style.css"
+@import "@stcland/components/dist/style.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
