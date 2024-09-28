@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { TableProps } from '@stcland/components'
-import { StcStylesProvider, getStyles } from '@stcland/components'
+import { StcStylesProvider } from '@stcland/components'
 import { Table } from '@stcland/components/withStyles'
 import * as React from 'react'
 import customStyles from '../stc.config'

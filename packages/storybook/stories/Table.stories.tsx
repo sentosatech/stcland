@@ -2,7 +2,6 @@ import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
 import { TableProps, Table as TableNoCustomStyles } from '@stcland/components'
 import * as React from 'react'
-import styles from '../stc.config'
 
 const columns: ColumnDef<any>[] = [
   {
