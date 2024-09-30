@@ -6,5 +6,9 @@ export { Table } from './table'
 
 
 // Styles
-export { StcStylesProvider, useStyles, getStyles, themeConfig } from './styles'
+export { StcStylesProvider, useStyles, getStyles } from './styles'
 export type { StclandStyles, TableStyles } from './styles'
+
+
+// Tailwind Theme
+export { config as themeConfig } from '../tailwind.config'

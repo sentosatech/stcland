@@ -11,7 +11,7 @@ import {
   } from '@tanstack/react-table'
   import { cns, withCustomStyles } from '@stcland/utils'
   import '../index.css'
-  import type { TableStyles } from '../styles/StylesProvider'
+  import type { TableStyles } from '../styles/'
   
   //*****************************************************************************
   // Interface

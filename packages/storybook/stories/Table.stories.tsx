@@ -1,7 +1,9 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
-import { TableProps, Table as TableNoCustomStyles } from '@stcland/components'
+import { TableProps, Table as TableNoCustomStyles, StcStylesProvider } from '@stcland/components'
+import { Table } from '@stcland/components/withStyles'
 import * as React from 'react'
+import customStyles from '../stc.config'
 
 const columns: ColumnDef<any>[] = [
   {
@@ -28,13 +30,6 @@ const data = [
 const meta : Meta<typeof TableNoCustomStyles> = {
   title: 'Components/Table',
   component: TableNoCustomStyles,
-  // decorators: [
-  //   (Story) => (
-  //     <StcStylesProvider customStyles={styles}>
-  //       <Story />
-  //     </StcStylesProvider>
-  //   ),
-  // ],
 }
 
 export default meta
@@ -51,16 +46,16 @@ export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
   columns,
   data,
-  // customStyles : {
-  //   root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
-  //   table: 'table-fixed',
-  //   header: 'text-s text-secondary-main text-left',
-  //   headerRow: '',
-  //   headerCell: 'font-medium pl-6 pb-4',
-  //   body: 'text-s text-gray-400',
-  //   row: 'border-t last:border-b border-secondary-main',
-  //   cell: 'px-6 py-6',
-  // },
+  customStyles : {
+    root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
+    table: 'table-fixed',
+    header: 'text-s text-secondary-main text-left',
+    headerRow: '',
+    headerCell: 'font-medium pl-6 pb-4',
+    body: 'text-s text-gray-400',
+    row: 'border-t last:border-b border-secondary-main',
+    cell: 'px-6 py-6',
+  },
 }
 
 const WithRowSelectionTemplate: StoryFn<TableProps> = (args) => {
@@ -168,4 +163,17 @@ WithExpandedRows.args = {
   customStyles: {
     subRow: 'text-gray-550',
   }
+}
+
+
+const TemplateWithStyles: StoryFn<TableProps> = (args) =>
+  <StcStylesProvider customStyles={customStyles}>
+    <Table {...args} />
+  </StcStylesProvider>
+
+
+export const WithStyles = TemplateWithStyles.bind({})
+WithStyles.args = {
+  columns,
+  data
 }
