@@ -1,9 +1,8 @@
-// import { isArray, isObj, isString } from 'ramda-adjunct'
 
-
-import { any, complement, isNil, not } from 'ramda'
+import { any, complement, isNil, not, all } from 'ramda'
 import {
-  isNumber, isString, isObject, isBoolean, isArray, isFunction
+  isNumber, isString, isObject, isBoolean, isArray, isFunction,
+  isUndefined, isNotUndefined,
 } from 'ramda-adjunct'
 
 type TypeCheckPred = (toCheck: unknown) => boolean;
@@ -50,3 +49,17 @@ export const isStringArray = (array: unknown[]) => isArrayType(isString, array)
 export const isNotStringArray = complement(isStringArray)
 export const isObjArray = (array: unknown[]) => isArrayType(isObject, array)
 export const isNotObjArray = complement(isObjArray)
+
+
+export const allUndefined = (...args: unknown[]) => all(isUndefined, args)
+export const allNotUndefined = complement(allUndefined)
+
+export const allDefined = (...args: unknown[]) => all(isNotUndefined, args)
+export const allNotDefined = complement(allDefined)
+
+export const allDefinedOrAllUndefined = (...args: unknown[]) => {
+  if (allDefined(...args)) return true
+  if (allUndefined(...args)) return true
+  return false
+}
+

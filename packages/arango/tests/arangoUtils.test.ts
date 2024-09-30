@@ -17,7 +17,9 @@ import {
   createCollection, createDocCollection, createEdgeCollection,
   IfCollectionDoesNotExistOnGet,
   getCollection, getDocCollection, getEdgeCollection, getCollectionType,
-  collectionDocCount, dropCollection
+  collectionDocCount, dropCollection,
+  documentExistsById, documentDoesNotExistById,
+  documentExists, documentDoesNotExist,
 } from '../utils'
 
 import { Database } from 'arangojs'
@@ -188,7 +190,12 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(db, collectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
 
-    await collection1.save({ name: 'doc1' })
+    let _key = 'doc1'; let name = _key; let docId = `${collectionName}/${_key}`
+    await collection1.save({ _key, name })
+    expect(await documentExists(db, collectionName, _key)).toBe(true)
+    expect(await documentExistsById(db, docId)).toBe(true)
+    expect(await documentDoesNotExist(db, collectionName, _key)).toBe(false)
+    expect(await documentDoesNotExistById(db, docId)).toBe(false)
     expect(await collectionDocCount(collection1)).toBe(1)
 
     // Error if collection aready exists
@@ -207,7 +214,10 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Fetch collections
 
-    await collection1.save({ name: 'doc2' })
+    _key = 'doc2'; name = _key; docId = `${collectionName}/${_key}`
+    await collection1.save({ _key, name })
+    expect(await documentExistsById(db, docId)).toBe(true)
+    expect(await documentDoesNotExistById(db, docId)).toBe(false)
     expect(await collectionDocCount(collection2)).toBe(1)
 
     const collection3 = await getCollection(db, collectionName)
@@ -270,7 +280,11 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(srcDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
     expect(await getCollectionType(db, srcDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
-    await srcDocCollection.save({ _key: 'sourceDoc1', name: 'sourceDoc1' })
+
+    let _key = 'sourceDoc1'; let name = _key; let docId = `${srcDocCollectionName}/${_key}`
+    await srcDocCollection.save({ _key, name })
+    expect(await documentExists(db, srcDocCollectionName, _key)).toBe(true)
+    expect(await documentDoesNotExist(db, srcDocCollectionName, _key)).toBe(false)
     expect(await collectionDocCount(srcDocCollection)).toBe(1)
 
 
@@ -279,7 +293,10 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(destDocCollection)).toBe(CollectionType.DOCUMENT_COLLECTION)
     expect(await getCollectionType(db, destDocCollectionName)).toBe(CollectionType.DOCUMENT_COLLECTION)
 
-    await destDocCollection.save({ _key: 'destDoc1', name: 'destDoc1' })
+    _key = 'destDoc1'; name = _key; docId = `${destDocCollectionName}/${_key}`
+    await destDocCollection.save({ _key, name })
+    expect(await documentExistsById(db, docId)).toBe(true)
+    expect(await documentDoesNotExistById(db, docId)).toBe(false)
     expect(await collectionDocCount(destDocCollection)).toBe(1)
 
     const edgeCollectionName = 'testEdgeCollection1'
@@ -295,11 +312,12 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(edgeCollection1)).toBe(CollectionType.EDGE_COLLECTION)
     expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
 
-    await edgeCollection1.save({
-      _from: srcDocCollectionName + '/sourceDoc1',
-      _to: destDocCollectionName + '/destDoc1'
-    })
-
+    _key = 'edge1'; docId = `${edgeCollectionName}/${_key}`
+    let from = 'sourceDoc1'; let _from = srcDocCollectionName + '/' + from
+    let to = 'destDoc1'; let _to = destDocCollectionName + '/' + to
+    await edgeCollection1.save({ _key, _from, _to })
+    expect(await documentExistsById(db, docId)).toBe(true)
+    expect(await documentDoesNotExistById(db, docId)).toBe(false)
     expect(await collectionDocCount(edgeCollection1)).toBe(1)
 
     // Error if collection aready exists
@@ -318,10 +336,15 @@ describe('Test @stcland/arango/utils', async () => {
     expect(await getCollectionType(db, edgeCollectionName)).toBe(CollectionType.EDGE_COLLECTION)
 
     expect(await collectionDocCount(returnedEdgeCollection)).toBe(1)
-    await edgeCollection1.save({
-      _from: srcDocCollectionName + '/sourceDoc1',
-      _to: destDocCollectionName + '/destDoc1'
-    })
+
+
+
+    _key = 'edge2'; docId = `${edgeCollectionName}/${_key}`
+    from = 'sourceDoc1'; _from = srcDocCollectionName + '/' + from
+    to = 'destDoc1'; _to = destDocCollectionName + '/' + to
+    await edgeCollection1.save({ _key, _from, _to })
+    expect(await documentExistsById(db, docId)).toBe(true)
+    expect(await documentDoesNotExistById(db, docId)).toBe(false)
     expect(await collectionDocCount(returnedEdgeCollection)).toBe(2)
 
     // overwrite existing collection
@@ -336,11 +359,12 @@ describe('Test @stcland/arango/utils', async () => {
 
     // Fetch collections
 
-    await edgeCollection1.save({
-      _from: srcDocCollectionName + '/sourceDoc1',
-      _to: destDocCollectionName + '/destDoc1'
-    })
-
+    _key = 'edge2'; docId = `${edgeCollectionName}/${_key}`
+    from = 'sourceDoc1'; _from = srcDocCollectionName + '/' + from
+    to = 'destDoc1'; _to = destDocCollectionName + '/' + to
+    await overwrittenEdgeCollection.save({ _key, _from, _to })
+    expect(await documentExists(db, edgeCollectionName, _key)).toBe(true)
+    expect(await documentDoesNotExist(db, edgeCollectionName, _key)).toBe(false)
     expect(await collectionDocCount(overwrittenEdgeCollection)).toBe(1)
 
     const edgeCollection2 = await getCollection(db, edgeCollectionName)

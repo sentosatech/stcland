@@ -9,7 +9,8 @@
     "sb": "storybook dev -p 6006",
     "sb-docs": "storybook dev --docs",
     "sb-build-docs": "storybook build --docs",
-    "build-sb": "storybook build"
+    "build-sb": "storybook build",
+    "clean:all": "rimraf ./node_modules"
   },
   "keywords": [],
   "author": "",
