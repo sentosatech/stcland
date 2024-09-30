@@ -7,7 +7,7 @@ import { useStyles } from '../../styles/StylesProvider'
 //*****************************************************************************
 
 const TableWithStyles = ( props: TableProps) => {
-    
+
   const { styles }  = useStyles()
 
   return (

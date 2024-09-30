@@ -10,4 +10,3 @@ export type TableStyles = {
     selectedRow: string
     subRow: string
   }
-  
