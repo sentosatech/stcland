@@ -11,44 +11,31 @@ import {
 } from '@tanstack/react-table'
 import { cns, withCustomStyles } from '@stcland/utils'
 import '../index.css'
+import type { TableStyles } from '../styles/'
 
+  //*****************************************************************************
+  // Interface
+  //*****************************************************************************
 
-//*****************************************************************************
-// Interface
-//*****************************************************************************
-
-// To customize styling of specific table elements
-export type CustomStylesShape = {
-  root: string
-  table: string
-  header: string
-  headerRow: string
-  headerCell: string
-  body: string
-  cell: string
-  row: string
-  selectedRow: string
-  subRow: string
-}
 
 export interface Props {
-  // title: string
-  columns: ColumnDef<any>[]
-  data: {[key: string]: any}[]
-  className?: string
-  customStyles?: Partial<CustomStylesShape>
-  expanded?: ExpandedState
-  setExpanded?: (value) => void
-  rowSelection?: RowSelectionState
-  onRowClick?: (row: RowData) => void
-}
+    // title: string
+    columns: ColumnDef<any>[]
+    data: {[key: string]: any}[]
+    className?: string
+    customStyles?: Partial<TableStyles>
+    expanded?: ExpandedState
+    setExpanded?: (value) => void
+    rowSelection?: RowSelectionState
+    onRowClick?: (row: RowData) => void
+  }
 
-//*****************************************************************************
-// Components
-//*****************************************************************************
+  //*****************************************************************************
+  // Components
+  //*****************************************************************************
 
 const Table = ({
-  // title,
+    // title,
   columns,
   data = [],
   customStyles = {},
@@ -78,7 +65,7 @@ const Table = ({
     },
   })
 
-  const defaultStyles : CustomStylesShape = {
+  const tableStyles: TableStyles = {
     root: cns('border border-gray-825 bg-gray-825 px-4 pt-8 pb-14', className),
     table: 'table-fixed',
     header: 'text-s text-gray-100 text-left',
@@ -90,7 +77,8 @@ const Table = ({
     selectedRow: 'bg-gray-500',
     subRow: 'text-secondary-main border-none',
   }
-  const cn  = withCustomStyles<CustomStylesShape>( defaultStyles, customStyles)
+
+  const cn  = withCustomStyles<TableStyles>( tableStyles, customStyles)
 
   return (
     <div className={cn.root}>
@@ -98,12 +86,12 @@ const Table = ({
         <thead className={cn.header}>
           {tableInstance.getHeaderGroups().map(function (headerGroup) {
             return (
-              /* Current header row */
+                /* Current header row */
               <tr key={headerGroup.id} className={cn.headerRow}>
                 {headerGroup.headers.map(function (column) {
                   if (column.id === 'extraLine') return null
                   return (
-                    /* Current header cell */
+                      /* Current header cell */
                     <th
                       key={column.id}
                       colSpan={column.colSpan}
@@ -111,9 +99,9 @@ const Table = ({
                       className={cn.headerCell}
                     >
                       {column.isPlaceholder !== null &&
-                        <div>
-                          {flexRender(column.column.columnDef.header, column.getContext())}
-                        </div>
+                          <div>
+                            {flexRender(column.column.columnDef.header, column.getContext())}
+                          </div>
                       }
                     </th>
                   )
@@ -132,14 +120,14 @@ const Table = ({
               [cn.subRow] : isSubRow
             }
             return (
-              /* table row */
+                /* table row */
               <tr
                 key={row.id}
                 className={cns(cn.row, rowStyleVariants)}
                 onClick={() => onRowClick?.(row)}
               >
                 {row.getVisibleCells().map((cell) => {
-                  // Must be equal to undefined, otherwise may not show zeros
+                    // Must be equal to undefined, otherwise may not show zeros
                   if (cell.getValue() === undefined) return null
 
                   return (

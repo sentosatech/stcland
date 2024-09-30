@@ -1,7 +1,9 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
-import Table, { Props } from './Table'
+import { TableProps, Table as TableNoCustomStyles, StcStylesProvider } from '@stcland/components'
+import { Table } from '@stcland/components/withStyles'
 import * as React from 'react'
+import customStyles from '../stc.config'
 
 const columns: ColumnDef<any>[] = [
   {
@@ -25,14 +27,14 @@ const data = [
   ], },
 ]
 
-const meta : Meta<typeof Table> = {
+const meta : Meta<typeof TableNoCustomStyles> = {
   title: 'Components/Table',
-  component: Table,
+  component: TableNoCustomStyles,
 }
 
 export default meta
 
-const Template: StoryFn<Props> = (args) => <Table {...args} />
+const Template: StoryFn<TableProps> = (args) => <TableNoCustomStyles {...args} />
 
 export const Base = Template.bind({})
 Base.args = {
@@ -56,11 +58,11 @@ WithCustomStyles.args = {
   },
 }
 
-const WithRowSelectionTemplate: StoryFn<Props> = (args) => {
+const WithRowSelectionTemplate: StoryFn<TableProps> = (args) => {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
   return (
-    <Table
+    <TableNoCustomStyles
       {...args}
       rowSelection={rowSelection}
       onRowClick={(row: any) => {
@@ -142,11 +144,11 @@ const sampleDataExpandedRows = [
   ], },
 ]
 
-const WithExpandedRowsTemplate: StoryFn<Props> = (args) => {
+const WithExpandedRowsTemplate: StoryFn<TableProps> = (args) => {
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
 
   return (
-    <Table
+    <TableNoCustomStyles
       {...args}
       expanded={expanded}
       setExpanded={setExpanded}
@@ -161,4 +163,17 @@ WithExpandedRows.args = {
   customStyles: {
     subRow: 'text-gray-550',
   }
+}
+
+
+const TemplateWithStyles: StoryFn<TableProps> = (args) =>
+  <StcStylesProvider customStyles={customStyles}>
+    <Table {...args} />
+  </StcStylesProvider>
+
+
+export const WithStyles = TemplateWithStyles.bind({})
+WithStyles.args = {
+  columns,
+  data
 }

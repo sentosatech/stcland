@@ -9,12 +9,11 @@
     "allowArbitraryExtensions": true,
     "baseUrl": ".",
     "paths": {
-       "@/*": ["src/*"],
-      "@storybook/*": ["../storybook*"]
+       "@/*": ["src"],
     }
   },
   "include": [
-    "src", "./index.ts"
+    "src",
   ],
   "exclude": [
     "node_modules"

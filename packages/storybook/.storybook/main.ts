@@ -4,9 +4,9 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 
 const config: StorybookConfig = {
-   stories: [
-   '../../**/**/*.{stories,stories.*}.@(js|jsx|ts|tsx)',
-    '../../**/**/*.mdx',
+  stories: [
+    '../stories/*.stories.@(js|jsx|ts|tsx)',
+    '../stories/*.mdx',
   ],
   addons: [
     "@storybook/addon-links",
@@ -25,7 +25,7 @@ const config: StorybookConfig = {
       css: {
       postcss: {
         plugins: [
-          tailwindcss(),
+          tailwindcss('./tailwind.config.ts'),
           autoprefixer(),
         ],
       },
