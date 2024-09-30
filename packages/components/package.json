@@ -1,7 +1,7 @@
 {
   "name": "@stcland/components",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.2",
   "type": "module",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
@@ -12,12 +12,12 @@
   "exports": {
     ".": {
       "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js", 
+      "require": "./dist/index.cjs.js",
       "types": "./dist/index.d.ts"
     },
     "./withStyles": {
       "import": "./dist/withStyles.es.js",
-      "require": "./dist/withStyles.cjs.js", 
+      "require": "./dist/withStyles.cjs.js",
       "types": "./dist/withStyles.d.ts"
     },
     "./dist/style.css": "./dist/style.css"
@@ -55,5 +55,9 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
     "vite-plugin-dts": "^4.0.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
