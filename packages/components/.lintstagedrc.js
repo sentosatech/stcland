@@ -1,5 +1,8 @@
 import baseConfig from '../config/.lintstagedrc.base.js'
 
 export default {
-  ...baseConfig
+  ...baseConfig,
+  '*.{ts,tsx}': [
+    () => 'pnpm ts-check',
+  ],
 }
