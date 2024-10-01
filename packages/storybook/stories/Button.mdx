@@ -1,0 +1,62 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as ButtonStories from './Button.stories';
+
+<Meta of={ButtonStories} />
+# Button Component
+
+The `Button` component is a versatile UI element that can be used in various scenarios such as submitting forms, triggering actions, and more. It comes with several customization options such as:
+
+### Properties
+
+#### Base:
+- **text** (`string`): Text label of the button. Defaults to `'No Text'`.
+- **onClick** (`() => void`): Function to be called when the button is clicked. Defaults to a no-operation function.
+- **icon** (`React.ComponentType`): Optional icon component that can be rendered alongside the button text.
+#### Size Variants:
+- **sm** (`boolean`): Applies small size variant. Defaults to `true`.
+- **md** (`boolean`): Applies medium size variant.
+- **lg** (`boolean`): Applies large size variant.
+- **fullWidth** (`boolean`): If true, the button will take up the full width of its container. Defaults to `false`.
+#### Color Variants:
+- **outlined** (`boolean`): If true, renders the button with an outlined style otherwise with solid bg.
+- **brightenOnHover** (`boolean`): Brightens the button on hover when true.
+- **primary** (`boolean`): Applies the primary variant. Defaults to `true` unless `secondary` or `neutral` is true.
+- **secondary** (`boolean`): Applies the secondary variant, overriding primary and neutral.
+- **neutral** (`boolean`): Applies the neutral variant, overriding primary and secondary.
+- **disabled** (`boolean`): Disables the button when true. Defaults to `false`.
+#### Shape Variants:
+- **rounded** (`boolean`): Applies rounded corners to the button. Defaults to `true`.
+#### Custom Styles:
+- **className** (`string`): Additional CSS classes for the button.
+- **customStyles** (`Partial<ButtonStyles>`): Allows passing custom styles for `root` and `button` directly.
+#### To use when wrapped within a Form:
+- **parentButtonProps** (`ParentButtonPropsShape`): Additional button properties like `type` and `form` for forms.
+
+
+## Primary
+
+<Canvas of={ButtonStories.Primary} />
+
+## Secondary
+
+Variant using this prop combination:
+<Canvas of={ButtonStories.Secondary} />
+
+
+## Disabled
+
+<Canvas of={ButtonStories.Disabled} />
+
+## With Custom Styles
+
+<Canvas of={ButtonStories.WithCustomStyles} />
+
+## WithStyles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property as the **With Custom Styles** example above.
+
+<Canvas of={ButtonStories.WithStyles} />
+
+---

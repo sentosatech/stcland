@@ -9,7 +9,7 @@ import {
   RowSelectionState,
   useReactTable,
 } from '@tanstack/react-table'
-import { cns, withCustomStyles } from '@stcland/utils'
+import { cns, appliedStyles } from '@stcland/utils'
 import '../index.css'
 import type { TableStyles } from '../styles/'
 
@@ -78,7 +78,7 @@ const Table = ({
     subRow: 'text-secondary-main border-none',
   }
 
-  const cn  = withCustomStyles<TableStyles>( tableStyles, customStyles)
+  const cn  = appliedStyles<TableStyles>( tableStyles, customStyles)
 
   return (
     <div className={cn.root}>
