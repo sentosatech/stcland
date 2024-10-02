@@ -34,11 +34,25 @@ const styles : StclandStyles = {
     lg: 'p-3 text-md',
     // fullWidth: 'w-full',
     // rounded: 'rounded-md',
-    // brightenOnHover: 'hover:brightness-200',
+    highlightOnHover: 'hover:bg-gray-600',
     icon: 'w-3.5 h-3.5 inline',
     // disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
     // button: 'w-full'
   },
+  icon: {
+    root: 'p-2',
+    secondary: 'text-gray-800',
+    primary: 'text-gray-100',
+    neutral: 'text-gray-600',
+    sm: 'h-4.5 w-4.5',
+    md: 'h-6 w-6',
+    lg: 'h-7 w-7',
+    rounded: 'rounded-md',
+    bright: 'brightness-125',
+    highlightOnHover: 'hover:bg-gray-600',
+    brightenOnHover: 'hover:brightness-125',
+    muted: 'opacity-50'
+  }
 }
 
 export default styles

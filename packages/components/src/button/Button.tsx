@@ -5,6 +5,10 @@ import '../index.css'
 
 export const noop = () => {}
 
+const getActiveVariant = (variants: Record<string, boolean | undefined>, defaultVariant: string) => {
+  return Object.keys(variants).find(key => variants[key]) || defaultVariant
+}
+
 //*****************************************************************************
 // Interface
 //*****************************************************************************
@@ -26,7 +30,7 @@ export interface Props {
   md?: boolean
   lg?: boolean
   outlined?: boolean
-  brightenOnHover?: boolean
+  highlightOnHover?: boolean
   primary?: boolean
   neutral?: boolean
   secondary?: boolean
@@ -51,7 +55,7 @@ const Button = function ({
   fullWidth = false,
   disabled = false,
   rounded = true,
-  brightenOnHover = false,
+  highlightOnHover = false,
   sm,
   md = true,
   lg,
@@ -82,7 +86,7 @@ const Button = function ({
     lg: 'p-3 text-md',
     fullWidth: 'w-full',
     rounded: 'rounded-md',
-    brightenOnHover: 'hover:brightness-300',
+    highlightOnHover: 'hover:bg-gray-600',
     icon: 'w-3.5 h-3.5 inline',
     disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
     button: 'w-full'
@@ -96,38 +100,47 @@ const Button = function ({
     secondary = false
   }
 
-
   // Merge custom styles with default styles.
   const mergedStyles = appliedStyles(defaultStyles, customStyles)
 
   // Define styles based on props.
-  const sizeVariants = cns(
-    sm ? mergedStyles.sm : '',
-    md ? mergedStyles.md : '',
-    lg ? mergedStyles.lg : '',
-    fullWidth ? mergedStyles.fullWidth : ''
-  )
+  const sizeVariants = {
+    [mergedStyles.sm] : sm,
+    [mergedStyles.md] : md,
+    [mergedStyles.lg] : lg,
+    [mergedStyles.fullWidth] : fullWidth
+  }
+
+  const rootVariants = {
+    [mergedStyles.highlightOnHover] : highlightOnHover,
+    [mergedStyles.disabled] : disabled,
+  }
 
   const shapeVariant = rounded ? mergedStyles.rounded : 'rounded-sm'
 
-  const brightnessOnHover = brightenOnHover ? 'hover:brightness-300' : ''
+  const solidVariants = {
+    [mergedStyles.primary.solid]: primary,
+    [mergedStyles.secondary.solid]: secondary,
+    [mergedStyles.neutral.solid]: neutral,
+  }
 
-  const disabledStyle = disabled ? 'border-none bg-gray-300 text-gray-400 hover:bg-gray-350' : ''
+  const outlinedVariants = {
+    [mergedStyles.primary.outlined]: primary,
+    [mergedStyles.secondary.outlined]: secondary,
+    [mergedStyles.neutral.outlined]: neutral,
+  }
 
-  const solidVariants = neutral ? mergedStyles.neutral.solid : secondary ?  mergedStyles.secondary.solid : primary ? mergedStyles.primary.solid : mergedStyles.primary.solid
-  const outlinedVariants = neutral ? mergedStyles.neutral.outlined : secondary ?  mergedStyles.secondary.outlined : primary ? mergedStyles.primary.outlined : mergedStyles.primary.outlined
-
-
-  const colorVariants = outlined ? outlinedVariants : solidVariants
+  const colorVariants = outlined
+    ? getActiveVariant(outlinedVariants, mergedStyles.primary.outlined)
+    : getActiveVariant(solidVariants, mergedStyles.primary.solid)
 
   const cn = {
     root: cns(
       mergedStyles.root,
       sizeVariants,
       shapeVariant,
-      brightnessOnHover,
       colorVariants,
-      disabledStyle,
+      rootVariants,
       className
     ),
     button: mergedStyles.button,
