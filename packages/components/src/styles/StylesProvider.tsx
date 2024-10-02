@@ -1,26 +1,20 @@
-import { createContext, useContext, useState, useEffect } from 'react'
-import type { ReactNode } from 'react'
-import type { TableStyles } from './'
-import { mergeCustomStyles } from '@stcland/utils'
+import * as React from 'react'
+import { appliedStyles } from '@stcland/utils'
 import { defaultStyles } from './defaults'
-
-export type StclandStyles = {
-  table?: Partial<TableStyles>
-}
+import type { StclandStyles } from './defaults'
 
 export type StylesContextType = {
   styles: StclandStyles | null
 }
 
+const StylesContext = React.createContext<StylesContextType | null>(null)
 
-const StylesContext = createContext<StylesContextType | null>(null)
-export const StcStylesProvider = ({ children, customStyles }: { children: ReactNode, customStyles?: StclandStyles }) => {
-  const [styles, setStyles] = useState<StclandStyles>(defaultStyles)
+export const StcStylesProvider = ({ children, customStyles }:
+  { children: React.ReactNode, customStyles?: StclandStyles }) => {
+  const [styles, setStyles] = React.useState<StclandStyles>(defaultStyles)
 
-  useEffect(() => {
-    const mergedStyles = {
-      table: mergeCustomStyles(defaultStyles.table || {}, customStyles?.table || {})
-    }
+  React.useEffect(() => {
+    const mergedStyles = appliedStyles(defaultStyles, customStyles || {})
     setStyles(mergedStyles)
   }, [customStyles])
 
@@ -32,7 +26,7 @@ export const StcStylesProvider = ({ children, customStyles }: { children: ReactN
 }
 
 export const useStyles = (): StylesContextType => {
-  const context = useContext(StylesContext)
+  const context = React.useContext(StylesContext)
 
   if (!context) {
     throw new Error('useStyles must be used within a StcStylesProvider')
@@ -42,8 +36,5 @@ export const useStyles = (): StylesContextType => {
 }
 
 export const getStyles = (customStyles?: StclandStyles) => {
-  return {
-    ...defaultStyles,
-    table: mergeCustomStyles(defaultStyles.table || {}, customStyles?.table),
-  }
+  return appliedStyles(defaultStyles, customStyles || {})
 }
