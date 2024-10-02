@@ -27,12 +27,7 @@ export const WithCustomStyles: WithCustomStyles = (baseStyles, customStyles = {}
 }
 
 
-export type AppliedStyles = <CustomStylesShape extends Record<string, any>>(
-  baseStyles: CustomStylesShape,
-  customStyles?: Partial<CustomStylesShape>,
-) => CustomStylesShape
-
-const mergeFn = (baseValue: any, customValue: any, ): any => {
+const mergeFn = (baseValue: any, customValue: any): any => {
   if (typeof customValue === 'string' && customValue.startsWith('replace ')) {
     // Replace the base value entirely with the custom value.
     return customValue.replace('replace ', '').trim()
@@ -46,6 +41,12 @@ const mergeFn = (baseValue: any, customValue: any, ): any => {
   // Fallback: Concatenate or return custom value
   return cns(baseValue, customValue)
 }
+
+
+export type AppliedStyles = <CustomStylesShape extends Record<string, any>>(
+  baseStyles: CustomStylesShape,
+  customStyles?: Partial<CustomStylesShape>,
+) => CustomStylesShape
 
 /**
  * Deep merges `baseStyles` and `customStyles`, with support for replacing classNames.

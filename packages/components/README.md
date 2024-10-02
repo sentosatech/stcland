@@ -26,9 +26,10 @@ import { XComponent } from '@stcland/components'
 // Importing a styled version of the X component
 import { XComponent  } from '@stcland/components/withStyles'
 
+// Use the `StclandStyles` type to add your layer of customStyles for all the component library.
+import { customStyles } from 'src/styles/example.stc.config.ts'
 
 // ALL components exported from the withStyles module should be wrapped in a StcStylesProvider.
-
-<StcStylesProvider customStyles={newCustomStyles}>
+<StcStylesProvider customStyles={customStyles}>
   <XComponent />  {/* No need to pass customStyles to the HOCs */}
 </StcStylesProvider>

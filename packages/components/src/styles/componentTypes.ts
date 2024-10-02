@@ -27,11 +27,7 @@ export type ButtonStyles = {
     fullWidth: string,
     rounded: string,
     brightenOnHover: string,
-    icon: Partial<{
-        width: string,
-        height: string,
-        display: string
-    }>,
+    icon: string,
     disabled:  string,
     button: string,
   }

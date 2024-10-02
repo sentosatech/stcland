@@ -1,19 +1,18 @@
 
-import type { StclandStyles } from '@stcland/components'
+import type { StclandStyles } from '.'
 
-
-const styles : StclandStyles = {
+const customStyles : StclandStyles = {
   table: {
     root: 'bg-secondary-main',
-    // table: 'table-fixed',
+    table: 'table-fixed',
     header: 'text-s text-primary-main text-left',
-    // headerRow: '',
-    // headerCell: 'font-medium pl-6 pb-4',
+    headerRow: '',
+    headerCell: 'font-medium pl-6 pb-4',
     body: 'text-gray-100 px-6',
-    // row: 'border-t last:border-b border-primary-dark',
-    // cell: 'px-6 py-6',
-    // selectedRow: 'bg-gray-500',
-    // subRow: 'text-secondary-main border-none',
+    row: 'border-t last:border-b border-primary-dark',
+    cell: 'px-6 py-6',
+    selectedRow: 'bg-gray-500',
+    subRow: 'text-secondary-main border-none',
   },
   button: {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
@@ -32,13 +31,13 @@ const styles : StclandStyles = {
     sm: 'p-2 text-1.5xs',
     md: 'p-3 text-sm',
     lg: 'p-3 text-md',
-    // fullWidth: 'w-full',
-    // rounded: 'rounded-md',
-    // brightenOnHover: 'hover:brightness-200',
-    icon: 'w-3.5 h-3.5 inline',
-    // disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
-    // button: 'w-full'
+    fullWidth: 'w-full',
+    rounded: 'rounded-md',
+    brightenOnHover: 'hover:brightness-200',
+    icon: 'w-1.5 h-1.5 inline',
+    disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
+    button: 'w-full'
   },
 }
 
-export default styles
+export default customStyles

@@ -47,9 +47,7 @@ Primary.args = {
   md: true,
   brightenOnHover: true,
   customStyles: {
-    icon: {
-      width: 'replace 1rem'
-    }
+    icon: 'w-5 h-5 inline'
   }
 }
 
@@ -92,5 +90,5 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   text: 'With Styles',
   lg: true,
-// icon: CheckIcon,
+  icon: CheckIcon,
 }

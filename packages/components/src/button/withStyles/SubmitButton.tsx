@@ -11,7 +11,7 @@ const SubmitButtonWithStyles = ( props: ButtonProps) => {
   const { styles }  = useStyles()
 
   return (
-    <SubmitButton {...props} customStyles={styles?.button}/>
+    <SubmitButton {...props} customStyles={styles?.submitButton}/>
   )
 }
 

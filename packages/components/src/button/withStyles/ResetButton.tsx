@@ -11,7 +11,7 @@ const RessetButtonWithStyles = ( props: ButtonProps) => {
   const { styles }  = useStyles()
 
   return (
-    <ResetButton {...props} customStyles={styles?.button}/>
+    <ResetButton {...props} customStyles={styles?.resetButton}/>
   )
 }
 

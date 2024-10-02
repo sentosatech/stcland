@@ -21,7 +21,7 @@ export interface Props {
   text?: string;
   onClick?: () => void;
   customStyles?: Partial<ButtonStyles>
-  icon?: React.ComponentType
+  icon?: React.ComponentType<{ className?: string }>
   sm?: boolean
   md?: boolean
   lg?: boolean
@@ -83,11 +83,7 @@ const Button = function ({
     fullWidth: 'w-full',
     rounded: 'rounded-md',
     brightenOnHover: 'hover:brightness-300',
-    icon: {
-      width: '1.25rem',
-      height: '1.25rem',
-      display: 'inline',
-    },
+    icon: 'w-3.5 h-3.5 inline',
     disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
     button: 'w-full'
   }
@@ -118,8 +114,8 @@ const Button = function ({
 
   const disabledStyle = disabled ? 'border-none bg-gray-300 text-gray-400 hover:bg-gray-350' : ''
 
-  const solidVariants = neutral ? mergedStyles.neutral.solid : secondary ?  mergedStyles.secondary.solid : mergedStyles.primary.solid
-  const outlinedVariants = neutral ? mergedStyles.neutral.outlined : secondary ?  mergedStyles.secondary.outlined : mergedStyles.primary.outlined
+  const solidVariants = neutral ? mergedStyles.neutral.solid : secondary ?  mergedStyles.secondary.solid : primary ? mergedStyles.primary.solid : mergedStyles.primary.solid
+  const outlinedVariants = neutral ? mergedStyles.neutral.outlined : secondary ?  mergedStyles.secondary.outlined : primary ? mergedStyles.primary.outlined : mergedStyles.primary.outlined
 
 
   const colorVariants = outlined ? outlinedVariants : solidVariants
@@ -135,13 +131,12 @@ const Button = function ({
       className
     ),
     button: mergedStyles.button,
-    // TODO: how to handle replace flow when using the StylesContext?
-    icon: appliedStyles(defaultStyles.icon, customStyles.icon || {}) as any
+    icon: mergedStyles.icon as any
   }
 
   return (
     <div className={cn.root}>
-      {icon && React.createElement(icon, cn.icon)}
+      {icon && React.createElement(icon,{ className: cn.icon })}
       <button
         {...{ type: type || 'button', form, onClick, disabled }}
         className={cn.button}

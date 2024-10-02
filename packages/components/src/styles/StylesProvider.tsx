@@ -3,11 +3,9 @@ import { appliedStyles } from '@stcland/utils'
 import { defaultStyles } from './defaults'
 import type { StclandStyles } from './defaults'
 
-
 export type StylesContextType = {
   styles: StclandStyles | null
 }
-
 
 const StylesContext = React.createContext<StylesContextType | null>(null)
 
@@ -16,10 +14,7 @@ export const StcStylesProvider = ({ children, customStyles }:
   const [styles, setStyles] = React.useState<StclandStyles>(defaultStyles)
 
   React.useEffect(() => {
-    const mergedStyles = {
-      table: appliedStyles(defaultStyles.table || {}, customStyles?.table),
-      button: appliedStyles(defaultStyles.button || {}, customStyles?.button),
-    }
+    const mergedStyles = appliedStyles(defaultStyles, customStyles || {})
     setStyles(mergedStyles)
   }, [customStyles])
 
@@ -41,9 +36,5 @@ export const useStyles = (): StylesContextType => {
 }
 
 export const getStyles = (customStyles?: StclandStyles) => {
-  return {
-    ...defaultStyles,
-    table: appliedStyles(defaultStyles.table || {}, customStyles?.table),
-    button: appliedStyles(defaultStyles.button || {}, customStyles?.button)
-  }
+  return appliedStyles(defaultStyles, customStyles || {})
 }
