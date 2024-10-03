@@ -4,9 +4,10 @@ import type { PredFn } from '@stcland/utils'
 
 // TODO
 // - multple docs per DataCollection
+// - dataCollection does not return typesMap, since can vary from object to object
 // - RowValueList -> RowList
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
-// - support _skip_ in row value list
+// - support _skip_ in row value list (low priority)
 
 //--- common -------------------------------------------------------------------
 
@@ -35,9 +36,6 @@ export interface ParseOptions {
     // defaults to true
   onDelimiter?: DelimiterActions
 
-  // TEMP
-  dataTerminationRow_delme? : '---' | undefined
-    // undefined means no termination data parsing on empty row or end of file
 }
 
 //--- data types --------------------------------------------------------------
@@ -81,9 +79,10 @@ export type MetaTypeMap = Record<string, DataType>
 
 //--- data layout -------------------------------------------------------------
 
-export type DataLayout = 'dataCollection' | 'dataTable' | 'frontMatterOnly' | 'any'
+export type DataLayout = 'dataCollection' | 'dataTable' | 'frontMatterOnly'
 
-export const validDataLayouts: DataLayout[] = ['dataCollection', 'dataTable', 'frontMatterOnly', 'any']
+// TODO: `any should go away`
+export const validDataLayouts: DataLayout[] = ['dataCollection', 'dataTable', 'frontMatterOnly']
 
 export interface ParseDataLayoutResult {
   dataLayout: DataLayout
@@ -115,13 +114,14 @@ export type ParseFrontMatter = (
 
 //--- data table --------------------------------------------------------------
 
-// list of objects
+// list of data objects
 export type DataTableData = Data[]
 
 export interface ParseDataTableResult {
   data: DataTableData
   dataTypeMap: DataTypeMap
-  numDataRowsParsed: number
+  numDataEntriesParsed: number
+  // nextRowNum: number // TODO:
 }
 
 export type ParseDataTable = (
@@ -131,15 +131,16 @@ export type ParseDataTable = (
 ) => ParseDataTableResult;
 
 
-// --- data list --------------------------------------------------------------
+// --- data collections -------------------------------------------------------
 
-// object
-export type DataCollectionData = Data
+// list of data objects
+export type DataCollectionData = Data[]
 
 export interface ParseDataCollectionResult {
   data: DataCollectionData | undefined
   dataTypeMap: DataTypeMap | undefined
-  numDataRowsParsed: number
+  numDataEntriesParsed: number
+  nextRowNum: number
 }
 
 export type ParseDataCollection = (
@@ -154,7 +155,7 @@ export type ParseDataCollection = (
 export interface ParsedWorksheetResult {
   worksheetName: string,
   dataLayout: DataLayout,
-  numDataRowsParsed: number,
+  numDataEntriesParsed: number,
   meta?: Meta
   metaTypeMap?: MetaTypeMap
   data?: DataCollectionData | DataTableData

@@ -7,7 +7,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   BasicParsing: {
     worksheetName: 'BasicParsing',
     dataLayout: 'dataTable',
-    numDataRowsParsed: 10,
+    numDataEntriesParsed: 10,
     metaTypeMap: {
       name: 'string',
       someNumber: 'number',
@@ -127,7 +127,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   FormulaAndRefParsing: {
     worksheetName: 'FormulaAndRefParsing',
     dataLayout: 'dataTable',
-    numDataRowsParsed: 1,
+    numDataEntriesParsed: 1,
     dataTypeMap: {
       key: 'string',
       formulaProp: 'number',
@@ -148,7 +148,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   ErrorCasesParsing: {
     worksheetName: 'ErrorCasesParsing',
     dataLayout: 'dataTable',
-    numDataRowsParsed: 1,
+    numDataEntriesParsed: 1,
     metaTypeMap: {
       created: 'date',
     },
@@ -175,34 +175,38 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
-  DataCollectionParsing: {
+  DataCollectionParsingHold: {
     worksheetName: 'DataCollectionParsing',
     dataLayout: 'dataCollection',
-    numDataRowsParsed: 4,
+    numDataEntriesParsed: 4,
     metaTypeMap: {
       note: 'string',
     },
     meta: {
       note: 'This spreadsheet represents a data list instead of a data table, returned as an object',
     },
-    dataTypeMap: {
-      prop1: 'string',
-      prop2: 'number',
-      prop3: 'json',
-      prop4: 'uuid'
-    },
-    data:     {
-      prop1: 'first prop in data list',
-      prop2: 2,
-      prop3:  { my: 'dude' },
-      prop4: []
-    }
 
+    data: [
+      {
+        prop1a: 'first prop in data list',
+        prop2a: 2,
+        prop3a:  { my: 'dude' },
+        prop4q: []
+      },
+      {
+        prop2a: 'first prop in data list',
+        prop2b: 2,
+        prop2c: { my: 'dude' }
+      },
+      {
+        prop3a:  'single prop',
+      }
+    ]
   },
   RowValueListParsing : {
     worksheetName: 'RowValueListParsing',
     dataLayout: 'dataCollection',
-    numDataRowsParsed: 7,
+    numDataEntriesParsed: 7,
     meta: {
       note: 'This spreadsheet test row value list parsing'
     },
@@ -218,7 +222,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       jsonList: 'json:list',
       uuidList: 'uuid:list'
     },
-    data: {
+    data: [{
       stringList: [ 'a', 'b', 'c', 'd' ],
       numberList: [1, 2, 3 ],
       boolList: [ true, true, false, true, true ],
@@ -229,12 +233,12 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       passwordList: [ 'pw1', 'pw2', 'pw3' ],
       jsonList: [ 'jlist' ],
       uuidList: [[],[],[],[],[],]
-    },
+    }],
   },
   FrontMatterOnly: {
     worksheetName: 'FrontMatterOnly',
     dataLayout: 'frontMatterOnly',
-    numDataRowsParsed: 0,
+    numDataEntriesParsed: 0,
     metaTypeMap: {
       thisParserRocks: 'boolean',
       oneHundred: 'number',

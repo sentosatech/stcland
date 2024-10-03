@@ -15,12 +15,10 @@ import {
 } from './SpreadsheetParserTypes'
 
 import type {
-  ParseOptions, DataLayout,
+  ParseOptions,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
-  CellMeta, DataCellMeta,
-  DataTableDataType, RowValueListType, DataCollectionDataType,
-  // Data, DataTableData, DataCollectionData,
-  DataType,
+  CellMeta, DataCellMeta, RowMeta,
+  DataType, DataTableDataType, RowValueListType, DataCollectionDataType,
   InvalidTypeWarning,
 } from './SpreadsheetParserTypes'
 
@@ -114,26 +112,6 @@ export const cellValueFromJson = (
     }
   }
   return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
-}
-
-// TODO: eventually will want cellValueFromList, where we pass in the type, and
-//       that is able to handle list:number, list:uuid, etc ...
-export const cellValueFromStringList = (
-  dataLayout: DataLayout,
-  colStart: number,
-  rowStart: number,
-  dataCellMeta: DataCellMeta,
-  parseOpts?: ParseOptions
-) : string[] => {
-
-  if (dataLayout !== 'dataCollection') {
-    const warningMsg = dataCellWarning(
-      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataCollection' dataLayout`,
-      dataCellMeta, parseOpts
-    )
-    return [warningMsg]
-  }
-  return ['']
 }
 
 
@@ -375,6 +353,23 @@ export const cellWarning = (
   }
   return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
 }
+
+export const rowWarning = (
+  msg: string,
+  rowMeta: RowMeta,
+  parseOpts?: ParseOptions
+): string =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${rowMeta.worksheetName} Row:${(rowMeta.rowNumber)}\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${rowMeta.worksheetName}, Row:${(rowMeta.rowNumber)}`
+}
+
 
 //--- General Parsing Utils ---------------------------------------------------
 

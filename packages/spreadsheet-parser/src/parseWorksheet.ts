@@ -1,7 +1,8 @@
 import { CellValue, Row, RowValues, Worksheet } from 'exceljs'
+import { isNil, isNotNil, } from 'ramda'
+// import { notEqual } from 'ramda-adjunct'
 
 import { toJson } from '@stcland/utils'
-import { keys, isNil, isNotNil } from 'ramda'
 
 import type {
   ParseOptions, ParseWorksheet,
@@ -10,13 +11,13 @@ import type {
   ParseDataTableResult, ParseDataCollectionResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData,
-  DataType, DataTypeMap, DataTableDataType,
+  DataType,  DataTableDataType, // DataTypeMap,
   DelimiterActions,
+  DataCollectionData,
 } from './SpreadsheetParserTypes'
 
 import {
   validDataLayouts,
-  // validRowValueListTypes,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -24,14 +25,13 @@ import {
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
   getPropNameFromCallValue, getDataTypeFromCallValue,
   getRowValues, getPropNamesFromRow, getDataTypesFromRow,
-  dataCellWarning, parserWarning, cellValueHasError, getCellError,
+  dataCellWarning, parserWarning, cellValueHasError, getCellError, rowWarning,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
   isNotValidDataTableDataType, isRowValueListType,
   shouldSkipDataCollectionRow,
-  shouldSkipDataTableValue,
-  getBaseDataType,
-  rowIsDelimiter
+  shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter
 } from './spreadsheetParseUtils'
+
 
 //-----------------------------------------------------------------------------
 
@@ -65,10 +65,14 @@ export const parseWorksheet: ParseWorksheet = (
 
   switch (dataLayout) {
   case 'dataTable':
-    parsedData = parseDataTable(ws, nextRowNum, parseOpts)
+    parsedData = parseDataTable(ws, nextRowNum, {
+      ...parseOpts, onDelimiter: 'stop'
+    })
     break
   case 'dataCollection':
-    parsedData = parseDataCollection(ws, nextRowNum, parseOpts)
+    parsedData = parseDataCollection(ws, nextRowNum, {
+      ...parseOpts, onDelimiter: 'continue'
+    })
     break
   case 'frontMatterOnly':
     break // ok to have no data,
@@ -82,7 +86,7 @@ export const parseWorksheet: ParseWorksheet = (
   const result: ParsedWorksheetResult = {
     worksheetName,
     dataLayout,
-    numDataRowsParsed: parsedData?.numDataRowsParsed || 0,
+    numDataEntriesParsed: parsedData?.numDataEntriesParsed || 0, // TODO: changet this to num dta entryes parsed
     meta,
     metaTypeMap,
     data: parsedData?.data,
@@ -112,7 +116,7 @@ const parseDataTable: ParseDataTable = (
       `  property types: ${toJson(dataTypes)}`,
       parseOpts
     )
-    return { numDataRowsParsed: 0, data: [], dataTypeMap: {} }
+    return { numDataEntriesParsed: 0, data: [], dataTypeMap: {} }
   }
 
   let stopParsing = false
@@ -121,24 +125,25 @@ const parseDataTable: ParseDataTable = (
   const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'stop'
 
   const data: DataTableData = []
-  ws.eachRow((row, rowNumber) => {
+  ws.eachRow((curRow, curRowNumber) => {
 
     if (stopParsing) return
 
+
     // skip propName and dataType rows
-    if (rowNumber < startingRowNum+2 ) return
+    if (curRowNumber < startingRowNum+2 ) return
 
     // keep an eye out for delimeter row
-    if (rowIsDelimiter(row) && onDelimiter === 'stop') {
+    if (rowIsDelimiter(curRow) && onDelimiter === 'stop') {
       stopParsing = true
       return false
     }
 
     const rowMeta: RowMeta = {
-      worksheetName: ws.name, rowNumber
+      worksheetName: ws.name, rowNumber: curRowNumber
     }
 
-    const rowData = parseTableDataRow(propNames, dataTypes, row, rowMeta, parseOpts)
+    const rowData = parseTableDataRow(propNames, dataTypes, curRow, rowMeta, parseOpts)
     data.push(rowData)
   })
 
@@ -146,7 +151,7 @@ const parseDataTable: ParseDataTable = (
     return { ...acc, [propName]: dataTypes[i] }
   }, {})
 
-  return { numDataRowsParsed: data.length, data, dataTypeMap }
+  return { numDataEntriesParsed: data.length, data, dataTypeMap }
 }
 
 //-----------------------------------------------------------------------------
@@ -198,36 +203,67 @@ const parseTableDataRow = (
 //-----------------------------------------------------------------------------
 
 export const parseDataCollection: ParseDataCollection = (
-  ws, startingRowNum, parseOpts?
+  ws, startingRowNum, parseOpts
 ) => {
 
   const worksheetName = ws.name
 
-  let data: Data | undefined = undefined
-  let dataTypeMap: DataTypeMap | undefined = undefined
+  const data: DataCollectionData = []
+  // let firstEntryDataTypeMap: DataTypeMap = {}
+  // const curDataTypeMap: DataTypeMap = {}
 
   let stopParsing = false
 
   // default to continue parsing for collection data when we hit a delimiter row
   const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'continue'
 
+  let nextRowNum = 1
+  let curDataEntry: Data = {}
+
+  // const curEntryIsFirst = (data: DataCollectionData) => data.length === 0
+  // const curEntryIsNotFirst = (data: DataCollectionData) => data.length > 1
+
   ws.eachRow((curRow, curRowNumber) => {
 
     if (stopParsing) return
+
+    nextRowNum++
+
+    // Get to our starting row
+    if (curRowNumber < startingRowNum) return
 
     const rowMeta: RowMeta = {
       worksheetName: ws.name,
       rowNumber: curRowNumber
     }
 
-    // Get to our target row
-    if (curRowNumber < startingRowNum)
-      return
+    // at end of current entry
+    if (rowIsDelimiter(curRow)) {
 
-    // keep an eye out for delimeter row
-    if (rowIsDelimiter(curRow) && onDelimiter === 'stop') {
-      stopParsing = true
-      return false
+      // Data type consistency check
+      // if (curEntryIsNotFirst(data)) {
+
+      //   if (notEqual(firstEntryDataTypeMap, curDataTypeMap)) {
+      //     console.log('firstEntryDataTypeMap: ', firstEntryDataTypeMap)
+      //     console.log('curDataTypeMap: ', curDataTypeMap)
+      //     const warningMsg = rowWarning(
+      //       'Data type inconsistency in data collection\n' +
+      //       `  First entry had types: ${toJson(firstEntryDataTypeMap)}\n` +
+      //       `  Followon entry has types: ${toJson(curDataTypeMap)}\n` +
+      //       '  Types from first entry will be returned',
+      //       rowMeta, parseOpts
+      //     )
+      //     if (!firstEntryDataTypeMap?.typeWarning)
+      //       firstEntryDataTypeMap.typeWarning = warningMsg as DataType
+      //   }
+      // }
+
+      // Lets push the current entry to the data list, and and get ready for the next
+      data.push(curDataEntry)
+      curDataEntry = {}
+
+      if (onDelimiter  === 'stop') stopParsing = true
+      return
     }
 
     const rowValues = getRowValues(curRow)
@@ -245,6 +281,7 @@ export const parseDataCollection: ParseDataCollection = (
     // are we delaing with a list of row values?
     if (isRowValueListType(dataType)) {
 
+      // TODO: use row warning
       if (rowValues.length < 3) {
         parserWarning(
           `WS: ${worksheetName}: Invalid Data List row value list ${curRowNumber}\n` +
@@ -267,21 +304,25 @@ export const parseDataCollection: ParseDataCollection = (
         `  ${toJson(rowValues)}`
         )}
 
-      if (shouldSkipDataCollectionRow(rowValues)) return
+      if (shouldSkipDataCollectionRow(rowValues)) return // TODO: hmmmmm, make sure this is OK
 
       propValue = parseDataCell(
         dataType, rowValues[2], { ...rowMeta, colNumber: 2, propName, dataType }, parseOpts
       )
     }
 
-    data = { ...(data || {}), [propName]: propValue }
-    dataTypeMap = { ...(dataTypeMap || {}), [propName]: dataType }
+    curDataEntry = { ...curDataEntry, [propName]: propValue }
+  //   if (curEntryIsFirst(data))
+  //     firstEntryDataTypeMap = { ...(firstEntryDataTypeMap), [propName]: dataType }
   })
+
+  console.log('data: ', data)
 
   const result: ParseDataCollectionResult = {
     data,
-    dataTypeMap,
-    numDataRowsParsed: keys(data || {}).length,
+    dataTypeMap: {}, // firstEntryDataTypeMap, // TEMP
+    numDataEntriesParsed: data ? data.length : 0,
+    nextRowNum
   }
 
   return result
@@ -364,17 +405,34 @@ export const parseFrontMatter: ParseFrontMatter = (
   // +1 to skip the intial '---'
   const curRowNumber = startingRowNumber + 1
 
+  const rowMeta: RowMeta = {
+    worksheetName: ws.name,
+    rowNumber: curRowNumber
+  }
 
   const parsedData =  parseDataCollection(ws, curRowNumber, {
     ...parseOpts, onDelimiter: 'stop'
   })
 
-  const { data, dataTypeMap, numDataRowsParsed } = parsedData
+  const { data, dataTypeMap, nextRowNum } = parsedData
+
+  // data coming back as an arrary (or undefined), only shoule be 1 entry for frontmatter
+  const meta: Meta | undefined = (data || [])[0]
+
+  if (meta && data && data.length > 1) {
+    const warningMsg = rowWarning(
+      'Front matter should only have one row of data\n' +
+      `  Found ${data?.length || 0} rows of data, only the first will be used\n` +
+      '  This is indicitive an signifcant internall error',
+      rowMeta, parseOpts
+    )
+    meta.typeWarning = warningMsg as DataType
+  }
 
   const result: ParseFrontMatterResult = {
-    meta: data,
+    meta,
     metaTypeMap: dataTypeMap,
-    nextRowNum: curRowNumber + numDataRowsParsed + 1 // +1 to skip terminating '---'
+    nextRowNum: nextRowNum // +1 to skip terminating '---'
   }
 
   return result

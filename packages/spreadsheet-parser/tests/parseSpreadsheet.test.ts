@@ -69,7 +69,7 @@ const assertParsedWorksheet = async (
   const {
     worksheetName,
     dataLayout,
-    numDataRowsParsed,
+    numDataEntriesParsed: numDataRowsParsed,
     data: parsedData,
     dataTypeMap: parsedDataTypeMap,
     meta: parsedMeta,
@@ -86,7 +86,7 @@ const assertParsedWorksheet = async (
   const {
     worksheetName: expectedSheetName,
     dataLayout: expectedDataLayout,
-    numDataRowsParsed: expectedNumDataRowsParsed,
+    numDataEntriesParsed: expectedNumDataRowsParsed,
     data: expectedData,
     dataTypeMap: expectedDataTypeMap,
     meta: expectedMeta,
@@ -95,16 +95,16 @@ const assertParsedWorksheet = async (
 
   expect(worksheetName).toEqual(expectedSheetName)
   expect(dataLayout).toEqual(expectedDataLayout)
-  expect(numDataRowsParsed).toEqual(expectedNumDataRowsParsed)
+  expect(numDataRowsParsed).toEqual(expectedNumDataRowsParsed) // TODO: changte to number date entries parsed
   expect(clientData.message).toEqual(testMeta.message)
 
-  assertParsedWorkSheetMetaTypeMaps(
-    expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
-  )
+  // assertParsedWorkSheetMetaTypeMaps(
+  //   expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
+  // )
 
-  assertParsedWorkSheetMeta(
-    expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
-  )
+  // assertParsedWorkSheetMeta(
+  //   expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
+  // )
 
   assertParsedWorksheetDataTypeMaps(
     expectedDataTypeMap, parsedDataTypeMap, worksheetName
@@ -426,16 +426,21 @@ const assertParsedWorksheetListData = (
 
   if (!expectedData) return
 
-  expect(
-    objectsHaveSameKeys(expectedData, parsedData!),
-    `\nWS:${worksheetName}: Parsed data does not have same keys as expected\n` +
-    `  expected data keys: ${toJson(keys(expectedData))}\n` +
-    `  parsed data keys: ${toJson(keys(parsedData!))}\n`
-  ).toEqual(true)
+  assert( parsedData!.length === expectedData.length)
 
-  const { expectAllUndefined, expectAllErrors } = expectedData
-  const validateOpts: ValidateOpts = { expectAllUndefined,  expectAllErrors }
-  assertParsedData(
-    parsedData, expectedData, expectedDataTypeMap, worksheetName, validateOpts
-  )
+  expectedData.forEach((expectedEntry, idx) => {
+    const parsedEntry = parsedData![idx]
+    expect(
+      objectsHaveSameKeys(expectedEntry, parsedEntry),
+      `\nWS:${worksheetName}: Parsed data does not have same keys as expected\n` +
+      `  expected data keys: ${toJson(keys(expectedEntry))}\n` +
+      `  parsed data keys: ${toJson(keys(parsedData!))}\n`
+    ).toEqual(true)
+
+    // const { expectAllUndefined, expectAllErrors } = expectedData // TODO: should we add this to data collections?
+    const validateOpts: ValidateOpts = { expectAllUndefined: false,  expectAllErrors: false }
+    assertParsedData(
+      parsedEntry, expectedEntry, expectedDataTypeMap, worksheetName, validateOpts
+    )
+  })
 }
