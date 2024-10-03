@@ -19,15 +19,15 @@
       "require": "./dist/withStyles.cjs.js",
       "types": "./dist/withStyles.d.ts"
     },
-    "./icons": {
-      "import": "./dist/icons.es.js",
-      "require": "./dist/icons.cjs.js",
-      "types": "./dist/icons.d.ts"
+    "./icon": {
+      "import": "./dist/icon.es.js",
+      "require": "./dist/icon.cjs.js",
+      "types": "./dist/icon.d.ts"
     },
-    "./icons/withStyles": {
-      "import": "./dist/iconsWithStyles.es.js",
-      "require": "./dist/iconsWithStyles.cjs.js",
-      "types": "./dist/iconsWithStyles.d.ts"
+    "./icon/withStyles": {
+      "import": "./dist/iconWithStyles.es.js",
+      "require": "./dist/iconWithStyles.cjs.js",
+      "types": "./dist/iconWithStyles.d.ts"
     },
     "./dist/style.css": "./dist/style.css"
   },

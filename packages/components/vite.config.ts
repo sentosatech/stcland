@@ -24,8 +24,8 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         withStyles: resolve(__dirname, 'src/withStyles/index.ts'),
-        icons: resolve(__dirname, 'src/icons/index.ts'),
-        iconsWithStyles: resolve(__dirname, 'src/icons/withStyles/index.ts')
+        icon: resolve(__dirname, 'src/icon/index.ts'),
+        iconWithStyles: resolve(__dirname, 'src/icon/withStyles/index.ts')
 
       },
       name: 'Stcland Components',
