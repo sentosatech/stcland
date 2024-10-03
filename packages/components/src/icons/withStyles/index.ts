@@ -1,12 +1,1 @@
-export {
-  HomeIcon,
-  ProjectionsIcon,
-  StaffIcon,
-  CustomersIcon,
-  ProjectsIcon,
-  ContractsIcon,
-  PaymentsIcon,
-  ExpensesIcon,
-  RateCalculatorIcon,
-  ExpandIcon
-} from './IconSet'
+export { default as Icon } from './Icon'

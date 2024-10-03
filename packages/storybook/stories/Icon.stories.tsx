@@ -1,42 +1,44 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import type { IconProps } from '@stcland/components/icons'
 import { StcStylesProvider } from '@stcland/components'
-import { HomeIcon, CustomersIcon } from '@stcland/components/icons'
-import { ProjectionsIcon } from '@stcland/components/icons/withStyles'
+import { Icon } from '@stcland/components/icons'
+import { Icon as IconWithStyles } from '@stcland/components/icons/withStyles'
 import * as React from 'react'
 import customStyles from '../stc.config'
 
 
-const meta : Meta<typeof HomeIcon> = {
+const meta : Meta<typeof Icon> = {
   title: 'Components/Icon',
-  component: HomeIcon,
+  component: Icon,
 }
 
 export default meta
 
-const HomeIconTemplate: StoryFn<IconProps> = (args) => <HomeIcon {...args} />
+const IconTemplate: StoryFn<IconProps> = (args) => <Icon {...args} />
 
-export const Home = HomeIconTemplate.bind({})
-Home.args = {
+export const Primary = IconTemplate.bind({})
+Primary.args = {
+  iconName: 'HomeIcon',
   solid: true,
   md: true,
 }
 
-const CustomersIconTemplate: StoryFn<IconProps> = (args) => <CustomersIcon {...args} />
-export const Customers = CustomersIconTemplate.bind({})
-Customers.args = {
+export const Secondary = Icon.bind({})
+Secondary.args = {
+  iconName: 'HeartIcon',
   md: true,
   secondaryColor: true
 }
 
 const TemplateWithStyles: StoryFn<IconProps> = (args) =>
   <StcStylesProvider customStyles={customStyles}>
-    <ProjectionsIcon {...args} />
+    <IconWithStyles {...args} />
   </StcStylesProvider>
 
 
 export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
+  iconName: 'CurrencyDollarIcon',
   lg: true,
   solid: true,
   secondaryColor: true

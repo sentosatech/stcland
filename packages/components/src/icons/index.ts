@@ -1,11 +1,13 @@
 
+import { IconStyles } from 'src/styles/componentTypes'
+import type { IconName } from './Icon'
+
 //*****************************************************************************
 // Interface
 //*****************************************************************************
 
-import { IconStyles } from 'src/styles/componentTypes'
-
 export interface IconProps {
+    iconName: IconName
     // defaults to md, otherwise specify desired size
     sm?: boolean  // small icon
     md?: boolean // medium icon
@@ -26,18 +28,7 @@ export interface IconProps {
 
 
   //*****************************************************************************
-  // IconSet
+  // Icon Component
   //*****************************************************************************
 
-export {
-  HomeIcon,
-  ProjectionsIcon,
-  StaffIcon,
-  CustomersIcon,
-  ProjectsIcon,
-  ContractsIcon,
-  PaymentsIcon,
-  ExpensesIcon,
-  RateCalculatorIcon,
-  ExpandIcon
-} from './IconSet'
+export { default as Icon } from './Icon'

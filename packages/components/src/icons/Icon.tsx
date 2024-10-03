@@ -1,27 +1,28 @@
-
-import { cns, appliedStyles } from '@stcland/utils'
+import type { IconStyles } from 'src/styles/componentTypes'
 import type { IconProps } from '.'
-import { IconStyles } from 'src/styles/componentTypes'
+import { cns, appliedStyles } from '@stcland/utils'
+import * as React from 'react'
+import * as outlineIcons from '@heroicons/react/24/outline'
+import * as solidIcons from '@heroicons/react/24/solid'
 
-//*****************************************************************************
-// Interface
-//*****************************************************************************
+export type IconName = keyof typeof outlineIcons | keyof typeof solidIcons
 
-export interface Props extends IconProps {
-  SolidIcon: React.ComponentType<any>
-  OutlineIcon: React.ComponentType<any>
+// Be safe, and check that icon exists using a Type Guard.
+function isValidIcon(iconSet: Record<string, React.ComponentType<any>>, iconName: string)
+: iconName is keyof typeof iconSet {
+  return iconName in iconSet
 }
-
 
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
-export const BaseIcon : React.FC<Props>  = ({
-  SolidIcon,
-  OutlineIcon,
-  sm, md, lg,
+export const Icon: React.FC<IconProps> = ({
+  iconName,
   solid = false,
+  sm,
+  md,
+  lg,
   secondaryColor = false,
   highlightOnHover = false,
   brightenOnHover = false,
@@ -30,10 +31,20 @@ export const BaseIcon : React.FC<Props>  = ({
   onClick = () => {},
   customStyles,
   className
-}
-: Props ) => {
+}: IconProps) => {
 
-  const defaultStyles : IconStyles = {
+  // Select the correct icon map based on solid prop.
+  const iconsMap = solid ? solidIcons : outlineIcons
+
+  // Get the Icon based on the `iconName`
+  const IconComponent = iconsMap[iconName as keyof typeof iconsMap]
+
+  if (!isValidIcon(iconsMap, iconName)) {
+    console.error(`Icon ${iconName} not found in ${solid ? 'solid' : 'outline'} style.`)
+    return <p>Icon not found</p>
+  }
+
+  const defaultStyles: IconStyles = {
     root: 'p-2',
     secondary: 'text-secondary-main',
     primary: 'text-primary-main',
@@ -50,12 +61,10 @@ export const BaseIcon : React.FC<Props>  = ({
 
   const mergedStyles = appliedStyles<IconStyles>(defaultStyles, customStyles)
 
-
   const rootVariants = {
     [mergedStyles.highlightOnHover]: highlightOnHover,
   }
 
-  // TODO: add neutral.
   const colorVariants = {
     [mergedStyles.secondary]: secondaryColor,
     [mergedStyles.primary]: !secondaryColor,
@@ -79,15 +88,15 @@ export const BaseIcon : React.FC<Props>  = ({
     icon: cns(iconVariants, colorVariants, sizeVariants)
   }
 
-  // Should iconText live here?
   return (
     <div {...{ onClick }} className={cn.root}>
-      {solid ?
-        <SolidIcon className={cn.icon} onClick={onClick}/> :
-        <OutlineIcon className={cn.icon} onClick={onClick}/>
-      }
+      {IconComponent ? (
+        <IconComponent className={cn.icon} onClick={onClick} />
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   )
 }
 
-export default BaseIcon
+export default Icon

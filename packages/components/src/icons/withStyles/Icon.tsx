@@ -1,17 +1,17 @@
-import  BaseIcon  from '../BaseIcon'
-import  type { Props as BaseIconProps }  from '../BaseIcon'
+import  Icon  from '../Icon'
+import  type { IconProps }  from '..'
 import { useStyles } from '../../styles/StylesProvider'
 
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
-const IconWithStyles = ( props: BaseIconProps) => {
+const IconWithStyles = ( props: IconProps) => {
 
   const { styles }  = useStyles()
 
   return (
-    <BaseIcon {...props} customStyles={styles?.icon}/>
+    <Icon {...props} customStyles={styles?.icon}/>
   )
 }
 
