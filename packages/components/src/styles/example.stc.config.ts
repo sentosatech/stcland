@@ -33,7 +33,7 @@ const customStyles : StclandStyles = {
     lg: 'p-3 text-md',
     fullWidth: 'w-full',
     rounded: 'rounded-md',
-    brightenOnHover: 'hover:brightness-200',
+    highlightOnHover: 'hover:bg-gray-600',
     icon: 'w-1.5 h-1.5 inline',
     disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
     button: 'w-full'

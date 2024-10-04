@@ -1,11 +1,13 @@
 import type { ButtonStyles, TableStyles } from '.'
+import { IconStyles } from './componentTypes'
 
 export type StclandStyles = {
   table?: Partial<TableStyles>,
   button?: Partial<ButtonStyles>,
   // Do we want this granularity?
   submitButton?: Partial<ButtonStyles>
-  resetButton?: Partial<ButtonStyles>
+  resetButton?: Partial<ButtonStyles>,
+  icon?: Partial<IconStyles>
 }
 
 // Default styles
@@ -41,9 +43,23 @@ export const defaultStyles: StclandStyles = {
     lg: 'p-3 text-md',
     fullWidth: 'w-full',
     rounded: 'rounded-md',
-    brightenOnHover: 'hover:brightness-200',
+    highlightOnHover: 'hover:bg-gray-600',
     icon: 'w-1.5 h-1.5 inline',
     disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
     button: 'w-full'
   },
+  icon: {
+    root: 'p-2',
+    secondary: 'text-secondary-main',
+    primary: 'text-primary-main',
+    neutral: 'text-gray-600',
+    sm: 'h-4.5 w-4.5',
+    md: 'h-6 w-6',
+    lg: 'h-7 w-7',
+    rounded: 'rounded-md',
+    bright: 'brightness-125',
+    highlightOnHover: 'hover:bg-gray-600',
+    brightenOnHover: 'hover:brightness-125',
+    muted: 'opacity-50'
+  }
 }

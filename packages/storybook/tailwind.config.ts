@@ -2,7 +2,7 @@ import { themeConfig } from '@stcland/components'
 
 const config = {
   ...themeConfig,
-  content: ['./stories/**/*.stories.tsx'],
+  content: ['./stories/**/*.stories.tsx', './stc.config.ts'],
 }
 
 

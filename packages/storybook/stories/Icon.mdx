@@ -1,0 +1,40 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as IconStories from './Icon.stories';
+
+<Meta of={IconStories} />
+# Icon Component
+
+The `Icon` component is a flexible UI element designed to visually represent actions, statuses, or concepts. 
+It can be used as a standalone decorative element, within buttons, or paired with text to enhance user interface clarity.
+
+
+### Properties
+
+#### Base:
+- **iconName** (`string`): Required. The icon name should be set with the same formart as the import name from https://heroicons.com/ (solid/outlined).
+- **onClick** (`() => void`): Function to be called when the button is clicked. Defaults to a no-operation function.
+#### Size Variants:
+- **sm** (`boolean`): Applies small size variant. Defaults to `true`.
+- **md** (`boolean`): Applies medium size variant.
+- **lg** (`boolean`): Applies large size variant.
+#### Color Variants:
+- **solid** (`boolean`): If true, renders solid icon variant otherwise outlined.
+- **highlightOnHover** (`boolean`): Changes background icon color on hover, defaults to false
+- **brightenOnHover** (`boolean`): Brighten icon color on hover, defaults to false
+- **disabled** (`boolean`): Disables the button when true. Defaults to `false`.
+#### Shape Variants:
+- **rounded** (`boolean`): Applies rounded corners to the button. Defaults to `true`.
+#### Custom Styles:
+- **className** (`string`): Additional CSS classes for the button.
+- **customStyles** (`Partial<IconStyles>`): Allows passing custom styles for `root` and `button` directly.
+
+## Icons
+
+<Canvas of={IconStories.Primary} />
+<Canvas of={IconStories.Secondary} />
+
+## With Styles
+
+<Canvas of={IconStories.WithStyles} />
+
+---

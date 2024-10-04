@@ -45,7 +45,6 @@ Primary.args = {
   text: 'Change',
   icon: HeartIcon,
   md: true,
-  brightenOnHover: true,
   customStyles: {
     icon: 'w-5 h-5 inline'
   }
@@ -68,7 +67,7 @@ Disabled.args = {
 
 export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
-  disabled: true,
+  primary: true,
   lg: true,
   text: 'Custom Styles',
   customStyles: {

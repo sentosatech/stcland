@@ -19,6 +19,16 @@
       "require": "./dist/withStyles.cjs.js",
       "types": "./dist/withStyles.d.ts"
     },
+    "./icon": {
+      "import": "./dist/icon.es.js",
+      "require": "./dist/icon.cjs.js",
+      "types": "./dist/icon.d.ts"
+    },
+    "./icon/withStyles": {
+      "import": "./dist/iconWithStyles.es.js",
+      "require": "./dist/iconWithStyles.cjs.js",
+      "types": "./dist/iconWithStyles.d.ts"
+    },
     "./dist/style.css": "./dist/style.css"
   },
   "scripts": {
@@ -29,6 +39,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
     "@stcland/utils": "workspace:^",
     "@tanstack/react-table": "^8.20.5",
     "d3-interpolate": "^3.0.1",
