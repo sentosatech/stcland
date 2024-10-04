@@ -19,7 +19,7 @@ const styles : StclandStyles = {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
       outlined: 'border border-primary-range-300 text-primary-main hover:border-primary-dark hover:bg-primary-range-200',
-      solid: 'bg-gray-750 hover:bg-primary-range-900 text-primary-main'
+      solid: 'bg-secondary-main hover:bg-primary-range-900 text-primary-main'
     },
     secondary:{
       outlined: 'border border-secondary-main text-secondary-main hover:border-secondary-dark hover:bg-secondary-range-200',
@@ -35,7 +35,7 @@ const styles : StclandStyles = {
     // fullWidth: 'w-full',
     // rounded: 'rounded-md',
     highlightOnHover: 'hover:bg-gray-600',
-    icon: 'w-3.5 h-3.5 inline',
+    icon: 'w-3 h-3 inline',
     // disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
     // button: 'w-full'
   },
