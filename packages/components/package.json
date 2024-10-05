@@ -45,11 +45,16 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@hookform/devtools": "^4.3.1",
     "@stcland/utils": "workspace:^",
     "@tanstack/react-table": "^8.20.5",
     "d3-interpolate": "^3.0.1",
+    "ramda": "^0.30.1",
+    "ramda-adjunct": "^5.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "react-tailwindcss-select": "^1.8.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

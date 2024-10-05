@@ -13,29 +13,28 @@ import { cns, appliedStyles } from '@stcland/utils'
 import '../index.css'
 import type { TableStyles } from '../styles/'
 
-  //*****************************************************************************
-  // Interface
-  //*****************************************************************************
-
+//*****************************************************************************
+// Interface
+//*****************************************************************************
 
 export interface Props {
-    // title: string
-    columns: ColumnDef<any>[]
-    data: {[key: string]: any}[]
-    className?: string
-    customStyles?: Partial<TableStyles>
-    expanded?: ExpandedState
-    setExpanded?: (value) => void
-    rowSelection?: RowSelectionState
-    onRowClick?: (row: RowData) => void
-  }
+  // title: string
+  columns: ColumnDef<any>[];
+  data: { [key: string]: any }[];
+  className?: string;
+  customStyles?: Partial<TableStyles>;
+  expanded?: ExpandedState;
+  setExpanded?: (value) => void;
+  rowSelection?: RowSelectionState;
+  onRowClick?: (row: RowData) => void;
+}
 
-  //*****************************************************************************
-  // Components
-  //*****************************************************************************
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 const Table = ({
-    // title,
+  // title,
   columns,
   data = [],
   customStyles = {},
@@ -45,7 +44,6 @@ const Table = ({
   rowSelection,
   onRowClick,
 }: Props) => {
-
   const tableInstance = useReactTable({
     columns: columns,
     data: data,
@@ -78,7 +76,7 @@ const Table = ({
     subRow: 'text-secondary-main border-none',
   }
 
-  const cn  = appliedStyles<TableStyles>( tableStyles, customStyles)
+  const cn = appliedStyles<TableStyles>(tableStyles, customStyles)
 
   return (
     <div className={cn.root}>
@@ -86,23 +84,26 @@ const Table = ({
         <thead className={cn.header}>
           {tableInstance.getHeaderGroups().map(function (headerGroup) {
             return (
-                /* Current header row */
+              /* Current header row */
               <tr key={headerGroup.id} className={cn.headerRow}>
                 {headerGroup.headers.map(function (column) {
                   if (column.id === 'extraLine') return null
                   return (
-                      /* Current header cell */
+                    /* Current header cell */
                     <th
                       key={column.id}
                       colSpan={column.colSpan}
                       style={{ width: column.getSize() }}
                       className={cn.headerCell}
                     >
-                      {column.isPlaceholder !== null &&
-                          <div>
-                            {flexRender(column.column.columnDef.header, column.getContext())}
-                          </div>
-                      }
+                      {column.isPlaceholder !== null && (
+                        <div>
+                          {flexRender(
+                            column.column.columnDef.header,
+                            column.getContext()
+                          )}
+                        </div>
+                      )}
                     </th>
                   )
                 })}
@@ -116,24 +117,26 @@ const Table = ({
             const isSelected = row.getIsSelected()
             const isSubRow = row.depth > 0
             const rowStyleVariants = {
-              [cn.selectedRow] : isSelected,
-              [cn.subRow] : isSubRow
+              [cn.selectedRow]: isSelected,
+              [cn.subRow]: isSubRow,
             }
             return (
-                /* table row */
+              /* table row */
               <tr
                 key={row.id}
                 className={cns(cn.row, rowStyleVariants)}
                 onClick={() => onRowClick?.(row)}
               >
                 {row.getVisibleCells().map((cell) => {
-                    // Must be equal to undefined, otherwise may not show zeros
+                  // Must be equal to undefined, otherwise may not show zeros
                   if (cell.getValue() === undefined) return null
 
                   return (
                     <td
                       key={cell.id}
-                      colSpan={row.depth > 0 ? row.getAllCells().length - 1 : undefined}
+                      colSpan={
+                        row.depth > 0 ? row.getAllCells().length - 1 : undefined
+                      }
                       style={{ width: cell.column.getSize() }}
                       align={(cell.column.columnDef.meta as any)?.align}
                       className={cns(
@@ -142,7 +145,10 @@ const Table = ({
                         customStyles?.cell
                       )}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </td>
                   )
                 })}

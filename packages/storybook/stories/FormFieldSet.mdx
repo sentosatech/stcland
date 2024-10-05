@@ -1,0 +1,28 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as FieldSetStories from './FormFieldSet.stories.tsx';
+
+<Meta of={FieldSetStories} />
+# FieldSet Component
+
+The `Fieldset` component is used grouping form inputs into one logical block. By default this is using a 2 column layout.
+
+## Properties
+- **name** (`string`): Nullable. used by the component as id for easier referencing
+- **title** (`string`): Nullable. Title of the fieldset panel only visible if withPanel attribute is set to true
+- **label** (`string`): Nullable. label of the fieldset, difference with title is this text is smaller, usually used to not emphasized the section too much
+- **withPanel** (`boolean`): Nullable. used to determine if fieldset should behave as a panel. By setting this to true the title will be visible if provided.
+- **disabled** (`boolean`): Nullable. disables the entire field set.
+- **hidden** (`boolean`): Nullable. hides the entire field set.
+
+### Variants:
+#### Default
+<Canvas of={FieldSetStories.Default} />
+#### WithoutPanel
+<Canvas of={FieldSetStories.WithoutPanel} />
+#### WithoutTitle
+<Canvas of={FieldSetStories.WithoutTitle} />
+#### WithoutLabel
+<Canvas of={FieldSetStories.WithoutLabel} />
+#### WithStylesContext
+<Canvas of={FieldSetStories.WithStyles} />
+---
