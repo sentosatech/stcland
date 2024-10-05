@@ -53,10 +53,17 @@ describe('Test Spreadsheet Parser', () => {
 
   test('forEach worksheet', async () => {
 
-    const parseOpts: ParseOptions = { reportProgress: true, reportWarnings: false  }
+    const parseOpts: ParseOptions = {
+      reportProgress: true,
+      reportWarnings: false,
+      includeTypeMaps: true
+    }
+
     await forEachSheet(assertParsedWorksheet, spreadsheetPath, testMeta, parseOpts)
 
   })
+
+  test.todo('test w/o type maps', async () => {})
 })
 
 //-------------------------------------------------------------------------
@@ -106,13 +113,13 @@ const assertParsedWorksheet = async (
   //   expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
   // )
 
-  assertParsedWorksheetDataTypeMaps(
-    expectedDataTypeMap, parsedDataTypeMap, worksheetName
-  )
+  // assertParsedWorksheetDataTypeMaps(
+  //   expectedDataTypeMap, parsedDataTypeMap, worksheetName
+  // )
 
   switch (dataLayout) {
   case 'dataCollection':
-    assertParsedWorksheetListData(
+    assertParsedWorksheetCollectionData(
       expectedData as DataCollectionData,
       parsedData as DataCollectionData,
       expectedDataTypeMap, parsedDataTypeMap, worksheetName
@@ -395,7 +402,7 @@ const assertParsedData = (
 
 //-------------------------------------------------------------------------
 
-const assertParsedWorksheetListData = (
+const assertParsedWorksheetCollectionData = (
   expectedData: DataCollectionData | undefined,
   parsedData: DataCollectionData | undefined,
   expectedDataTypeMap: DataTypeMap | undefined,

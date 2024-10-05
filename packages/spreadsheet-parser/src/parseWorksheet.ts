@@ -11,8 +11,7 @@ import type {
   ParseDataTableResult, ParseDataCollectionResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData,
-  DataType,  DataTableDataType, // DataTypeMap,
-  DelimiterActions,
+  DataType,  DataTableDataType, DataTypeMap,
   DataCollectionData,
 } from './SpreadsheetParserTypes'
 
@@ -86,13 +85,16 @@ export const parseWorksheet: ParseWorksheet = (
   const result: ParsedWorksheetResult = {
     worksheetName,
     dataLayout,
-    numDataEntriesParsed: parsedData?.numDataEntriesParsed || 0, // TODO: changet this to num dta entryes parsed
+    numDataEntriesParsed: parsedData?.numDataEntriesParsed || 0,
     meta,
     metaTypeMap,
     data: parsedData?.data,
     dataTypeMap: parsedData?.dataTypeMap,
   }
 
+  // TODO: consider stripping out props that are undefined, actually, nice idea
+
+  // console.log('result: ', result)
   return result
 }
 
@@ -103,6 +105,11 @@ const parseDataTable: ParseDataTable = (
   startingRowNum: number,
   parseOpts?: ParseOptions
 ) => {
+
+  const {
+    includeTypeMaps = false,
+    onDelimiter = 'stop'
+  } = parseOpts || {}
 
   const worksheetName = ws.name
 
@@ -116,22 +123,24 @@ const parseDataTable: ParseDataTable = (
       `  property types: ${toJson(dataTypes)}`,
       parseOpts
     )
-    return { numDataEntriesParsed: 0, data: [], dataTypeMap: {} }
+    return {
+      numDataEntriesParsed: 0, data: [], nextRowNum: startingRowNum + 2
+    }
   }
 
+  let dataTypeMap: DataTypeMap | undefined = undefined
   let stopParsing = false
-
-  // default to stop parsing for table data when we hit a delimiter row
-  const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'stop'
-
+  let nextRowNum = startingRowNum+2
   const data: DataTableData = []
+
   ws.eachRow((curRow, curRowNumber) => {
 
     if (stopParsing) return
 
-
     // skip propName and dataType rows
     if (curRowNumber < startingRowNum+2 ) return
+
+    nextRowNum++
 
     // keep an eye out for delimeter row
     if (rowIsDelimiter(curRow) && onDelimiter === 'stop') {
@@ -147,11 +156,17 @@ const parseDataTable: ParseDataTable = (
     data.push(rowData)
   })
 
-  const dataTypeMap = propNames.reduce((acc, propName, i) => {
-    return { ...acc, [propName]: dataTypes[i] }
-  }, {})
+  const numDataEntriesParsed = data.length
 
-  return { numDataEntriesParsed: data.length, data, dataTypeMap }
+  if (includeTypeMaps) {
+    dataTypeMap  = propNames.reduce((acc, propName, i) => {
+      return { ...acc, [propName]: dataTypes[i] }
+    }, {})
+  }
+
+  return {
+    data, dataTypeMap, numDataEntriesParsed, nextRowNum,
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -206,22 +221,25 @@ export const parseDataCollection: ParseDataCollection = (
   ws, startingRowNum, parseOpts
 ) => {
 
+  console.log('~~> parseDataCollection()')
+
   const worksheetName = ws.name
 
+  const {
+    includeTypeMaps = false,
+    onDelimiter = 'stop'
+  } = parseOpts || {}
+
+  console.log('includeTypeMaps: ', includeTypeMaps)
+
   const data: DataCollectionData = []
-  // let firstEntryDataTypeMap: DataTypeMap = {}
-  // const curDataTypeMap: DataTypeMap = {}
+  const dataTypeMap: DataTypeMap[] | undefined = includeTypeMaps ? [] : undefined
+
+  let curDataEntry: Data = {}
+  let curDataTypeMap: DataTypeMap | undefined = undefined
 
   let stopParsing = false
-
-  // default to continue parsing for collection data when we hit a delimiter row
-  const onDelimiter: DelimiterActions = parseOpts?.onDelimiter || 'continue'
-
   let nextRowNum = 1
-  let curDataEntry: Data = {}
-
-  // const curEntryIsFirst = (data: DataCollectionData) => data.length === 0
-  // const curEntryIsNotFirst = (data: DataCollectionData) => data.length > 1
 
   ws.eachRow((curRow, curRowNumber) => {
 
@@ -240,27 +258,24 @@ export const parseDataCollection: ParseDataCollection = (
     // at end of current entry
     if (rowIsDelimiter(curRow)) {
 
-      // Data type consistency check
-      // if (curEntryIsNotFirst(data)) {
-
-      //   if (notEqual(firstEntryDataTypeMap, curDataTypeMap)) {
-      //     console.log('firstEntryDataTypeMap: ', firstEntryDataTypeMap)
-      //     console.log('curDataTypeMap: ', curDataTypeMap)
-      //     const warningMsg = rowWarning(
-      //       'Data type inconsistency in data collection\n' +
-      //       `  First entry had types: ${toJson(firstEntryDataTypeMap)}\n` +
-      //       `  Followon entry has types: ${toJson(curDataTypeMap)}\n` +
-      //       '  Types from first entry will be returned',
-      //       rowMeta, parseOpts
-      //     )
-      //     if (!firstEntryDataTypeMap?.typeWarning)
-      //       firstEntryDataTypeMap.typeWarning = warningMsg as DataType
-      //   }
-      // }
+      console.log('~~> rowIsDelimiter()')
 
       // Lets push the current entry to the data list, and and get ready for the next
       data.push(curDataEntry)
       curDataEntry = {}
+
+      // add to type map if needed
+      if (includeTypeMaps) {
+        dataTypeMap?.push(curDataTypeMap as DataTypeMap)
+        curDataTypeMap = {}
+      }
+
+
+      // if (dataTypeMap === undefined) {
+      //   dataTypeMap = getPropNamesFromRow(curRow).reduce((acc, propName, i) => {
+      //     return { ...acc, [propName]: getDataTypeFromCallValue(curRow.getCell(i+1).value) }
+      //   }, {})
+      // }
 
       if (onDelimiter  === 'stop') stopParsing = true
       return
@@ -312,11 +327,10 @@ export const parseDataCollection: ParseDataCollection = (
     }
 
     curDataEntry = { ...curDataEntry, [propName]: propValue }
-  //   if (curEntryIsFirst(data))
-  //     firstEntryDataTypeMap = { ...(firstEntryDataTypeMap), [propName]: dataType }
+    if (includeTypeMaps) {
+      curDataTypeMap = { ...curDataTypeMap, [propName]: dataType }
+    }
   })
-
-  console.log('data: ', data)
 
   const result: ParseDataCollectionResult = {
     data,
@@ -435,6 +449,7 @@ export const parseFrontMatter: ParseFrontMatter = (
     nextRowNum: nextRowNum // +1 to skip terminating '---'
   }
 
+  console.log('result: ', result)
   return result
 }
 
