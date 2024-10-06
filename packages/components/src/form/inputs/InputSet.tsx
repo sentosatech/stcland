@@ -13,6 +13,7 @@ type InputSetProps = FormInputProps & {
     | FieldType.PASSWORD
     | FieldType.TEXTAREA
     | FieldType.TIME
+    | FieldType.RADIO
     | FieldType.DATE;
 };
 
@@ -66,6 +67,22 @@ const DateInput = ({ ...props }: FormInputProps) => (
   />
 )
 
+const RadioButton = ({
+  id,
+  onChange,
+  ...props
+}: FormInputProps & {
+  onChange?: (event: React.MouseEvent<HTMLInputElement>) => void;
+}) => {
+  return (
+    <InputSet
+      {...pickFormProps(props)}
+      type={FieldType.RADIO}
+      onChange={onChange}
+    />
+  )
+}
+
 export {
   Email,
   InputSet,
@@ -75,4 +92,5 @@ export {
   TextArea,
   TimeInput,
   DateInput,
+  RadioButton,
 }

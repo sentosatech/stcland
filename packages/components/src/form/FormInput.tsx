@@ -36,6 +36,7 @@ export type FormInputProps = {
   textAreaProps?: TextAreaPropsShape;
   classNames?: ClassNamesShape;
   className?: string;
+  onChange?: () => void;
 };
 
 export const formInputDefaultProps = {

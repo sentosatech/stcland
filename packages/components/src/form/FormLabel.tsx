@@ -9,6 +9,7 @@ interface Props {
   className?: string; // className string applied to root of this component
   required?: boolean; // required fields
   requiredClass?: string; // class for required fields
+  htmlFor?: string;
 }
 
 //*****************************************************************************
@@ -19,6 +20,7 @@ const FormLabel = function ({
   className,
   required,
   requiredClass,
+  htmlFor,
 }: Props) {
   const cn = {
     root: cns('mb-0.5 flex-row gap-3 text-xs text-zinc-500', className || ''),
@@ -26,7 +28,7 @@ const FormLabel = function ({
   }
   return (
     <div className={cn.root}>
-      <label>
+      <label htmlFor={htmlFor}>
         <span>{labelText}</span>
         {required && <span className={cn.required}>*</span>}
       </label>
