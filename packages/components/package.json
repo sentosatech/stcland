@@ -1,7 +1,6 @@
 {
   "name": "@stcland/components",
-  "version": "0.0.4",
-  "type": "module",
+  "version": "0.0.5",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
@@ -28,6 +27,11 @@
       "import": "./dist/iconWithStyles.es.js",
       "require": "./dist/iconWithStyles.cjs.js",
       "types": "./dist/iconWithStyles.d.ts"
+    },
+    "./theme": {
+      "import": "./dist/theme.es.js",
+      "require": "./dist/theme.cjs.js",
+      "types": "./dist/theme.d.ts"
     },
     "./dist/style.css": "./dist/style.css"
   },

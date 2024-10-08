@@ -1,5 +1,6 @@
 {
   "name": "@stcland/new-package-name",
+  "private": true,
   "version": "0.0.3",
   "description": "Add description here",
   "type": "module",

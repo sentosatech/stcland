@@ -1,7 +1,7 @@
-import { themeConfig } from '@stcland/components'
+import { config } from '@stcland/components/theme'
 
-const config = {
-  ...themeConfig,
+const themeConfig = {
+  ...config,
   content: ['./stories/**/*.stories.tsx', './stc.config.ts'],
 }
 
@@ -32,4 +32,4 @@ const config = {
 // }
 
 
-export default config
+export default themeConfig

@@ -25,7 +25,8 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.ts'),
         withStyles: resolve(__dirname, 'src/withStyles/index.ts'),
         icon: resolve(__dirname, 'src/icon/index.ts'),
-        iconWithStyles: resolve(__dirname, 'src/icon/withStyles/index.ts')
+        iconWithStyles: resolve(__dirname, 'src/icon/withStyles/index.ts'),
+        theme: resolve(__dirname, './tailwind.config.ts')
 
       },
       name: 'Stcland Components',
