@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.9
+
+### Patch Changes
+
+- Update theme export.
+- Updated dependencies
+  - @stcland/components@0.0.5
+
 ## 0.0.8
 
 ### Patch Changes
