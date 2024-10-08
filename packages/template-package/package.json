@@ -1,6 +1,6 @@
 {
   "name": "@stcland/new-package-name",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Add description here",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,5 +1,13 @@
 # @stcland/components
 
+## 0.0.4
+
+### Patch Changes
+
+- Icon added to components, some clean up in utils done.
+- Updated dependencies
+  - @stcland/utils@0.0.6
+
 ## 0.0.3
 
 ### Patch Changes
