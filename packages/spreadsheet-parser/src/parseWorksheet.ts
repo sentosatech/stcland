@@ -1,8 +1,10 @@
 import { CellValue, Row, RowValues, Worksheet } from 'exceljs'
-import { isNil, isNotNil, } from 'ramda'
-// import { notEqual } from 'ramda-adjunct'
+
+import { isNil, isEmpty, isNotNil, } from 'ramda'
+import { isUndefined } from 'ramda-adjunct'
 
 import { toJson } from '@stcland/utils'
+import { throwIf } from '../../errors/dist'
 
 import type {
   ParseOptions, ParseWorksheet,
@@ -30,7 +32,6 @@ import {
   shouldSkipDataCollectionRow,
   shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter
 } from './spreadsheetParseUtils'
-
 
 //-----------------------------------------------------------------------------
 
@@ -93,8 +94,6 @@ export const parseWorksheet: ParseWorksheet = (
   }
 
   // TODO: consider stripping out props that are undefined, actually, nice idea
-
-  // console.log('result: ', result)
   return result
 }
 
@@ -107,7 +106,7 @@ const parseDataTable: ParseDataTable = (
 ) => {
 
   const {
-    includeTypeMaps = false,
+    includeDataTypeMaps = false,
     onDelimiter = 'stop'
   } = parseOpts || {}
 
@@ -158,7 +157,7 @@ const parseDataTable: ParseDataTable = (
 
   const numDataEntriesParsed = data.length
 
-  if (includeTypeMaps) {
+  if (includeDataTypeMaps) {
     dataTypeMap  = propNames.reduce((acc, propName, i) => {
       return { ...acc, [propName]: dataTypes[i] }
     }, {})
@@ -221,22 +220,19 @@ export const parseDataCollection: ParseDataCollection = (
   ws, startingRowNum, parseOpts
 ) => {
 
-  console.log('~~> parseDataCollection()')
-
   const worksheetName = ws.name
 
   const {
-    includeTypeMaps = false,
+    includeDataTypeMaps = false,
     onDelimiter = 'stop'
   } = parseOpts || {}
 
-  console.log('includeTypeMaps: ', includeTypeMaps)
-
   const data: DataCollectionData = []
-  const dataTypeMap: DataTypeMap[] | undefined = includeTypeMaps ? [] : undefined
+  const dataTypeMap: DataTypeMap | undefined = includeDataTypeMaps ? [] : undefined
 
   let curDataEntry: Data = {}
-  let curDataTypeMap: DataTypeMap | undefined = undefined
+  let curDataEntryTypeMap: DataTypeMap | undefined =
+    includeDataTypeMaps ? {} : undefined
 
   let stopParsing = false
   let nextRowNum = 1
@@ -258,24 +254,19 @@ export const parseDataCollection: ParseDataCollection = (
     // at end of current entry
     if (rowIsDelimiter(curRow)) {
 
-      console.log('~~> rowIsDelimiter()')
-
       // Lets push the current entry to the data list, and and get ready for the next
       data.push(curDataEntry)
       curDataEntry = {}
 
       // add to type map if needed
-      if (includeTypeMaps) {
-        dataTypeMap?.push(curDataTypeMap as DataTypeMap)
-        curDataTypeMap = {}
+      if (includeDataTypeMaps) {
+        throwIf(
+          isUndefined(curDataEntryTypeMap) || isUndefined(dataTypeMap),
+          'Internal error, not expecting undefined dataTypeMap/curDataEntryTypeMap'
+        )
+        dataTypeMap?.push(curDataEntryTypeMap as Record<string, DataType>)
+        curDataEntryTypeMap = {}
       }
-
-
-      // if (dataTypeMap === undefined) {
-      //   dataTypeMap = getPropNamesFromRow(curRow).reduce((acc, propName, i) => {
-      //     return { ...acc, [propName]: getDataTypeFromCallValue(curRow.getCell(i+1).value) }
-      //   }, {})
-      // }
 
       if (onDelimiter  === 'stop') stopParsing = true
       return
@@ -327,14 +318,21 @@ export const parseDataCollection: ParseDataCollection = (
     }
 
     curDataEntry = { ...curDataEntry, [propName]: propValue }
-    if (includeTypeMaps) {
-      curDataTypeMap = { ...curDataTypeMap, [propName]: dataType }
+
+    if (includeDataTypeMaps) {
+      curDataEntryTypeMap = { ...curDataEntryTypeMap, [propName]: dataType }
     }
   })
 
+  // account for case when there was no ending delimiter
+  if (!isEmpty(curDataEntry))
+    data.push(curDataEntry)
+  if (!isEmpty(curDataEntryTypeMap) && includeDataTypeMaps)
+    dataTypeMap?.push(curDataEntryTypeMap as Record<string, DataType>)
+
   const result: ParseDataCollectionResult = {
     data,
-    dataTypeMap: {}, // firstEntryDataTypeMap, // TEMP
+    dataTypeMap,
     numDataEntriesParsed: data ? data.length : 0,
     nextRowNum
   }
@@ -432,6 +430,7 @@ export const parseFrontMatter: ParseFrontMatter = (
 
   // data coming back as an arrary (or undefined), only shoule be 1 entry for frontmatter
   const meta: Meta | undefined = (data || [])[0]
+  const metaTypeMap: MetaTypeMap | undefined = dataTypeMap ? dataTypeMap[0] : undefined
 
   if (meta && data && data.length > 1) {
     const warningMsg = rowWarning(
@@ -444,12 +443,9 @@ export const parseFrontMatter: ParseFrontMatter = (
   }
 
   const result: ParseFrontMatterResult = {
-    meta,
-    metaTypeMap: dataTypeMap,
-    nextRowNum: nextRowNum // +1 to skip terminating '---'
+    meta, metaTypeMap, nextRowNum: nextRowNum // +1 to skip terminating '---'
   }
 
-  console.log('result: ', result)
   return result
 }
 

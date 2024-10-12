@@ -2,18 +2,11 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
-// In Progress
-// - Metadata Type Map options
-// - multple docs per DataCollection
-//
-// ... get tables to work first with type options
-// ... then get collections to work with type options
-
 
 // TODO
 // - RowValueList -> RowList
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
-// - support _skip_ in row value list (low priority)
+// - support _skip_ in row value list (low priority) ???
 
 //--- common -------------------------------------------------------------------
 
@@ -40,10 +33,10 @@ export interface ParseOptions {
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
-  includeTypeMaps?: boolean
+  includeDataTypeMaps?: boolean
     // defaults to false
   onDelimiter?: DelimiterActions
-    // 'stop' front matter parsing as collection
+    // 'stop' is used front matter parsing as collection
 
 }
 
@@ -81,7 +74,7 @@ export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataCollectionDataTypes
 ]))
 
-export type DataTypeMap = Record<string, DataType>
+export type DataTypeMap = Record<string, DataType> | Record<string, DataType>[]
 export type Meta = Record<string, any>
 export type MetaTypeMap = Record<string, DataType>
 

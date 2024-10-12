@@ -4,14 +4,14 @@ export type ExpectedParsedSpreadsheetResults =
   Record<string, ParsedWorksheetResult>
 
 export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
-  BasicParsingSkip: {
+  BasicParsing: {
     worksheetName: 'BasicParsing',
     dataLayout: 'dataTable',
     numDataEntriesParsed: 10,
-    metaTypeMap: { // TEMP
-      // name: 'string',
-      // someNumber: 'number',
-      // someBool: 'boolean'
+    metaTypeMap: {
+      name: 'string',
+      someNumber: 'number',
+      someBool: 'boolean'
     },
     meta: {
       name: 'test basic spreadsheet parsing',
@@ -124,7 +124,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
-  FormulaAndRefParsingSkip: {
+  FormulaAndRefParsing: {
     worksheetName: 'FormulaAndRefParsing',
     dataLayout: 'dataTable',
     numDataEntriesParsed: 1,
@@ -145,7 +145,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
-  ErrorCasesParsingSkip: {
+  ErrorCasesParsing: {
     worksheetName: 'ErrorCasesParsing',
     dataLayout: 'dataTable',
     numDataEntriesParsed: 1,
@@ -175,23 +175,22 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
-  DataCollectionParsingSkip: {
+  DataCollectionParsing: {
     worksheetName: 'DataCollectionParsing',
     dataLayout: 'dataCollection',
-    numDataEntriesParsed: 4,
+    numDataEntriesParsed: 3,
     metaTypeMap: {
       note: 'string',
     },
     meta: {
       note: 'This spreadsheet represents a data list instead of a data table, returned as an object',
     },
-
     data: [
       {
         prop1a: 'first prop in data list',
         prop2a: 2,
         prop3a:  { my: 'dude' },
-        prop4q: []
+        prop4a: []
       },
       {
         prop2a: 'first prop in data list',
@@ -201,19 +200,29 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       {
         prop3a:  'single prop',
       }
+    ],
+    dataTypeMap: [
+      {
+        prop1a: 'string',
+        prop2a: 'number',
+        prop3a: 'json',
+        prop4a: 'uuid'
+      },
+      { prop2a: 'string', prop2b: 'number', prop2c: 'json' },
+      { prop3a: 'string' }
     ]
   },
-  RowValueListParsingSkip : {
+  RowValueListParsing : {
     worksheetName: 'RowValueListParsing',
     dataLayout: 'dataCollection',
-    numDataEntriesParsed: 7,
+    numDataEntriesParsed: 1,
     meta: {
       note: 'This spreadsheet test row value list parsing'
     },
     metaTypeMap: {
       note: 'string'
     },
-    dataTypeMap: {
+    dataTypeMap: [{
       stringList: 'string:list',
       numberList: 'number:list',
       boolList: 'boolean:list',
@@ -221,7 +230,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       passwordList: 'password:list',
       jsonList: 'json:list',
       uuidList: 'uuid:list'
-    },
+    }],
     data: [{
       stringList: [ 'a', 'b', 'c', 'd' ],
       numberList: [1, 2, 3 ],

@@ -80,8 +80,7 @@ export const dbExists: DbExists = async (
   return existingDbs.includes(dbName)
 }
 
-// @ts-expect-error complement does not hanlde multiple signatures
-export const dbDoesNotExist: DbDoesNotExist = asyncComplement(dbExists)
+export const dbDoesNotExist: DbDoesNotExist = asyncComplement(dbExists) as DbDoesNotExist
 
 export const createDb: CreateDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,

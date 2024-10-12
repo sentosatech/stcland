@@ -12,7 +12,7 @@ import {  allDefinedOrAllUndefined, objectsHaveSameKeys, toJson } from '@stcland
 
 import { expectedSpreadsheetResults } from './expectedParsedSpreadsheetResults'
 import {
-  DataType, ParsedWorksheetResult, ParseOptions, MetaTypeMap, DataTypeMap,
+  ParsedWorksheetResult, ParseOptions, MetaTypeMap, DataTypeMap,
   DataTableData, DataCollectionData, Meta, Data
 } from '../src/SpreadsheetParserTypes'
 
@@ -56,7 +56,7 @@ describe('Test Spreadsheet Parser', () => {
     const parseOpts: ParseOptions = {
       reportProgress: true,
       reportWarnings: false,
-      includeTypeMaps: true
+      includeDataTypeMaps: true
     }
 
     await forEachSheet(assertParsedWorksheet, spreadsheetPath, testMeta, parseOpts)
@@ -73,16 +73,7 @@ const assertParsedWorksheet = async (
   clientData: TestMeta
 ) => {
 
-  const {
-    worksheetName,
-    dataLayout,
-    numDataEntriesParsed: numDataRowsParsed,
-    data: parsedData,
-    dataTypeMap: parsedDataTypeMap,
-    meta: parsedMeta,
-    metaTypeMap: parsedMetaTypeMap
-  } = parsedWorksheet
-
+  const { worksheetName } = parsedWorksheet
   const expectedParsedWorksheet = expectedSpreadsheetResults[worksheetName]
 
   if (!expectedParsedWorksheet) {
@@ -93,29 +84,38 @@ const assertParsedWorksheet = async (
   const {
     worksheetName: expectedSheetName,
     dataLayout: expectedDataLayout,
-    numDataEntriesParsed: expectedNumDataRowsParsed,
+    numDataEntriesParsed: expectedNumDataEntriesParsed,
     data: expectedData,
     dataTypeMap: expectedDataTypeMap,
     meta: expectedMeta,
     metaTypeMap: expectedMetaTypeMap
   } = expectedParsedWorksheet
 
+  const {
+    dataLayout,
+    numDataEntriesParsed,
+    data: parsedData,
+    dataTypeMap: parsedDataTypeMap,
+    meta: parsedMeta,
+    metaTypeMap: parsedMetaTypeMap
+  } = parsedWorksheet
+
   expect(worksheetName).toEqual(expectedSheetName)
   expect(dataLayout).toEqual(expectedDataLayout)
-  expect(numDataRowsParsed).toEqual(expectedNumDataRowsParsed) // TODO: changte to number date entries parsed
+  expect(numDataEntriesParsed).toEqual(expectedNumDataEntriesParsed)
   expect(clientData.message).toEqual(testMeta.message)
 
-  // assertParsedWorkSheetMetaTypeMaps(
-  //   expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
-  // )
+  assertParsedWorkSheetMetaTypeMaps(
+    expectedMetaTypeMap, parsedMetaTypeMap, worksheetName
+  )
 
-  // assertParsedWorkSheetMeta(
-  //   expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
-  // )
+  assertParsedWorkSheetMeta(
+    expectedMeta, expectedMetaTypeMap, parsedMeta, parsedMetaTypeMap, worksheetName
+  )
 
-  // assertParsedWorksheetDataTypeMaps(
-  //   expectedDataTypeMap, parsedDataTypeMap, worksheetName
-  // )
+  assertParsedWorksheetDataTypeMaps(
+    expectedDataTypeMap, parsedDataTypeMap, worksheetName
+  )
 
   switch (dataLayout) {
   case 'dataCollection':
@@ -306,19 +306,10 @@ const assertParsedWorksheetTableData = (
     })
 
   assertConsistentDefinedState(
-    worksheetName, expectedDataTypeMap, expectedDataTypeMap, {
-      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but expectedDataTypeMap is undefined',
-      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but expectedDataTypeMap is defined'
+    worksheetName, expectedDataTypeMap, parsedDataTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but parsedDataTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but parsedDataTypeMap is defined'
     })
-
-  // all inputs should be eithyer all defined or all undefined
-  const testInputs = [expectedData, pasredData, expectedDataTypeMap, parsedDataTypeMap]
-  if (!allDefinedOrAllUndefined(...testInputs)) {
-    assert(false,
-      `assertParsedWorksheetTableData(): WS:${worksheetName}: \n` +
-      'All expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap ' +
-      'should be defined or all should be undefined')
-  }
 
   if (!expectedData) return
 
@@ -353,9 +344,8 @@ const assertParsedData = (
   expectedRowData: Data | undefined,
   DataTypeMap: DataTypeMap | undefined,
   worksheetName: string,
-  validateOpts: ValidateOpts,
+  validateOpts?: ValidateOpts,
 ) => {
-
 
   if (any(isUndefined, [parsedRowData, expectedRowData, DataTypeMap]))
     throw new Error('assertParsedRow(): All inputs should be defined')
@@ -417,37 +407,29 @@ const assertParsedWorksheetCollectionData = (
     })
 
   assertConsistentDefinedState(
-    worksheetName, expectedDataTypeMap, expectedDataTypeMap, {
-      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but expectedDataTypeMap is undefined',
-      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but expectedDataTypeMap is defined'
+    worksheetName, expectedDataTypeMap, parsedDataTypeMap, {
+      firstDefinedButNotSecondMsg: 'expectedDataTypeMap is defined but parsedDataTypeMap is undefined',
+      secondDefinedButNotFirstMsg: 'expectedDataTypeMap is undefined but parsedDataTypeMap is defined'
     })
-
-  // all inputs should be either all defined or all undefined
-  const testInputs = [expectedData, parsedData, expectedDataTypeMap, parsedDataTypeMap]
-  if (!allDefinedOrAllUndefined(...testInputs)) {
-    assert(false,
-      `assertParsedWorksheetListData(): WS:${worksheetName}: \n` +
-      'All expectedMeta, parsedMeta, expectedMetaTypeMap, parsedMetaTypeMap ' +
-      'should be defined or all should be undefined')
-  }
 
   if (!expectedData) return
 
   assert( parsedData!.length === expectedData.length)
 
   expectedData.forEach((expectedEntry, idx) => {
-    const parsedEntry = parsedData![idx]
+
+    const parsedEntry = parsedData?.[idx]
+    const expectedEntryDataTypeMap = expectedDataTypeMap?.[idx]
+
     expect(
-      objectsHaveSameKeys(expectedEntry, parsedEntry),
+      objectsHaveSameKeys(expectedEntry, parsedEntry!),
       `\nWS:${worksheetName}: Parsed data does not have same keys as expected\n` +
       `  expected data keys: ${toJson(keys(expectedEntry))}\n` +
-      `  parsed data keys: ${toJson(keys(parsedData!))}\n`
+      `  parsed data keys: ${toJson(keys(parsedEntry!))}\n`
     ).toEqual(true)
 
-    // const { expectAllUndefined, expectAllErrors } = expectedData // TODO: should we add this to data collections?
-    const validateOpts: ValidateOpts = { expectAllUndefined: false,  expectAllErrors: false }
     assertParsedData(
-      parsedEntry, expectedEntry, expectedDataTypeMap, worksheetName, validateOpts
+      parsedEntry, expectedEntry, expectedEntryDataTypeMap, worksheetName
     )
   })
 }
