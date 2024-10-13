@@ -5,6 +5,17 @@ import FormInput, {
   pickFormProps,
 } from '../FormInput'
 
+type EmailProps = FormInputProps;
+type NumberProps = FormInputProps;
+type PasswordProps = FormInputProps;
+type TextInputProps = FormInputProps;
+type TextAreaProps = FormInputProps & { rows: number };
+type TimeInputProps = FormInputProps;
+type DateInputProps = FormInputProps;
+type RadioButtonProps = FormInputProps & {
+  onChange?: (event: React.MouseEvent<HTMLInputElement>) => void;
+};
+
 type InputSetProps = FormInputProps & {
   type:
     | FieldType.EMAIL
@@ -25,23 +36,42 @@ const InputSet = function ({ ...props }: InputSetProps) {
   return <FormInput {...formInputProps} />
 }
 
-const Email = ({ ...props }: FormInputProps) => (
+const Email = ({ ...props }: EmailProps) => (
   <InputSet {...pickFormProps(props)} type={FieldType.EMAIL} />
 )
 
-const Number = ({ ...props }: FormInputProps) => (
+const NumberInput = ({ ...props }: NumberProps) => (
   <InputSet {...pickFormProps(props)} type={FieldType.NUMBER} />
 )
 
-const Password = ({ ...props }: FormInputProps) => (
+const Password = ({ ...props }: PasswordProps) => (
   <InputSet {...pickFormProps(props)} type={FieldType.PASSWORD} />
 )
 
-const Text = ({ ...props }: FormInputProps) => (
-  <InputSet {...pickFormProps(props)} type={FieldType.TEXT} />
+const Text = ({
+  label = '',
+  placeholder = '',
+  valueAsNumber = false,
+  required = false,
+  disabled = false,
+  hidden = false,
+  onFocus = () => {},
+  ...rest
+}: TextInputProps) => (
+  <InputSet
+    label={label}
+    placeholder={placeholder}
+    valueAsNumber={valueAsNumber}
+    required={required}
+    disabled={disabled}
+    hidden={hidden}
+    onFocus={onFocus}
+    {...pickFormProps(rest)}
+    type={FieldType.TEXT}
+  />
 )
 
-const TextArea = ({ ...props }: FormInputProps & { rows: number }) => (
+const TextArea = ({ ...props }: TextAreaProps) => (
   <InputSet
     {...pickFormProps(props)}
     type={FieldType.TEXTAREA}
@@ -49,7 +79,7 @@ const TextArea = ({ ...props }: FormInputProps & { rows: number }) => (
   />
 )
 
-const TimeInput = ({ ...props }: FormInputProps) => (
+const TimeInput = ({ ...props }: TimeInputProps) => (
   <InputSet
     {...pickFormProps(props)}
     type={FieldType.TIME}
@@ -58,7 +88,7 @@ const TimeInput = ({ ...props }: FormInputProps) => (
   />
 )
 
-const DateInput = ({ ...props }: FormInputProps) => (
+const DateInput = ({ ...props }: DateInputProps) => (
   <InputSet
     defaultValue={props.defaultValue}
     {...pickFormProps(props)}
@@ -67,13 +97,7 @@ const DateInput = ({ ...props }: FormInputProps) => (
   />
 )
 
-const RadioButton = ({
-  id,
-  onChange,
-  ...props
-}: FormInputProps & {
-  onChange?: (event: React.MouseEvent<HTMLInputElement>) => void;
-}) => {
+const RadioButton = ({ id, onChange, ...props }: RadioButtonProps) => {
   return (
     <InputSet
       {...pickFormProps(props)}
@@ -86,11 +110,22 @@ const RadioButton = ({
 export {
   Email,
   InputSet,
-  Number,
+  NumberInput,
   Password,
   Text,
   TextArea,
   TimeInput,
   DateInput,
   RadioButton,
+}
+
+export type {
+  EmailProps,
+  NumberProps,
+  PasswordProps,
+  TextInputProps,
+  TextAreaProps,
+  TimeInputProps,
+  DateInputProps,
+  RadioButtonProps,
 }

@@ -1,12 +1,14 @@
-import Form from './Form'
-import Panel from './Panel'
-import FormTitle from './FormTitle'
 import Fieldset from './FieldSet'
+import Form, { Props as FormProps } from './Form'
+import FormTitle from './FormTitle'
+import Panel from './Panel'
 import {
   Checkbox,
+  DateInput,
   Email,
+  FileInput,
   InputSet,
-  Number,
+  NumberInput,
   Password,
   RadioButton,
   RadioButtonGroup,
@@ -14,18 +16,30 @@ import {
   Text,
   TextArea,
   TimeInput,
-  FileInput,
+} from './inputs'
+
+import type {
+  DateInputProps,
+  EmailProps,
+  NumberProps,
+  PasswordProps,
+  RadioButtonProps,
+  TextAreaProps,
+  TextInputProps,
+  TimeInputProps,
 } from './inputs'
 
 export {
-  Form,
-  Panel,
-  FormTitle,
-  Fieldset,
   Checkbox,
+  DateInput,
   Email,
+  Fieldset,
+  FileInput,
+  Form,
+  FormTitle,
   InputSet,
-  Number,
+  NumberInput,
+  Panel,
   Password,
   RadioButton,
   RadioButtonGroup,
@@ -33,5 +47,16 @@ export {
   Text,
   TextArea,
   TimeInput,
-  FileInput,
+}
+
+export type {
+  DateInputProps,
+  EmailProps,
+  FormProps,
+  NumberProps,
+  PasswordProps,
+  RadioButtonProps,
+  TextAreaProps,
+  TextInputProps,
+  TimeInputProps,
 }

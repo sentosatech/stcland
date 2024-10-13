@@ -1,8 +1,20 @@
 import Checkbox from './CheckBox'
+import FileInput from './FileInput'
+import type {
+  DateInputProps,
+  EmailProps,
+  NumberProps,
+  PasswordProps,
+  RadioButtonProps,
+  TextAreaProps,
+  TextInputProps,
+  TimeInputProps,
+} from './InputSet'
 import {
+  DateInput,
   Email,
   InputSet,
-  Number,
+  NumberInput,
   Password,
   RadioButton,
   Text,
@@ -11,13 +23,14 @@ import {
 } from './InputSet'
 import RadioButtonGroup from './RadioButtonGroup'
 import Select from './Select'
-import FileInput from './FileInput'
 
 export {
   Checkbox,
+  DateInput,
   Email,
+  FileInput,
   InputSet,
-  Number,
+  NumberInput,
   Password,
   RadioButton,
   RadioButtonGroup,
@@ -25,5 +38,15 @@ export {
   Text,
   TextArea,
   TimeInput,
-  FileInput,
+}
+
+export type {
+  DateInputProps,
+  EmailProps,
+  NumberProps,
+  PasswordProps,
+  RadioButtonProps,
+  TextAreaProps,
+  TextInputProps,
+  TimeInputProps,
 }

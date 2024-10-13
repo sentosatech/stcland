@@ -11,10 +11,12 @@ import Label from './FormLabel'
 //*****************************************************************************
 // Interface
 //*****************************************************************************
-type ClassNamesShape = {
-  input?: string;
-  label?: string;
-};
+
+type ClassNamesShape = Partial<{
+  input: string;
+  label: string;
+}>;
+
 type TextAreaPropsShape = {
   rows: number;
 };
@@ -34,6 +36,7 @@ export type FormInputProps = {
   dirty?: boolean;
   onFocus?: () => void;
   textAreaProps?: TextAreaPropsShape;
+  customStyles?: Partial<FormInputStyles>;
   classNames?: ClassNamesShape;
   className?: string;
   onChange?: () => void;
@@ -86,8 +89,14 @@ export enum FieldType {
 
 type Props = FormInputProps & {
   type: FieldType;
-  classNames?: ClassNamesShape;
-  className?: string;
+  customStyles?: Partial<FormInputStyles>;
+};
+
+export type FormInputStyles = {
+  root: string;
+  input: string;
+  error: string;
+  label: string;
 };
 
 //*****************************************************************************
@@ -96,8 +105,6 @@ type Props = FormInputProps & {
 
 const FormInput = ({
   textAreaProps,
-  className,
-  classNames,
   type,
   name,
   id,
@@ -110,6 +117,7 @@ const FormInput = ({
   hidden = false,
   placeholder = '',
   required = false,
+  customStyles,
 }: Props) => {
   const { register, setValue, clearErrors, formState, setFocus } =
     useFormContext() || nullFormContext
@@ -131,16 +139,19 @@ const FormInput = ({
     message: 'is required',
   }
 
-  const cn = {
-    root: className || '',
+  const cn: FormInputStyles = {
+    root: cns(customStyles?.root) || '',
+    label: cns(customStyles?.label) || '',
     input: cns(
       'rounded-md border border-neutral-750 bg-zinc-925 text-sm text-zinc-400',
       'mb-4 p-1',
       type !== FieldType.TEXTAREA && 'h-8',
-      classNames?.input || '',
+      customStyles?.input || ''
     ),
-    error:
+    error: cns(
       'absolute text-xs ml-2 text-rose-400 -top-2 items-center flex h-full',
+      customStyles?.error
+    ),
   }
 
   const inputProps = {
@@ -161,9 +172,7 @@ const FormInput = ({
   const FormInputComponent = (
     <div className={cn.root}>
       {label && (
-        <Label
-          {...{ labelText: label, required, className: classNames?.label }}
-        />
+        <Label {...{ labelText: label, required, className: cn.label }} />
       )}
       <div className="relative">
         {type === FieldType.TEXTAREA ? (

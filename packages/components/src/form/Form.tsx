@@ -13,7 +13,7 @@ import { FormTitle, Panel } from './'
 // Interface
 //*****************************************************************************
 
-interface Props {
+export interface Props {
   id?: string;
   mode?: 'onBlur' | 'onChange' | 'onSubmit' | 'onTouched' | 'all';
   onSubmit?: (data: any, event: any) => void;
