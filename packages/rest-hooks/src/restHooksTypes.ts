@@ -365,13 +365,6 @@ export namespace StcRest {
     //=> Request DELETE /things/123
     ```
    */
-    // export type CreateMutateFn = (
-    //   restPath: string,
-    //     // Path to the REST endpoint.
-    //     // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-    //   axiosOptions?: Partial<AxiosRequestConfig>
-    //     // Optional Axios request configuration.
-    // ) => MutateFn;
   export type CreateDeleteFn = CreateMutateFn
 
   type Action = () => void
