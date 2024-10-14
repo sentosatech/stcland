@@ -243,7 +243,7 @@ export namespace StcRest {
     Options passed into the {@link MutateFn}.
   */
   export interface MutateFnOptions {
-    data: unknown;
+    data?: unknown;
       // The parameters for the mutation operation.
     restParams?: RestParams;
       // restParams.pathParams - For path variable substitutions.
@@ -255,7 +255,7 @@ export namespace StcRest {
     This function can be passed into 'react-query' mutation hooks.
    */
   export type MutateFn = (
-    options: MutateFnOptions
+    options?: MutateFnOptions
       // A promise containing the results of the mutation.
   ) => Promise<AxiosResponse>;
 
@@ -356,16 +356,6 @@ export namespace StcRest {
   export type CreatePatchFn = CreateMutateFn;
 
   /**
-    A function that performs a REST DELETE request.
-    This function can be passed into 'react-query' mutation hooks.
-    Returns a promise containing the response to the delete request.
-   */
-  export type DeleteFn = (
-    restParams?: RestParams
-      // The path and query parameters to be used for the REST call.
-  ) => Promise<AxiosResponse>;
-
-  /**
     Creates a function that performs a REST DELETE request to the specified path.
 
     Example:
@@ -375,11 +365,36 @@ export namespace StcRest {
     //=> Request DELETE /things/123
     ```
    */
-  export type CreateDeleteFn = (
-    restPath: string,
-      // Path to the REST endpoint.
-      // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
-    axiosOptions?: Partial<AxiosRequestConfig>
-      // Optional Axios request configuration.
-  ) => DeleteFn;
+    // export type CreateMutateFn = (
+    //   restPath: string,
+    //     // Path to the REST endpoint.
+    //     // Can contain path substitution variables in the form of `/path/:variableToSubstitute`.
+    //   axiosOptions?: Partial<AxiosRequestConfig>
+    //     // Optional Axios request configuration.
+    // ) => MutateFn;
+  export type CreateDeleteFn = CreateMutateFn
+
+  type Action = () => void
+  export type ActionsList = Action[]
+
+  export type MutationOptions = {
+      cachesToAdd?: string[]
+      cachesToInvalidate?: string[]
+      cachesToRemove?: string[]
+      actions?: ActionsList
+      routeTo?: string
+      toastMessage?: string
+  }
+
+  export interface MutateBaseProps {
+    mutateFn: CreatePostFn | CreatePutFn | CreateDeleteFn | CreatePatchFn
+    options: {
+      mutationFnName?: string
+      onSuccess?: MutationOptions | (()=> void)
+      onError?: MutationOptions | (()=> void)
+      baseUrl?: string
+      navigateFn?: (routeTo?: string) => void
+      toastFn?: (toastMessage?: string) => void
+    }
+  }
 }

@@ -48,23 +48,23 @@ export const createRestClient: StcRest.CreateRestClient = (
 
     createPostFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) => {
+        ({ data, restParams } = {}) => {
           return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
         },
 
     createPutFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) =>
+        ({ data, restParams } = {}) =>
           restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createPatchFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) =>
+        ({ data, restParams } = {}) =>
           restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
 
     createDeleteFn:
       (restPath, axiosOptions) =>
-        (restParams) =>
+        ({ restParams } = {}) =>
           restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
   }
 
