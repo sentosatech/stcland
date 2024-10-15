@@ -2,10 +2,9 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
+
 // TODO
-// - support _skip_ in data list
-// - better name for DataList (DabaObject?  DataCollection?, if collection could have multiple --- seperated entires)
-// - RowValueList -> RowList
+// - RowValueList -> RowDataList (DataRow?)
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
 
 //--- common -------------------------------------------------------------------
@@ -26,13 +25,18 @@ export interface DataCellMeta extends CellMeta {
   dataType: DataType;
 }
 
+export type DelimiterActions = 'stop' | 'continue'
+
 export interface ParseOptions {
   reportProgress?: boolean
     // defaults to true
   reportWarnings?: boolean
     // defaults to true
-  dataTerminationRow? : '---' | undefined
-  // undefined means no termination data parsing on empty row or end of file
+  includeDataTypeMaps?: boolean
+    // defaults to false
+  onDelimiter?: DelimiterActions
+    // 'stop' is used front matter parsing as collection
+
 }
 
 //--- data types --------------------------------------------------------------
@@ -55,30 +59,30 @@ export type InvalidDataTypeWarning = 'invalid-data-type'
 export type InvalidListTypeWarning = 'invalid-list-type'
 export type InvalidTypeWarning = InvalidDataTypeWarning | InvalidListTypeWarning
 
-export type DataListDataType =  RowValueListType | DataTableDataType
+export type DataCollectionDataType =  RowValueListType | DataTableDataType
 
-export const validDataListDataTypes: DataListDataType[] = [
+export const validDataCollectionDataTypes: DataCollectionDataType[] = [
   ...validRowValueListTypes, ...validDataTableDataTypes
 ]
 
-export type DataType = DataTableDataType | DataListDataType
+export type DataType = DataTableDataType | DataCollectionDataType
 
 // using a set to remove duplicates
 export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataTableDataTypes,
-  ...validDataListDataTypes
+  ...validDataCollectionDataTypes
 ]))
 
-export type DataTypeMap = Record<string, DataType>
+export type DataTypeMap = Record<string, DataType> | Record<string, DataType>[]
 export type Meta = Record<string, any>
 export type MetaTypeMap = Record<string, DataType>
 
 
 //--- data layout -------------------------------------------------------------
 
-export type DataLayout = 'dataList' | 'dataTable' | 'frontMatterOnly' | 'any'
+export type DataLayout = 'dataCollection' | 'dataTable' | 'frontMatterOnly'
 
-export const validDataLayouts: DataLayout[] = ['dataList', 'dataTable', 'frontMatterOnly', 'any']
+export const validDataLayouts: DataLayout[] = ['dataCollection', 'dataTable', 'frontMatterOnly']
 
 export interface ParseDataLayoutResult {
   dataLayout: DataLayout
@@ -110,13 +114,14 @@ export type ParseFrontMatter = (
 
 //--- data table --------------------------------------------------------------
 
-// list of objects
+// list of data objects
 export type DataTableData = Data[]
 
 export interface ParseDataTableResult {
   data: DataTableData
-  dataTypeMap: DataTypeMap
-  numDataRowsParsed: number
+  dataTypeMap?: DataTypeMap
+  numDataEntriesParsed: number
+  nextRowNum: number
 }
 
 export type ParseDataTable = (
@@ -126,22 +131,23 @@ export type ParseDataTable = (
 ) => ParseDataTableResult;
 
 
-// --- data list --------------------------------------------------------------
+// --- data collections -------------------------------------------------------
 
-// object
-export type DataListData = Data
+// list of data objects
+export type DataCollectionData = Data[]
 
-export interface ParseDataListResult {
-  data: DataListData | undefined
+export interface ParseDataCollectionResult {
+  data: DataCollectionData | undefined
   dataTypeMap: DataTypeMap | undefined
-  numDataRowsParsed: number
+  numDataEntriesParsed: number
+  nextRowNum: number
 }
 
-export type ParseDataList = (
+export type ParseDataCollection = (
   ws: Worksheet,
   startingRowNum: number,
   parseOpts?: ParseOptions
-) => ParseDataListResult;
+) => ParseDataCollectionResult;
 
 
 // --- worksheet parsing ------------------------------------------------------
@@ -149,10 +155,10 @@ export type ParseDataList = (
 export interface ParsedWorksheetResult {
   worksheetName: string,
   dataLayout: DataLayout,
-  numDataRowsParsed: number,
+  numDataEntriesParsed: number,
   meta?: Meta
   metaTypeMap?: MetaTypeMap
-  data?: DataListData | DataTableData
+  data?: DataCollectionData | DataTableData
   dataTypeMap?: DataTypeMap
 }
 

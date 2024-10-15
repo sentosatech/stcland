@@ -11,16 +11,14 @@ import {
 
 import {
   validDataTableDataTypes, validRowValueListTypes,
-  validDataListDataTypes, validDataTypes,
+  validDataCollectionDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
 import type {
-  ParseOptions, DataLayout,
+  ParseOptions,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
-  CellMeta, DataCellMeta,
-  DataTableDataType, RowValueListType, DataListDataType,
-  // Data, DataTableData, DataListData,
-  DataType,
+  CellMeta, DataCellMeta, RowMeta,
+  DataType, DataTableDataType, RowValueListType, DataCollectionDataType,
   InvalidTypeWarning,
 } from './SpreadsheetParserTypes'
 
@@ -114,26 +112,6 @@ export const cellValueFromJson = (
     }
   }
   return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
-}
-
-// TODO: eventually will want cellValueFromList, where we pass in the type, and
-//       that is able to handle list:number, list:uuid, etc ...
-export const cellValueFromStringList = (
-  dataLayout: DataLayout,
-  colStart: number,
-  rowStart: number,
-  dataCellMeta: DataCellMeta,
-  parseOpts?: ParseOptions
-) : string[] => {
-
-  if (dataLayout !== 'dataList') {
-    const warningMsg = dataCellWarning(
-      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataList' dataLayout`,
-      dataCellMeta, parseOpts
-    )
-    return [warningMsg]
-  }
-  return ['']
 }
 
 
@@ -266,8 +244,8 @@ export const isValidRowValueListType = (dataType: DataType) =>
 
 export const isRowValueListType = isValidRowValueListType
 
-export const isValidDataListDataType = (dataType: DataType) =>
-  isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
+export const isValidDataCollectionDataType = (dataType: DataType) =>
+  isString(dataType) && validDataCollectionDataTypes.includes(dataType as DataCollectionDataType)
 
 export const isValidDataType = (dataType: DataType) =>
   isString(dataType) && validDataTypes.includes(dataType)
@@ -284,7 +262,7 @@ export const isValidDataTypeList = (dataTypes: DataType[]) : {
 export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
 export const isNotValidRowValueListType = complement(isValidRowValueListType)
 export const isNotRowValueListType = isNotValidRowValueListType
-export const isNotValidDataListDataType = complement(isValidDataListDataType)
+export const isNotValidDataCollectionDataType = complement(isValidDataCollectionDataType)
 export const isNotValidDataType = complement(isValidDataType)
 export const isNotValidDataTypeList = complement(isValidDataTypeList)
 
@@ -376,17 +354,35 @@ export const cellWarning = (
   return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
 }
 
+export const rowWarning = (
+  msg: string,
+  rowMeta: RowMeta,
+  parseOpts?: ParseOptions
+): string =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${rowMeta.worksheetName} Row:${(rowMeta.rowNumber)}\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${rowMeta.worksheetName}, Row:${(rowMeta.rowNumber)}`
+}
+
+
 //--- General Parsing Utils ---------------------------------------------------
 
-export const rowIsFrontMatterDelimiter = (row: Row) =>
-  row.getCell(1).value === '---'
+
+export const rowIsDelimiter = (row: Row) =>
+  row.getCell(1).toString().trim().startsWith('---')
 
 export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
   const row = ws.getRow(startingRow)
-  return rowIsFrontMatterDelimiter(row)
+  return rowIsDelimiter(row)
 }
 
-export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
+export const rowIsNotFrontMatterDelimiter = complement(rowIsDelimiter)
 export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
 
 export const passwordHash = (password: string) =>
@@ -399,7 +395,7 @@ export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`
 
-export const shouldSkipDataListRow = (rowValues: CellValue[]) =>
+export const shouldSkipDataCollectionRow = (rowValues: CellValue[]) =>
   rowValues[2]?.toString().trim() === '_skip_'
 
 export const shouldSkipDataTableValue = (callValue: CellValue) =>

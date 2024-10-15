@@ -1,62 +1,63 @@
 import { complement } from 'ramda'
 
 import { Database } from 'arangojs'
+
 import type {
   DocumentCollection,
   EdgeCollection,
 } from 'arangojs/collection'
+
+// import { EdgeDefinitionOptions } from 'arangojs/graph'
 
 import { asyncComplement } from '@stcland/utils'
 import { throwIf } from '@stcland/errors'
 
 import {
   CollectionType,
-  IfDbExistsOnCreate, IfDbDoesNotExistOnGet,
-  IfCollectionExistsOnCreate,   IfCollectionDoesNotExistOnGet,
+  // Graph,
 } from './ArangoUtilsTypes'
 
 import type {
-  ArangoHostConfig, DataBaseUser, GetSysDb,
-  CanConnectToDbServer, CanNotConnectToDbServer,
+  ArangoHostConfig, GetSysDb,
+  CanConnectToServer, CanNotConnectToServer,
   DbIsConnected, DbIsNotConnected,
-  CreateDb, DropDb, GetDb, DropAllDatabases,
   DbExists, DbDoesNotExist, NonSystemDbsExists,
-  CreateCollectionOpts, CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
+  CreateDb, CreateDbOptions, IfDbExistsOnCreate,
+  DropDb, DropAllDatabases,
+  GetDb, GetDbOptions,
+  IfCollectionExistsOnCreate,
+  CreateCollection, CreateDocumentCollection, CreateEdgeCollection,
   CollectionExists, CollectionDoesNotExist, CollectionDocCount,
-  GetCollection, GetDocCollection, GetEdgeCollection, DropCollection, GetCollectionType,
-  DocumentExistsById,
-  DocumentExists,
-  DocumentDoesNotExist
+  GetCollection, GetDocCollection, GetEdgeCollection, IfDbDoesNotExistOnGet,
+  DropCollection, GetCollectionType,
+  DocumentExistsById, DocumentExists, DocumentDoesNotExist,
+  GraphExists, GraphDoesNotExist, CreateGraph, CreateEmptyGraph,
+
 } from './ArangoUtilsTypes'
 
-//*****************************************************************************
-// General Utils
-//*****************************************************************************
+// --- General Utils ----------------------------------------------------------
 
-export const canConnectToDbServer : CanConnectToDbServer = async (hostConfig: ArangoHostConfig) => {
+export const canConnectToServer : CanConnectToServer = async (hostConfig) => {
   const sysDb = await getSysDb(hostConfig)
   return dbIsConnected(sysDb)
 }
-export const canNotConnectToDbServer: CanNotConnectToDbServer =
-  asyncComplement(canConnectToDbServer)
+export const canNotConnectToServer: CanNotConnectToServer =
+  asyncComplement(canConnectToServer)
 
 // throws error if connection fails
 export const getSysDb: GetSysDb = async (
-  hostConfig: ArangoHostConfig,
-  opts?: { checkConnection: boolean }
+  hostConfig, getSysDbOpts
 ) => {
   const { url = '', username = '', password = '' } = hostConfig || {}
   const sysDb = new Database({ url, auth: { username, password } })
-  if (opts?.checkConnection) {
+  if (getSysDbOpts?.checkConnection) {
     if (await dbIsNotConnected(sysDb)) throw new Error('Sys database connection failed')
   }
   return sysDb
 }
 
-//*****************************************************************************
-// Database Utils
-//*****************************************************************************
 
+// --- Database Utils ---------------------------------------------------------
 
 export const dbIsConnected: DbIsConnected = async (db: Database) => {
   try { await db.get(); return true }
@@ -79,53 +80,58 @@ export const dbExists: DbExists = async (
   return existingDbs.includes(dbName)
 }
 
-// @ts-expect-error complement does not hanlde multiple signatures
-export const dbDoesNotExist: DbDoesNotExist = asyncComplement(dbExists)
+export const dbDoesNotExist: DbDoesNotExist = asyncComplement(dbExists) as DbDoesNotExist
 
 export const createDb: CreateDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,
   dbName: string,
-  dbUsers: DataBaseUser[],
-  ifDbExists: IfDbExistsOnCreate = IfDbExistsOnCreate.ThrowError
+  createDbOpts?: CreateDbOptions
 ) => {
   const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
   if (isNotSysDb(sysDb))
     throw new Error('createArangoDb(): non system DB provided: ' + sysDb.name)
 
+  const ifDbExists: IfDbExistsOnCreate = createDbOpts?.ifDbExists || 'ThrowError'
+
   let requestedDbExists = await dbExists(sysDb, dbName)
 
-  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.ThrowError)
+  if (requestedDbExists && ifDbExists === 'ThrowError')
     throw new Error(`Attempting to create arango database '${dbName}', but it already exists`)
 
-  if (requestedDbExists && ifDbExists === IfDbExistsOnCreate.Overwrite) {
+  if (requestedDbExists && ifDbExists === 'Overwrite') {
     await sysDb.dropDatabase(dbName)
     requestedDbExists = false
   }
 
   if (!requestedDbExists)
-    await sysDb.createDatabase(dbName, { users: dbUsers })
+    // actually create the database
+    await sysDb.createDatabase(dbName, createDbOpts)
 
+  // returns instance of already created database
   return sysDb.database(dbName)
 }
 
 export const getDb: GetDb = async (
   sysDbOrArangoHostConfig: ArangoHostConfig | Database,
   dbName: string,
-  ifDbDoesNotExist: IfDbDoesNotExistOnGet = IfDbDoesNotExistOnGet.ThrowError,
-  dbUsers?: DataBaseUser[],
+  getDbOpts?: GetDbOptions
 ) => {
   const sysDb = await getDbFromVarious(sysDbOrArangoHostConfig)
 
   if (isNotSysDb(sysDb))
     throw new Error('getArangoDb(): non system DB provided: ' + sysDb.name)
 
+  const ifDbDoesNotExist: IfDbDoesNotExistOnGet = getDbOpts?.ifDbDoesNotExist || 'ThrowError'
   const requestedDbExists = await dbExists(sysDb, dbName)
 
-  if (!requestedDbExists && ifDbDoesNotExist === IfDbDoesNotExistOnGet.ThrowError)
+  if (!requestedDbExists && ifDbDoesNotExist === 'ThrowError' )
     throw new Error(`Attempting to fetch database '${dbName}', but it does not exit`)
 
-  if (!requestedDbExists)
-    await sysDb.createDatabase(dbName, { users: dbUsers })
+  if (!requestedDbExists) {
+    // this is OK, getDbOpts extends CreateDbOptions
+    const createDbOpts = getDbOpts as CreateDbOptions
+    await sysDb.createDatabase(dbName, createDbOpts)
+  }
 
   return sysDb.database(dbName)
 }
@@ -220,9 +226,8 @@ export const documentExistsById: DocumentExistsById = async (
 export const documentDoesNotExistById: DocumentExistsById =
   asyncComplement(documentExistsById)
 
-//*****************************************************************************
-// Collcection Utils
-//*****************************************************************************
+
+// --- Collcection Utils ------------------------------------------------------
 
 export const collectionExists: CollectionExists = (
   db: Database,
@@ -233,22 +238,19 @@ export const collectionDoesNotExist: CollectionDoesNotExist =
   asyncComplement(collectionExists)
 
 export const createCollection: CreateCollection = async (
-  db: Database,
-  collectionName: string,
-  opts: CreateCollectionOpts
+  db, collectionName, createCollectionOpts
 ) => {
-  const {
-    ifExists = IfCollectionExistsOnCreate.ThrowError,
-    type = CollectionType.EDGE_COLLECTION
-  } = opts || {}
+
+  const { type = CollectionType.EDGE_COLLECTION } = createCollectionOpts || {}
+  const ifExists: IfCollectionExistsOnCreate = createCollectionOpts?.ifExists || 'ThrowError'
 
   const collection = db.collection(collectionName)
   let collectionExists = await collection.exists()
 
-  if (collectionExists && ifExists === IfCollectionExistsOnCreate.ThrowError)
+  if (collectionExists && ifExists === 'ThrowError')
     throw new Error(`DB ${db.name}: Attempting to create collection '${collectionName}', but it already exists`)
 
-  if (collectionExists && ifExists === IfCollectionExistsOnCreate.Overwrite) {
+  if (collectionExists && ifExists === 'Overwrite') {
     await collection.drop()
     collectionExists = false
   }
@@ -257,13 +259,31 @@ export const createCollection: CreateCollection = async (
   return collection
 }
 
+export const createDocCollection: CreateDocumentCollection = async (
+  db: Database,
+  collectionName: string,
+  ifExists: IfCollectionExistsOnCreate = 'ThrowError'
+) => {
+  const createCollectionOpts = { ifExists, type: CollectionType.DOCUMENT_COLLECTION }
+  return createCollection(db, collectionName, createCollectionOpts) as Promise<DocumentCollection>
+}
+
+export const createEdgeCollection: CreateEdgeCollection = async (
+  db: Database,
+  collectionName: string,
+  ifExists: IfCollectionExistsOnCreate = 'ThrowError'
+) => {
+  const createCollectionOpts = { ifExists, type: CollectionType.EDGE_COLLECTION }
+  return createCollection(db, collectionName, createCollectionOpts) as Promise<EdgeCollection>
+}
+
 const collectionTypeToString = (type: CollectionType): string =>
   type === CollectionType.DOCUMENT_COLLECTION ? 'document' : 'edge'
 
 export const getCollection: GetCollection = async (
   db: Database,
   collectionName: string,
-  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+  ifCollectionDoesNotExist = 'ThrowError',
   collectionType: CollectionType
 ) => {
 
@@ -274,12 +294,12 @@ export const getCollection: GetCollection = async (
     collectionExists ? (await collection.properties()).type : null
 
   throwIf(
-    !collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.ThrowError,
+    !collectionExists && ifCollectionDoesNotExist === 'ThrowError',
     `getCollection() DB ${db.name}: Attempting to fetch collection '${collectionName}', but it does not exist`
   )
 
   throwIf(
-    !collectionExists && ifCollectionDoesNotExist === IfCollectionDoesNotExistOnGet.Create && !collectionType,
+    !collectionExists && ifCollectionDoesNotExist === 'Create' && !collectionType,
     `getCollection() DB ${db.name}: Need to create '${collectionName}', but collection type not provided`
   )
 
@@ -298,7 +318,7 @@ export const getCollection: GetCollection = async (
 export const getDocCollection: GetDocCollection = async (
   db: Database,
   collectionName: string,
-  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+  ifCollectionDoesNotExist = 'ThrowError',
 ) => getCollection(
   db, collectionName, ifCollectionDoesNotExist, CollectionType.DOCUMENT_COLLECTION
 )
@@ -306,7 +326,7 @@ export const getDocCollection: GetDocCollection = async (
 export const getEdgeCollection: GetEdgeCollection = async (
   db: Database,
   collectionName: string,
-  ifCollectionDoesNotExist: IfCollectionDoesNotExistOnGet = IfCollectionDoesNotExistOnGet.ThrowError,
+  ifCollectionDoesNotExist = 'ThrowError',
 ) => getCollection(
   db, collectionName, ifCollectionDoesNotExist, CollectionType.EDGE_COLLECTION
 )
@@ -343,28 +363,44 @@ export const collectionDocCount: CollectionDocCount = async (
   return c.count
 }
 
-export const createDocCollection: CreateDocumentCollection = async (
+
+// --- graph functions --------------------------------------------------
+
+export const graphExists: GraphExists = (
   db: Database,
-  collectionName: string,
-  ifExists: IfCollectionExistsOnCreate = IfCollectionExistsOnCreate.ThrowError
+  graphName: string
+) => db.graph(graphName).exists()
+
+export const graphDoesNotExist: GraphDoesNotExist =
+  asyncComplement(collectionExists)
+
+export const createGraph: CreateGraph = async (
+  db, graphName, edgeDefinitions, createGraphOpts
 ) => {
-  const opts = { ifExists, type: CollectionType.DOCUMENT_COLLECTION }
-  return createCollection(db, collectionName, opts) as Promise<DocumentCollection>
+
+  const ifExists: IfCollectionExistsOnCreate = createGraphOpts?.ifExists || 'ThrowError'
+
+  const graph = db.graph(graphName)
+  let graphExists = await graph.exists()
+
+  if (graphExists && ifExists === 'ThrowError')
+    throw new Error(`DB ${db.name}: Attempting to create graph '${graphName}', but it already exists`)
+
+  if (graphExists && ifExists === 'Overwrite') {
+    await graph.drop()
+    graphExists = false
+  }
+
+  if (!graphExists) await graph.create(edgeDefinitions, createGraphOpts)
+  return graph
 }
 
-export const createEdgeCollection: CreateEdgeCollection = async (
-  db: Database,
-  collectionName: string,
-  ifExists: IfCollectionExistsOnCreate = IfCollectionExistsOnCreate.ThrowError
-) => {
-  const opts = { ifExists, type: CollectionType.EDGE_COLLECTION }
-  return createCollection(db, collectionName, opts) as Promise<EdgeCollection>
-}
+export const createEmptyGraph: CreateEmptyGraph = async (
+  db, graphName, createGraphOpts
+) => createGraph(db, graphName, [], createGraphOpts)
 
 
-//*****************************************************************************
-// module only functions
-//*****************************************************************************
+// --- module only functions --------------------------------------------------
 
 const isHostConfig = (arg: any): boolean => {
   return arg.url && typeof arg.url === 'string'

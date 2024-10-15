@@ -1,10 +1,24 @@
+
 import type { Database } from 'arangojs'
-import { CreateDatabaseUser } from 'arangojs/database'
-import {
-  CollectionType,
+import type { CreateDatabaseUser, CreateDatabaseOptions } from 'arangojs/database'
+
+import  { CollectionType } from 'arangojs/collection'
+import type {
   DocumentCollection,
   EdgeCollection
 } from 'arangojs/collection'
+
+import {
+  Graph, EdgeDefinitionOptions,
+  CreateGraphOptions as ArangoCreateGraphOptions
+} from 'arangojs/graph'
+
+// re-export arango types so clients can use directly
+export { Graph, Database, CollectionType }
+export type { DocumentCollection, EdgeCollection, CreateDatabaseUser }
+
+
+// --- General utils ----------------------------------------------------------
 
 export interface ArangoHostConfig {
   url: string
@@ -12,22 +26,17 @@ export interface ArangoHostConfig {
   password?: string
 }
 
-//*****************************************************************************
-// General utils
-//*****************************************************************************
-
 // Fetch the arango system database, throws error if connection fails
 export type GetSysDb = (
   hostConfig: ArangoHostConfig,
-  opts?: { checkConnection: boolean }
+  getSysDbOpts?: { checkConnection: boolean }
 ) => Promise<Database>
 
-export type CanConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
-export type CanNotConnectToDbServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
+export type CanConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
+export type CanNotConnectToServer = ( hostConfig: ArangoHostConfig ) => Promise<boolean>
 
-//*****************************************************************************
-// DB utils
-//*****************************************************************************
+
+// --- DB utils ----------------------------------------------------------------
 
 export type DbIsConnected = ( db: Database ) => Promise<boolean>
 export type DbIsNotConnected = ( db: Database ) => Promise<boolean>
@@ -39,41 +48,40 @@ export type DbExists = {
 
 export type DbDoesNotExist = DbExists
 
-export type DataBaseUser = CreateDatabaseUser
+export type IfDbExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
 
-export const enum IfDbExistsOnCreate {
-  ThrowError = 'throw-error',
-  Overwrite = 'overwrite',
-  ReturnExisting = 'return-existing',
+export type CreateDbOptions = CreateDatabaseOptions & {
+  ifDbExists?: IfDbExistsOnCreate // defaults to ThrowError
 }
 
-// Create a new arango database, throws error if connection to db server fails
 export type CreateDb = {
   ( hostConfig: ArangoHostConfig,
     dbName: string,
-    dbUsers: DataBaseUser[],
-    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
+    createDbOpts?: CreateDbOptions
+  ): Promise<Database>;
   ( sysDb: Database,
     dbName: string,
-    dbUsers: DataBaseUser[],
-    ifDbExists: IfDbExistsOnCreate): Promise<Database>;
+    createDbOpts?: CreateDbOptions
+  ): Promise<Database>;
 }
 
-export const enum IfDbDoesNotExistOnGet {
-  ThrowError = 'throw-error',
-  Create = 'create',
+export type IfDbDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+export type GetDbOptions =
+  CreateDatabaseOptions & {
+    // Note: CreateDatabaseOptions props only needed if
+    // IfDbDoesNotExistOnGet is Create and the target db does not exist
+  ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is Create
 }
 
 export type GetDb = {
   ( hostConfig: ArangoHostConfig,
     dbName: string,
-    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
-    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+    getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
   ( sysDb: Database,
     dbName: string,
-    ifDbDoesNotExist?: IfDbDoesNotExistOnGet, // default is ThrowError
-    dbUsers?: DataBaseUser[], // only needed if IfDbDoesNotExistOnGet is Create
+    getDbOpts?: GetDbOptions, // only needed if IfDbDoesNotExistOnGet is Create
   ) : Promise<Database>;
 }
 
@@ -94,31 +102,23 @@ export type NonSystemDbsExists = {
   ( sysDb: Database ) : Promise<boolean>;
 }
 
-//*****************************************************************************
-// Collection utils
-//*****************************************************************************
+
+// --- Collection utils -------------------------------------------------------
 
 export type CollectionExists =  (db: Database, collectionName: string) => Promise<boolean>;
 export type CollectionDoesNotExist = CollectionExists
 
-export { CollectionType }
-
-export const enum IfCollectionExistsOnCreate {
-  ThrowError = 'throw-error',
-  Overwrite = 'overwrite',
-  ReturnExisting = 'return-existing',
-}
+export type IfCollectionExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
 
 export interface CreateCollectionOpts {
   type?: CollectionType // defaults to EDGE_COLLECTION
   ifExists?: IfCollectionExistsOnCreate // defaults to ThrowError
 }
 
-// Create a new arango database, throws error if connection to db server fails
 export type CreateCollection = (
   db: Database,
   collectionName: string,
-  opts: CreateCollectionOpts
+  createCollectionOpts: CreateCollectionOpts
 ) => Promise<DocumentCollection | EdgeCollection>;
 
 export type CreateDocumentCollection = (
@@ -133,10 +133,7 @@ export type CreateEdgeCollection = (
   ifExists?: IfCollectionExistsOnCreate
 ) => Promise<EdgeCollection>;
 
-export const enum IfCollectionDoesNotExistOnGet {
-  ThrowError = 'throw-error',
-  Create = 'create',
-}
+export type IfCollectionDoesNotExistOnGet = 'ThrowError' | 'Create'
 
 export type GetCollection = (
   db: Database,
@@ -195,3 +192,36 @@ export type DocumentDoesNotExistById = (
   db: Database,
   documentId: string
 ) => Promise<boolean>
+
+
+// --- Graph Utils -------------------------------------------------------
+
+export type GraphExists =  (db: Database, graphName: string) => Promise<boolean>;
+export type GraphDoesNotExist = GraphExists
+
+export type IfGraphExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
+
+export type CreateGraphOptions = ArangoCreateGraphOptions & {
+  ifExists?: IfGraphExistsOnCreate // defaults to ThrowError
+}
+
+export type CreateGraph = (
+  db: Database,
+  graphName: string,
+  edgeDefinitions: EdgeDefinitionOptions[],
+  createGraphOpts?: CreateGraphOptions
+) => Promise<Graph>;
+
+export type CreateEmptyGraph = (
+  db: Database,
+  graphName: string,
+  createGraphOpts?: CreateGraphOptions
+) => Promise<Graph>;
+
+// The edge definition has been added to the graph
+
+// export type IfGraphDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+// export type GetGraphOptions = {
+//   ifGraphDoesNotExist?: IfGraphDoesNotExistOnGet // default is ThrowError
+// }

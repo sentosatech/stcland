@@ -7,8 +7,8 @@ import { pathExistsSync } from 'path-exists'
 import { Database } from 'arangojs'
 
 import {
-  type ArangoHostConfig, type DataBaseUser,
-  getSysDb, dbExists, dropDb, canConnectToDbServer
+  type ArangoHostConfig, type CreateDatabaseUser,
+  getSysDb, dbExists, dropDb, canConnectToServer
 } from '../utils'
 
 import {
@@ -25,7 +25,7 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-const dbUsers: DataBaseUser[] = [
+const dbUsers: CreateDatabaseUser[] = [
   { username: 'root', passwd: 'pw' },
 ]
 
@@ -34,7 +34,7 @@ const dbName = 'arangoDataLoaderTestDb'
 let sysDb: Database
 
 beforeAll(async () => {
-  expect(await canConnectToDbServer(hostConfig)).toBe(true)
+  expect(await canConnectToServer(hostConfig)).toBe(true)
   sysDb = await getSysDb(hostConfig, { checkConnection: true })
   if (await dbExists(sysDb, dbName)) {
     console.warn(`WARNING: test start: ${dbName} exists, dropping it`)
@@ -54,16 +54,19 @@ afterAll(async () => {
 describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
-    const ifTargetDbDoesNotExist = IfTargetDbDoesNotExist.Create
+    const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'
     const opts = {
-      dbUsers, ifTargetDbDoesNotExist, reportWarnings: true
+      dbUsers, ifTargetDbDoesNotExist, reportWarnings: true, reportProgress: true
     }
 
     const results = await loadSpreadsheetData(
       spreadsheetPath, hostConfig, dbName, opts
     )
+
     console.log('results: ', results)
   })
   test.todo('DB/Collection existance cases', async () => {})
+  test.todo('Invalid worksheet contents', async () => {})
   test.todo('Invalid Edges', async () => {})
+  test.todo('Mismatch in collection type specified in spreadsheet and actual collection type', async () => {})
 })

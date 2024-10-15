@@ -108,6 +108,8 @@ export const assertConsistentDefinedState = (
   if (isNotUndefined(first) && isNotUndefined(second)) return
   if (isUndefined(first) && isUndefined(second)) return
 
+  console.log('WTF')
+
   const { firstDefinedButNotSecondMsg, secondDefinedButNotFirstMsg } = errMessages
   if (isNotUndefined(first))
     assert(false, firstDefinedButNotSecondMsg)
