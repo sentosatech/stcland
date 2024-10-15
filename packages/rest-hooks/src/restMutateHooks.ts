@@ -107,7 +107,8 @@ export const useRestMutate : StcRest.UseRestMutate = <
       : _onMutateSuccess(queryClient, baseActions, onSuccess),
     onError: typeof onError === 'function'
       ? onError
-      :  (error, variables, context: any) => _onMutateError(queryClient, baseActions, onError, context?.rollback),
+      :  (error, variables, context: {rollback: ()=> void}) => {
+        _onMutateError(queryClient, baseActions, onError, context?.rollback)(error)},
   })
 
   // Optionally extend result with mutation function names
@@ -151,52 +152,57 @@ const _validateCacheList = (op: string, cacheList: any[][]) => {
 }
 
 
-const _onMutateOptimisticUpdate =
-  (queryClient: QueryClient, onMutateOptions: StcRest.MutationOptions) =>
-    async (data: any) => {
-      const { cachesToAdd = [], cachesToRemove = [], cachesToInvalidate = [] } = onMutateOptions
+const _onMutateOptimisticUpdate = (
+  queryClient: QueryClient,
+  onMutateOptions: StcRest.MutationOptions
+) => async (data: any) => {
+  const { cachesToAdd = [], cachesToRemove = [], cachesToInvalidate = [] } = onMutateOptions
 
-    // Store previous state for rollback
-      const previousCacheData: Map<QueryKey, any> = new Map()
+  const previousCacheData: Map<QueryKey, any> = new Map()
+  const addedCacheKeys: QueryKey[] = []  // Track caches added during mutation
 
-    // Handle caches to remove
-      _validateCacheList('onMutateOptimisticUpdate - removing caches', cachesToRemove)
-      cachesToRemove.forEach(cacheToRemove => {
-        const cacheKey = _getCacheId(cacheToRemove, data)
-        previousCacheData.set(cacheKey, queryClient.getQueryData(cacheKey))
-        queryClient.removeQueries({ queryKey: cacheKey })
-      })
-
-    // Handle caches to invalidate
-      _validateCacheList('onMutateOptimisticUpdate - invalidating caches', cachesToInvalidate)
-      cachesToInvalidate.forEach(cacheToInvalidate => {
-        const cacheKey = _getCacheId(cacheToInvalidate, data)
-        previousCacheData.set(cacheKey, queryClient.getQueryData(cacheKey))
-        queryClient.invalidateQueries(cacheKey)
-      })
-
-    // Handle caches to add with optimistic data
-      if (cachesToAdd.length > 0) {
-        _validateCacheList('onMutateOptimisticUpdate - adding caches', cachesToAdd)
-        cachesToAdd.forEach(cacheToAdd => {
-          const cacheKey = _getCacheId(cacheToAdd, data)
-          const optimisticData = data
-          queryClient.setQueryData(cacheKey, optimisticData)
-        })
-      }
-
-      const rollback = () => {
-        // Rollback previous cache states
-        previousCacheData.forEach((data, key) => {
-          if (data !== undefined) {
-            queryClient.setQueryData(key, data)
-          }
-        })
-      }
-      // Return a rollback function
-      return { rollback }
+  // Handle caches to remove - Store data, then remove from cache
+  cachesToRemove.forEach((cacheToRemove) => {
+    const cacheKey = _getCacheId(cacheToRemove, data.data)
+    const existingData = queryClient.getQueryData(cacheKey)
+    if (existingData !== undefined) {
+      previousCacheData.set(cacheKey, existingData)
     }
+    queryClient.removeQueries({ queryKey: cacheKey })
+  })
 
+  // Handle caches to invalidate - Store data, then invalidate
+  cachesToInvalidate.forEach((cacheToInvalidate) => {
+    const cacheKey = _getCacheId(cacheToInvalidate, data.data)
+    const existingData = queryClient.getQueryData(cacheKey)
+    if (existingData !== undefined) {
+      previousCacheData.set(cacheKey, existingData)
+    }
+    queryClient.invalidateQueries(cacheKey) // Invalidate cache
+  })
+
+  // Handle caches to add - Add optimistic data to cache
+  cachesToAdd.forEach((cacheToAdd) => {
+    const cacheKey = _getCacheId(cacheToAdd, data.data)
+    queryClient.setQueryData(cacheKey, 'optimisticData') // Set optimistic cache
+    addedCacheKeys.push(cacheKey)  // Track added cache for rollback
+  })
+
+  // Rollback logic: Restore previous state for all cache actions
+  const rollback = () => {
+    // Restore removed and invalidated caches
+    previousCacheData.forEach((data, key) => {
+      queryClient.setQueryData(key, data) // Restore previous data
+    })
+
+    // Remove caches that were optimistically added
+    addedCacheKeys.forEach((key) => {
+      queryClient.removeQueries({ queryKey: key })
+    })
+  }
+
+  return { rollback }
+}
 
 
 const _onMutateSuccess =
@@ -266,7 +272,7 @@ const _onMutateError = (
   const { toastMessage } = onErrorOptions
   console.error('Error: rest mutation failed', error)
 
- // Rollback if provided
+  // Rollback if provided - just available when passing the onMutate props.
   if (rollback) {
     console.log('Rolling back optimistic update...')
     rollback()

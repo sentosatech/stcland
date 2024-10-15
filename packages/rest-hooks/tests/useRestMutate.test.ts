@@ -6,9 +6,8 @@ import { handlers } from './handlers'
 import { useRestCreate, useRestUpdate, useRestPatch, useRestDelete, _getCacheId } from '../src/restMutateHooks'
 import { makeReactQueryRenderHook } from './reactQueryRenderHook'
 
-type StateType = string | null
 
-const createStatefulFunction = <T extends StateType>() => {
+const createStatefulFunction = <T extends string | null>() => {
   let state: T = null as T
 
   // A unified function to set the state, regardless of the type.
@@ -28,20 +27,21 @@ describe('Test Rest Mutate Query Hooks', () => {
   let response: StcRestTest.TestResponse
   let expectedRsp: StcRestTest.TestResponse
 
-  // OnSuccess Mutation props.
-  const actions = [vi.fn(), vi.fn()]
+  // Base Props.
+  let restPath: string
+  let baseUrl: string
   let toastFnWrapper: { fn: (message?: string) => void; getState: () => string | null }
   let navigateFnWrapper: { fn: (routeTo?: string) => void; getState: () => string | null }
+
+  // OnSuccess Mutation props.
+  const actions = [vi.fn(), vi.fn()]
   let toastMessage : string
   let routeTo: string
   let cachesToRemove: any[][]
   let cachesToInvalidate: any[][]
-  let restPath: string
-  let baseUrl: string
+  let cachesToAdd: any[][]
 
   const { queryClient, reactQueryRenderHook } = makeReactQueryRenderHook()
-
-  /// TODO: AddCaches
 
   beforeEach(() => {
     queryClient.clear()
@@ -72,18 +72,19 @@ describe('Test Rest Mutate Query Hooks', () => {
   }
 
  /**
-    Helper method to add queries
+    Helper method to add/remove/invalidate queries
    */
   const addAndAssertQueriesBeforeMutation = (
-    caches : Pick<StcRest.MutationOptions, 'cachesToInvalidate' | 'cachesToRemove'>,
+    caches : Pick<StcRest.MutationOptions, 'cachesToInvalidate' | 'cachesToRemove' | 'cachesToAdd'>,
     data?: any
   ) => {
 
-    const { cachesToRemove, cachesToInvalidate } = caches
+    const { cachesToRemove, cachesToInvalidate, cachesToAdd } = caches
 
     // Add queries to the cache.
     cachesToRemove?.forEach((cache) => queryClient.setQueryData(_getCacheId(cache, data), 'remove') as any)
     cachesToInvalidate?.forEach((cache) => queryClient.setQueryData(_getCacheId(cache, data), 'invalidate') as any)
+    cachesToAdd?.forEach((cache) => queryClient.setQueryData(_getCacheId(cache, data), 'add') as any)
 
     // Assert queries are present in the cache before removal.
     cachesToRemove?.forEach((cache) => {
@@ -91,6 +92,10 @@ describe('Test Rest Mutate Query Hooks', () => {
     })
 
     cachesToInvalidate?.forEach((cache) => {
+      expect(queryClient.getQueryData(_getCacheId(cache, data))).toBeDefined()
+    })
+
+    cachesToAdd?.forEach((cache) => {
       expect(queryClient.getQueryData(_getCacheId(cache, data))).toBeDefined()
     })
   }
@@ -371,6 +376,73 @@ describe('Test Rest Mutate Query Hooks', () => {
 
     assertResponse(response, expectedRsp)
     assertOnMutateSuccess(mutationOptions)
+  })
+
+
+  // Failling test cases.
+  test('useRestCreate mutate hook - optimistic rollback on failure', async () => {
+    toastMessage = 'Failed to create item!'
+    cachesToRemove = [['cache1'], ['cache2']]
+    cachesToInvalidate = [['cache5']]
+    cachesToAdd = [['hello']]
+    restPath = '/failing-post/:animal'
+    baseUrl = 'http://testhost.com:6666'
+
+
+    const { result } = reactQueryRenderHook(() =>
+      useRestCreate(restPath, {
+        mutationFnName: 'useRestCreateFailTest',
+        baseUrl,
+        toastFn: toastFnWrapper.fn,
+        onMutate: {
+          cachesToRemove,
+          cachesToInvalidate,
+          cachesToAdd
+        },
+        onError: {
+          toastMessage,
+        },
+      })
+    )
+
+    const restParams = { pathParams: { animal: 'dog' } }
+    const data = { data: 'Invalid Post Data' }
+
+    addAndAssertQueriesBeforeMutation(
+      { cachesToRemove, cachesToInvalidate, cachesToAdd },
+      data.data
+    )
+
+    try {
+      // Attempt the mutation and expect it to fail
+      await result.current.mutateAsync({ data, restParams })
+    } catch (error) {
+      const expectedRsp = {
+        data: { message: 'Something went wrong!' },
+        meta: {
+          url: `${baseUrl}/failing-post/dog`,
+          headers: { authorization: 'Bearer token' },
+          method: 'POST',
+          body: { data },
+        },
+      }
+
+      // Verify error matches the expected response, and trigger toast with toastMessage.
+      expect(error.response.data.data.message).toEqual(expectedRsp.data.message)
+      expect(toastFnWrapper.getState()).toBe(toastMessage)
+
+      const allQueries = queryClient.getQueryCache().findAll()
+
+      // Verify that caches added during optimistic update are removed.
+      cachesToAdd.forEach(([key]) => {
+        expect(allQueries.some(query => query.queryKey[0] === key)).toBe(false)
+      })
+
+      // Verify that caches removed/invalidated are restored.
+      cachesToRemove.concat(cachesToInvalidate).forEach((queryKey) => {
+        expect(queryClient.getQueryData(queryKey)).toBeDefined()
+      })
+    }
   })
 
 })
