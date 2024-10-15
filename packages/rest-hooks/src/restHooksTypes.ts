@@ -1,4 +1,4 @@
-import { QueryFunctionContext, UseQueryOptions, UseQueryResult } from '@tanstack/react-query'
+import type { QueryFunctionContext, UseQueryOptions, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
 import {
   AxiosStatic, AxiosResponse, AxiosInstance, AxiosRequestConfig
 } from 'axios'
@@ -367,24 +367,155 @@ export namespace StcRest {
    */
   export type CreateDeleteFn = CreateMutateFn
 
+
+  /*
+  All of the mutate hooks return a standard react-query useMutation() object
+
+  The returned object will include the standard use-query mutation functions
+  mutate and mutateAsync (which can be given custom names via options)
+
+  All of the returned mutation functions recieve an optional last argument
+  `params` (see documentation for each specific hook). The param object allows
+  path paramaters and query options to be provided as follows
+
+  params {
+    pathParams {
+        keys: values
+        * keys: variables in the path name that will be substituted
+        * values: string | number, values that will be substitued in the path
+      }
+    queryParams {
+      keys: values // for query string to be appended
+      * keys: query paramater variable names
+      * values: query paramater variable values (string, number or bool)
+    }
+    -or-
+    queryParams:
+      string: will be appended directly to the request usrl
+  }
+
+  An options object can be supplied to the mutation functions, which can include
+  any of the standard react-query useMutation() options
+
+  In addition, the following options can also be included
+
+  options: {
+
+    mutationFnName: string
+    * response object will include fxns providedFnName amd providedFnNameAsync
+      which reference the stnadard react-query mutation functions
+
+    baseUrl: string
+    * optional - the base URL to use for the mutation query
+
+    navigate: () => void
+    * trigger redirect after on success.
+
+    toastFn: (message: string) => void
+    * trigger toast selected by client when on success
+
+    onSuccess: { // as object
+      cachesToAddTo: ['cachId' | [cacheId]] // list of standard react-query cache ID
+      * add the entity as a new cache entry on success
+      * currently NYI TODO: implement (some complications getting queryFn fetchQuery  )
+
+      cachesToInvalidate [ 'cachId' | [cacheId] ] // list of standard react-query cache ID
+      * list of caches to invalidate on success
+
+      cachesToRemove [ 'cachId' | [cacheId] ]
+      * list of standard react-query cache ID
+
+      actions []
+      * list of functions to perform
+
+      toastMessage: string
+      * Passed to the toasFn base option.
+
+      routeTo: string
+      * Passed to the navigateFn base option.
+
+    }
+    -or-
+    onSuccess: // as func
+      called with create/updated/deleted passed in when op is succesful
+
+    onError: {
+      navigate: () => void
+      * trigger redirect after on error.
+
+      toastMessage:
+      * Passed to the toasFn base option.
+    }
+    -or-
+    onError: // as func
+      called with error passed in when op is fails
+  }
+
+  Advanced Options Usage
+
+  * cacheId / routeTo as functions
+
+    For any option functions that recieves `cacheId` or `routeTo` as inputs,
+    these may be functions
+
+    The functions sill be passed the entity that was created/updated/deleted,
+    and is expected to return the approrate cache id or route
+
+    This can be useful if you need to construct a route or cacheId in real time
+    that is dependent upon the entity being operated upon
+
+    example
+      const cacheId = newEntitiy => `[entities, newEntity.id]`
+      const routeTo = newEntitiy => `/entities/${newEntity.id}`
+  }
+*/
+
+/*
+  Returns react-query mutation object, which includes the standard react-query
+  mutation functions to create an entity, and which have the following signatures
+
+  mutate({ data, params })
+    returns created data
+
+  mutateAsync({ data, params })
+    return promise which resolves to created data
+
+  The mutation function names can be customized via options: { mutationFnName }
+    example options: { mutationFnName: createThing }
+*/
+
+  export type UseMutateHook = (restPath: string, options?: StcRest.MutateBaseProps['options'])
+  => UseMutationResult<AxiosResponse<any, any>, unknown, StcRest.MutateFnOptions | undefined>
+
+
+  export type UseRestMutate = <TData = unknown, TVariables = unknown, TError = unknown>
+  (mutateFn: (restPath: string, options?: AxiosRequestConfig) => (variables: TVariables) =>
+    Promise<TData>, restPath: string, options?: StcRest.MutateBaseProps['options']) =>
+      UseMutationResult<TData, TError, TVariables>
+
   type Action = () => void
   export type ActionsList = Action[]
 
   export type MutationOptions = {
-      cachesToAdd?: string[]
-      cachesToInvalidate?: string[]
-      cachesToRemove?: string[]
+      cachesToAdd?: any[][]
+      cachesToInvalidate?: any[][]
+      cachesToRemove?: any[][]
       actions?: ActionsList
       routeTo?: string
       toastMessage?: string
   }
 
+  export type OnSucessOptions = MutationOptions
+  export type OnErrorOptions = Pick<MutationOptions, 'toastMessage'>
+  export type OnMutateOptions = Pick<MutationOptions, 'cachesToAdd' | 'cachesToRemove' | 'cachesToInvalidate'>
+
   export interface MutateBaseProps {
     mutateFn: CreatePostFn | CreatePutFn | CreateDeleteFn | CreatePatchFn
     options: {
       mutationFnName?: string
-      onSuccess?: MutationOptions | (()=> void)
-      onError?: MutationOptions | (()=> void)
+      onSuccess?: OnSucessOptions | (()=> void)
+      onError?: OnErrorOptions | (()=> void)
+      onMutate?: OnMutateOptions | (()=> void)
       baseUrl?: string
       navigateFn?: (routeTo?: string) => void
       toastFn?: (toastMessage?: string) => void

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import type { StcRest } from './restHooksTypes'
+import type { StcRest } from './RestHooksTypes'
 
 export const useRestQuery: StcRest.UseRestQuery = <
   TData = any,

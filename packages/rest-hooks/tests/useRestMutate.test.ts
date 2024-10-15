@@ -1,4 +1,4 @@
-import type { StcRest } from '../src/restHooksTypes'
+import type { StcRest } from '../src/RestHooksTypes'
 import type { StcRestTest } from './testTypes'
 import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { setupServer } from 'msw/node'
@@ -34,8 +34,8 @@ describe('Test Rest Mutate Query Hooks', () => {
   let navigateFnWrapper: { fn: (routeTo?: string) => void; getState: () => string | null }
   let toastMessage : string
   let routeTo: string
-  let cachesToRemove: string[]
-  let cachesToInvalidate: string[]
+  let cachesToRemove: any[][]
+  let cachesToInvalidate: any[][]
   let restPath: string
   let baseUrl: string
 
@@ -121,7 +121,6 @@ describe('Test Rest Mutate Query Hooks', () => {
       expect(queryClient.getQueryData(_getCacheId(cache, data))).toBeUndefined()
     })
 
-     // Assert the state of the query cache after the mutation
     const cacheEntries = queryClient.getQueryCache().findAll()
 
     // Assert that the only caches are the invalidate, and that it matches the queryKey
@@ -149,17 +148,21 @@ describe('Test Rest Mutate Query Hooks', () => {
   test('useRestCreate mutate hook', async () => {
     toastMessage = 'Item created successfully!'
     routeTo = '/created'
-    cachesToRemove = ['cache1', 'cache2']
-    cachesToInvalidate = ['cache3', 'cache4']
+    cachesToRemove = [['cache1', 'cache2'], ['cache3', 'cache4']]
+    cachesToInvalidate = [['cache5']]
     restPath = '/simple-post/:animal'
-    baseUrl = 'http://testhost.com:12345'
+    baseUrl = 'http://testhost.com:1234'
 
 
     const { result } = reactQueryRenderHook(() => useRestCreate(restPath,
       { mutationFnName: 'useRestCreateTest',
         baseUrl,
-        toastFn: () => toastFnWrapper.fn(toastMessage),
-        navigateFn: () => navigateFnWrapper.fn(routeTo),
+        toastFn: toastFnWrapper.fn,
+        navigateFn: navigateFnWrapper.fn,
+        onMutate: {
+          cachesToRemove,
+          cachesToInvalidate
+        },
         onSuccess: {
           toastMessage,
           routeTo,
@@ -206,16 +209,16 @@ describe('Test Rest Mutate Query Hooks', () => {
   test('useRestUpdate mutate hook', async () => {
     toastMessage = 'Item updated successfully!'
     routeTo = '/updated'
-    cachesToRemove = ['cacheUpdate1', 'cacheUpdate2']
-    cachesToInvalidate = ['cacheUpdate3']
+    cachesToRemove = [['cacheUpdate1'], ['cacheUpdate2']]
+    cachesToInvalidate = [['cacheUpdate3']]
     restPath = '/simple-put'
     baseUrl = 'http://testhost.com:6666'
 
 
     const { result } = reactQueryRenderHook(() => useRestUpdate(restPath,
       { mutationFnName: 'useRestUpdateTest',
-        toastFn: () => toastFnWrapper.fn(toastMessage),
-        navigateFn: () => navigateFnWrapper.fn(routeTo),
+        toastFn: toastFnWrapper.fn,
+        navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
           toastMessage,
@@ -263,16 +266,16 @@ describe('Test Rest Mutate Query Hooks', () => {
   test('useRestPatch mutate hook', async () => {
     toastMessage = 'Item partially updated successfully!'
     routeTo = '/patched'
-    cachesToRemove = ['patchCache1']
-    cachesToInvalidate = ['patchCache2']
+    cachesToRemove = [['patchCache1']]
+    cachesToInvalidate = [['patchCache2']]
     restPath = '/simple-patch'
     baseUrl = 'http://testhost.com:9999'
 
 
     const { result } = reactQueryRenderHook(() => useRestPatch(restPath,
       { mutationFnName: 'useRestPatchTest',
-        toastFn: () => toastFnWrapper.fn(toastMessage),
-        navigateFn: () => navigateFnWrapper.fn(routeTo),
+        toastFn: toastFnWrapper.fn,
+        navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
           toastMessage,
@@ -320,16 +323,16 @@ describe('Test Rest Mutate Query Hooks', () => {
   test('useRestDelete mutate hook', async () => {
     toastMessage = 'Item deleted successfully!'
     routeTo = '/deleted'
-    cachesToRemove = ['deleteCache']
-    cachesToInvalidate = ['deleteCache2']
+    cachesToRemove = [['deleteCache']]
+    cachesToInvalidate = [['deleteCache2']]
     restPath = '/simple-delete/:id'
     baseUrl = 'http://testhost.com:5555'
 
 
     const { result } = reactQueryRenderHook(() => useRestDelete(restPath,
       { mutationFnName: 'useRestDeleteTest',
-        toastFn: () => toastFnWrapper.fn(toastMessage),
-        navigateFn: () => navigateFnWrapper.fn(routeTo),
+        toastFn: toastFnWrapper.fn,
+        navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
           toastMessage,

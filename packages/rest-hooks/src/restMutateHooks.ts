@@ -1,7 +1,7 @@
 import { isNil } from 'ramda'
 import { isFunction, isNotFunction } from 'ramda-adjunct'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import type { QueryClient, UseMutationResult } from '@tanstack/react-query'
+import type { QueryKey, QueryClient, UseMutationResult } from '@tanstack/react-query'
 import type { AxiosRequestConfig } from 'axios'
 import { throwIf } from '@stcland/errors'
 import {
@@ -9,137 +9,18 @@ import {
   isNotStringOrArrayOrFunction,
 } from '@stcland/utils'
 
-import type { StcRest } from './restHooksTypes'
+import type { StcRest } from './RestHooksTypes'
 import { useRestClient } from './state/restState'
-/*
-  All of the mutate hooks return a standard react-query useMutation() object
 
-  The returned object will include the standard use-query mutation functions
-  mutate and mutateAsync (which can be given custom names via options)
 
-  All of the returned mutation functions recieve an optional last argument
-  `params` (see documentation for each specific hook). The param object allows
-  path paramaters and query options to be provided as follows
 
-  params {
-    pathParams {
-        keys: values
-        * keys: variables in the path name that will be substituted
-        * values: string | number, values that will be substitued in the path
-      }
-    queryParams {
-      keys: values // for query string to be appended
-      * keys: query paramater variable names
-      * values: query paramater variable values (string, number or bool)
-    }
-    -or-
-    queryParams:
-      string: will be appended directly to the request usrl
-  }
-
-  An options object can be supplied to the mutation functions, which can include
-  any of the standard react-query useMutation() options
-
-  In addition, the following options can also be included
-
-  options: {
-
-    mutationFnName: string
-    * response object will include fxns providedFnName amd providedFnNameAsync
-      which reference the stnadard react-query mutation functions
-
-    baseUrl: string
-    * optional - the base URL to use for the mutation query
-
-    onSuccess: { // as object
-      cachesToAddTo: ['cachId' | [cacheId]] // list of standard react-query cache ID
-      * add the entity as a new cache entry on success
-      * currently NYI TODO: implement (some complications getting queryFn fetchQuery  )
-
-      cachesToInvalidate [ 'cachId' | [cacheId] ] // list of standard react-query cache ID
-      * list of caches to invalidate on success
-
-      cachesToRemove [ 'cachId' | [cacheId] ]
-      * list of standard react-query cache ID
-
-      actions []
-      * list of functions to perform
-
-      navigate: () => void
-      * trigger redirect after on success.
-
-      toastFn: (message: string) => void
-      * trigger toast selected by client when on success
-    }
-    -or-
-    onSuccess: // as func
-      called with create/updated/deleted passed in when op is succesful
-
-    onError: {
-      navigate: () => void
-      * trigger redirect after on error.
-
-      toastFn: (message: string) => void
-      * display a toast with provided message on error
-    }
-    -or-
-    onError: // as func
-      called with error passed in when op is fails
-  }
-
-  Advanced Options Usage
-
-  * cacheId / routeTo as functions
-
-    For any option functions that recieves `cacheId` or `routeTo` as inputs,
-    these may be functions
-
-    The functions sill be passed the entity that was created/updated/deleted,
-    and is expected to return the approrate cache id or route
-
-    This can be useful if you need to construct a route or cacheId in real time
-    that is dependent upon the entity being operated upon
-
-    example
-      const cacheId = newEntitiy => `[entities, newEntity.id]`
-      const routeTo = newEntitiy => `/entities/${newEntity.id}`
-  }
-*/
-
-/*
-  Returns react-query mutation object, which includes the standard react-query
-  mutation functions to create an entity, and which have the following signatures
-
-  mutate({ data, params })
-    returns created data
-
-  mutateAsync({ data, params })
-    return promise which resolves to created data
-
-  The mutation function names can be customized via options: { mutationFnName }
-    example options: { mutationFnName: createThing }
-*/
-
-/*
-  Returns react-query mutation object, which includes the standard react-query
-  mutation functions to create an entity, and which have the following signatures
-
-  mutate({ data, params })
-    returns created data
-
-  mutateAsync({ data, params })
-    return promise which resolves to created data
-
-  The mutation function names can be customized via options: { mutationFnName }
-    example options: { mutationFnName: createThing }
-*/
-export const useRestCreate = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestCreate : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPostFn, restPath, options)
 }
 
 /*
-  Returns react-query mutation obect, which includes the standard react-query
+  Returns react-query mutation object, which includes the standard react-query
   mutation functions to update an entity, and which have the following signatures
 
   mutate(dataForUpdate, params)
@@ -151,7 +32,7 @@ export const useRestCreate = (restPath: string, options: StcRest.MutateBaseProps
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: updateThing }
 */
-export const useRestUpdate = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestUpdate : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPutFn, restPath, options)
 }
@@ -169,7 +50,7 @@ export const useRestUpdate = (restPath: string, options: StcRest.MutateBaseProps
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: updateThing }
 */
-export const useRestPatch = (restPath: string, options: StcRest.MutateBaseProps['options']= {}) => {
+export const useRestPatch : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options']= {}) => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPatchFn, restPath, options)
 }
@@ -187,7 +68,7 @@ export const useRestPatch = (restPath: string, options: StcRest.MutateBaseProps[
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: deleteThing }
 */
-export const useRestDelete = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestDelete : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createDeleteFn, restPath, options)
 }
@@ -197,7 +78,7 @@ export const useRestDelete = (restPath: string, options: StcRest.MutateBaseProps
   All mutation hooks call down to this guy
 */
 
-export const useRestMutate = <
+export const useRestMutate : StcRest.UseRestMutate = <
   TData = unknown,
   TVariables = unknown,
   TError = unknown
@@ -208,7 +89,7 @@ export const useRestMutate = <
   ): UseMutationResult<TData, TError, TVariables> => {
 
     // Base Props
-  const { mutationFnName, onSuccess = {}, onError = {}, baseUrl = '', navigateFn, toastFn } = options
+  const { mutationFnName, onSuccess = {}, onMutate = {}, onError = {}, baseUrl = '', navigateFn, toastFn } = options
 
   const baseActions = { navigateFn, toastFn }
 
@@ -220,12 +101,13 @@ export const useRestMutate = <
   const res = useMutation<TData, TError, TVariables>({
     mutationFn:
       mutateFn(restPath, axiosOptions),
+    onMutate: typeof onMutate === 'function' ? onMutate : _onMutateOptimisticUpdate(queryClient, onMutate),
     onSuccess: typeof onSuccess === 'function'
       ? onSuccess
       : _onMutateSuccess(queryClient, baseActions, onSuccess),
     onError: typeof onError === 'function'
       ? onError
-      : _onMutateError(queryClient, baseActions, onError),
+      :  (error, variables, context: any) => _onMutateError(queryClient, baseActions, onError, context?.rollback),
   })
 
   // Optionally extend result with mutation function names
@@ -239,8 +121,8 @@ export const useRestMutate = <
 
 
 // Utils
-export const _getCacheId = (clientCacheId: string , entity: string) =>
-  isFunction(clientCacheId) ? clientCacheId(entity) : clientCacheId
+export const _getCacheId = (clientCacheId: any[] , data: string) =>
+  isFunction(clientCacheId) ? clientCacheId(data) : clientCacheId
 
 
 const _validateActionsList = (op: string, actions?: StcRest.MutationOptions['actions']) => {
@@ -254,7 +136,7 @@ const _validateActionsList = (op: string, actions?: StcRest.MutationOptions['act
   })
 }
 
-const _validateCacheList = (op: string, cacheList: string[]) => {
+const _validateCacheList = (op: string, cacheList: any[][]) => {
   throwIf(
     isNotNilOrArray(cacheList),
     `${op} - invalidating caches: expected array for cache list, but got ${cacheList}`
@@ -269,6 +151,54 @@ const _validateCacheList = (op: string, cacheList: string[]) => {
 }
 
 
+const _onMutateOptimisticUpdate =
+  (queryClient: QueryClient, onMutateOptions: StcRest.MutationOptions) =>
+    async (data: any) => {
+      const { cachesToAdd = [], cachesToRemove = [], cachesToInvalidate = [] } = onMutateOptions
+
+    // Store previous state for rollback
+      const previousCacheData: Map<QueryKey, any> = new Map()
+
+    // Handle caches to remove
+      _validateCacheList('onMutateOptimisticUpdate - removing caches', cachesToRemove)
+      cachesToRemove.forEach(cacheToRemove => {
+        const cacheKey = _getCacheId(cacheToRemove, data)
+        previousCacheData.set(cacheKey, queryClient.getQueryData(cacheKey))
+        queryClient.removeQueries({ queryKey: cacheKey })
+      })
+
+    // Handle caches to invalidate
+      _validateCacheList('onMutateOptimisticUpdate - invalidating caches', cachesToInvalidate)
+      cachesToInvalidate.forEach(cacheToInvalidate => {
+        const cacheKey = _getCacheId(cacheToInvalidate, data)
+        previousCacheData.set(cacheKey, queryClient.getQueryData(cacheKey))
+        queryClient.invalidateQueries(cacheKey)
+      })
+
+    // Handle caches to add with optimistic data
+      if (cachesToAdd.length > 0) {
+        _validateCacheList('onMutateOptimisticUpdate - adding caches', cachesToAdd)
+        cachesToAdd.forEach(cacheToAdd => {
+          const cacheKey = _getCacheId(cacheToAdd, data)
+          const optimisticData = data
+          queryClient.setQueryData(cacheKey, optimisticData)
+        })
+      }
+
+      const rollback = () => {
+        // Rollback previous cache states
+        previousCacheData.forEach((data, key) => {
+          if (data !== undefined) {
+            queryClient.setQueryData(key, data)
+          }
+        })
+      }
+      // Return a rollback function
+      return { rollback }
+    }
+
+
+
 const _onMutateSuccess =
   (queryClient: QueryClient,
     baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastFn'>,
@@ -276,7 +206,10 @@ const _onMutateSuccess =
     (data: any) => {
 
       const { navigateFn, toastFn } = baseActions
-      const { actions, cachesToInvalidate = [], cachesToRemove = [], toastMessage, routeTo } = onSuccessOptions
+      const {
+        actions, cachesToInvalidate = [],
+        cachesToRemove = [], cachesToAdd = [],
+        toastMessage, routeTo } = onSuccessOptions
 
 
       _validateActionsList('onMutateSuccess - running action functions', actions)
@@ -303,6 +236,15 @@ const _onMutateSuccess =
         queryClient.invalidateQueries(_getCacheId(cacheToInvalidate, data))
       })
 
+       // Add new caches
+      if (cachesToAdd.length > 0) {
+        _validateCacheList('onMutateSuccess - adding caches', cachesToAdd)
+        cachesToAdd.forEach((cacheToAdd) => {
+          const queryKey = _getCacheId(cacheToAdd, data)
+          queryClient.setQueryData(queryKey, () => data)
+        })
+      }
+
     // navigate if needed
       if (navigateFn && routeTo) {
         navigateFn(routeTo)
@@ -317,11 +259,18 @@ const _onMutateSuccess =
 const _onMutateError = (
   queryClient: QueryClient,
   baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastFn'>,
-  onErrorOptions: StcRest.MutationOptions) => error => {
+  onErrorOptions: StcRest.OnErrorOptions,
+  rollback?:()=> void,
+) => (error: any) => {
   const { toastFn } = baseActions
   const { toastMessage } = onErrorOptions
   console.error('Error: rest mutation failed', error)
 
+ // Rollback if provided
+  if (rollback) {
+    console.log('Rolling back optimistic update...')
+    rollback()
+  }
   /*
   * Detail property is temporary while error property doesn't
   * have a specific messsage to be clearer on each error

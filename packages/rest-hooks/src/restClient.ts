@@ -11,7 +11,7 @@ import {
   isNotNilOrStringOrObject
 } from '@stcland/utils'
 
-import { StcRest } from './restHooksTypes'
+import { StcRest } from './RestHooksTypes'
 
 export const createRestClient: StcRest.CreateRestClient = (
   clientConfig: StcRest.ClientConfig,
