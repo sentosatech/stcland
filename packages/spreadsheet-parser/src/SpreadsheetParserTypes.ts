@@ -4,9 +4,8 @@ import type { PredFn } from '@stcland/utils'
 
 
 // TODO
-// - RowValueList -> RowList
+// - RowValueList -> RowDataList (DataRow?)
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
-// - support _skip_ in row value list (low priority) ???
 
 //--- common -------------------------------------------------------------------
 
