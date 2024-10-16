@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node'
 
 import { handlers } from './handlers'
 
-import { StcRest } from '../src/restHooksTypes'
+import { StcRest } from '../src/RestHooksTypes'
 import { StcRestTest } from './testTypes'
 import { expandRestPath, createRestClient } from '../src/restClient'
 
@@ -614,7 +614,7 @@ describe('Test Rest Client', () => {
     // with query params
 
     restParams = { queryParams: { life: 'bills' } }
-    rsp = (await deleteFn(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFn({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data:  {
@@ -634,7 +634,7 @@ describe('Test Rest Client', () => {
     const deleteFnWithPathParams = restClient.createDeleteFn('/simple-delete/:problem')
     restParams = { pathParams: { problem: 'traffic' } }
 
-    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFnWithPathParams({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data: {
@@ -656,7 +656,7 @@ describe('Test Rest Client', () => {
       queryParams: { scope: 'global' },
     }
 
-    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFnWithPathParams({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data: {
