@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.14
+
+### Patch Changes
+
+- Update MutateBaseProps signature, update mutate hooks signatures to accept generics.
+
 ## 0.0.13
 
 ### Patch Changes

@@ -1,5 +1,5 @@
 import type { QueryFunctionContext, UseQueryOptions, UseQueryResult, UseMutationResult } from '@tanstack/react-query'
-import {
+import type {
   AxiosStatic, AxiosResponse, AxiosInstance, AxiosRequestConfig
 } from 'axios'
 
@@ -483,11 +483,6 @@ export namespace StcRest {
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: createThing }
 */
-
-  export type UseMutateHook = (restPath: string, options?: StcRest.MutateBaseProps['options'])
-  => UseMutationResult<AxiosResponse<any, any>, unknown, StcRest.MutateFnOptions | undefined>
-
-
   export type UseRestMutate = <TData = unknown, TVariables = unknown, TError = unknown>
   (mutateFn: (restPath: string, options?: AxiosRequestConfig) => (variables: TVariables) =>
     Promise<TData>, restPath: string, options?: StcRest.MutateBaseProps['options']) =>
@@ -518,7 +513,8 @@ export namespace StcRest {
       onMutate?: OnMutateOptions | (()=> void)
       baseUrl?: string
       navigateFn?: (routeTo?: string) => void
-      toastFn?: (toastMessage?: string) => void
+      toastSuccessFn?: (toastMessage?: string) => void
+      toastErrorFn?: (toastMessage?: string) => void
     }
   }
 }

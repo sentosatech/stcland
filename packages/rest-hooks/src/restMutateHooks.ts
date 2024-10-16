@@ -2,7 +2,7 @@ import { isNil } from 'ramda'
 import { isFunction, isNotFunction } from 'ramda-adjunct'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { QueryKey, QueryClient, UseMutationResult } from '@tanstack/react-query'
-import type { AxiosRequestConfig } from 'axios'
+import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { throwIf } from '@stcland/errors'
 import {
   isNotNilOrArray,
@@ -13,8 +13,10 @@ import type { StcRest } from './RestHooksTypes'
 import { useRestClient } from './state/restState'
 
 
-
-export const useRestCreate : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestCreate = <TData = unknown, TError = unknown>(
+  restPath: string,
+  options: StcRest.MutateBaseProps['options'] = {}
+): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPostFn, restPath, options)
 }
@@ -32,7 +34,10 @@ export const useRestCreate : StcRest.UseMutateHook = (restPath: string, options:
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: updateThing }
 */
-export const useRestUpdate : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestUpdate  = <TData = unknown, TError = unknown>(
+  restPath: string,
+  options: StcRest.MutateBaseProps['options'] = {}
+): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPutFn, restPath, options)
 }
@@ -50,7 +55,10 @@ export const useRestUpdate : StcRest.UseMutateHook = (restPath: string, options:
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: updateThing }
 */
-export const useRestPatch : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options']= {}) => {
+export const useRestPatch  = <TData = unknown, TError = unknown>(
+  restPath: string,
+  options: StcRest.MutateBaseProps['options'] = {}
+): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createPatchFn, restPath, options)
 }
@@ -68,7 +76,10 @@ export const useRestPatch : StcRest.UseMutateHook = (restPath: string, options: 
   The mutation function names can be customized via options: { mutationFnName }
     example options: { mutationFnName: deleteThing }
 */
-export const useRestDelete : StcRest.UseMutateHook = (restPath: string, options: StcRest.MutateBaseProps['options'] = {}) => {
+export const useRestDelete  = <TData = unknown, TError = unknown>(
+  restPath: string,
+  options: StcRest.MutateBaseProps['options'] = {}
+): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
   const { restClient } = useRestClient()
   return useRestMutate(restClient.createDeleteFn, restPath, options)
 }
@@ -89,9 +100,19 @@ export const useRestMutate : StcRest.UseRestMutate = <
   ): UseMutationResult<TData, TError, TVariables> => {
 
     // Base Props
-  const { mutationFnName, onSuccess = {}, onMutate = {}, onError = {}, baseUrl = '', navigateFn, toastFn } = options
+  const {
+    mutationFnName,
+    onSuccess = {},
+    onMutate = {},
+    onError = {},
+    baseUrl = '',
+    navigateFn,
+    toastSuccessFn,
+    toastErrorFn,
+  } = options
 
-  const baseActions = { navigateFn, toastFn }
+  const baseSuccessActions = { navigateFn, toastSuccessFn }
+  const baseErrorActions = { navigateFn, toastErrorFn }
 
   const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
 
@@ -104,11 +125,11 @@ export const useRestMutate : StcRest.UseRestMutate = <
     onMutate: typeof onMutate === 'function' ? onMutate : _onMutateOptimisticUpdate(queryClient, onMutate),
     onSuccess: typeof onSuccess === 'function'
       ? onSuccess
-      : _onMutateSuccess(queryClient, baseActions, onSuccess),
+      : _onMutateSuccess(queryClient, baseSuccessActions, onSuccess),
     onError: typeof onError === 'function'
       ? onError
       :  (error, variables, context: {rollback: ()=> void}) => {
-        _onMutateError(queryClient, baseActions, onError, context?.rollback)(error)},
+        _onMutateError(queryClient, baseErrorActions, onError, context?.rollback)(error)},
   })
 
   // Optionally extend result with mutation function names
@@ -207,11 +228,11 @@ const _onMutateOptimisticUpdate = (
 
 const _onMutateSuccess =
   (queryClient: QueryClient,
-    baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastFn'>,
+    baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastSuccessFn'>,
     onSuccessOptions: StcRest.MutationOptions) =>
     (data: any) => {
 
-      const { navigateFn, toastFn } = baseActions
+      const { navigateFn, toastSuccessFn } = baseActions
       const {
         actions, cachesToInvalidate = [],
         cachesToRemove = [], cachesToAdd = [],
@@ -257,18 +278,18 @@ const _onMutateSuccess =
       }
 
     // Toast !
-      if (toastFn && toastMessage){
-        toastFn(toastMessage)
+      if (toastSuccessFn && toastMessage){
+        toastSuccessFn(toastMessage)
       }
     }
 
 const _onMutateError = (
   queryClient: QueryClient,
-  baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastFn'>,
+  baseActions: Pick<StcRest.MutateBaseProps['options'], 'navigateFn' | 'toastErrorFn'>,
   onErrorOptions: StcRest.OnErrorOptions,
   rollback?:()=> void,
 ) => (error: any) => {
-  const { toastFn } = baseActions
+  const { toastErrorFn } = baseActions
   const { toastMessage } = onErrorOptions
   console.error('Error: rest mutation failed', error)
 
@@ -282,8 +303,8 @@ const _onMutateError = (
   * have a specific messsage to be clearer on each error
   */
   if( !toastMessage && error.response?.data?.detail ){
-    toastFn?.(error.response.data.detail)
+    toastErrorFn?.(error.response.data.detail)
   } else {
-    toastFn?.(toastMessage)
+    toastErrorFn?.(toastMessage)
   }
 }

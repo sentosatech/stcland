@@ -162,7 +162,8 @@ describe('Test Rest Mutate Query Hooks', () => {
     const { result } = reactQueryRenderHook(() => useRestCreate(restPath,
       { mutationFnName: 'useRestCreateTest',
         baseUrl,
-        toastFn: toastFnWrapper.fn,
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
         navigateFn: navigateFnWrapper.fn,
         onMutate: {
           cachesToRemove,
@@ -222,7 +223,8 @@ describe('Test Rest Mutate Query Hooks', () => {
 
     const { result } = reactQueryRenderHook(() => useRestUpdate(restPath,
       { mutationFnName: 'useRestUpdateTest',
-        toastFn: toastFnWrapper.fn,
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
         navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
@@ -279,7 +281,8 @@ describe('Test Rest Mutate Query Hooks', () => {
 
     const { result } = reactQueryRenderHook(() => useRestPatch(restPath,
       { mutationFnName: 'useRestPatchTest',
-        toastFn: toastFnWrapper.fn,
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
         navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
@@ -336,7 +339,8 @@ describe('Test Rest Mutate Query Hooks', () => {
 
     const { result } = reactQueryRenderHook(() => useRestDelete(restPath,
       { mutationFnName: 'useRestDeleteTest',
-        toastFn: toastFnWrapper.fn,
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
         navigateFn: navigateFnWrapper.fn,
         baseUrl,
         onSuccess: {
@@ -393,7 +397,8 @@ describe('Test Rest Mutate Query Hooks', () => {
       useRestCreate(restPath, {
         mutationFnName: 'useRestCreateFailTest',
         baseUrl,
-        toastFn: toastFnWrapper.fn,
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
         onMutate: {
           cachesToRemove,
           cachesToInvalidate,
