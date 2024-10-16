@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.13
+
+### Patch Changes
+
+- Add mutation hooks.
+
 ## 0.0.12
 
 ### Patch Changes
