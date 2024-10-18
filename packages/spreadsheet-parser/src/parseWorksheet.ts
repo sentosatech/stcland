@@ -15,6 +15,8 @@ import type {
   Data, DataTableData,
   DataType,  DataTableDataType, DataTypeMap,
   DataCollectionData,
+  BaseDataTypes,
+  ListDataTypes,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -172,7 +174,7 @@ const parseDataTable: ParseDataTable = (
 
 const parseTableDataRow = (
   propNames: string[],
-  dataTypes: DataType[],
+  dataTypes: BaseDataTypes[], //
   row: Row,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions
@@ -344,7 +346,7 @@ export const parseDataCollection: ParseDataCollection = (
 
 export const parseRowValueList = (
   propName: string,
-  dataType: DataType,
+  dataType: BaseDataTypes | ListDataTypes,
   rowValuesList: RowValues,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions

@@ -40,6 +40,13 @@ export interface ParseOptions {
 }
 
 //--- data types --------------------------------------------------------------
+export type BaseDataTypes =
+'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid'
+
+export type ListDataTypes =
+  'string:list' | 'number:list' | 'boolean:list' | 'date:list' | 'password:list' | 'json:list' | 'uuid:list'
+
+
 
 export type DataTableDataType =
 'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid'
@@ -218,7 +225,7 @@ export type GetWorkSheetList = (
   filterFns?: PredFn<Worksheet>[] // list of functions to filter unwante worksheets
 ) => Worksheet[];
 
-export type GetDataTypesFromRow = (row: Row) => DataType[];
+export type GetDataTypesFromRow = (row: Row) => BaseDataTypes[];
 
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];

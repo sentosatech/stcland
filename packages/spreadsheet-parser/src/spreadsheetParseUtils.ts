@@ -20,6 +20,8 @@ import type {
   CellMeta, DataCellMeta, RowMeta,
   DataType, DataTableDataType, RowValueListType, DataCollectionDataType,
   InvalidTypeWarning,
+  BaseDataTypes,
+  ListDataTypes,
 } from './SpreadsheetParserTypes'
 
 
@@ -188,7 +190,7 @@ export const getDataTypeFromCallValue = (
 
 export const getDataTypesFromRow: GetDataTypesFromRow = (row: Row) => {
 
-  const dataTypes = getRowValuesAsStrings(row) as DataType[]
+  const dataTypes  = getRowValuesAsStrings(row) as BaseDataTypes[]
 
   if (dataTypes.length === 0 )
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
@@ -203,7 +205,7 @@ export const getDataTypesFromRow: GetDataTypesFromRow = (row: Row) => {
       `  should be one of ${toJson(validDataTypes.join(', '))}`
     )
   }
-  return dataTypes as DataType[]
+  return dataTypes as BaseDataTypes[]
 }
 
 // excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
@@ -219,8 +221,8 @@ export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
 
 // returns data type if valid or false if not a valid list
 export const getRowValueListBaseType = (
-  dataType: DataType
-): DataType | 'invalid-list-type' => {
+  dataType: BaseDataTypes | ListDataTypes
+): BaseDataTypes | ListDataTypes | 'invalid-list-type' => {
 
   if (!dataType.includes(':')) return 'invalid-list-type'
   const [subType] = dataType.split(':') as [DataType]
