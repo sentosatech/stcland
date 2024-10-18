@@ -54,7 +54,7 @@ export namespace StcRest {
   export type UseRestQuery = <TData, TDefaultResponse = TData, TMeta = any>(
     restClient: RestClient,
       // The REST client to use for the query
-    queryKey: [any],
+    queryKey: any[],
       // The key to use for the query
     restPath: string,
       // The path to the REST endpoint
@@ -487,6 +487,11 @@ export namespace StcRest {
   (mutateFn: (restPath: string, options?: AxiosRequestConfig) => (variables: TVariables) =>
     Promise<TData>, restPath: string, options?: StcRest.MutateBaseProps['options']) =>
       UseMutationResult<TData, TError, TVariables>
+
+  export type UseMutateResult<
+  TData,
+  TError
+> = UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined>
 
   type Action = () => void
   export type ActionsList = Action[]
