@@ -10,6 +10,11 @@ import customStyles from '../stc.config'
 const meta: Meta<typeof NumberInput> = {
   title: 'Components/Form/Input/Number',
   component: NumberInput,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',

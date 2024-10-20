@@ -10,6 +10,11 @@ import customStyles from '../stc.config'
 const meta: Meta<typeof TimeInput> = {
   title: 'Components/Form/Input/TimeInput',
   component: TimeInput,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',

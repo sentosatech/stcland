@@ -10,6 +10,11 @@ import customStyles from '../stc.config'
 const meta: Meta<typeof TextArea> = {
   title: 'Components/Form/Input/TextArea',
   component: TextArea,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',

@@ -6,6 +6,11 @@ import customStyles from '../stc.config'
 const meta: Meta<typeof Text> = {
   title: 'Components/Form/Input/Text',
   component: Text,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',

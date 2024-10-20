@@ -11,11 +11,6 @@ interface Props extends FormInputProps {
 const Checkbox = function ({ label, ...props }: Props) {
   const { formLabel, ...formProps } = pickFormProps<Props>(props)
 
-  // Custom styling for checkbox
-  const classNames = {
-    input: 'h-4 w-8 accent-primary rounded-sm m-0 p-0',
-  }
-
   const cn = {
     root: 'flex items-center mt-2 mb-4 gap-1 justify-center',
     label: 'text-neutral-400',
@@ -25,7 +20,9 @@ const Checkbox = function ({ label, ...props }: Props) {
   const formInputProps: Props = {
     ...formProps,
     formLabel,
-    classNames,
+    customStyles: {
+      input: 'h-4 w-8 accent-primary rounded-sm m-0 p-0',
+    },
   }
 
   return (

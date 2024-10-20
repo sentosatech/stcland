@@ -23,7 +23,7 @@ const FormLabel = function ({
   htmlFor,
 }: Props) {
   const cn = {
-    root: cns('mb-0.5 flex-row gap-3 text-xs text-zinc-500', className || ''),
+    root: cns('mb-0.5 flex-row gap-3 text-xs text-white', className || ''),
     required: cns('ml-1 text-rose-400', requiredClass || ''),
   }
   return (

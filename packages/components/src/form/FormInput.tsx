@@ -11,10 +11,12 @@ import Label from './FormLabel'
 //*****************************************************************************
 // Interface
 //*****************************************************************************
-
-type ClassNamesShape = Partial<{
-  input: string;
-  label: string;
+export type FormInputStyles = Partial<{
+  root: React.HTMLAttributes<HTMLDivElement>['className'];
+  input: React.HTMLAttributes<HTMLInputElement>['className'];
+  label: React.HTMLAttributes<HTMLDivElement>['className'];
+  error: React.HTMLAttributes<HTMLDivElement>['className'];
+  info: React.HTMLAttributes<HTMLDivElement>['className'];
 }>;
 
 type TextAreaPropsShape = {
@@ -37,8 +39,6 @@ export type FormInputProps = {
   onFocus?: () => void;
   textAreaProps?: TextAreaPropsShape;
   customStyles?: Partial<FormInputStyles>;
-  classNames?: ClassNamesShape;
-  className?: string;
   onChange?: () => void;
 };
 
@@ -92,13 +92,6 @@ type Props = FormInputProps & {
   customStyles?: Partial<FormInputStyles>;
 };
 
-export type FormInputStyles = {
-  root: string;
-  input: string;
-  error: string;
-  label: string;
-};
-
 //*****************************************************************************
 // Components
 //*****************************************************************************
@@ -139,25 +132,23 @@ const FormInput = ({
     message: 'is required',
   }
 
-  const cn: FormInputStyles = {
-    root: cns(customStyles?.root) || '',
-    label: cns(customStyles?.label) || '',
+  const inputStyles: FormInputStyles = {
+    root: cns('flex flex-col w-100 gap-2', customStyles?.root),
+    label: cns('text-sm', customStyles?.label),
     input: cns(
-      'rounded-md border border-neutral-750 bg-zinc-925 text-sm text-zinc-400',
-      'mb-4 p-1',
-      type !== FieldType.TEXTAREA && 'h-8',
-      customStyles?.input || ''
+      type !== FieldType.TEXTAREA && 'h-14',
+      'px-4 py-4 border-[#4B5563] border-solid rounded-lg bg-[#2A2C30] text-lg border text-white w-full',
+      'placeholder:italic',
+      'disabled:text-zinc-400',
+      customStyles?.input
     ),
-    error: cns(
-      'absolute text-xs ml-2 text-rose-400 -top-2 items-center flex h-full',
-      customStyles?.error
-    ),
+    error: cns('text-red-300 italic text-sm', customStyles?.error),
   }
 
   const inputProps = {
     type,
     placeholder: !errorText ? placeholder : '',
-    className: cn.input,
+    className: inputStyles.input,
     id: id || name,
     disabled,
     onFocus,
@@ -170,33 +161,36 @@ const FormInput = ({
   }
 
   const FormInputComponent = (
-    <div className={cn.root}>
+    <div className={inputStyles.root}>
       {label && (
-        <Label {...{ labelText: label, required, className: cn.label }} />
+        <Label
+          className={inputStyles.label}
+          {...{ labelText: label, required }}
+        />
       )}
       <div className="relative">
         {type === FieldType.TEXTAREA ? (
-          <textarea {...inputProps} className={cn.input} />
+          <textarea {...inputProps} className={inputStyles.input} />
         ) : (
           <input
             defaultValue={defaultValue}
             {...inputProps}
             type={String(inputProps.type)}
-            className={cn.input}
+            className={inputStyles.input}
           />
         )}
-        {errorText && !value ? (
-          <div
-            className={cn.error}
-            onClick={() => {
-              clearErrors(name)
-              setFocus(name)
-            }}
-          >
-            {name} {errorText}
-          </div>
-        ) : null}
       </div>
+      {errorText && !value ? (
+        <div
+          className={inputStyles.error}
+          onClick={() => {
+            clearErrors(name)
+            setFocus(name)
+          }}
+        >
+          {name} {errorText}
+        </div>
+      ) : null}
     </div>
   )
 

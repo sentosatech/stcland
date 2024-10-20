@@ -10,6 +10,11 @@ import customStyles from '../stc.config'
 const meta: Meta<typeof Password> = {
   title: 'Components/Form/Input/Password',
   component: Password,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',

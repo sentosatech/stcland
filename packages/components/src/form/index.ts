@@ -39,7 +39,6 @@ export {
   FormTitle,
   InputSet,
   NumberInput,
-  Panel,
   Password,
   RadioButton,
   RadioButtonGroup,
@@ -47,6 +46,7 @@ export {
   Text,
   TextArea,
   TimeInput,
+  Panel,
 }
 
 export type {

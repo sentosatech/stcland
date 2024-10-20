@@ -10,7 +10,6 @@ export { Table } from './table'
 
 export {
   Form,
-  Panel,
   FormTitle,
   Fieldset,
   Checkbox,

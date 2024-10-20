@@ -3,28 +3,14 @@ import { Email, StcStylesProvider, EmailProps } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
 
-// name: string;
-// value?: any;
-// defaultValue?: any;
-// id?: string;
-// label?: string;
-// placeholder?: string;
-// valueAsNumber?: boolean;
-// required?: boolean;
-// disabled?: boolean;
-// hidden?: boolean;
-// touched?: boolean;
-// dirty?: boolean;
-// onFocus?: () => void;
-// textAreaProps?: TextAreaPropsShape;
-// customStyles?: Partial<FormInputStyles>;
-// classNames?: ClassNamesShape;
-// className?: string;
-// onChange?: () => void;
-
 const meta: Meta<typeof Email> = {
   title: 'Components/Form/Input/Email',
   component: Email,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
   argTypes: {
     name: {
       type: 'string',
@@ -84,14 +70,14 @@ const EmailTemplate: StoryFn<EmailProps> = (args) => <Email {...args} />
 export const Default = EmailTemplate.bind({})
 Default.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
 }
 
 export const Disabled = EmailTemplate.bind({})
 Disabled.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
   disabled: true,
 }
@@ -99,7 +85,7 @@ Disabled.args = {
 export const Required = EmailTemplate.bind({})
 Required.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
   required: true,
 }
@@ -107,7 +93,7 @@ Required.args = {
 export const Hidden = EmailTemplate.bind({})
 Hidden.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
   hidden: true,
 }
@@ -115,7 +101,7 @@ Hidden.args = {
 export const Touched = EmailTemplate.bind({})
 Touched.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
   touched: true,
 }
@@ -123,7 +109,7 @@ Touched.args = {
 export const Dirty = EmailTemplate.bind({})
 Dirty.args = {
   name: 'email',
-  placeholder: 'Email',
+  placeholder: 'steve@sentosatech.com',
   label: 'Email Input',
   touched: true,
 }

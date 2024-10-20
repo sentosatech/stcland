@@ -1,4 +1,3 @@
-import { cns } from '@stcland/utils'
 import FormInput, {
   FieldType,
   FormInputProps,
@@ -84,7 +83,6 @@ const TimeInput = ({ ...props }: TimeInputProps) => (
     {...pickFormProps(props)}
     type={FieldType.TIME}
     defaultValue={props.defaultValue}
-    className={props.className || 'text-red'}
   />
 )
 
@@ -92,7 +90,6 @@ const DateInput = ({ ...props }: DateInputProps) => (
   <InputSet
     defaultValue={props.defaultValue}
     {...pickFormProps(props)}
-    className={cns('text-red w-full', props.className)}
     type={FieldType.DATE}
   />
 )
