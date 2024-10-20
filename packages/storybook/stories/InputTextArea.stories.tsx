@@ -3,6 +3,7 @@ import {
   TextArea,
   StcStylesProvider,
   TextAreaProps,
+  Fieldset,
 } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -73,7 +74,11 @@ const meta: Meta<typeof TextArea> = {
 
 export default meta
 
-const TextTemplate: StoryFn<TextAreaProps> = (args) => <TextArea {...args} />
+const TextTemplate: StoryFn<TextAreaProps> = (args) => (
+  <Fieldset withPanel>
+    <TextArea {...args} />
+  </Fieldset>
+)
 
 export const Default = TextTemplate.bind({})
 Default.args = {

@@ -3,6 +3,7 @@ import {
   Password,
   StcStylesProvider,
   PasswordProps,
+  Fieldset,
 } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -70,7 +71,9 @@ const meta: Meta<typeof Password> = {
 export default meta
 
 const PasswordTemplate: StoryFn<PasswordProps> = (args) => (
-  <Password {...args} />
+  <Fieldset withPanel>
+    <Password {...args} />
+  </Fieldset>
 )
 
 export const Default = PasswordTemplate.bind({})

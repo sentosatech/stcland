@@ -3,6 +3,7 @@ import {
   DateInput,
   StcStylesProvider,
   DateInputProps,
+  Fieldset,
 } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -65,7 +66,9 @@ const meta: Meta<typeof DateInput> = {
 export default meta
 
 const DateInputTemplate: StoryFn<DateInputProps> = (args) => (
-  <DateInput {...args} />
+  <Fieldset withPanel>
+    <DateInput {...args} />
+  </Fieldset>
 )
 
 export const Default = DateInputTemplate.bind({})

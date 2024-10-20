@@ -1,5 +1,10 @@
 import type { Meta, StoryFn } from '@storybook/react'
-import { Email, StcStylesProvider, EmailProps } from '@stcland/components'
+import {
+  Email,
+  StcStylesProvider,
+  EmailProps,
+  Fieldset,
+} from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
 
@@ -65,8 +70,11 @@ const meta: Meta<typeof Email> = {
 
 export default meta
 
-const EmailTemplate: StoryFn<EmailProps> = (args) => <Email {...args} />
-
+const EmailTemplate: StoryFn<EmailProps> = (args) => (
+  <Fieldset withPanel>
+    <Email {...args} />
+  </Fieldset>
+)
 export const Default = EmailTemplate.bind({})
 Default.args = {
   name: 'email',

@@ -40,7 +40,10 @@ const Fieldset = ({
       'p-4 flex flex-col gap-2 bg-gray-800 text-xl',
       customStyles?.root
     ),
-    fieldset: cns('grid grid-cols-2 gap-2', customStyles?.fieldset),
+    fieldset: cns(
+      'grid grid-cols-2 gap-2 disabled:cursor-disabled',
+      customStyles?.fieldset
+    ),
     title: cns(customStyles?.title),
   }
 

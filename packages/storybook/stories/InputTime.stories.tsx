@@ -3,6 +3,7 @@ import {
   TimeInput,
   StcStylesProvider,
   TimeInputProps,
+  Fieldset,
 } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -70,7 +71,9 @@ const meta: Meta<typeof TimeInput> = {
 export default meta
 
 const TimeInputTemplate: StoryFn<TimeInputProps> = (args) => (
-  <TimeInput {...args} />
+  <Fieldset withPanel>
+    <TimeInput {...args} />
+  </Fieldset>
 )
 
 export const Default = TimeInputTemplate.bind({})

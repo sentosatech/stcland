@@ -3,6 +3,7 @@ import {
   NumberInput,
   StcStylesProvider,
   NumberProps,
+  Fieldset,
 } from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -70,7 +71,9 @@ const meta: Meta<typeof NumberInput> = {
 export default meta
 
 const NumberInputTemplate: StoryFn<NumberProps> = (args) => (
-  <NumberInput {...args} />
+  <Fieldset withPanel>
+    <NumberInput {...args} />
+  </Fieldset>
 )
 
 export const Default = NumberInputTemplate.bind({})

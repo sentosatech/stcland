@@ -1,5 +1,10 @@
 import type { Meta, StoryFn } from '@storybook/react'
-import { Text, StcStylesProvider, TextProps } from '@stcland/components'
+import {
+  Text,
+  StcStylesProvider,
+  TextProps,
+  Fieldset,
+} from '@stcland/components'
 import * as React from 'react'
 import customStyles from '../stc.config'
 
@@ -65,7 +70,11 @@ const meta: Meta<typeof Text> = {
 
 export default meta
 
-const TextTemplate: StoryFn<TextProps> = (args) => <Text {...args} />
+const TextTemplate: StoryFn<TextProps> = (args) => (
+  <Fieldset withPanel>
+    <Text {...args} />
+  </Fieldset>
+)
 
 export const Default = TextTemplate.bind({})
 Default.args = {

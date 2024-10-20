@@ -4,23 +4,15 @@ import * as FieldSetStories from './FormFieldSet.stories.tsx';
 <Meta of={FieldSetStories} />
 # DateInput Component
 
-The `DateInput` component is used for form inputs with HTML5 date validation
+The `Fieldset` component is used grouping form inputs into one logical block. By default this is using a 2 column layout.
 
 ## Properties
-- **name** (`string`): Required. The input elements name, this will become the key of the input on form submission. Can be nested using dot notation ie (fieldset.email)
-- **value** (`string`): Nullable. String value to make the input element as a controlled component, can be used to set defaultValue. 
-- **defaultValue** (`string`): Nullable. String value to set the value of the input element without turning it into a controlled component.
-- **id** (`string`): Nullable. used to tag the input element with an Id. must be unique
-- **rows** (`number`): Nullable. determines how many lines does the text area have on render
-- **label** (`string`): Nullable. label text that appears on top of the input element
-- **placeholder** (`string`): Nullable. property to determine the placeholder text of the input element
-- **required** (`string`): Nullable. used to determine if field is required.
-- **disabled** (`string`): Nullable. used to determine if field is disabled.
-- **hidden** (`string`): Nullable. used to determine if field is hidden. Can be used to have prefilled content without being visible to the end user
-- **touched** (`string`): Nullable. used to determine if field has been touched.
-- **dirty** (`string`): Nullable. used to determine if field dirty
-- **onFocus** (`function`): Nullable. used to hook into html onFocus input event.
-- **onChange** (`function`): Nullable. used to hook into html onChange input event.
+- **name** (`string`): Nullable. used by the component as id for easier referencing
+- **title** (`string`): Nullable. Title of the fieldset panel only visible if withPanel attribute is set to true
+- **label** (`string`): Nullable. label of the fieldset, difference with title is this text is smaller, usually used to not emphasized the section too much
+- **withPanel** (`boolean`): Nullable. used to determine if fieldset should behave as a panel. By setting this to true the title will be visible if provided.
+- **disabled** (`boolean`): Nullable. disables the entire field set.
+- **hidden** (`boolean`): Nullable. hides the entire field set.
 
 ### Variants:
 #### Default
