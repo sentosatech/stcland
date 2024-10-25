@@ -2,6 +2,9 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
+// TODO
+// - RowValueList -> RowDataList (DataRow?)
+// - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
 //--- Common -------------------------------------------------------------------
 
 export interface WorksheetMeta  {
@@ -96,13 +99,13 @@ export type InvalidTypeWarning = InvalidDataTypeWarning | InvalidListTypeWarning
 
 export type DataType = DataCollectionDataType
 
-// using a set to remove duplicates
+// Using a set to remove duplicates
 export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataTableDataTypes,
   ...validDataCollectionDataTypes
 ]))
 
-export type DataTypeMap = Record<string, DataCollectionDataType> | Record<string, DataCollectionDataType>[]
+export type DataTypeMap = Record<string, DataType> | Record<string, DataType>[]
 export type Meta = Record<string, any>
 export type MetaTypeMap = Record<string, DataType>
 
