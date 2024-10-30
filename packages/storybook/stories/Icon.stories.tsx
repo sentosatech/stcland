@@ -1,9 +1,9 @@
+import * as React from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import type { IconProps } from '@stcland/components/icon'
 import { StcStylesProvider } from '@stcland/components'
 import { Icon } from '@stcland/components/icon'
 import { Icon as IconWithStyles } from '@stcland/components/icon/withStyles'
-import * as React from 'react'
 import customStyles from '../stc.config'
 
 

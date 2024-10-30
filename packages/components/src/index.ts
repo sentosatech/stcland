@@ -11,3 +11,5 @@ export { Table } from './table'
 export type { ButtonProps, ResetButtonProps, SubmitButtonProps } from './button'
 export { Button, ResetButton, SubmitButton } from './button'
 
+export type { AccordionProps, AccordionSummaryProps, AccordionDetailsProps, AccordionActionsProps } from './accordion'
+export { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from './accordion'
