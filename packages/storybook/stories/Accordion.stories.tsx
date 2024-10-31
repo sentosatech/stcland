@@ -87,7 +87,7 @@ const WithStylesTemplate: StoryFn = () => (
   <StcStylesProvider customStyles={customStyles}>
     <AccordionWithStyles id="actions-accordion">
       <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'  />}>
-        <h3>Accordion with Actions</h3>
+        <h3>Accordion from withStyles</h3>
       </AccordionSummary>
       <AccordionDetails>
         <p>This accordion includes action buttons below.</p>
