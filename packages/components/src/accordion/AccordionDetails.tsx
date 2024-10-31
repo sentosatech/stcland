@@ -2,10 +2,18 @@ import * as React from 'react'
 import { useAccordionContext } from './context/AccordionContext'
 import { appliedStyles, cns } from '@stcland/utils'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface AccordionDetailsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const AccordionDetails = ({
   children,

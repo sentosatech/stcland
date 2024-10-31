@@ -1,6 +1,10 @@
 import * as React from 'react'
 import { AccordionStyles } from 'src/styles'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 interface AccordionContextType {
   expanded: boolean;
   toggle: () => void;
@@ -9,7 +13,16 @@ interface AccordionContextType {
   customStyles?: Partial<AccordionStyles>
 }
 
+interface AccordionProviderProps extends Omit<AccordionContextType, 'toggle' | 'expanded'> {
+  children: React.ReactNode;
+  defaultExpanded?: boolean;
+}
+
 const AccordionContext = React.createContext<AccordionContextType | undefined>(undefined)
+
+//*****************************************************************************
+// Hooks
+//*****************************************************************************
 
 export const useAccordionContext = () => {
   const context = React.useContext(AccordionContext)
@@ -19,13 +32,9 @@ export const useAccordionContext = () => {
   return context
 }
 
-interface AccordionProviderProps {
-  children: React.ReactNode;
-  summaryId: string;
-  detailsId: string;
-  defaultExpanded?: boolean;
-  customStyles?: Partial<AccordionStyles>
-}
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const AccordionProvider = ({ children, summaryId, detailsId, defaultExpanded = false, customStyles }: AccordionProviderProps) => {
   const [expanded, setExpanded] = React.useState(defaultExpanded)

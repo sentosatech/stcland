@@ -3,6 +3,10 @@ import { AccordionProvider } from './context/AccordionContext'
 import { cns, appliedStyles } from '@stcland/utils'
 import type { AccordionStyles } from '../styles/'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   id: string;
@@ -10,6 +14,10 @@ export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   customStyles?: Partial<AccordionStyles>
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const Accordion = ({
   children,

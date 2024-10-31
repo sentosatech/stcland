@@ -2,11 +2,19 @@ import * as React from 'react'
 import { appliedStyles, cns } from '@stcland/utils'
 import { useAccordionContext } from './context/AccordionContext'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface AccordionActionsProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   disableSpacing?: boolean;
   className?: string;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const AccordionActions = ({
   children,
