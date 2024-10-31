@@ -1,13 +1,14 @@
-import type { ButtonStyles, TableStyles } from '.'
+import type { ButtonStyles, TableStyles, AccordionStyles } from '.'
 import { IconStyles } from './componentTypes'
 
 export type StclandStyles = {
-  table?: Partial<TableStyles>,
-  button?: Partial<ButtonStyles>,
+  table?: Partial<TableStyles>
+  button?: Partial<ButtonStyles>
   // Do we want this granularity?
   submitButton?: Partial<ButtonStyles>
-  resetButton?: Partial<ButtonStyles>,
+  resetButton?: Partial<ButtonStyles>
   icon?: Partial<IconStyles>
+  accordion?: Partial<AccordionStyles>
 }
 
 // Default styles
@@ -61,5 +62,14 @@ export const defaultStyles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50'
+  },
+  accordion: {
+    accordion: { root: 'border rounded bg-gray-825' },
+    accordionSummary: {
+      root: 'flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100',
+      icon: 'ml-2 transition-transform duration-300 ease-in-out'
+    },
+    accordionDetails: { root: 'p-4 bg-gray-825 text-gray-400' },
+    accordionAction: { root: 'flex justify-end gap-2', spacing: 'p-4' },
   }
 }

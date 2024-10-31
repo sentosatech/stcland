@@ -1,9 +1,11 @@
 import * as React from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import type { AccordionProps } from '@stcland/components'
-import { Accordion, AccordionSummary, AccordionDetails, AccordionActions } from '@stcland/components'
+import { Accordion, AccordionSummary, AccordionDetails, AccordionActions, StcStylesProvider } from '@stcland/components'
+import { Accordion as AccordionWithStyles } from '@stcland/components/withStyles'
 import { Button } from '@stcland/components'
 import { Icon } from '@stcland/components/icon'
+import customStyles from '../stc.config'
 
 const meta: Meta<AccordionProps> = {
   title: 'Components/Accordion',
@@ -80,3 +82,22 @@ const ActionsTemplate: StoryFn = () => (
 )
 
 export const WithActions = ActionsTemplate.bind({})
+
+const WithStylesTemplate: StoryFn = () => (
+  <StcStylesProvider customStyles={customStyles}>
+    <AccordionWithStyles id="actions-accordion">
+      <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'  />}>
+        <h3>Accordion with Actions</h3>
+      </AccordionSummary>
+      <AccordionDetails>
+        <p>This accordion includes action buttons below.</p>
+      </AccordionDetails>
+      <AccordionActions>
+        <Button text="Cancel" secondary outlined className="mr-2" />
+        <Button text="Agree" outlined />
+      </AccordionActions>
+    </AccordionWithStyles>
+  </StcStylesProvider>
+)
+
+export const WithStyles = WithStylesTemplate.bind({})

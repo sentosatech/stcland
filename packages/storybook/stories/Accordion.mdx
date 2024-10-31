@@ -18,6 +18,7 @@ It offers flexibility for content organization and supports custom styling, stat
 - **id** (`string`): Unique identifier for accessibility purposes. Required for proper WAI-ARIA support.
 - **defaultExpanded** (`boolean`): If `true`, the accordion is expanded by default. Defaults to `false`.
 - **className** (`string`): Additional CSS classes for styling.
+- **customStyles**(`Partial<AccordionStyles>`): Allows passing custom styles for all child elements.
 - **...rest**: Other HTML props such as `aria-*` or `data-*` attributes.
 
 ---
@@ -45,23 +46,23 @@ It offers flexibility for content organization and supports custom styling, stat
 
 ## Examples
 
-### Default Accordion
+### Default 
 
 <Canvas of={AccordionStories.Default} />
 
-This example shows a basic accordion with no custom styling.
+This example shows a basic accordion with default styles.
 
 ---
 
-### Expanded Accordion
+### Expanded 
 
 <Canvas of={AccordionStories.ExpandedByDefault} />
 
-This example shows a basic accordion with no custom styling.
+This example shows a basic accordion with `defaultExpanded` property set to `true`.
 
 ---
 
-### Accordion with Multiple Sections
+### With Multiple Sections
 
 <Canvas of={AccordionStories.MultipleSections} />
 
@@ -69,10 +70,19 @@ This variant demonstrates multiple accordion items with independent expand/colla
 
 ---
 
-### Accordion with Actions
+### With Actions
 
 <Canvas of={AccordionStories.WithActions} />
 
 This example includes action buttons within the `AccordionActions` component.
+
+---
+
+### WithStyles Wrapper
+
+<Canvas of={AccordionStories.WithStyles} />
+
+Apply custom styles to the Accordion component and all of its child elements without the need to pass explicitly 
+a `customStyles` property to the parent `Accordion`.
 
 ---

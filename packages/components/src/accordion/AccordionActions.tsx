@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { cns } from '@stcland/utils'
+import { appliedStyles, cns } from '@stcland/utils'
 import { useAccordionContext } from './context/AccordionContext'
 
 export interface AccordionActionsProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,19 +14,24 @@ export const AccordionActions = ({
   className = '',
   ...rest
 }: AccordionActionsProps) => {
-  const { expanded } = useAccordionContext()
+  const { expanded, customStyles } = useAccordionContext()
 
   if (!expanded) return null
 
   const accordionActionStyles = {
-    root: cns(`flex justify-end gap-2 ${
-      disableSpacing ? '' : 'p-4'
-    }`, className),
+    root: cns('flex justify-end gap-2', className),
+    spacing: 'p-4'
+  }
+
+  const mergedStyles = appliedStyles(accordionActionStyles, customStyles?.accordionAction)
+
+  const cn = {
+    root: cns(mergedStyles.root, disableSpacing ? '' :  mergedStyles.spacing)
   }
 
   return (
     <div
-      className={accordionActionStyles.root}
+      className={cn.root}
       {...rest}
     >
       {children}
