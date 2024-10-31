@@ -66,10 +66,10 @@ export const defaultStyles: StclandStyles = {
   accordion: {
     accordion: { root: 'border rounded bg-gray-825' },
     accordionSummary: {
-      root: 'flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100',
+      root: 'flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100 border-b border-primary-main',
       icon: 'ml-2 transition-transform duration-300 ease-in-out'
     },
-    accordionDetails: { root: 'p-4 bg-gray-825 text-gray-400' },
+    accordionDetails: { root: 'bg-gray-825 text-gray-400' },
     accordionAction: { root: 'flex justify-end gap-2', spacing: 'p-4' },
   }
 }

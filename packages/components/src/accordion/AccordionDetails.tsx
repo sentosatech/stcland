@@ -15,14 +15,15 @@ export const AccordionDetails = ({
 
   const { expanded, detailsId, customStyles } = useAccordionContext()
 
-  if (!expanded) return null
-
   const accordionDetailsStyles = {
-    root: cns( 'p-4 bg-gray-825 text-gray-400', className),
+    root: 'bg-gray-825 text-gray-400 transition-all duration-500 ease-in-out overflow-hidden',
   }
 
+  const mergedStyles = appliedStyles(accordionDetailsStyles, customStyles?.accordionDetails)
 
-  const cn = appliedStyles(accordionDetailsStyles, customStyles?.accordionDetails)
+  const cn = {
+    root: cns(mergedStyles.root, className, expanded ? 'opacity-100 p-4 max-h-full' : 'opacity-0 p-0 max-h-0 delay-300')
+  }
 
   return (
     <div

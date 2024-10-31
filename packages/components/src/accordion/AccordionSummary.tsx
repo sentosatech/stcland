@@ -17,7 +17,7 @@ export const AccordionSummary = ({
   const { expanded, toggle, summaryId, detailsId, customStyles } = useAccordionContext()
 
   const accordionSummaryStyles = {
-    root: cns('flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100', className),
+    root: cns('flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100 border-b border-primary-main', className),
     icon: 'ml-2 transition-transform duration-300 ease-in-out'
   }
 

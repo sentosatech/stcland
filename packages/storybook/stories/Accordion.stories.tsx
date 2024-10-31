@@ -83,6 +83,44 @@ const ActionsTemplate: StoryFn = () => (
 
 export const WithActions = ActionsTemplate.bind({})
 
+
+// Template for a nested accordion example
+const NestedAccordionTemplate: StoryFn = () => (
+  <Accordion id="parent-accordion" defaultExpanded={true}>
+    <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'/>}>
+      <h3>Parent Accordion</h3>
+    </AccordionSummary>
+    <AccordionDetails>
+      <p>This is the content inside the parent accordion.</p>
+      <Accordion id="nested-accordion-1" defaultExpanded={true}>
+        <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'/>}>
+          <h4>Nested Accordion 1</h4>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Accordion id="nested-accordion-2">
+            <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'/>}>
+              <h5>Nested Accordion 2</h5>
+            </AccordionSummary>
+            <AccordionDetails>
+              <p>This is the content inside the deepest nested accordion.</p>
+            </AccordionDetails>
+            <AccordionActions>
+              <Button text="Nested Cancel" outlined className="mr-2" />
+              <Button text="Nested Confirm" primary outlined />
+            </AccordionActions>
+          </Accordion>
+        </AccordionDetails>
+      </Accordion>
+    </AccordionDetails>
+    <AccordionActions>
+      <Button text="Cancel" outlined className="mr-2" />
+      <Button text="Confirm" primary outlined />
+    </AccordionActions>
+  </Accordion>
+)
+
+export const NestedAccordions = NestedAccordionTemplate.bind({})
+
 const WithStylesTemplate: StoryFn = () => (
   <StcStylesProvider customStyles={customStyles}>
     <AccordionWithStyles id="actions-accordion">
@@ -101,3 +139,4 @@ const WithStylesTemplate: StoryFn = () => (
 )
 
 export const WithStyles = WithStylesTemplate.bind({})
+

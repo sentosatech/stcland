@@ -23,7 +23,7 @@ export const Accordion = ({
   const detailsId = `${id}-content`
 
   const accordionStyles = {
-    root: cns('border rounded bg-gray-825', className),
+    root: cns('bg-gray-825', className),
   }
 
   const cn  = appliedStyles( accordionStyles, customStyles?.accordion)

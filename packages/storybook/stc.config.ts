@@ -59,7 +59,7 @@ const styles : StclandStyles = {
       root: 'flex justify-between items-center p-4 cursor-pointer bg-secondary-main text-gray-600',
       icon: 'ml-2 transition-transform duration-300 ease-in-out'
     },
-    accordionDetails: { root: 'p-4 bg-gray-700 text-gray-200' },
+    accordionDetails: { root: 'bg-gray-700 text-gray-200' },
     accordionAction: { root: 'flex justify-end gap-2', spacing: 'p-4' },
   }
 }
