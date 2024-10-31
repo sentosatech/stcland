@@ -1,7 +1,7 @@
+import * as React from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import { ButtonProps, Button, StcStylesProvider } from '@stcland/components'
 import { Button as ButtonWithStyles } from '@stcland/components/withStyles'
-import * as React from 'react'
 import customStyles from '../stc.config'
 import { HeartIcon, CheckIcon }  from '@heroicons/react/24/solid'
 
