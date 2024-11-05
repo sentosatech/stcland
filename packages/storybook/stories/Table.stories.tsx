@@ -1,7 +1,15 @@
 import * as React from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
-import type { ColumnDef, RowSelectionState, ExpandedState } from '@tanstack/react-table'
-import { TableProps, Table as TableNoCustomStyles, StcStylesProvider } from '@stcland/components'
+import type {
+  ColumnDef,
+  RowSelectionState,
+  ExpandedState,
+} from '@tanstack/react-table'
+import {
+  TableProps,
+  Table as TableNoCustomStyles,
+  StcStylesProvider,
+} from '@stcland/components'
 import { Table } from '@stcland/components/withStyles'
 import customStyles from '../stc.config'
 
@@ -17,24 +25,32 @@ const columns: ColumnDef<any>[] = [
 ]
 
 const data = [
-  { name: 'Juanito Doe', age: 30, subRows: [
-    { name: 'Juanito Jr.', age: 5 },
-    { name: 'Luna Doe', age: 8 },
-  ],
+  {
+    name: 'Juanito Doe',
+    age: 30,
+    subRows: [
+      { name: 'Juanito Jr.', age: 5 },
+      { name: 'Luna Doe', age: 8 },
+    ],
   },
-  { name: 'Jane Moreno', age: 25, subRows: [
-    { name: 'Maria Moreno', age: 2 },
-  ], },
+  { name: 'Jane Moreno', age: 25, subRows: [{ name: 'Maria Moreno', age: 2 }] },
 ]
 
-const meta : Meta<typeof TableNoCustomStyles> = {
+const meta: Meta<typeof TableNoCustomStyles> = {
   title: 'Components/Table',
   component: TableNoCustomStyles,
+  parameters: {
+    backgrounds: {
+      default: 'Dark',
+    },
+  },
 }
 
 export default meta
 
-const Template: StoryFn<TableProps> = (args) => <TableNoCustomStyles {...args} />
+const Template: StoryFn<TableProps> = (args) => (
+  <TableNoCustomStyles {...args} />
+)
 
 export const Base = Template.bind({})
 Base.args = {
@@ -46,7 +62,7 @@ export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
   columns,
   data,
-  customStyles : {
+  customStyles: {
     root: 'border border-secondary-main bg-gray-750 px-4 pt-8 pb-14',
     table: 'table-fixed',
     header: 'text-s text-secondary-main text-left',
@@ -81,8 +97,8 @@ WithRowSelected.args = {
   columns,
   data,
   customStyles: {
-    selectedRow: 'bg-secondary-main text-gray-825'
-  }
+    selectedRow: 'bg-secondary-main text-gray-825',
+  },
 }
 
 // With Expanded Rows
@@ -94,14 +110,14 @@ const sampleColumnsExpandedRows: ColumnDef<any>[] = [
       return (
         <div>
           <button
-            className='mr-4 cursor-pointer'
+            className="mr-4 cursor-pointer"
             onClick={() => {
               table.toggleAllRowsExpanded(!isAllExpanded)
             }}
           >
             {isAllExpanded ? '▼' : '▶'}
           </button>
-      Name
+          Name
         </div>
       )
     },
@@ -115,7 +131,7 @@ const sampleColumnsExpandedRows: ColumnDef<any>[] = [
         <div className={isSubRow ? 'pl-6' : ''}>
           {row.depth === 0 && hasSubRows && (
             <span
-              className='mr-4 cursor-pointer'
+              className="mr-4 cursor-pointer"
               onClick={row.getToggleExpandedHandler()}
             >
               {isExpanded ? '▼' : '▶'}
@@ -134,14 +150,15 @@ const sampleColumnsExpandedRows: ColumnDef<any>[] = [
 ]
 
 const sampleDataExpandedRows = [
-  { name: 'Juanito Doe', age: 30, subRows: [
-    { name: 'Juanito Jr.', age: 5 },
-    { name: 'Luna Doe', age: 8 },
-  ],
+  {
+    name: 'Juanito Doe',
+    age: 30,
+    subRows: [
+      { name: 'Juanito Jr.', age: 5 },
+      { name: 'Luna Doe', age: 8 },
+    ],
   },
-  { name: 'Jane Moreno', age: 25, subRows: [
-    { name: 'Maria Moreno', age: 2 },
-  ], },
+  { name: 'Jane Moreno', age: 25, subRows: [{ name: 'Maria Moreno', age: 2 }] },
 ]
 
 const WithExpandedRowsTemplate: StoryFn<TableProps> = (args) => {
@@ -162,18 +179,18 @@ WithExpandedRows.args = {
   data: sampleDataExpandedRows,
   customStyles: {
     subRow: 'text-gray-550',
-  }
+  },
 }
 
-
-const TemplateWithStyles: StoryFn<TableProps> = (args) =>
+const TemplateWithStyles: StoryFn<TableProps> = (args) => (
   <StcStylesProvider customStyles={customStyles}>
     <Table {...args} />
   </StcStylesProvider>
-
+)
 
 export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   columns,
-  data
+  data,
 }
+
