@@ -1,5 +1,4 @@
-import type { ButtonStyles, TableStyles, AccordionStyles } from '.'
-import { IconStyles } from './componentTypes'
+import type { ButtonStyles, TableStyles, AccordionStyles, IconStyles, ListStyles } from '.'
 
 export type StclandStyles = {
   table?: Partial<TableStyles>
@@ -9,6 +8,7 @@ export type StclandStyles = {
   resetButton?: Partial<ButtonStyles>
   icon?: Partial<IconStyles>
   accordion?: Partial<AccordionStyles>
+  list?: Partial<ListStyles>
 }
 
 // Default styles
@@ -71,5 +71,49 @@ export const defaultStyles: StclandStyles = {
     },
     accordionDetails: { root: 'bg-gray-825 text-gray-400' },
     accordionAction: { root: 'flex justify-end gap-2', spacing: 'p-4' },
+  },
+  list: {
+    list: {
+      root: 'w-full max-w-lg bg-gray-825 text-gray-100 rounded-md shadow-md',
+      dense: 'space-y-1',
+      padding: 'p-4',
+      gutters: 'px-4',
+      ordered: 'list-decimal list-inside',
+    },
+    listItem: {
+      root: '',
+      padding: 'p-4',
+      divider: 'border-b border-primary-main',
+      dense: 'py-1',
+      listItem: '',
+      secondaryAction: 'ml-auto',
+    },
+    listItemButton: {
+      root: 'w-full flex rounded',
+      dense: 'py-1',
+      divider: 'border-b border-gray-200',
+      selected: 'bg-gray-200',
+      hover: 'bg-gray-700',
+      disabled: 'bg-gray-750',
+      disabledChilds: 'text-gray-600'
+    },
+    listItemIcon: {
+      root: '',
+    },
+    listItemText: {
+      root: 'flex flex-col w-full',
+      inset: 'pl-8',
+      disabledByParent: 'text-gray-500',
+      primaryContent: 'text-base font-medium text-gray-200',
+      secondaryContent: 'text-sm text-gray-400',
+    },
+    listItemSubheader: {
+      root: '',
+      neutral: 'text-gray-700',
+      primary: 'text-primary-main',
+      secondary: 'text-secondary-main',
+      sticky: 'sticky top-0 z-10',
+      inset: 'ml-4',
+    }
   }
 }

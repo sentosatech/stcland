@@ -1,0 +1,117 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import * as ListStories from './List.stories'
+
+<Meta of={ListStories} />
+
+# List Component
+
+The `List` component provides a flexible way to render a list of items, either ordered or unordered. It allows customization of padding, gutters, and density, making it easy to adapt to different design requirements.
+
+---
+
+## Properties
+
+### List
+- **children** (`React.ReactNode`): The list items or subcomponents rendered within the list.
+- **className** (`string`): Additional CSS classes for styling.
+- **dense** (`boolean`): If `true`, reduces the padding between list items. Defaults to `false`.
+- **disablePadding** (`boolean`): If `true`, disables the default padding for the list. Defaults to `false`.
+- **disableGutters** (`boolean`): If `true`, removes the horizontal padding from list items. Defaults to `false`.
+- **subheader** (`React.ReactNode`): A subheader element rendered above the list items.
+- **ordered** (`boolean`): If `true`, renders an ordered list (`<ol>`), otherwise an unordered list (`<ul>`). Defaults to `false`.
+
+---
+
+### ListItem
+- **alignItems** (`'center' | 'start'`): Defines the alignment of the list item content. Defaults to `'center'`.
+- **children** (`React.ReactNode`): The content of the list item.
+- **className** (`string`): Additional CSS classes for styling.
+- **divider** (`boolean`): If `true`, adds a divider line below the list item. Defaults to `false`.
+- **secondaryAction** (`React.ReactNode`): Content for an action button or element displayed to the right of the list item.
+
+---
+
+### ListItemButton
+- **alignItems** (`'center' | 'start'`): Defines the alignment of the button content. Defaults to `'center'`.
+- **autoFocus** (`boolean`): If `true`, focuses the button automatically when the component mounts. Defaults to `false`.
+- **children** (`React.ReactNode`): The content of the button.
+- **className** (`string`): Additional CSS classes for styling.
+- **dense** (`boolean`): If `true`, applies dense styles to the button. Overrides the `List` context. Defaults to `false`.
+- **disabled** (`boolean`): If `true`, disables the button. Defaults to `false`.
+- **disableGutters** (`boolean`): If `true`, disables horizontal padding. Overrides the `List` context. Defaults to `false`.
+- **divider** (`boolean`): If `true`, adds a divider above the button. Defaults to `false`.
+- **selected** (`boolean`): If `true`, styles the button as selected. Defaults to `false`.
+
+---
+
+### ListItemText
+- **children** (`React.ReactNode`): Additional content to render inside the text block.
+- **className** (`string`): Additional CSS classes for styling.
+- **inset** (`boolean`): If `true`, applies inset styling. Defaults to `false`.
+- **primary** (`React.ReactNode`): The primary text content.
+- **secondary** (`React.ReactNode`): The secondary text content.
+
+---
+
+### ListSubheader
+- **children** (`React.ReactNode`): The content of the subheader.
+- **className** (`string`): Additional Tailwind CSS classes for styling.
+- **color** (`'secondary' | 'neutral' | 'primary'`): Defines the color theme of the subheader. Defaults to `'neutral'`.
+- **disableGutters** (`boolean`): If `true`, disables padding around the subheader. Defaults to `false`.
+- **disableSticky** (`boolean`): If `true`, the subheader will not stick to the top during scrolling. Defaults to `false`.
+- **inset** (`boolean`): If `true`, applies inset styling. Defaults to `false`.
+
+---
+
+## Examples
+
+### Default List
+
+This example shows a basic unordered list with default styles and props.
+
+<Canvas of={ListStories.Default} />
+
+---
+
+### Ordered List
+
+This example demonstrates rendering an ordered list with some items.
+
+<Canvas of={ListStories.OrderedList} />
+
+---
+
+### List Inset
+
+This example demonstrates a list with inset behavior/style.
+
+<Canvas of={ListStories.ListWithInset} />
+
+---
+
+### List with Dividers
+
+This example shows a list where each item has a divider.
+
+<Canvas of={ListStories.ListWithDivider} />
+
+---
+
+### List with Buttons
+
+This example demonstrates a list with buttons and ListItemText element, when the property `disabled` is passed, it will apply a style to the child.
+
+<Canvas of={ListStories.ListWithButtons} />
+
+---
+
+### List with Nested List
+
+<Canvas of={ListStories.NestedListWithToggleExample} />
+
+---
+
+### With Custom Styles
+
+<Canvas of={ListStories.ListWithCustomStyles} />
+

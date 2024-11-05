@@ -61,3 +61,48 @@ export type AccordionStyles = {
       root: string,
       spacing: string }
   }
+
+export type ListStyles = {
+    list: {
+      root: string,
+      dense: string,
+      padding: string,
+      gutters: string,
+      ordered: string,
+    }
+    listItem: {
+      root: string,
+      padding: string,
+      divider: string,
+      dense: string,
+      listItem: string,
+      secondaryAction: string,
+    }
+    listItemButton: {
+      root: string,
+      dense: string,
+      divider: string,
+      selected: string,
+      hover: string,
+      disabled: string,
+      disabledChilds: string,
+    }
+    listItemIcon: {
+      root: string,
+    },
+    listItemText: {
+      root: string,
+      inset: string,
+      disabledByParent: string,
+      primaryContent: string,
+      secondaryContent: string,
+    },
+    listItemSubheader: {
+      root: string,
+      neutral: string,
+      primary: string,
+      secondary: string,
+      sticky: string,
+      inset: string,
+    }
+  }

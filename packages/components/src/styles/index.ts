@@ -5,4 +5,4 @@ export { StcStylesProvider, useStyles, getStyles } from './StylesProvider'
 
 export type { StclandStyles } from './defaults'
 
-export type { TableStyles, ButtonStyles, AccordionStyles } from './componentTypes'
+export type { TableStyles, ButtonStyles, AccordionStyles, IconStyles, ListStyles } from './componentTypes'

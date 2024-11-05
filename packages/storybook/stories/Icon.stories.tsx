@@ -27,7 +27,7 @@ export const Secondary = Icon.bind({})
 Secondary.args = {
   iconName: 'HeartIcon',
   md: true,
-  secondaryColor: true
+  secondary: true
 }
 
 const TemplateWithStyles: StoryFn<IconProps> = (args) =>
@@ -41,5 +41,5 @@ WithStyles.args = {
   iconName: 'CurrencyDollarIcon',
   lg: true,
   solid: true,
-  secondaryColor: true
+  secondary: true
 }
