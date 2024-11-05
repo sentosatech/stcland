@@ -24,7 +24,7 @@ export const ListItemText = ({
   const defaultStyles = {
     root: 'flex flex-col w-full',
     inset: 'pl-8',
-    disabledByParent: 'text-gray-500',
+    disabledByParent: 'group-disabled:text-gray-500',
     primaryContent: 'text-base font-medium text-gray-200',
     secondaryContent: 'text-sm text-gray-400'
   }
@@ -32,13 +32,12 @@ export const ListItemText = ({
   const mergedStyles = appliedStyles(defaultStyles, customStyles?.listItemText)
 
   const insetStyle = inset ? mergedStyles.inset : ''
-  const contentDisabledByParentStyle = `group-disabled:${mergedStyles.disabledByParent}`
   const alignItemStyle = `text-${alignItem}`
 
   const cn = {
-    root: cns(mergedStyles.root, insetStyle, className, contentDisabledByParentStyle),
-    primaryContent: cns(mergedStyles.primaryContent, alignItemStyle),
-    secondaryContent: cns(mergedStyles.secondaryContent, alignItemStyle),
+    root: cns(mergedStyles.root, insetStyle, className, mergedStyles.disabledByParent),
+    primaryContent: cns(mergedStyles.primaryContent, alignItemStyle, mergedStyles.disabledByParent),
+    secondaryContent: cns(mergedStyles.secondaryContent, alignItemStyle, mergedStyles.disabledByParent),
   }
   const primaryContent = primary &&
     <span className={cn.primaryContent}>

@@ -33,9 +33,9 @@ export const ListItemButton = ({
     dense: 'py-1',
     divider: 'border-b border-gray-200',
     selected: 'bg-gray-200',
-    hover: 'bg-gray-700',
-    disabled: 'bg-gray-750',
-    disabledChilds: 'text-gray-600'
+    hover: 'hover:bg-gray-700',
+    disabled: 'disabled:bg-gray-750',
+    disabledChilds: 'group disabled:text-gray-600'
   }
 
   const mergedStyles = appliedStyles(defaultStyles, customStyles?.listItemButton)
@@ -47,11 +47,10 @@ export const ListItemButton = ({
   const guttersClass = disableGutters ? 'px-0' : 'px-4'
   const dividerClass = divider ? mergedStyles.divider : ''
   const selectedClass = selected ? mergedStyles.selected : ''
-  const hoverStyle = `hover:${mergedStyles.hover}`
-  const disabledStyle = disabled ? `disabled:${mergedStyles.disabled} group disabled:${mergedStyles.disabledChilds}` : ''
+  const disabledStyle = disabled ? `${mergedStyles.disabled} ${mergedStyles.disabledChilds}` : ''
 
   const cn = {
-    root: cns(mergedStyles.root, alignItems, denseClass, alignmentClass, guttersClass, dividerClass, selectedClass, className, hoverStyle, disabledStyle),
+    root: cns(mergedStyles.root, alignItems, denseClass, alignmentClass, guttersClass, dividerClass, selectedClass, className, mergedStyles.hover, disabledStyle),
   }
 
   return (

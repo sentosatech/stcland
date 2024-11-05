@@ -94,8 +94,8 @@ export const defaultStyles: StclandStyles = {
       divider: 'border-b border-gray-200',
       selected: 'bg-gray-200',
       hover: 'bg-gray-700',
-      disabled: 'bg-gray-750',
-      disabledChilds: 'text-gray-600'
+      disabled: 'disabled:bg-gray-750',
+      disabledChilds: 'group disabled:text-gray-600'
     },
     listItemIcon: {
       root: '',
@@ -103,7 +103,7 @@ export const defaultStyles: StclandStyles = {
     listItemText: {
       root: 'flex flex-col w-full',
       inset: 'pl-8',
-      disabledByParent: 'text-gray-500',
+      disabledByParent: 'group-disabled:text-gray-500',
       primaryContent: 'text-base font-medium text-gray-200',
       secondaryContent: 'text-sm text-gray-400',
     },
