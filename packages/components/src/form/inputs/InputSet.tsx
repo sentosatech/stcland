@@ -113,7 +113,7 @@ const RadioButton = ({ id, onChange, ...props }: RadioButtonProps) => {
 const CheckBox = ({ ...props }: CheckBoxProps) => {
   const cn: CheckBoxStyles = appliedStyles(
     {
-      root: 'justify-end items-center py-4',
+      root: 'flex-row-reverse justify-end items-center py-4',
       inputRoot: 'accent-sky-500 rounded-sm h-100',
       label: 'pt-0 mb-0',
     },
