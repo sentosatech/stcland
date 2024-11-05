@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.7
+
+### Patch Changes
+
+- Added List and Form to STCLandia.
+
 ## 0.0.6
 
 ### Patch Changes
