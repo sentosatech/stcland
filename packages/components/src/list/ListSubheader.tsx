@@ -2,6 +2,10 @@ import React from 'react'
 import { useListContext } from './context/ListContext'
 import { appliedStyles, cns } from '@stcland/utils'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface ListSubheaderProps {
   children: React.ReactNode;
   className?: string;
@@ -9,6 +13,10 @@ export interface ListSubheaderProps {
   disableSticky?: boolean;
   inset?: boolean;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const ListSubheader = ({
   children,
@@ -41,7 +49,7 @@ export const ListSubheader = ({
   const insetClass = inset ? mergedStyles.inset : ''
 
   const cn = {
-    root: cns(gutterClass, colorVariants, stickyClass, insetClass, className)
+    root: cns(mergedStyles.root, gutterClass, stickyClass, insetClass, colorVariants, className)
   }
 
   return (

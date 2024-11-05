@@ -27,7 +27,6 @@ The `List` component provides a flexible way to render a list of items, either o
 - **children** (`React.ReactNode`): The content of the list item.
 - **className** (`string`): Additional CSS classes for styling.
 - **divider** (`boolean`): If `true`, adds a divider line below the list item. Defaults to `false`.
-- **secondaryAction** (`React.ReactNode`): Content for an action button or element displayed to the right of the list item.
 
 ---
 
@@ -77,7 +76,7 @@ This example shows a basic unordered list with default styles and props.
 
 This example demonstrates rendering an ordered list with some items.
 
-<Canvas of={ListStories.OrderedList} />
+<Canvas of={ListStories.Ordered} />
 
 ---
 
@@ -85,7 +84,7 @@ This example demonstrates rendering an ordered list with some items.
 
 This example demonstrates a list with inset behavior/style.
 
-<Canvas of={ListStories.ListWithInset} />
+<Canvas of={ListStories.WithInset} />
 
 ---
 
@@ -93,7 +92,7 @@ This example demonstrates a list with inset behavior/style.
 
 This example shows a list where each item has a divider.
 
-<Canvas of={ListStories.ListWithDivider} />
+<Canvas of={ListStories.WithDivider} />
 
 ---
 
@@ -101,17 +100,34 @@ This example shows a list where each item has a divider.
 
 This example demonstrates a list with buttons and ListItemText element, when the property `disabled` is passed, it will apply a style to the child.
 
-<Canvas of={ListStories.ListWithButtons} />
+<Canvas of={ListStories.WithButtons} />
 
 ---
 
 ### List with Nested List
 
-<Canvas of={ListStories.NestedListWithToggleExample} />
+<Canvas of={ListStories.NestedWithToggleExample} />
+
+---
+
+### With Selected Item
+
+<Canvas of={ListStories.WithSelectedItem} />
 
 ---
 
 ### With Custom Styles
 
-<Canvas of={ListStories.ListWithCustomStyles} />
+<Canvas of={ListStories.WithCustomStyles} />
 
+----
+
+## WithStyles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property as the **With Custom Styles** example above.
+
+<Canvas of={ListStories.WithStylesWrapper} />
+
+---

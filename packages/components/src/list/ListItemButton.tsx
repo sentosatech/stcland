@@ -2,9 +2,13 @@ import React from 'react'
 import { useListContext } from './context/ListContext'
 import { appliedStyles, cns } from '@stcland/utils'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface ListItemButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (param?: unknown) => void;
   alignItems?: 'center' | 'start';
   autoFocus?: boolean;
   className?: string;
@@ -14,8 +18,12 @@ export interface ListItemButtonProps {
   selected?: boolean;
 }
 
+//*****************************************************************************
+// Components
+//*****************************************************************************
+
 export const ListItemButton = ({
-  alignItems = 'start',
+  alignItems = 'center',
   onClick = () => {},
   autoFocus = false,
   children,
@@ -31,8 +39,8 @@ export const ListItemButton = ({
   const defaultStyles = {
     root: 'w-full flex rounded',
     dense: 'py-1',
-    divider: 'border-b border-gray-200',
-    selected: 'bg-gray-200',
+    divider: 'border-b border-primary-main',
+    selected: 'bg-gray-600',
     hover: 'hover:bg-gray-700',
     disabled: 'disabled:bg-gray-750',
     disabledChilds: 'group disabled:text-gray-600'

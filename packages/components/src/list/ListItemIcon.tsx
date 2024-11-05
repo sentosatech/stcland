@@ -2,10 +2,18 @@ import React from 'react'
 import { useListContext } from './context/ListContext'
 import { appliedStyles } from '@stcland/utils'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface ListItemIconProps {
   children: React.ReactNode;
   className?: string;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const ListItemIcon = ({ children, className = '' }: ListItemIconProps) => {
   const { customStyles } = useListContext()

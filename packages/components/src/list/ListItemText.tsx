@@ -2,6 +2,10 @@ import React from 'react'
 import { appliedStyles, cns } from '@stcland/utils'
 import { useListContext } from './context/ListContext'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface ListItemTextProps {
   alignItem?: 'center' | 'left';
   children?: React.ReactNode;
@@ -10,6 +14,10 @@ export interface ListItemTextProps {
   primary?: React.ReactNode;
   secondary?: React.ReactNode;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const ListItemText = ({
   alignItem ='left',

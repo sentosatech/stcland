@@ -1,6 +1,10 @@
-import React, { Children } from 'react'
+import React from 'react'
+import type { StoryFn } from '@storybook/react'
 import { List, ListItem, ListSubheader, ListItemText, ListItemIcon, ListItemButton, ListProps } from '@stcland/components'
 import { Icon } from '@stcland/components/icon'
+import { StcStylesProvider } from '@stcland/components'
+import { List as ListWithStyles } from '@stcland/components/withStyles'
+import customStyles from '../stc.config'
 
 export default {
   title: 'Components/List',
@@ -39,8 +43,8 @@ Default.args = {
 }
 
 
-export const OrderedList = Template.bind({})
-OrderedList.args = {
+export const Ordered = Template.bind({})
+Ordered.args = {
   ordered: true,
   dense: false,
   disablePadding: false,
@@ -59,26 +63,26 @@ OrderedList.args = {
 }
 
 
-export const ListWithButtons = (args) => (
+export const WithButtons = (args) => (
   <List {...args}>
     <ListSubheader>My List With Buttons</ListSubheader>
-    <ListItemButton alignItems="center">
+    <ListItemButton >
       <ListItemIcon>
         <Icon iconName="InboxIcon" />
       </ListItemIcon>
       <ListItemText primary="Inbox" secondary="View Messages" />
     </ListItemButton>
-    <ListItemButton alignItems="center" disabled>
+    <ListItemButton disabled>
       <Icon solid iconName="HeartIcon" />
       <ListItemText primary="Action (Disabled)" secondary="Click to see options" />
     </ListItemButton>
   </List>
 )
-ListWithButtons.args = { dense: false, disablePadding: false, disableGutters: false }
+WithButtons.args = { dense: false, disablePadding: false, disableGutters: false }
 
 
-export const ListWithDivider = Template.bind({})
-ListWithDivider.args = {
+export const WithDivider = Template.bind({})
+WithDivider.args = {
   children: (
     <>
       <ListSubheader>My List With Dividers</ListSubheader>
@@ -96,8 +100,8 @@ ListWithDivider.args = {
 }
 
 
-export const ListWithInset = Template.bind({})
-ListWithInset.args = {
+export const WithInset = Template.bind({})
+WithInset.args = {
   children: (
     <>
       <ListSubheader>My Inset List</ListSubheader>
@@ -111,7 +115,7 @@ ListWithInset.args = {
   ),
 }
 
-export const NestedListWithToggleExample = (args) => {
+export const NestedWithToggleExample = (args) => {
   const [openDocuments, setOpenDocuments] = React.useState(false)
   const [openFavorites, setOpenFavorites] = React.useState(false)
 
@@ -119,7 +123,7 @@ export const NestedListWithToggleExample = (args) => {
     <List {...args}>
       <ListSubheader>My Nested List</ListSubheader>
 
-      <ListItemButton onClick={() => setOpenDocuments(!openDocuments)} alignItems="center">
+      <ListItemButton onClick={() => setOpenDocuments(!openDocuments)} >
         <ListItemIcon>
           <Icon iconName="FolderIcon" />
         </ListItemIcon>
@@ -128,13 +132,13 @@ export const NestedListWithToggleExample = (args) => {
       </ListItemButton>
       {openDocuments && (
         <List>
-          <ListItemButton alignItems="center">
+          <ListItemButton >
             <ListItemIcon>
               <Icon iconName="HomeIcon" />
             </ListItemIcon>
             <ListItemText primary="Resume.pdf" />
           </ListItemButton>
-          <ListItemButton alignItems="center">
+          <ListItemButton>
             <ListItemIcon>
               <Icon iconName="PencilIcon" />
             </ListItemIcon>
@@ -143,7 +147,7 @@ export const NestedListWithToggleExample = (args) => {
         </List>
       )}
 
-      <ListItemButton onClick={() => setOpenFavorites(!openFavorites)} alignItems="center">
+      <ListItemButton onClick={() => setOpenFavorites(!openFavorites)}>
         <ListItemIcon>
           <Icon iconName="HeartIcon" />
         </ListItemIcon>
@@ -152,13 +156,13 @@ export const NestedListWithToggleExample = (args) => {
       </ListItemButton>
       {openFavorites && (
         <List>
-          <ListItemButton alignItems="center">
+          <ListItemButton >
             <ListItemIcon>
               <Icon iconName="FilmIcon" />
             </ListItemIcon>
             <ListItemText primary="FavoriteItem1" />
           </ListItemButton>
-          <ListItemButton alignItems="center">
+          <ListItemButton >
             <ListItemIcon>
               <Icon iconName="FilmIcon" />
             </ListItemIcon>
@@ -169,11 +173,11 @@ export const NestedListWithToggleExample = (args) => {
     </List>
   )
 }
-NestedListWithToggleExample.args = { dense: false, disablePadding: false, disableGutters: false }
+NestedWithToggleExample.args = { dense: false, disablePadding: false, disableGutters: false }
 
 // Custom Styled List Example
-export const ListWithCustomStyles = Template.bind({})
-ListWithCustomStyles.args = {
+export const WithCustomStyles = Template.bind({})
+WithCustomStyles.args = {
   className: 'bg-gray-100',
   children: (
     <>
@@ -187,3 +191,72 @@ ListWithCustomStyles.args = {
     </>
   ),
 }
+
+
+export const WithSelectedItem = () => {
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
+
+  const handleListItemClick = (event, index) => {
+    setSelectedIndex(index)
+  }
+
+  return (
+    <>
+      <List aria-label="main folders" divider>
+        <ListItemButton
+          selected={selectedIndex === 0}
+          onClick={(event) => handleListItemClick(event, 0)}
+        >
+          <ListItemIcon>
+            <Icon iconName='BeakerIcon' />
+          </ListItemIcon>
+          <ListItemText primary="Tests" />
+        </ListItemButton>
+        <ListItemButton
+          selected={selectedIndex === 1}
+          onClick={(event) => handleListItemClick(event, 1)}
+        >
+          <ListItemIcon>
+            <Icon iconName='AtSymbolIcon' />
+          </ListItemIcon>
+          <ListItemText primary="Emails" />
+        </ListItemButton>
+      </List>
+      <List aria-label="secondary folder">
+        <ListItemButton
+          selected={selectedIndex === 2}
+          onClick={(event) => handleListItemClick(event, 2)}
+        >
+          <ListItemText primary="Lab" />
+        </ListItemButton>
+        <ListItemButton
+          selected={selectedIndex === 3}
+          onClick={(event) => handleListItemClick(event, 3)}
+        >
+          <ListItemText primary="Code" />
+        </ListItemButton>
+      </List>
+    </>
+  )
+}
+
+
+// Custom Styled List Example
+const WithStylesTemplate: StoryFn = () => (
+  <StcStylesProvider customStyles={customStyles}>
+    <ListWithStyles>
+      <ListSubheader>Custom Styled List</ListSubheader>
+      <ListItem divider>
+        <ListItemText primary="Custom Item 1" secondary="More details here" />
+      </ListItem>
+      <ListItemButton>
+        <ListItemText primary="Custom Item 2" secondary="More details here" />
+      </ListItemButton>
+      <ListItemButton disabled>
+        <ListItemText primary="Custom Disabled" secondary="Hello World!" />
+      </ListItemButton>
+    </ListWithStyles>
+  </StcStylesProvider>
+)
+
+export const WithStylesWrapper = WithStylesTemplate.bind({})

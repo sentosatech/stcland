@@ -130,6 +130,49 @@ const styles: StclandStyles = {
     error: 'text-red-300 italic text-sm',
     radioButton: 'accent-sky-500 h-4 w-4',
   },
+  list: {
+    list: {
+      root: 'w-full max-w-lg bg-gray-900 rounded-md shadow-md',
+      dense: 'space-y-1',
+      padding: 'p-4',
+      gutters: 'px-4',
+      ordered: 'list-decimal list-inside',
+      divider: 'border-b border-primary-main',
+    },
+    listItem: {
+      root: '',
+      padding: 'p-4',
+      divider: 'border-b border-secondary-dark',
+      dense: 'py-1',
+    },
+    listItemButton: {
+      root: 'w-full flex rounded',
+      dense: 'py-1',
+      divider: 'border-b border-gray-200',
+      selected: 'bg-gray-200',
+      hover: 'hover:bg-gray-800',
+      disabled: 'disabled:bg-gray-650',
+      disabledChilds: 'group disabled:text-gray-700'
+    },
+    listItemIcon: {
+      root: '',
+    },
+    listItemText: {
+      root: 'flex flex-col w-full',
+      inset: 'pl-8',
+      disabledByParent: 'group-disabled:text-gray-750',
+      primaryContent: 'text-base font-medium text-secondary-main',
+      secondaryContent: 'text-sm text-gray-500',
+    },
+    listItemSubheader: {
+      root: '',
+      neutral: 'text-secondary-dark',
+      primary: 'text-secondary-dark',
+      secondary: 'text-secondary-dark',
+      sticky: 'sticky top-0 z-10',
+      inset: 'ml-4',
+    }
+  }
 }
 
 export default styles

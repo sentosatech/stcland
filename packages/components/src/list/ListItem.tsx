@@ -2,30 +2,34 @@ import React from 'react'
 import { useListContext } from './context/ListContext'
 import { appliedStyles, cns } from '@stcland/utils'
 
+//*****************************************************************************
+// Interface
+//*****************************************************************************
+
 export interface ListItemProps {
   alignItems?: 'center' | 'start';
   children: React.ReactNode;
   className?: string;
   divider?: boolean;
-  secondaryAction?: React.ReactNode;
 }
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 export const ListItem = ({
   alignItems = 'center',
   children,
   className = '',
   divider = false,
-  secondaryAction,
 }: ListItemProps) => {
   const { dense, disablePadding, customStyles } = useListContext()
 
   const defaultStyles = {
-    root: '',
+    root: 'flex',
     padding: 'p-4',
     divider: 'border-b border-primary-main',
-    listItem: '',
     dense: 'py-1',
-    secondaryAction: 'ml-auto'
   }
 
   const mergedStyles = appliedStyles(defaultStyles, customStyles?.listItem)
@@ -36,17 +40,14 @@ export const ListItem = ({
   const dividerClass = divider ? mergedStyles.divider : ''
 
   const cn = {
-    root: cns(alignmentClass, denseClass, dividerClass, paddingStyle, className),
-    listItem: mergedStyles.listItem,
-    secondaryAction: mergedStyles.secondaryAction
+    root: cns(mergedStyles.root, alignmentClass, denseClass, dividerClass, paddingStyle, className),
   }
 
   return (
     <li
       className={cn.root}
     >
-      <div className={cn.listItem}>{children}</div>
-      {secondaryAction && <div className={cn.secondaryAction}>{secondaryAction}</div>}
+      {children}
     </li>
   )
 }
