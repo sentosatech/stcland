@@ -23,7 +23,9 @@ export const Icon: React.FC<IconProps> = ({
   sm,
   md,
   lg,
-  secondaryColor = false,
+  neutral,
+  secondary,
+  primary,
   highlightOnHover = false,
   brightenOnHover = false,
   muted = false,
@@ -65,12 +67,16 @@ export const Icon: React.FC<IconProps> = ({
     [mergedStyles.highlightOnHover]: highlightOnHover,
   }
 
+  const noColorVariant = !secondary && !primary && !neutral
+
   const colorVariants = {
-    [mergedStyles.secondary]: secondaryColor,
-    [mergedStyles.primary]: !secondaryColor,
+    [mergedStyles.secondary]: secondary,
+    [mergedStyles.primary]: primary || noColorVariant,
+    [mergedStyles.neutral]: neutral
   }
 
   const noSizeVariants = !sm && !md && !lg
+
   const sizeVariants = {
     [mergedStyles.sm]: sm,
     [mergedStyles.md]: md || noSizeVariants, // Default to md if no size specified
@@ -85,7 +91,7 @@ export const Icon: React.FC<IconProps> = ({
 
   const cn = {
     root: cns(mergedStyles.root, rootVariants, className),
-    icon: cns(iconVariants, colorVariants, sizeVariants)
+    icon: cns(iconVariants, colorVariants, sizeVariants, 'group-disabled:text-gray-600')
   }
 
   return (

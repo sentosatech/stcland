@@ -1,7 +1,9 @@
 // All component withStyles exports.
-export { Table } from "../table/withStyles";
-export { Button, ResetButton, SubmitButton } from "../button/withStyles";
-export { Accordion } from "../accordion/withStyles";
+export { Table } from '../table/withStyles'
+export { Button, ResetButton, SubmitButton } from '../button/withStyles'
+export { Accordion } from '../accordion/withStyles'
+export { List } from '../list/withStyles'
+
 export {
   Form,
   FormTitle,
@@ -16,4 +18,4 @@ export {
   TextArea,
   TimeInput,
   DateInput,
-} from "../form/withStyles";
+} from '../form/withStyles'

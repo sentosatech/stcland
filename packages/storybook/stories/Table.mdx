@@ -8,7 +8,7 @@ import * as TableStories from './Table.stories';
 The table component is a highly customizable component designed to render tabular data efficiently. It supports a range of use cases, from basic static tables to fully dynamic and customizable data tables. Below are examples showcasing its versatility through different story scenarios.
 
 
-## Basic 
+### Basic 
 
 This example showcases the default configuration of the table component, rendering a simple data table with predefined columns and rows. No custom styles or additional functionality are applied in this example, making it a good starting point for understanding the core functionality.
 
@@ -16,11 +16,11 @@ This example showcases the default configuration of the table component, renderi
 
 ---
 
-## With Custom Styles
+### With Custom Styles
 
 Apply custom styles to the table. It includes the ability to modify the appearance of table elements such as the header, rows, and cells using a `customStyles` prop. This flexibility allows for easy integration of the table into various design systems while maintaining a consistent look and feel.
 
-### Features:
+#### Features:
 - Customizable cell padding
 - Custom border and background colors
 - Tailwind CSS utility classes for styling
@@ -29,11 +29,11 @@ Apply custom styles to the table. It includes the ability to modify the appearan
 
 ---
 
-## With Row Selection
+### With Row Selection
 
 Row selection functionality, allowing users to select one or more rows by clicking on them. The selected rows can be highlighted with custom styles to differentiate them from unselected rows. This is particularly useful in applications that require user interaction with tabular data, such as data grids or list management tools.
 
-### Features:
+#### Features:
 - Row selection state management
 - Custom styles for selected rows
 - Click events for rows
@@ -42,11 +42,11 @@ Row selection functionality, allowing users to select one or more rows by clicki
 
 ---
 
-## With Expanded Row
+### With Expanded Row
 
 The row expanded functionality allows users to view additional details within a row by expanding it. This is useful for displaying nested data or additional information without cluttering the main view. You can control the expansion state of rows and customize the appearance of expanded rows with styles.
 
-### Features:
+#### Features:
 - **Row expansion state management**: Control the expanded state for individual and all rows.
 - **Expand/Collapse Controls**: Display the buttons or icons to expand or collaps rows.
 - **Nested Row Styles**: Apply custom styles to distinguish between main rows and sub-rows.
@@ -56,7 +56,7 @@ The row expanded functionality allows users to view additional details within a 
 ---
 
 
-## WithStyles Wrapper
+### WithStyles Wrapper
 
 When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
 users to access styled versions of the core components. These components enhance the base functionality with added styling without

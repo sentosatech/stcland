@@ -1,5 +1,4 @@
-import type {
-  AccordionStyles,
+import type {  AccordionStyles,
   ButtonStyles,
   CheckBoxStyles,
   FieldSetStyles,
@@ -9,33 +8,34 @@ import type {
   IconStyles,
   RadioButtonGroupStyles,
   SelectStyles,
-  TableStyles,
+  TableStyles, ListStyles
 } from '.'
 
 export type StclandStyles = {
   table?: Partial<TableStyles>;
   button?: Partial<ButtonStyles>;
   // Do we want this granularity?
-  submitButton?: Partial<ButtonStyles>;
-  resetButton?: Partial<ButtonStyles>;
-  icon?: Partial<IconStyles>;
-  accordion?: Partial<AccordionStyles>;
+  submitButton?: Partial<ButtonStyles>
+  resetButton?: Partial<ButtonStyles>
+  icon?: Partial<IconStyles>
+  accordion?: Partial<AccordionStyles>
+  list?: Partial<ListStyles>
 
-  // Form styles
-  form?: Partial<FormStyles>;
-  formTitle?: Partial<FormTitleStyles>;
-  fieldSet?: Partial<FieldSetStyles>;
-  checkbox?: Partial<CheckBoxStyles>;
-  date?: Partial<FormInputStyles>;
-  email?: Partial<FormInputStyles>;
-  number?: Partial<FormInputStyles>;
-  password?: Partial<FormInputStyles>;
-  radio?: Partial<RadioButtonGroupStyles>;
-  select?: Partial<SelectStyles>;
-  text?: Partial<FormInputStyles>;
-  textArea?: Partial<FormInputStyles>;
-  time?: Partial<FormInputStyles>;
-};
+   // Form styles
+   form?: Partial<FormStyles>;
+   formTitle?: Partial<FormTitleStyles>;
+   fieldSet?: Partial<FieldSetStyles>;
+   checkbox?: Partial<CheckBoxStyles>;
+   date?: Partial<FormInputStyles>;
+   email?: Partial<FormInputStyles>;
+   number?: Partial<FormInputStyles>;
+   password?: Partial<FormInputStyles>;
+   radio?: Partial<RadioButtonGroupStyles>;
+   select?: Partial<SelectStyles>;
+   text?: Partial<FormInputStyles>;
+   textArea?: Partial<FormInputStyles>;
+   time?: Partial<FormInputStyles>;
+}
 
 // Default styles
 export const defaultStyles: StclandStyles = {
@@ -101,6 +101,39 @@ export const defaultStyles: StclandStyles = {
     accordionDetails: { root: 'bg-gray-825 text-gray-400' },
     accordionAction: { root: 'flex justify-end gap-2', spacing: 'p-4' },
   },
+  list: {
+    list: {
+      root: 'w-full max-w-lg bg-gray-825 text-gray-100 rounded-md shadow-md',
+      dense: 'space-y-1',
+      padding: 'p-4',
+      gutters: 'px-4',
+      ordered: 'list-decimal list-inside',
+      divider: 'border-b border-primary-main',
+      subheader: 'px-4 text-primary-main',
+    },
+    listItem: {
+      root: '',
+      padding: 'p-4',
+      divider: 'border-b border-primary-main',
+      dense: 'py-1',
+    },
+    listItemButton: {
+      root: 'w-full flex rounded',
+      dense: 'py-1',
+      divider: 'border-b border-gray-200',
+      selected: 'bg-gray-700',
+      hover: 'hover:bg-gray-700',
+      disabled: 'disabled:bg-gray-750',
+      disabledChilds: 'group disabled:text-gray-600'
+    },
+    listItemText: {
+      root: 'flex flex-col w-full',
+      inset: 'pl-8',
+      disabledByParent: 'group-disabled:text-gray-500',
+      primaryText: 'text-base font-medium text-gray-200',
+      secondaryText: 'text-sm text-gray-400',
+    },
+  },
   checkbox: {
     root: 'flex-row-reverse justify-end items-center py-4',
     inputRoot: 'accent-sky-500 rounded-sm h-100',
@@ -110,7 +143,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -118,7 +151,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -126,7 +159,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -134,7 +167,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -142,7 +175,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -150,7 +183,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'h-14 px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'h-14 px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -158,7 +191,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot:
-      'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -174,7 +207,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col gap-2',
     label: '',
     menuButton:
-      'flex px-4 py-1 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full items-center [&>*:first-child]:grow',
+        'flex px-4 py-1 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full items-center [&>*:first-child]:grow',
     menu: 'absolute z-10 min-w-full bg-zinc-700 rounded py-1 mt-1.5 text-base',
     listItem: {
       base: 'block transition duration-200 px-2 cursor-pointer select-none truncate rounded text-lg text-zinc-400 bg-zinc-700 hover:bg-zinc-600 py-2',

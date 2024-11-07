@@ -130,6 +130,39 @@ const styles: StclandStyles = {
     error: 'text-red-300 italic text-sm',
     radioButton: 'accent-sky-500 h-4 w-4',
   },
+  list: {
+    list: {
+      root: 'w-full max-w-lg bg-gray-900 rounded-md shadow-md',
+      dense: 'space-y-1',
+      padding: 'p-4',
+      gutters: 'px-4',
+      ordered: 'list-decimal list-inside',
+      divider: 'border-b border-primary-main',
+      subheader: 'text-gray-300'
+    },
+    listItem: {
+      root: '',
+      padding: 'p-4',
+      divider: 'border-b border-secondary-dark',
+      dense: 'py-1',
+    },
+    listItemButton: {
+      root: 'w-full flex rounded',
+      dense: 'py-1',
+      divider: 'border-b border-gray-200',
+      selected: 'bg-gray-200',
+      hover: 'hover:bg-gray-800',
+      disabled: 'disabled:bg-gray-650',
+      disabledChilds: 'group disabled:text-gray-700'
+    },
+    listItemText: {
+      root: 'flex flex-col w-full',
+      inset: 'pl-8',
+      disabledByParent: 'group-disabled:text-gray-750',
+      primaryText: 'text-base font-medium text-secondary-main',
+      secondaryText: 'text-sm text-gray-500',
+    },
+  }
 }
 
 export default styles
