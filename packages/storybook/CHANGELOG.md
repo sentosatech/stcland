@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.12
+
+### Patch Changes
+
+- Some enhancements in List composition.
+- Updated dependencies
+  - @stcland/components@0.0.8
+
 ## 0.0.11
 
 ### Patch Changes
