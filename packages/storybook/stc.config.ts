@@ -138,6 +138,7 @@ const styles: StclandStyles = {
       gutters: 'px-4',
       ordered: 'list-decimal list-inside',
       divider: 'border-b border-primary-main',
+      subheader: 'text-gray-300'
     },
     listItem: {
       root: '',
@@ -154,24 +155,13 @@ const styles: StclandStyles = {
       disabled: 'disabled:bg-gray-650',
       disabledChilds: 'group disabled:text-gray-700'
     },
-    listItemIcon: {
-      root: '',
-    },
     listItemText: {
       root: 'flex flex-col w-full',
       inset: 'pl-8',
       disabledByParent: 'group-disabled:text-gray-750',
-      primaryContent: 'text-base font-medium text-secondary-main',
-      secondaryContent: 'text-sm text-gray-500',
+      primaryText: 'text-base font-medium text-secondary-main',
+      secondaryText: 'text-sm text-gray-500',
     },
-    listItemSubheader: {
-      root: '',
-      neutral: 'text-secondary-dark',
-      primary: 'text-secondary-dark',
-      secondary: 'text-secondary-dark',
-      sticky: 'sticky top-0 z-10',
-      inset: 'ml-4',
-    }
   }
 }
 

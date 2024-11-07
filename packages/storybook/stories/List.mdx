@@ -3,7 +3,7 @@ import * as ListStories from './List.stories'
 
 <Meta of={ListStories} />
 
-# List Component
+# List Components
 
 The `List` component provides a flexible way to render a list of items, either ordered or unordered. It allows customization of padding, gutters, and density, making it easy to adapt to different design requirements.
 
@@ -13,13 +13,13 @@ The `List` component provides a flexible way to render a list of items, either o
 
 ### List
 - **children** (`React.ReactNode`): The list items or subcomponents rendered within the list.
-- **className** (`string`): Additional CSS classes for styling.
+- **className** (`string`): Additional classes for styling.
 - **dense** (`boolean`): If `true`, reduces the padding between list items. Defaults to `false`.
 - **disablePadding** (`boolean`): If `true`, disables the default padding for the list. Defaults to `false`.
 - **disableGutters** (`boolean`): If `true`, removes the horizontal padding from list items. Defaults to `false`.
-- **subheader** (`React.ReactNode`): A subheader element rendered above the list items.
+- **subheader** (`React.ReactNode or string`): A subheader element or string rendered above the list items.
 - **ordered** (`boolean`): If `true`, renders an ordered list (`<ol>`), otherwise an unordered list (`<ul>`). Defaults to `false`.
-
+- **divider** (`boolean`): If `true`, adds a divider line below the list. Mostly used when there are nested lists. Defaults to `false`.
 ---
 
 ### ListItem
@@ -49,16 +49,6 @@ The `List` component provides a flexible way to render a list of items, either o
 - **inset** (`boolean`): If `true`, applies inset styling. Defaults to `false`.
 - **primary** (`React.ReactNode`): The primary text content.
 - **secondary** (`React.ReactNode`): The secondary text content.
-
----
-
-### ListSubheader
-- **children** (`React.ReactNode`): The content of the subheader.
-- **className** (`string`): Additional Tailwind CSS classes for styling.
-- **color** (`'secondary' | 'neutral' | 'primary'`): Defines the color theme of the subheader. Defaults to `'neutral'`.
-- **disableGutters** (`boolean`): If `true`, disables padding around the subheader. Defaults to `false`.
-- **disableSticky** (`boolean`): If `true`, the subheader will not stick to the top during scrolling. Defaults to `false`.
-- **inset** (`boolean`): If `true`, applies inset styling. Defaults to `false`.
 
 ---
 
@@ -118,16 +108,17 @@ This example demonstrates a list with buttons and ListItemText element, when the
 
 ### With Custom Styles
 
+If you want to style a single instance, you can explicitly pass `customStyles` to the parent `List` without importing `List` from `withStyles`. 
+Note: This approach is not bound under `StcStylesProvider`, so changes in `stc.config.ts` will not affect these one-time customizations.
+
 <Canvas of={ListStories.WithCustomStyles} />
 
 ----
 
-## WithStyles Wrapper
+### WithStyles Wrapper
 
 When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
 users to access styled versions of the core components. These components enhance the base functionality with added styling without
 the need to pass a `customStyles` property as the **With Custom Styles** example above.
 
 <Canvas of={ListStories.WithStylesWrapper} />
-
----

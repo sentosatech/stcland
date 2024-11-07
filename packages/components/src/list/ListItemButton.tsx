@@ -1,6 +1,7 @@
 import React from 'react'
 import { useListContext } from './context/ListContext'
 import { appliedStyles, cns } from '@stcland/utils'
+import { ListStyles } from 'src/styles'
 
 //*****************************************************************************
 // Interface
@@ -9,13 +10,13 @@ import { appliedStyles, cns } from '@stcland/utils'
 export interface ListItemButtonProps {
   children: React.ReactNode;
   onClick?: (param?: unknown) => void;
-  alignItems?: 'center' | 'start';
-  autoFocus?: boolean;
-  className?: string;
-  dense?: boolean;
-  disabled?: boolean;
-  divider?: boolean;
-  selected?: boolean;
+  alignItems?: 'center' | 'start'; // Defines alignment of the button content, defaults to `center`
+  autoFocus?: boolean; // Focuses the button automatically when the component mounts, defaults to `false`
+  className?: string; // Additional classes
+  dense?: boolean; // Applies dense styles to the button, overrides context, defaults to `false`
+  disabled?: boolean; // If `true`, disableds the button, and applies pseudo-classes, defaults to `false`
+  divider?: boolean; // If `true`, adds a divider below the button, defaults to `false`
+  selected?: boolean; // If `true`, styles the button as `selected`, defaults to `false`
 }
 
 //*****************************************************************************
@@ -36,7 +37,7 @@ export const ListItemButton = ({
 
   const { customStyles, dense: denseFromParent, disableGutters } = useListContext()
 
-  const defaultStyles = {
+  const defaultStyles: ListStyles['listItemButton'] = {
     root: 'w-full flex rounded',
     dense: 'py-1',
     divider: 'border-b border-primary-main',
@@ -46,7 +47,7 @@ export const ListItemButton = ({
     disabledChilds: 'group disabled:text-gray-600'
   }
 
-  const mergedStyles = appliedStyles(defaultStyles, customStyles?.listItemButton)
+  const mergedStyles = appliedStyles<ListStyles['listItemButton']>(defaultStyles, customStyles?.listItemButton)
 
   const isDense = dense ?? denseFromParent
 
@@ -62,14 +63,17 @@ export const ListItemButton = ({
   }
 
   return (
-    <button
-      autoFocus={autoFocus}
-      onClick={onClick}
-      disabled={disabled}
-      className={cn.root}
-    >
-      {children}
-    </button>
+    // Adding a <li/> wrapper to keep semantics intact without affecting button accessibility.
+    <li>
+      <button
+        autoFocus={autoFocus}
+        onClick={onClick}
+        disabled={disabled}
+        className={cn.root}
+      >
+        {children}
+      </button>
+    </li>
   )
 }
 

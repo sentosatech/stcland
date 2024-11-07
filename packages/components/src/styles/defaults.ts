@@ -109,6 +109,7 @@ export const defaultStyles: StclandStyles = {
       gutters: 'px-4',
       ordered: 'list-decimal list-inside',
       divider: 'border-b border-primary-main',
+      subheader: 'px-4 text-primary-main',
     },
     listItem: {
       root: '',
@@ -125,24 +126,13 @@ export const defaultStyles: StclandStyles = {
       disabled: 'disabled:bg-gray-750',
       disabledChilds: 'group disabled:text-gray-600'
     },
-    listItemIcon: {
-      root: '',
-    },
     listItemText: {
       root: 'flex flex-col w-full',
       inset: 'pl-8',
       disabledByParent: 'group-disabled:text-gray-500',
-      primaryContent: 'text-base font-medium text-gray-200',
-      secondaryContent: 'text-sm text-gray-400',
+      primaryText: 'text-base font-medium text-gray-200',
+      secondaryText: 'text-sm text-gray-400',
     },
-    listItemSubheader: {
-      root: '',
-      neutral: 'text-gray-700',
-      primary: 'text-primary-main',
-      secondary: 'text-secondary-main',
-      sticky: 'sticky top-0 z-10',
-      inset: 'ml-4',
-    }
   },
   checkbox: {
     root: 'flex-row-reverse justify-end items-center py-4',

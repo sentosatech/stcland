@@ -6,17 +6,17 @@ export interface BaseStyles {
 
 export type AccordionStyles = {
   accordion: {
-    root: string;
+    root: DivElementClassName;
   };
   accordionSummary: {
-    root: string;
+    root: DivElementClassName;
     icon: string;
   };
   accordionDetails: {
-    root: string;
+    root: DivElementClassName;
   };
   accordionAction: {
-    root: string;
+    root: DivElementClassName;
     spacing: string;
   };
 };
@@ -124,21 +124,22 @@ export type SelectStyles = {
 
 export type ListStyles = {
   list: {
-    root: string
+    root: DivElementClassName
     dense: string
     padding: string
     divider: string
     gutters: string
     ordered: string
+    subheader: DivElementClassName,
   }
   listItem: {
-    root: string
+    root: DivElementClassName
     padding: string
     divider: string
     dense: string
   }
   listItemButton: {
-    root: string
+    root: DivElementClassName
     dense: string
     divider: string
     selected: string
@@ -146,22 +147,11 @@ export type ListStyles = {
     disabled: string
     disabledChilds: string
   }
-  listItemIcon: {
-    root: string
-  }
   listItemText: {
-    root: string
+    root: DivElementClassName
     inset: string
     disabledByParent: string
-    primaryContent: string
-    secondaryContent: string
-  }
-  listItemSubheader: {
-    root: string
-    neutral: string
-    primary: string
-    secondary: string
-    sticky: string
-    inset: string
+    primaryText: DivElementClassName
+    secondaryText: DivElementClassName
   }
 }

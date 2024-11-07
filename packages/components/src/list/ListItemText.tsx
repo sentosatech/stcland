@@ -6,26 +6,41 @@ import { useListContext } from './context/ListContext'
 // Interface
 //*****************************************************************************
 
-export interface ListItemTextProps {
-  alignItem?: 'center' | 'left';
-  children?: React.ReactNode;
-  className?: string;
-  inset?: boolean;
-  primary?: React.ReactNode;
-  secondary?: React.ReactNode;
+// Base props, shared by both variants
+interface BaseListItemTextProps {
+  alignItem?: 'center' | 'left'; // Defines alignment of the list item text contents, defaults to `center`
+  className?: string; // Additional classes applied to the root.
+  inset?: boolean; // If `true` applies left padding, defaults to `false`
 }
+
+// Allows `primaryText` and `secondaryText`, but not `children`
+interface WithPrimarySecondary extends BaseListItemTextProps {
+  primaryText?: string; // Text that will be rendered as the primary variant
+  secondaryText?: string; // Text that will be rendered as the secondary variant
+  children?: never;
+}
+
+// Allows `children`, but not `primaryText` or `secondaryText`
+interface WithChildren extends BaseListItemTextProps {
+  children: React.ReactNode; // Single element passed if wanted to render a more fancy content.
+  primaryText?: never;
+  secondaryText?: never;
+}
+
+// Combined type, ensuring mutual exclusivity
+export type ListItemTextProps = WithPrimarySecondary | WithChildren;
 
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
 export const ListItemText = ({
-  alignItem ='left',
+  alignItem = 'left',
   children,
   className = '',
   inset = false,
-  primary,
-  secondary,
+  primaryText,
+  secondaryText,
 }: ListItemTextProps) => {
   const { customStyles } = useListContext()
 
@@ -33,8 +48,8 @@ export const ListItemText = ({
     root: 'flex flex-col w-full',
     inset: 'pl-8',
     disabledByParent: 'group-disabled:text-gray-500',
-    primaryContent: 'text-base font-medium text-gray-200',
-    secondaryContent: 'text-sm text-gray-400'
+    primaryText: 'text-base font-medium text-gray-200',
+    secondaryText: 'text-sm text-gray-400'
   }
 
   const mergedStyles = appliedStyles(defaultStyles, customStyles?.listItemText)
@@ -44,23 +59,24 @@ export const ListItemText = ({
 
   const cn = {
     root: cns(mergedStyles.root, insetStyle, className, mergedStyles.disabledByParent),
-    primaryContent: cns(mergedStyles.primaryContent, alignItemStyle, mergedStyles.disabledByParent),
-    secondaryContent: cns(mergedStyles.secondaryContent, alignItemStyle, mergedStyles.disabledByParent),
+    primaryText: cns(mergedStyles.primaryText, alignItemStyle, mergedStyles.disabledByParent),
+    secondaryText: cns(mergedStyles.secondaryText, alignItemStyle, mergedStyles.disabledByParent),
   }
-  const primaryContent = primary &&
-    <span className={cn.primaryContent}>
-      {primary}
-    </span>
 
-  const secondaryContent = secondary &&
-    <span className={cn.secondaryContent}>
-      {secondary}
+  const primaryContent = primaryText && (
+    <span className={cn.primaryText}>
+      {primaryText}
     </span>
+  )
+
+  const secondaryContent = secondaryText && (
+    <span className={cn.secondaryText}>
+      {secondaryText}
+    </span>
+  )
 
   return (
-    <div
-      className={cn.root}
-    >
+    <div className={cn.root}>
       {children || (
         <>
           {primaryContent}

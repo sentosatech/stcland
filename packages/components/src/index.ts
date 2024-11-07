@@ -65,16 +65,12 @@ export { Button, ResetButton, SubmitButton } from './button'
 export type {
   ListProps,
   ListItemProps,
-  ListItemIconProps,
   ListItemButtonProps,
   ListItemTextProps,
-  ListSubheaderProps
 } from './list'
 export {
   List,
   ListItem,
-  ListItemIcon,
   ListItemButton,
   ListItemText,
-  ListSubheader
 } from './list'
