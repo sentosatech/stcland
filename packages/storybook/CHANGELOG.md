@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.13
+
+### Patch Changes
+
+- Added checkbox independent from form to STCLandia.
+- Updated dependencies
+  - @stcland/components@0.0.9
+
 ## 0.0.12
 
 ### Patch Changes
