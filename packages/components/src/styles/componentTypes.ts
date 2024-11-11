@@ -155,3 +155,21 @@ export type ListStyles = {
     secondaryText: DivElementClassName
   }
 }
+
+export interface CheckboxStyles extends BaseStyles {
+  rootWithoutCustomIcons: DivElementClassName
+  primary: string
+  secondary: string
+  neutral: string
+  uncheckedPrimary: string
+  uncheckedSecondary: string
+  uncheckedNeutral: string
+  sm: string
+  md: string
+  lg: string
+  smChecked: string
+  mdChecked: string
+  lgChecked: string
+  disabled: DivElementClassName
+  checked: string
+}

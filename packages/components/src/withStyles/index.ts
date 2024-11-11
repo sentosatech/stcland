@@ -3,6 +3,7 @@ export { Table } from '../table/withStyles'
 export { Button, ResetButton, SubmitButton } from '../button/withStyles'
 export { Accordion } from '../accordion/withStyles'
 export { List } from '../list/withStyles'
+export { Checkbox } from '../checkbox/withStyles'
 
 export {
   Form,

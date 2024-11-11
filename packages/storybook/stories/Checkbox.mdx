@@ -1,0 +1,58 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as CheckboxStories from './Checkbox.stories';
+
+<Meta of={CheckboxStories} />
+
+# Checkbox Component
+
+The `Checkbox` component allows users to toggle a checked and unchecked state with optional icon customization for each state. 
+It is highly flexible and can be used independently to capture boolean selections. Below is a breakdown of its props and various examples.
+
+### Properties
+
+#### Base:
+- **checked** (`boolean`): Controls whether the checkbox is checked. Defaults to `false`.
+- **onChange** (`() => void`): Callback function that triggers when the checkbox is toggled.
+
+#### Style Variants:
+- **primary** (`boolean`): Applies primary styling to the checkbox.
+- **neutral** (`boolean`): Applies neutral styling to the checkbox.
+- **secondary** (`boolean`): Applies secondary styling to the checkbox.
+- **disabled** (`boolean`): Disables the checkbox, preventing interaction. Defaults to `false`.
+
+#### Size Variants:
+- **sm** (`boolean`): Applies small size variant. Defaults to `true`.
+- **md** (`boolean`): Applies medium size variant.
+- **lg** (`boolean`): Applies large size variant.
+
+#### With Custom Icons:
+- **icon** (`React.ReactNode`): Icon displayed in the unchecked state. Requires `checkedIcon` to be passed if used.
+- **checkedIcon** (`React.ReactNode`): Icon displayed in the checked state. Requires `icon` to be passed if used.
+
+#### Custom Styles:
+- **className** (`string`): Additional CSS classes for the button.
+- **customStyles** (`Partial<CheckboxStyles>`): Allows passing custom styles for `root` and `checked` directly.
+
+### Basic Example
+
+<Canvas of={CheckboxStories.Default} />
+
+### Example with Custom Icons
+
+This example demonstrates passing custom icons for both checked and unchecked states. Here, the checkbox displays a circle when unchecked and a checkmark when checked.
+
+<Canvas of={CheckboxStories.WithIcons} />
+
+### Disabled State
+
+An example where the checkbox is disabled, preventing user interaction.
+
+<Canvas of={CheckboxStories.Disabled} />
+
+### WithStyles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property as the **With Custom Styles** example above.
+
+<Canvas of={CheckboxStories.WithStyles} />
