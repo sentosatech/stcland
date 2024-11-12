@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.10
+
+### Patch Changes
+
+- Added indeterminate prop to Checkbox.
+
 ## 0.0.9
 
 ### Patch Changes
