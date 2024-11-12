@@ -13,6 +13,7 @@ It is highly flexible and can be used independently to capture boolean selection
 #### Base:
 - **checked** (`boolean`): Controls whether the checkbox is checked. Defaults to `false`.
 - **onChange** (`() => void`): Callback function that triggers when the checkbox is toggled.
+- **indeterminate** (`boolean`): Controls wheter it is in a partial state, mostly used when there is a list of items. Defaults to `false`.
 
 #### Style Variants:
 - **primary** (`boolean`): Applies primary styling to the checkbox.
@@ -28,6 +29,7 @@ It is highly flexible and can be used independently to capture boolean selection
 #### With Custom Icons:
 - **icon** (`React.ReactNode`): Icon displayed in the unchecked state. Requires `checkedIcon` to be passed if used.
 - **checkedIcon** (`React.ReactNode`): Icon displayed in the checked state. Requires `icon` to be passed if used.
+- **indeterminateIcon** (`React.ReactNode`): Icon displayed in the indeterminate state.
 
 #### Custom Styles:
 - **className** (`string`): Additional CSS classes for the button.
@@ -48,6 +50,18 @@ This example demonstrates passing custom icons for both checked and unchecked st
 An example where the checkbox is disabled, preventing user interaction.
 
 <Canvas of={CheckboxStories.Disabled} />
+
+### Indeterminate
+
+The indeterminate prop sets the checkbox to an indeterminate state, which is typically used when a partial selection is made 
+(for example, when some, but not all, items in a group are selected). 
+This state is visually represented by a dash or a custom icon, indicating that the checkbox is neither fully checked nor unchecked.
+
+The indeterminate state is often used in scenarios like selecting all items in a list where some items are selected, but not all.
+
+<Canvas of={CheckboxStories.Indeterminate} />
+
+<Canvas of={CheckboxStories.IndeterminateWithCustomIcons} />
 
 ### WithStyles Wrapper
 

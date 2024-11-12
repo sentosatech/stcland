@@ -180,6 +180,7 @@ const styles: StclandStyles = {
     lgChecked: 'text-lg',
     disabled: 'bg-gray-800 border-gray-800 text-gray-600 hover:bg-gray-750',
     checked: 'text-white',
+    indeterminate: 'absolute w-3/4 h-0.5',
   }
 }
 

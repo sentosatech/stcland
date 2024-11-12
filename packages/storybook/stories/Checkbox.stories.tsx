@@ -54,7 +54,62 @@ Disabled.args = {
   required: false,
 }
 
-// Wrapper utility to manage checkbox state with custom styles
+// New story for indeterminate state
+export const Indeterminate = (args: CheckboxProps) => {
+  const [checked, setChecked] = useState(false)
+  const [indeterminate, setIndeterminate] = useState(true)
+
+  const handleChange = () => {
+    setIndeterminate(!indeterminate)
+    setChecked(!checked)
+    args.onChange()
+  }
+
+  return (
+    <Checkbox
+      {...args}
+      checked={checked}
+      indeterminate={indeterminate}
+      onChange={handleChange}
+    />
+  )
+}
+
+Indeterminate.args = {
+  indeterminate: true,
+  sm: true,
+  primary: true,
+}
+
+// Custom Icons: Icon/CheckedIcon and IndeterminateIcon
+export const IndeterminateWithCustomIcons = (args: CheckboxProps) => {
+  const [checked, setChecked] = useState(false)
+  const [indeterminate, setIndeterminate] = useState(true)
+
+  const handleChange = () => {
+    setIndeterminate(!indeterminate)
+    setChecked(!checked)
+    args.onChange()
+  }
+
+  return (
+    <Checkbox
+      {...args}
+      checked={checked}
+      indeterminate={indeterminate}
+      indeterminateIcon={<Icon lg secondary iconName="MinusIcon" />}
+      icon={<Icon lg secondary iconName="ChatBubbleOvalLeftIcon" />}
+      checkedIcon={<Icon secondary lg solid iconName="ChatBubbleOvalLeftIcon" />}
+      onChange={handleChange}
+    />
+  )
+}
+
+IndeterminateWithCustomIcons.args = {
+  indeterminate: true,
+}
+
+
 const TemplateWithStyles: StoryFn<CheckboxProps> = (args) => {
   const [checked, setChecked] = useState(args.checked || false)
   const handleChange = () => {

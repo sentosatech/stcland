@@ -172,4 +172,5 @@ export interface CheckboxStyles extends BaseStyles {
   lgChecked: string
   disabled: DivElementClassName
   checked: string
+  indeterminate: string // TODO: Not quite sure if this prop should be customizable.
 }

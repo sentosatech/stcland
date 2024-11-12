@@ -8,6 +8,7 @@ import { CheckboxStyles } from 'src/styles'
 interface BaseCheckBoxProps {
     checked: boolean
     onChange: () => void
+    indeterminate?: boolean // Controls wheter it is in a partial state, mostly used when there is a list of items, defaults to false.
     // Color variables
     primary?: boolean
     neutral?: boolean
@@ -25,8 +26,8 @@ interface BaseCheckBoxProps {
 
 
 export type CheckboxProps =
-    | (BaseCheckBoxProps & { icon?: never; checkedIcon?: never })
-    | (BaseCheckBoxProps & { icon: React.ReactNode; checkedIcon: React.ReactNode }) // Customized icons.
+    | (BaseCheckBoxProps & { icon?: never; checkedIcon?: never; indeterminateIcon?: never })
+    | (BaseCheckBoxProps & { icon: React.ReactNode; checkedIcon: React.ReactNode; indeterminateIcon?: React.ReactNode }) // Customized icons.
 
 
 //*****************************************************************************
@@ -36,8 +37,10 @@ export type CheckboxProps =
 const Checkbox = ({
   checked,
   onChange,
+  indeterminate = false,
   icon,
   checkedIcon,
+  indeterminateIcon,
   disabled = false,
   primary,
   neutral,
@@ -68,6 +71,7 @@ const Checkbox = ({
     lgChecked: 'text-lg',
     disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
     checked: 'text-white',
+    indeterminate: 'absolute w-3/4 h-0.5',
   }
 
   const mergedStyles = appliedStyles<CheckboxStyles>(defaultStyles, customStyles)
@@ -95,34 +99,33 @@ const Checkbox = ({
   }
 
   const uncheckedColorVariants = {
-    [mergedStyles.uncheckedPrimary]: primary,
+    [mergedStyles.uncheckedPrimary]: primary ||  noColorVariant,
     [mergedStyles.uncheckedSecondary]: secondary,
-    [mergedStyles.uncheckedNeutral]: neutral || noColorVariant
+    [mergedStyles.uncheckedNeutral]: neutral
   }
 
-
-  const checkedStyle = !icon && (checked  ? colorVariants : uncheckedColorVariants)
+  const checkedStyle = !icon && (checked ? colorVariants : uncheckedColorVariants)
   const disabledStyle = disabled && mergedStyles.disabled
+  const indeterminateRoot = indeterminate && 'relative'
 
   const cn = {
-    root: cns(mergedStyles.root, !icon && mergedStyles.rootWithoutCustomIcons, checkedStyle, !icon && sizeVariants, className, disabledStyle),
-    checked: cns(mergedStyles.checked, checkedSizeVariants)
+    root: cns(mergedStyles.root, !icon && mergedStyles.rootWithoutCustomIcons, checkedStyle, !icon && sizeVariants, className, disabledStyle, indeterminateRoot),
+    checked: cns(checked ? mergedStyles.checked : 'text-transparent', checkedSizeVariants, disabledStyle),
+    indeterminate: cns(indeterminate ? colorVariants : '', mergedStyles.indeterminate)
   }
 
   return (
     <span
       role="checkbox"
-      aria-checked={checked}
+      aria-checked={indeterminate ? 'mixed' : checked}
       tabIndex={tabIndex}
       onClick={!disabled ? onChange : undefined}
       className={cn.root}
     >
-      {checked ? (
-        checkedIcon ? (
-          checkedIcon
-        ) : (
-          <span className={cn.checked}>&#10003;</span>
-        )
+      {indeterminate ? (
+        indeterminateIcon || <span className={cn.indeterminate}/>
+      ) : checked ? (
+        checkedIcon || <span className={cn.checked}>&#10003;</span>
       ) : (
         icon || <span className={cn.checked}>&#10003;</span>
       )}

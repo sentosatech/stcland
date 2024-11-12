@@ -248,5 +248,6 @@ export const defaultStyles: StclandStyles = {
     lgChecked: 'text-lg',
     disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
     checked: 'text-white',
+    indeterminate: 'absolute w-3/4 h-0.5',
   }
 }
