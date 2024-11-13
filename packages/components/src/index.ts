@@ -74,3 +74,6 @@ export {
   ListItemButton,
   ListItemText,
 } from './list'
+
+export type { CheckboxProps } from './checkbox'
+export { Checkbox } from './checkbox'

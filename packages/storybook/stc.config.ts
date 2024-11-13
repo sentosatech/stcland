@@ -109,7 +109,7 @@ const styles: StclandStyles = {
     label: 'font-semibold text-sky-700 text-lg',
     fieldset: 'grid-cols-1',
   },
-  checkbox: {
+  checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
     inputRoot:
       'accent-sky-500 rounded-sm h-100 bg-white border-white dark:[color-scheme:light]',
@@ -162,6 +162,25 @@ const styles: StclandStyles = {
       primaryText: 'text-base font-medium text-secondary-main',
       secondaryText: 'text-sm text-gray-500',
     },
+  },
+  checkbox: {
+    root: 'cursor-pointer',
+    rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-800',
+    primary: 'bg-pink-400 border-pink-400',
+    secondary: 'bg-purple-400 border-purple-400',
+    neutral: 'bg-gray-600 border-gray-600',
+    uncheckedPrimary: 'border-pink-400',
+    uncheckedSecondary: 'border-purple-400',
+    uncheckedNeutral: 'border-gray-600',
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+    smChecked: 'text-xs',
+    mdChecked: 'text-md',
+    lgChecked: 'text-lg',
+    disabled: 'bg-gray-800 border-gray-800 text-gray-600 hover:bg-gray-750',
+    checked: 'text-white',
+    indeterminate: 'absolute w-3/4 h-0.5',
   }
 }
 

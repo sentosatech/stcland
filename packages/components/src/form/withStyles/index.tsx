@@ -36,7 +36,7 @@ export const FormTitle = stylesWrapper<FormTitleProps>(
   'formTitle'
 )
 export const Fieldset = stylesWrapper<FieldsetProps>(BaseFieldset, 'fieldSet')
-export const CheckBox = stylesWrapper<CheckBoxProps>(BaseCheckBox, 'checkbox')
+export const CheckBox = stylesWrapper<CheckBoxProps>(BaseCheckBox, 'checkBox')
 export const Email = stylesWrapper<EmailProps>(BaseEmail, 'email')
 export const NumberInput = stylesWrapper<NumberProps>(
   BaseNumberInput,

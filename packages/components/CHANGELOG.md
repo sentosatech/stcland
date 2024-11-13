@@ -1,5 +1,17 @@
 # @stcland/components
 
+## 0.0.10
+
+### Patch Changes
+
+- Added indeterminate prop to Checkbox.
+
+## 0.0.9
+
+### Patch Changes
+
+- Added checkbox independent from form to STCLandia.
+
 ## 0.0.8
 
 ### Patch Changes

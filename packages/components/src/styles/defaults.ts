@@ -8,7 +8,8 @@ import type {  AccordionStyles,
   IconStyles,
   RadioButtonGroupStyles,
   SelectStyles,
-  TableStyles, ListStyles
+  TableStyles, ListStyles,
+  CheckboxStyles
 } from '.'
 
 export type StclandStyles = {
@@ -20,12 +21,13 @@ export type StclandStyles = {
   icon?: Partial<IconStyles>
   accordion?: Partial<AccordionStyles>
   list?: Partial<ListStyles>
+  checkbox?: Partial<CheckboxStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
    formTitle?: Partial<FormTitleStyles>;
    fieldSet?: Partial<FieldSetStyles>;
-   checkbox?: Partial<CheckBoxStyles>;
+   checkBox?: Partial<CheckBoxStyles>;
    date?: Partial<FormInputStyles>;
    email?: Partial<FormInputStyles>;
    number?: Partial<FormInputStyles>;
@@ -134,7 +136,7 @@ export const defaultStyles: StclandStyles = {
       secondaryText: 'text-sm text-gray-400',
     },
   },
-  checkbox: {
+  checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
     inputRoot: 'accent-sky-500 rounded-sm h-100',
     label: 'pt-0 mb-0',
@@ -229,4 +231,23 @@ export const defaultStyles: StclandStyles = {
     root: 'py-4 flex flex-col gap-2 text-xl',
     fieldset: 'grid gap-2 disabled:cursor-disabled grid-cols-4',
   },
+  checkbox: {
+    root: 'cursor-pointer',
+    rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
+    primary: 'bg-primary-main border-primary-main',
+    secondary: 'bg-secondary-main border-secondary-main',
+    neutral: 'bg-gray-600 border-gray-600',
+    uncheckedPrimary: 'border-primary-main',
+    uncheckedSecondary: 'border-secondary-main',
+    uncheckedNeutral: 'border-gray-600',
+    sm: 'w-5 h-5',
+    md: 'w-6 h-6',
+    lg: 'w-8 h-8',
+    smChecked: 'text-xs',
+    mdChecked: 'text-md',
+    lgChecked: 'text-lg',
+    disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
+    checked: 'text-white',
+    indeterminate: 'absolute w-3/4 h-0.5',
+  }
 }

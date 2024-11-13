@@ -16,5 +16,6 @@ export type {
   FormStyles,
   FieldSetStyles,
   FormTitleStyles,
-  ListStyles
+  ListStyles,
+  CheckboxStyles
 } from './componentTypes'
