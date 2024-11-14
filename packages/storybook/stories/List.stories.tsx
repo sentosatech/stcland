@@ -1,8 +1,7 @@
 import React from 'react'
 import type { StoryFn } from '@storybook/react'
-import { List, ListItem, ListItemText, ListItemButton, ListProps } from '@stcland/components'
+import { List, ListItem, ListItemText, ListItemButton, ListProps, StcStylesProvider } from '@stcland/components'
 import { Icon } from '@stcland/components/icon'
-import { StcStylesProvider } from '@stcland/components'
 import { List as ListWithStyles } from '@stcland/components/withStyles'
 import customStyles from '../stc.config'
 

@@ -77,3 +77,6 @@ export {
 
 export type { CheckboxProps } from './checkbox'
 export { Checkbox } from './checkbox'
+
+export type { ModalProps } from './modal'
+export { Modal } from './modal'
