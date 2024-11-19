@@ -19,6 +19,13 @@ const meta: Meta<typeof Modal> = {
   },
 }
 
+const renderActions = () =>
+  <div className='flex gap-2'>
+    <Button outlined onClick={() => alert('Action Cancelled')} text="Cancel" />
+    <Button outlined onClick={() => alert('Action Confirmed')} text="Confirm" />
+  </div>
+
+
 export default meta
 
 type Story = StoryObj<typeof Modal>
@@ -33,11 +40,7 @@ const ModalStoryTemplate: React.FC<ModalProps> = (args) => {
     <div>
       <Button  onClick={handleOpen} text='Open Modal'/>
       {isOpen && (
-        <Modal {...args} open={isOpen} onClose={handleClose}>
-          {args.header && <div>{args.header}</div>}
-          {args.content && <div>{args.content}</div>}
-          {args.actions && <div>{args.actions}</div>}
-        </Modal>
+        <Modal {...args} open={isOpen} onClose={handleClose} header={args.header} content={args.content} actions={args.actions}/>
       )}
     </div>
   )
@@ -49,7 +52,7 @@ export const Default: Story = {
       {...args}
       header="Modal Header"
       content="This is the modal content."
-      actions="Modal actions go here."
+      actions={(renderActions())}
     />
   ),
 }
@@ -61,12 +64,11 @@ export const FullScreen: Story = {
       fullScreen
       header="Full Screen Modal"
       content="This modal takes up the entire screen."
-      actions="Full screen modal actions."
+      actions={(renderActions())}
     />
   ),
 }
 
-// Modal with Custom Width
 export const CustomWidth: Story = {
   render: (args) => (
     <ModalStoryTemplate
@@ -74,12 +76,11 @@ export const CustomWidth: Story = {
       maxWidth={900}
       header="Custom Width Modal"
       content="This modal has a maximum width of 900px."
-      actions="Custom width modal actions."
+      actions={(renderActions())}
     />
   ),
 }
 
-// Modal with Header and Content
 export const ModalWithHeaderAndContent: Story = {
   render: (args) => (
     <ModalStoryTemplate
@@ -113,10 +114,5 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   header: 'Modal Header',
   content: 'Hello content',
-  actions: (
-    <div className='flex gap-2'>
-      <Button outlined onClick={() => alert('Action Cancelled')} text="Cancel" />
-      <Button outlined onClick={() => alert('Action Confirmed')} text="Confirm" />
-    </div>
-  ),
+  actions: (renderActions()),
 }

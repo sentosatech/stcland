@@ -184,14 +184,14 @@ const styles: StclandStyles = {
   },
   modal: {
     root: 'fixed inset-0 z-50 flex items-center justify-center',
-    modal: 'z-20 bg-pink-800 text-gray-300 p-6 shadow-lg transition-all relative rounded min-w-[500px]',
+    modal: 'z-20 bg-pink-800 text-gray-300 p-6 shadow-lg transition-all relative rounded min-w-[500px] flex flex-col space-y-16',
     backdrop: 'absolute inset-0 bg-black opacity-50',
     fullScreen: 'w-screen h-screen',
     closeButton: 'absolute top-4 right-4 text-3xl text-gray-500 hover:text-gray-800 focus:outline-none',
-    modalChildsContainer: 'mt-10 space-y-4 flex flex-col',
+    headerContentContainer: 'flex flex-col flex-1 space-y-4',
     header: 'border-b border-primary-main',
     content: 'text-gray-400',
-    actions: 'mt-auto flex justify-end'
+    actions: 'flex justify-end'
   }
 }
 

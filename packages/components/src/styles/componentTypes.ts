@@ -180,7 +180,7 @@ export interface ModalStyles extends BaseStyles {
   backdrop: string
   fullScreen: string
   closeButton: string
-  modalChildsContainer: string
+  headerContentContainer: string
   header: DivElementClassName
   content: DivElementClassName
   actions: DivElementClassName

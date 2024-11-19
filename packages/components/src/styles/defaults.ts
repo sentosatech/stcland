@@ -254,13 +254,13 @@ export const defaultStyles: StclandStyles = {
   },
   modal : {
     root: 'fixed inset-0 z-50 flex items-center justify-center',
-    modal: 'z-20 bg-white p-6 shadow-lg transition-all' ,
+    modal: 'z-20 bg-gray-850 text-primary-main p-6 shadow-lg transition-all relative rounded min-w-[500px] flex flex-col space-y-16',
     backdrop: 'absolute inset-0 bg-black opacity-50',
     fullScreen: 'w-screen h-screen',
-    modalChildsContainer: 'mt-16 space-y-4',
-    closeButton: 'absolute top-4 right-4 text-xl text-gray-500 hover:text-gray-800 focus:outline-none',
-    header: 'mt-8',
-    content: '',
-    actions: ''
+    closeButton: 'absolute top-4 right-4 text-3xl text-gray-500 hover:text-gray-800 focus:outline-none',
+    headerContentContainer: 'flex flex-col flex-1 space-y-4',
+    header: 'border-b border-primary-main text-2xl pb-4',
+    content: 'text-gray-400',
+    actions: 'flex justify-end'
   }
 }

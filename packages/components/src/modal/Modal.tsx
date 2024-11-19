@@ -21,7 +21,6 @@ export interface ModalProps {
   disableEscapeKeyDown?: boolean
   fullScreen?: boolean
   maxWidth?: number
-  children?: React.ReactNode
   header?: React.ReactNode
   content?: React.ReactNode
   actions?: React.ReactNode
@@ -93,14 +92,14 @@ const Modal = React.forwardRef<TModalHandlers, ModalProps>(function Modal(
 
   const modalStyles: ModalStyles = {
     root: 'fixed inset-0 z-50 flex items-center justify-center',
-    modal: 'z-20 bg-gray-850 text-primary-main p-6 shadow-lg transition-all relative rounded min-w-[500px]',
+    modal: 'z-20 bg-gray-850 text-primary-main p-6 shadow-lg transition-all relative rounded min-w-[500px] flex flex-col space-y-16',
     backdrop: 'absolute inset-0 bg-black opacity-50',
     fullScreen: 'w-screen h-screen',
     closeButton: 'absolute top-4 right-4 text-3xl text-gray-500 hover:text-gray-800 focus:outline-none',
-    modalChildsContainer: 'mt-10 space-y-4 flex flex-col',
+    headerContentContainer: 'flex flex-col flex-1 space-y-4',
     header: 'border-b border-primary-main text-2xl pb-4',
     content: 'text-gray-400',
-    actions: 'mt-auto flex justify-end'
+    actions: 'flex justify-end'
   }
 
   const maxWidthStyle = maxWidth && `max-w-${maxWidth}`
@@ -116,7 +115,7 @@ const Modal = React.forwardRef<TModalHandlers, ModalProps>(function Modal(
     ),
     backdrop: cns(mergedStyles.backdrop, fullScreen, maxWidthStyle),
     closeButton: mergedStyles.closeButton,
-    modalChildsContainer: mergedStyles.modalChildsContainer,
+    headerContentContainer: mergedStyles.headerContentContainer,
     header: mergedStyles.header,
     content: mergedStyles.content,
     actions: mergedStyles.actions
@@ -142,11 +141,11 @@ const Modal = React.forwardRef<TModalHandlers, ModalProps>(function Modal(
         >
           ×
         </button>
-        <div className={cn.modalChildsContainer}>
+        <div className={cn.headerContentContainer}>
           {header && <div className={cn.header}>{header}</div>}
           {content && <div className={cn.content}>{content}</div>}
-          {actions && <div className={cn.actions}>{actions}</div>}
         </div>
+        {actions && <div className={cn.actions}>{actions}</div>}
       </div>
     </div>,
     document.body
