@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.15
+
+### Patch Changes
+
+- Adding Modal to STCLandia.
+- Updated dependencies
+  - @stcland/components@0.0.11
+
 ## 0.0.14
 
 ### Patch Changes
