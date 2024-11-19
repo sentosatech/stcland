@@ -9,7 +9,8 @@ import type {  AccordionStyles,
   RadioButtonGroupStyles,
   SelectStyles,
   TableStyles, ListStyles,
-  CheckboxStyles
+  CheckboxStyles,
+  ModalStyles
 } from '.'
 
 export type StclandStyles = {
@@ -22,6 +23,7 @@ export type StclandStyles = {
   accordion?: Partial<AccordionStyles>
   list?: Partial<ListStyles>
   checkbox?: Partial<CheckboxStyles>
+  modal?: Partial<ModalStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -249,5 +251,16 @@ export const defaultStyles: StclandStyles = {
     disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
     checked: 'text-white',
     indeterminate: 'absolute w-3/4 h-0.5',
+  },
+  modal : {
+    root: 'fixed inset-0 z-50 flex items-center justify-center',
+    modal: 'z-20 bg-gray-850 text-primary-main p-6 shadow-lg transition-all relative rounded min-w-[500px] flex flex-col space-y-16',
+    backdrop: 'absolute inset-0 bg-black opacity-50',
+    fullScreen: 'w-screen h-screen',
+    closeButton: 'absolute top-4 right-4 text-3xl text-gray-500 hover:text-gray-800 focus:outline-none',
+    headerContentContainer: 'flex flex-col flex-1 space-y-4',
+    header: 'border-b border-primary-main text-2xl pb-4',
+    content: 'text-gray-400',
+    actions: 'flex justify-end'
   }
 }

@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.11
+
+### Patch Changes
+
+- Adding Modal to STCLandia.
+
 ## 0.0.10
 
 ### Patch Changes

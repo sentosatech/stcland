@@ -4,6 +4,7 @@ export { Button, ResetButton, SubmitButton } from '../button/withStyles'
 export { Accordion } from '../accordion/withStyles'
 export { List } from '../list/withStyles'
 export { Checkbox } from '../checkbox/withStyles'
+export { Modal } from '../modal/withStyles'
 
 export {
   Form,
