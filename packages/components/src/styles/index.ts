@@ -18,5 +18,6 @@ export type {
   FormTitleStyles,
   ListStyles,
   CheckboxStyles,
-  ModalStyles
+  ModalStyles,
+  DndStyles
 } from './componentTypes'

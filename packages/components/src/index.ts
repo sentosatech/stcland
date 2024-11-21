@@ -80,3 +80,6 @@ export { Checkbox } from './checkbox'
 
 export type { ModalProps } from './modal'
 export { Modal } from './modal'
+
+export type { SortableListProps, SortableItemProps, DraggableProps, DroppableProps } from './dnd'
+export { SortableItem, SortableList, DragDropProvider, Draggable, Droppable, arrayMove } from './dnd'

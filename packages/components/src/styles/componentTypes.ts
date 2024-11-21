@@ -185,3 +185,27 @@ export interface ModalStyles extends BaseStyles {
   content: DivElementClassName
   actions: DivElementClassName
 }
+
+export interface DndStyles {
+  sortableList: {
+    grid: string
+  },
+  sortableItem: {
+    root: string
+    bgColorClass: string
+    dragging: string
+    content: string
+    removeButton: string
+  },
+  droppable: {
+    root: string
+    dropping: string
+  },
+  draggable: {
+    root: string
+    bgColorClass: string
+    dragging: string
+    content: string
+    removeButton: string
+  }
+}

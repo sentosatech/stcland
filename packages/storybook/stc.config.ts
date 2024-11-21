@@ -192,6 +192,29 @@ const styles: StclandStyles = {
     header: 'border-b border-primary-main',
     content: 'text-gray-400',
     actions: 'flex justify-end'
+  },
+  dnd: {
+    sortableList: {
+      grid: 'grid grid-cols-3 gap-4 p-4 bg-gray-200 rounded-md'
+    },
+    sortableItem: {
+      root: 'relative p-2 rounded text-pink-900 transition-opacity flex items-center justify-between',
+      bgColorClass: 'bg-pink-200',
+      dragging: 'opacity-50',
+      content: 'flex-1',
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+    },
+    droppable: {
+      root: '',
+      dropping: 'opacity-50'
+    },
+    draggable: {
+      root: 'cursor-grab relative p-2 rounded text-primary-main transition-opacity flex items-center justify-between',
+      bgColorClass: ' bg-pink-200',
+      dragging: 'opacity-50',
+      content: 'flex-1',
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+    }
   }
 }
 
