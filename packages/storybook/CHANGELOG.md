@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.16
+
+### Patch Changes
+
+- Added DND to STCLandia.
+- Updated dependencies
+  - @stcland/components@0.0.12
+
 ## 0.0.15
 
 ### Patch Changes

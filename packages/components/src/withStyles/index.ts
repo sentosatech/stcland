@@ -5,6 +5,7 @@ export { Accordion } from '../accordion/withStyles'
 export { List } from '../list/withStyles'
 export { Checkbox } from '../checkbox/withStyles'
 export { Modal } from '../modal/withStyles'
+export { DragDropProvider } from '../dnd/withStyles'
 
 export {
   Form,

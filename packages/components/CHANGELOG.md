@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.12
+
+### Patch Changes
+
+- Added DND to STCLandia.
+
 ## 0.0.11
 
 ### Patch Changes

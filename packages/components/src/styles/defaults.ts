@@ -10,7 +10,8 @@ import type {  AccordionStyles,
   SelectStyles,
   TableStyles, ListStyles,
   CheckboxStyles,
-  ModalStyles
+  ModalStyles,
+  DndStyles
 } from '.'
 
 export type StclandStyles = {
@@ -24,6 +25,7 @@ export type StclandStyles = {
   list?: Partial<ListStyles>
   checkbox?: Partial<CheckboxStyles>
   modal?: Partial<ModalStyles>
+  dnd?: Partial<DndStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -262,5 +264,28 @@ export const defaultStyles: StclandStyles = {
     header: 'border-b border-primary-main text-2xl pb-4',
     content: 'text-gray-400',
     actions: 'flex justify-end'
+  },
+  dnd: {
+    sortableList: {
+      grid: 'grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-md'
+    },
+    sortableItem: {
+      root: 'relative mb-1 p-2 rounded-lg text-white transition-opacity flex items-center justify-between',
+      bgColorClass: 'bg-gray-825',
+      dragging: 'opacity-50',
+      content: 'flex-1',
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+    },
+    droppable: {
+      root: '',
+      dropping: 'opacity-50'
+    },
+    draggable: {
+      root: 'cursor-grab relative mb-1 p-2 rounded-lg text-white transition-opacity flex items-center justify-between',
+      bgColorClass: 'bg-gray-825',
+      dragging: 'opacity-50',
+      content: 'flex-1',
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+    }
   }
 }
