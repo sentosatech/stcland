@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import * as React from 'react'
 import { DndContext  } from '@dnd-kit/core'
 import type { DndContextProps  } from '@dnd-kit/core'
 import { DndStyles } from 'src/styles'
@@ -9,13 +9,13 @@ export interface CustomDndContextProps extends DndContextProps {
 }
 
 // Create a React context for custom styles
-const CustomDndContext = createContext<Partial<CustomDndContextProps>>({})
+const CustomDndContext = React.createContext<Partial<CustomDndContextProps>>({})
 
-const DragDropProvider: React.FC<CustomDndContextProps> = ({
+const DragDropProvider = ({
   children,
   customStyles,
   ...props
-}) => {
+}: CustomDndContextProps) => {
   return (
     <CustomDndContext.Provider value={{ customStyles }}>
       <DndContext {...props}>{children}</DndContext>
@@ -25,7 +25,7 @@ const DragDropProvider: React.FC<CustomDndContextProps> = ({
 
 // Custom hook to access custom styles
 export const useCustomDndContext = () => {
-  const context = useContext(CustomDndContext)
+  const context = React.useContext(CustomDndContext)
   if (!context) {
     throw new Error('useCustomDndContext must be used within a DragDropProvider')
   }

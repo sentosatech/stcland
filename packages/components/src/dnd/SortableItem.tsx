@@ -20,7 +20,7 @@ export interface SortableItemProps {
 // Components
 //*****************************************************************************
 
-const SortableItem: React.FC<SortableItemProps> = ({ id, children, onRemove, bgColorClass = 'bg-gray-825', className }) => {
+const SortableItem = ({ id, children, onRemove, bgColorClass = 'bg-gray-825', className }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
   const { customStyles } = useCustomDndContext()
 

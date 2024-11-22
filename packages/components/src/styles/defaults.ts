@@ -11,7 +11,8 @@ import type {  AccordionStyles,
   TableStyles, ListStyles,
   CheckboxStyles,
   ModalStyles,
-  DndStyles
+  DndStyles,
+  RadioGroupStyles
 } from '.'
 
 export type StclandStyles = {
@@ -26,6 +27,7 @@ export type StclandStyles = {
   checkbox?: Partial<CheckboxStyles>
   modal?: Partial<ModalStyles>
   dnd?: Partial<DndStyles>
+  radioGroup?: Partial<RadioGroupStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -292,6 +294,23 @@ export const defaultStyles: StclandStyles = {
       dragging: 'opacity-50',
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+    }
+  },
+  radioGroup: {
+    radio: {
+      root: 'flex items-center gap-2',
+      inputRoot: 'sr-only',
+      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-gray-825 bg-none',
+      radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
+      selected: 'bg-primary-main',
+      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-825',
+      text: 'text-sm text-gray-825',
+      textDisabled: 'text-gray-400'
+    },
+    radioGroup: {
+      root: 'flex',
+      vertical: 'flex-col space-y-2',
+      horizontal: 'flex-row space-x-4'
     }
   }
 }

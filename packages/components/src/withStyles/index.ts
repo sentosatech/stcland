@@ -6,6 +6,8 @@ export { List } from '../list/withStyles'
 export { Checkbox } from '../checkbox/withStyles'
 export { Modal } from '../modal/withStyles'
 export { DragDropProvider } from '../dnd/withStyles'
+export { RadioGroup } from '../radio/withStyles'
+export { Radio } from '../radio/withStyles'
 
 export {
   Form,

@@ -19,5 +19,6 @@ export type {
   ListStyles,
   CheckboxStyles,
   ModalStyles,
-  DndStyles
+  DndStyles,
+  RadioGroupStyles
 } from './componentTypes'

@@ -28,7 +28,7 @@ const strategyMap: Record<StrategyName, SortingStrategy> = {
 // Components
 //*****************************************************************************
 
-const SortableList: React.FC<SortableListProps> = ({ items, strategy = 'vertical', children }) => {
+const SortableList = ({ items, strategy = 'vertical', children }: SortableListProps) => {
   const { customStyles } = useCustomDndContext()
 
   const resolvedStrategy = strategyMap[strategy]

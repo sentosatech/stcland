@@ -18,7 +18,7 @@ export interface DroppableProps {
 // Components
 //*****************************************************************************
 
-const Droppable: React.FC<DroppableProps> = ({ id, children, className }) => {
+const Droppable = ({ id, children, className }: DroppableProps) => {
   const { setNodeRef, isOver } = useDroppable({ id })
   const { customStyles } = useCustomDndContext()
 

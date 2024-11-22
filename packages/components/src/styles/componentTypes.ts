@@ -215,3 +215,24 @@ export interface DndStyles {
     removeButton: string
   }
 }
+
+type RadioStyles = {
+  root: DivElementClassName
+  inputRoot: DivElementClassName
+  radio: DivElementClassName
+  radioDisabled: DivElementClassName
+  selected: DivElementClassName
+  innerCircle: DivElementClassName
+  text: DivElementClassName
+  textDisabled: DivElementClassName
+}
+
+export interface RadioGroupStyles {
+  radio: RadioStyles,
+  radioGroup: {
+    root: DivElementClassName
+    vertical: DivElementClassName
+    horizontal: DivElementClassName
+  },
+  isolatedRadio: RadioStyles
+}

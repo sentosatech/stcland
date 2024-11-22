@@ -218,6 +218,33 @@ const styles: StclandStyles = {
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
     }
+  },
+  radioGroup: {
+    radio: {
+      root: 'flex items-center gap-2',
+      inputRoot: 'sr-only',
+      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-primary-main bg-none',
+      radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
+      selected: 'bg-primary-main',
+      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
+      text: 'text-sm text-gray-200',
+      textDisabled: 'text-gray-400'
+    },
+    radioGroup: {
+      root: 'flex bg-gray-800 p-4 rounded-lg',
+      vertical: 'flex-col space-y-2',
+      horizontal: 'flex-row space-x-4'
+    },
+    isolatedRadio: {
+      root: 'flex items-center gap-2',
+      inputRoot: 'sr-only',
+      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-gray-800 bg-none',
+      radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
+      selected: 'bg-pink-500',
+      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
+      text: 'text-sm text-pink-500',
+      textDisabled: 'text-gray-200'
+    }
   }
 }
 
