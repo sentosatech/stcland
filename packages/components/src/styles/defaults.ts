@@ -236,6 +236,7 @@ export const defaultStyles: StclandStyles = {
     fieldset: 'grid gap-2 disabled:cursor-disabled grid-cols-4',
   },
   checkbox: {
+    container: 'flex flex-row',
     root: 'cursor-pointer',
     rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
     primary: 'bg-primary-main border-primary-main',
@@ -251,8 +252,13 @@ export const defaultStyles: StclandStyles = {
     mdChecked: 'text-md',
     lgChecked: 'text-lg',
     disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
-    checked: 'text-white',
-    indeterminate: 'absolute w-3/4 h-0.5',
+    indeterminatePrimary: 'absolute w-3/4 h-0.5',
+    indeterminateSecondary: 'absolute w-3/4 h-0.5',
+    indeterminateNeutral: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-primary-main',
+    labelSecondary: 'text-secondary-main',
+    labelNeutral: 'text-gray-700',
+    labelCustomIcon: 'text-gray-925'
   },
   modal : {
     root: 'fixed inset-0 z-50 flex items-center justify-center',

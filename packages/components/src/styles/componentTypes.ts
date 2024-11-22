@@ -157,6 +157,7 @@ export type ListStyles = {
 }
 
 export interface CheckboxStyles extends BaseStyles {
+  container: string
   rootWithoutCustomIcons: DivElementClassName
   primary: string
   secondary: string
@@ -171,8 +172,13 @@ export interface CheckboxStyles extends BaseStyles {
   mdChecked: string
   lgChecked: string
   disabled: DivElementClassName
-  checked: string
-  indeterminate: string // TODO: Not quite sure if this prop should be customizable.
+  indeterminatePrimary: string
+  indeterminateSecondary: string
+  indeterminateNeutral: string
+  labelPrimary: string
+  labelSecondary: string
+  labelNeutral: string
+  labelCustomIcon: string
 }
 
 export interface ModalStyles extends BaseStyles {

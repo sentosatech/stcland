@@ -164,7 +164,8 @@ const styles: StclandStyles = {
     },
   },
   checkbox: {
-    root: 'cursor-pointer',
+    container: 'flex flex-row gap-2',
+    root: '',
     rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-800',
     primary: 'bg-pink-400 border-pink-400',
     secondary: 'bg-purple-400 border-purple-400',
@@ -179,8 +180,10 @@ const styles: StclandStyles = {
     mdChecked: 'text-md',
     lgChecked: 'text-lg',
     disabled: 'bg-gray-800 border-gray-800 text-gray-600 hover:bg-gray-750',
-    checked: 'text-white',
-    indeterminate: 'absolute w-3/4 h-0.5',
+    indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-gray-200',
+    indeterminateSecondary: 'absolute w-3/4 h-0.5',
+    indeterminateNeutral: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-pink-400'
   },
   modal: {
     root: 'fixed inset-0 z-50 flex items-center justify-center',

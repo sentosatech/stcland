@@ -11,6 +11,7 @@ export default {
   title: 'Components/Checkbox',
   component: Checkbox,
   argTypes: {
+    label: { control: 'text' },
     onChange: { action: 'changed' },
     checked: { control: 'boolean' },
   },
@@ -34,7 +35,8 @@ Default.args = {
   disabled: false,
   required: false,
   sm: true,
-  secondary: true
+  secondary: true,
+  label: 'Label'
 }
 
 // Story with custom icons
@@ -45,6 +47,7 @@ WithIcons.args = {
   checkedIcon: <Icon primary lg solid iconName='HeartIcon' />,
   disabled: false,
   required: false,
+  label: 'Label'
 }
 
 export const Disabled = Template.bind({})
@@ -52,6 +55,7 @@ Disabled.args = {
   checked: false,
   disabled: true,
   required: false,
+  label: 'Label'
 }
 
 // New story for indeterminate state
@@ -79,6 +83,7 @@ Indeterminate.args = {
   indeterminate: true,
   sm: true,
   primary: true,
+  label: 'Label'
 }
 
 // Custom Icons: Icon/CheckedIcon and IndeterminateIcon
@@ -107,6 +112,7 @@ export const IndeterminateWithCustomIcons = (args: CheckboxProps) => {
 
 IndeterminateWithCustomIcons.args = {
   indeterminate: true,
+  label: 'Label'
 }
 
 
@@ -128,5 +134,6 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   primary: true,
   lg: true,
-  checked: true
+  checked: true,
+  label: 'Label'
 }
