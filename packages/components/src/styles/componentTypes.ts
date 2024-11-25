@@ -110,7 +110,7 @@ export interface CheckBoxStyles extends BaseStyles {
   label: DivElementClassName;
 }
 
-export type SelectStyles = {
+export type SelectInputStyles = {
   root: DivElementClassName;
   label: DivElementClassName;
   menuButton: string;
@@ -235,4 +235,16 @@ export interface RadioGroupStyles {
     horizontal: DivElementClassName
   },
   isolatedRadio: RadioStyles
+}
+
+export interface SelectStyles extends BaseStyles {
+  label: DivElementClassName
+  optionContainer: DivElementClassName
+  menu: DivElementClassName
+  button: DivElementClassName
+  disabled: DivElementClassName
+  listItem: {
+    base: DivElementClassName
+    selected: DivElementClassName
+  },
 }

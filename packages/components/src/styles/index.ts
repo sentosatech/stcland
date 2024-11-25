@@ -12,7 +12,7 @@ export type {
   FormInputStyles,
   IconStyles,
   RadioButtonGroupStyles,
-  SelectStyles,
+  SelectInputStyles,
   FormStyles,
   FieldSetStyles,
   FormTitleStyles,
@@ -20,5 +20,6 @@ export type {
   CheckboxStyles,
   ModalStyles,
   DndStyles,
-  RadioGroupStyles
+  RadioGroupStyles,
+  SelectStyles
 } from './componentTypes'

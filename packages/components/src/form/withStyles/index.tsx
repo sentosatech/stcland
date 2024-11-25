@@ -7,7 +7,7 @@ import type {
   NumberProps,
   PasswordProps,
   RadioButtonGroupProps,
-  SelectProps,
+  SelectInputProps,
   TextAreaProps,
   TextInputProps,
   TimeInputProps,
@@ -22,7 +22,7 @@ import {
   NumberInput as BaseNumberInput,
   Password as BasePassword,
   RadioButtonGroup as BaseRadioButtonGroup,
-  Select as BaseSelect,
+  SelectInput as BaseSelect,
   Text as BaseText,
   TextArea as BaseTextArea,
   TimeInput as BaseTimeInput,
@@ -47,7 +47,7 @@ export const RadioButtonGroup = stylesWrapper<RadioButtonGroupProps>(
   BaseRadioButtonGroup,
   'radio'
 )
-export const Select = stylesWrapper<SelectProps>(BaseSelect, 'select')
+export const SelectInput = stylesWrapper<SelectInputProps>(BaseSelect, 'selectInput')
 export const Text = stylesWrapper<TextInputProps>(BaseText, 'text')
 export const TextArea = stylesWrapper<TextAreaProps>(BaseTextArea, 'textArea')
 export const TimeInput = stylesWrapper<TimeInputProps>(BaseTimeInput, 'time')

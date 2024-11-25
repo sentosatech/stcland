@@ -8,6 +8,7 @@ export { Modal } from '../modal/withStyles'
 export { DragDropProvider } from '../dnd/withStyles'
 export { RadioGroup } from '../radio/withStyles'
 export { Radio } from '../radio/withStyles'
+export { Select } from '../select/withStyles'
 
 export {
   Form,
@@ -18,7 +19,7 @@ export {
   NumberInput,
   Password,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   Text,
   TextArea,
   TimeInput,

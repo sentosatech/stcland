@@ -1,17 +1,17 @@
 import type { Meta, StoryFn } from '@storybook/react'
 import {
-  Select,
-  SelectProps,
+  SelectInput,
+  SelectInputProps,
   StcStylesProvider,
   Form,
 } from '@stcland/components'
-import { Select as SelectWithStyles } from '@stcland/components/withStyles'
+import { SelectInput as SelectWithStyles } from '@stcland/components/withStyles'
 import * as React from 'react'
 import customStyles from '../stc.config'
 
-const meta: Meta<typeof Select> = {
+const meta: Meta<typeof SelectInput> = {
   title: 'Components/Form/Input/Select',
-  component: Select,
+  component: SelectInput,
   parameters: {
     backgrounds: {
       default: 'Dark',
@@ -54,9 +54,9 @@ const meta: Meta<typeof Select> = {
 
 export default meta
 
-const RadioButtonGroupTemplate: StoryFn<SelectProps> = (args) => (
+const RadioButtonGroupTemplate: StoryFn<SelectInputProps> = (args) => (
   <Form withPanel>
-    <Select {...args} onSelectionChange={console.log} />
+    <SelectInput {...args} onSelectionChange={console.log} />
   </Form>
 )
 
@@ -103,7 +103,7 @@ Hidden.args = {
   ],
 }
 
-const TemplateWithStyles: StoryFn<SelectProps> = (args) => (
+const TemplateWithStyles: StoryFn<SelectInputProps> = (args) => (
   <StcStylesProvider customStyles={customStyles}>
     <Form withPanel>
       <SelectWithStyles {...args} />

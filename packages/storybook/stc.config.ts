@@ -115,7 +115,7 @@ const styles: StclandStyles = {
       'accent-sky-500 rounded-sm h-100 bg-white border-white dark:[color-scheme:light]',
     label: 'pt-0 mb-0 text-sky-500 text-md',
   },
-  select: {
+  selectInput: {
     label: 'text-sky-500 text-md',
     menuButton: 'bg-white text-slate-800 border-sky-200',
     menu: 'bg-slate-100  border border-sky-200',
@@ -245,6 +245,18 @@ const styles: StclandStyles = {
       text: 'text-sm text-pink-500',
       textDisabled: 'text-gray-200'
     }
+  },
+  select: {
+    root: 'relative w-64',
+    label: 'block mb-2 text-sm font-medium text-pink-700',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-pink-900 border border-gray-400 text-neutral-200 rounded focus:outline-none',
+    menu: 'absolute z-10 w-full bg-pink-600 border border-gray-300 text-neutral-700 rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'disabled:bg-gray-400',
+    optionContainer: 'flex items-center p-2',
+    listItem: {
+      base: 'ml-10',
+      selected: 'ml-0',
+    },
   }
 }
 

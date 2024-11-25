@@ -1,0 +1,28 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as DividerStories from './Divider.stories';
+
+<Meta of={DividerStories} />
+
+# Divider Component
+
+The `Divider` component allows users to toggle a checked and unchecked state with optional icon customization for each state. 
+It is highly flexible and can be used independently to capture boolean selections. Below is a breakdown of its props and various examples.
+
+### Properties
+
+
+### Basic Example
+
+<Canvas of={DividerStories.Default} />
+
+### Dashed Example
+
+<Canvas of={DividerStories.Dashed} />
+
+### Dotted Example
+
+<Canvas of={DividerStories.Dotted} />
+
+### Thin Example
+
+<Canvas of={DividerStories.Thin} />

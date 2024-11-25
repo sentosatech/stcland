@@ -20,7 +20,7 @@ export type {
   TimeInputProps,
   CheckBoxProps,
   RadioButtonGroupProps,
-  SelectProps,
+  SelectInputProps,
 } from './form'
 export {
   Form,
@@ -33,7 +33,7 @@ export {
   Password,
   RadioButton,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   Text,
   TextArea,
   TimeInput,
@@ -86,3 +86,9 @@ export { SortableItem, SortableList, DragDropProvider, Draggable, Droppable, arr
 
 export type { RadioProps, RadioGroupProps } from './radio'
 export { Radio, RadioGroup } from './radio'
+
+export type { DividerProps } from './divider'
+export { Divider } from './divider'
+
+export type { SelectProps } from './select'
+export { Select } from './select'

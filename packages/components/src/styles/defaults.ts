@@ -7,12 +7,13 @@ import type {  AccordionStyles,
   FormTitleStyles,
   IconStyles,
   RadioButtonGroupStyles,
-  SelectStyles,
+  SelectInputStyles,
   TableStyles, ListStyles,
   CheckboxStyles,
   ModalStyles,
   DndStyles,
-  RadioGroupStyles
+  RadioGroupStyles,
+  SelectStyles
 } from '.'
 
 export type StclandStyles = {
@@ -28,6 +29,7 @@ export type StclandStyles = {
   modal?: Partial<ModalStyles>
   dnd?: Partial<DndStyles>
   radioGroup?: Partial<RadioGroupStyles>
+  select?: Partial<SelectStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -39,7 +41,7 @@ export type StclandStyles = {
    number?: Partial<FormInputStyles>;
    password?: Partial<FormInputStyles>;
    radio?: Partial<RadioButtonGroupStyles>;
-   select?: Partial<SelectStyles>;
+   selectInput?: Partial<SelectInputStyles>;
    text?: Partial<FormInputStyles>;
    textArea?: Partial<FormInputStyles>;
    time?: Partial<FormInputStyles>;
@@ -211,7 +213,7 @@ export const defaultStyles: StclandStyles = {
     error: 'text-red-300 italic text-sm',
     radioButton: 'accent-sky-500 h-4 w-4',
   },
-  select: {
+  selectInput: {
     root: 'flex flex-col gap-2',
     label: '',
     menuButton:
@@ -312,5 +314,17 @@ export const defaultStyles: StclandStyles = {
       vertical: 'flex-col space-y-2',
       horizontal: 'flex-row space-x-4'
     }
+  },
+  select: {
+    root: 'relative w-64',
+    label: 'block mb-2 text-sm font-medium text-gray-700',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-900 border border-gray-400 text-neutral-400 rounded focus:outline-none',
+    menu: 'absolute z-10 w-full bg-zinc-700 border border-gray-300 text-neutral-400 rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'disabled:bg-gray-400',
+    optionContainer: 'flex items-center p-2',
+    listItem: {
+      base: 'ml-10',
+      selected: 'ml-0',
+    },
   }
 }
