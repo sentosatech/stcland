@@ -10,9 +10,9 @@ The `SelectInput` component is used for plain text form inputs.
 - **label** (`string`): Optional. label text that appears on top of the input element
 - **disabled** (`boolean`): Optional. used to determine if field is disabled.
 - **placeholder** (`string`): Optional. Text displayed when no `selected` value is active.
-- **options** (`Array<{value: string, label: string}>`): Required. options for the checkbox
+- **options** (`Array<{value: string, label: string, disabled?: boolean, isSelected?:boolean, icon?: React.ReactNode, selectedIcon?: React.ReactNode}>`): Required. Options for the select.
 - **onChange** (`(value:string) => void`): Callback function to return the selected value when user selects an option
-- **selected**(`string`): Controlled selected value.
+- **selected**(`string`): Required. Controlled selected value.
 - **className**(`string`): Customized Talwind classes applied to the root element.
 - **customStyles** (`Partial<SelectStyles>`): Object containing custom styles for specific elements of the `Select` component.
 
