@@ -349,10 +349,10 @@ export const defaultStyles: StclandStyles = {
       root: 'cursor-pointer',
       rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
       primary: 'bg-zinc-900 border-zinc-900 text-white',
-      secondary: 'bg-zinc-300 border-zinc-300 text-white',
+      secondary: 'bg-yellow-400 border-yellow-600 text-zinc-900',
       neutral: 'bg-gray-600 border-gray-600 text-white',
       uncheckedPrimary: 'border-zinc-900',
-      uncheckedSecondary: 'border-zinc-300',
+      uncheckedSecondary: 'border-yellow-600',
       uncheckedNeutral: 'border-gray-600',
       sm: 'w-5 h-5',
       md: 'w-6 h-6',
@@ -365,7 +365,7 @@ export const defaultStyles: StclandStyles = {
       indeterminateSecondary: 'absolute w-3/4 h-0.5',
       indeterminateNeutral: 'absolute w-3/4 h-0.5',
       labelPrimary: 'text-zinc-900',
-      labelSecondary: 'text-zinc-600',
+      labelSecondary: 'text-yellow-200',
       labelNeutral: 'text-gray-700',
       labelCustomIcon: 'text-gray-925'
     }
