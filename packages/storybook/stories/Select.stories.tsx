@@ -135,5 +135,6 @@ WithStyles.args = {
     { value: 'music', label: 'Music', icon: <Icon neutral iconName='MusicalNoteIcon'/> },
     { value: 'radio', label: 'Radio', icon: <Icon neutral iconName='RadioIcon' /> },
   ],
+  selected: 'music',
   placeholder: 'Please pick an option'
 }

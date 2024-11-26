@@ -92,3 +92,6 @@ export { Divider } from './divider'
 
 export type { SelectProps } from './select'
 export { Select } from './select'
+
+export type { CheckboxGroupProps } from './checkboxGroup'
+export { CheckboxGroup } from './checkboxGroup'

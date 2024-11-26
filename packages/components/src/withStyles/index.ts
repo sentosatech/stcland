@@ -9,6 +9,8 @@ export { DragDropProvider } from '../dnd/withStyles'
 export { RadioGroup } from '../radio/withStyles'
 export { Radio } from '../radio/withStyles'
 export { Select } from '../select/withStyles'
+export { Divider } from '../divider/withStyles'
+export { CheckboxGroup } from '../checkboxGroup/withStyles'
 
 export {
   Form,

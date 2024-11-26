@@ -247,4 +247,20 @@ export interface SelectStyles extends BaseStyles {
     base: DivElementClassName
     selected: DivElementClassName
   },
+  selectedDefaultIcon: DivElementClassName
+}
+
+export interface DividerStyles extends BaseStyles {
+  horizontal: DivElementClassName
+  vertical: DivElementClassName
+  thin: DivElementClassName
+  medium: DivElementClassName
+  thick: DivElementClassName
+}
+
+
+export interface CheckboxGroupStyles extends BaseStyles {
+  vertical: DivElementClassName
+  horizontal: DivElementClassName
+  checkbox: CheckboxStyles
 }

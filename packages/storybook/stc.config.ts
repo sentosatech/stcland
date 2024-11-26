@@ -257,6 +257,45 @@ const styles: StclandStyles = {
       base: 'ml-10',
       selected: 'ml-0',
     },
+    selectedDefaultIcon: 'text-green-300'
+  },
+  divider: {
+    root: 'border-0',
+    horizontal: 'w-full border-t',
+    vertical: 'h-full border-l',
+    thin: 'border-0.5',
+    medium: 'border-[1px]',
+    thick: 'border-[2px]',
+  },
+  checkboxGroup: {
+    root: 'flex',
+    vertical: 'flex-col gap-2',
+    horizontal: 'flex-row gap-4',
+    checkbox: {
+      container: 'flex flex-row items-center gap-2',
+      root: 'cursor-pointer',
+      rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
+      primary: 'bg-purple-500 border-purple-500 text-white',
+      secondary: 'bg-green-500 border-green-500 text-white',
+      neutral: 'bg-gray-600 border-gray-600 text-white',
+      uncheckedPrimary: 'border-purple-500',
+      uncheckedSecondary: 'border-green-500',
+      uncheckedNeutral: 'border-gray-600',
+      sm: 'w-5 h-5',
+      md: 'w-6 h-6',
+      lg: 'w-8 h-8',
+      smChecked: 'text-xs',
+      mdChecked: 'text-md',
+      lgChecked: 'text-lg',
+      disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
+      indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
+      indeterminateSecondary: 'absolute w-3/4 h-0.5',
+      indeterminateNeutral: 'absolute w-3/4 h-0.5',
+      labelPrimary: 'text-purple-500',
+      labelSecondary: 'text-green-500',
+      labelNeutral: 'text-gray-700',
+      labelCustomIcon: 'text-gray-925'
+    }
   }
 }
 

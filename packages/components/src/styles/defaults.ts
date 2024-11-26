@@ -13,7 +13,9 @@ import type {  AccordionStyles,
   ModalStyles,
   DndStyles,
   RadioGroupStyles,
-  SelectStyles
+  SelectStyles,
+  DividerStyles,
+  CheckboxGroupStyles
 } from '.'
 
 export type StclandStyles = {
@@ -26,10 +28,12 @@ export type StclandStyles = {
   accordion?: Partial<AccordionStyles>
   list?: Partial<ListStyles>
   checkbox?: Partial<CheckboxStyles>
+  checkboxGroup?: Partial<CheckboxGroupStyles>
   modal?: Partial<ModalStyles>
   dnd?: Partial<DndStyles>
   radioGroup?: Partial<RadioGroupStyles>
   select?: Partial<SelectStyles>
+  divider?: Partial<DividerStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -105,7 +109,7 @@ export const defaultStyles: StclandStyles = {
   accordion: {
     accordion: { root: 'border rounded bg-gray-825' },
     accordionSummary: {
-      root: 'flex justify-between items-center p-4 cursor-pointer bg-gray-825 text-gray-100 border-b border-primary-main',
+      root: 'flex justify-between items-center p-4 bg-gray-825 text-gray-100 border-b border-primary-main',
       icon: 'ml-2 transition-transform duration-300 ease-in-out',
     },
     accordionDetails: { root: 'bg-gray-825 text-gray-400' },
@@ -326,5 +330,44 @@ export const defaultStyles: StclandStyles = {
       base: 'ml-10',
       selected: 'ml-0',
     },
+    selectedDefaultIcon: 'h-4.5 w-4.5 ml-2 mr-3 stroke-2'
+  },
+  divider: {
+    root: 'border-0',
+    horizontal: 'w-full border-t',
+    vertical: 'h-full border-l',
+    thin: 'border-[1px]',
+    medium: 'border-[2px]',
+    thick: 'border-[4px]',
+  },
+  checkboxGroup: {
+    root: 'flex',
+    vertical: 'flex-col gap-2',
+    horizontal: 'flex-row gap-4',
+    checkbox: {
+      container: 'flex flex-row items-center gap-2',
+      root: 'cursor-pointer',
+      rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
+      primary: 'bg-zinc-900 border-zinc-900 text-white',
+      secondary: 'bg-zinc-300 border-zinc-300 text-white',
+      neutral: 'bg-gray-600 border-gray-600 text-white',
+      uncheckedPrimary: 'border-zinc-900',
+      uncheckedSecondary: 'border-zinc-300',
+      uncheckedNeutral: 'border-gray-600',
+      sm: 'w-5 h-5',
+      md: 'w-6 h-6',
+      lg: 'w-8 h-8',
+      smChecked: 'text-xs',
+      mdChecked: 'text-md',
+      lgChecked: 'text-lg',
+      disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
+      indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
+      indeterminateSecondary: 'absolute w-3/4 h-0.5',
+      indeterminateNeutral: 'absolute w-3/4 h-0.5',
+      labelPrimary: 'text-zinc-900',
+      labelSecondary: 'text-zinc-600',
+      labelNeutral: 'text-gray-700',
+      labelCustomIcon: 'text-gray-925'
+    }
   }
 }

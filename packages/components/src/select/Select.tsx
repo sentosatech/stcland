@@ -2,6 +2,7 @@ import React from 'react'
 import ReactTailwindSelect from 'react-tailwindcss-select'
 import { appliedStyles, cns } from '@stcland/utils'
 import { SelectStyles } from 'src/styles'
+import { CheckIcon } from '@heroicons/react/24/solid'
 
 //*****************************************************************************
 // Interface
@@ -54,6 +55,7 @@ const Select: React.FC<SelectProps> = ({
       base: 'ml-10',
       selected: 'ml-0',
     },
+    selectedDefaultIcon: 'h-5 w-5 ml-2 mr-3 text-yellow-500'
   }
 
   const mergedStyles = appliedStyles<SelectStyles>(selectStyles, customStyles)
@@ -64,7 +66,8 @@ const Select: React.FC<SelectProps> = ({
     menu: mergedStyles.menu,
     button: mergedStyles.button,
     optionContainer: mergedStyles.optionContainer,
-    listItem: mergedStyles.listItem
+    listItem: mergedStyles.listItem,
+    selectedDefaultIcon: mergedStyles.selectedDefaultIcon
   }
 
   const selectedOption = options.find(option => option.value === selected) || null
@@ -91,9 +94,9 @@ const Select: React.FC<SelectProps> = ({
         formatOptionLabel={({ label, isSelected, icon, selectedIcon }: SelectOption) => (
           <div className={cn.optionContainer}>
             <span>
-              {isSelected && selectedIcon ? selectedIcon : icon || null}
+              {isSelected ? (selectedIcon ? selectedIcon : <CheckIcon className={cn.selectedDefaultIcon}/>) : icon || null}
             </span>
-            <span className={(isSelected && selectedIcon) || icon ? cn.listItem.selected : cn.listItem.base}>{label}</span>
+            <span className={isSelected || icon ? cn.listItem.selected : cn.listItem.base}>{label}</span>
           </div>
         )}
       />

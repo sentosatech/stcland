@@ -24,10 +24,13 @@ It offers flexibility for content organization and supports custom styling, stat
 ---
 
 ### AccordionSummary
+Base:
 - **children** (`React.ReactNode`): The header or title of the accordion section.
-- **expandIcon** (`React.ReactNode`): Icon displayed to indicate expansion/collapse.
 - **className** (`string`): Additional CSS classes for styling.
-- **focusVisibleClassName** (`string`): CSS class applied when the element gains focus through keyboard interaction.
+
+With Expanded Icon:
+- **expandIcon** (`React.ReactNode`): Icon displayed to indicate expansion/collapse.
+- **onlyIconClickable** (`boolean`): Optional, defaults to false. If true, only the `expandedIcon` is clickable.
 
 ---
 
@@ -59,6 +62,14 @@ This example shows a basic accordion with default styles and props.
 This example shows a basic accordion with `defaultExpanded` property set to `true`.
 
 <Canvas of={AccordionStories.ExpandedByDefault} />
+
+---
+
+### Only Icon Clickable 
+
+This example shows a basic accordion with `onlyIconClickable` property.
+
+<Canvas of={AccordionStories.OnlyIconClickableTemplate} />
 
 ---
 

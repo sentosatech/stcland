@@ -1,4 +1,5 @@
-import { cns } from '@stcland/utils'
+import { cns, appliedStyles } from '@stcland/utils'
+import { DividerStyles } from 'src/styles'
 
 //*****************************************************************************
 // Interface
@@ -10,6 +11,7 @@ export interface DividerProps {
   orientation?: 'horizontal' | 'vertical'; // Divider orientation
   borderColorClass?: string; // Tailwind color class
   className?: string; // Additional custom Tailwind classes
+  customStyles?: Partial<DividerStyles>
 }
 
 //*****************************************************************************
@@ -22,9 +24,10 @@ const Divider = ({
   orientation = 'horizontal',
   borderColorClass = 'border-primary-main',
   className,
+  customStyles
 }: DividerProps) => {
 
-  const styles = {
+  const dividerStyles: DividerStyles = {
     root: 'border-0',
     horizontal: 'w-full border-t',
     vertical: 'h-full border-l',
@@ -39,17 +42,19 @@ const Divider = ({
     dotted: 'border-dotted',
   }
 
+  const mergedStyles = appliedStyles(dividerStyles, customStyles)
+
   const thicknessStyles = {
-    thin: [styles.thin],
-    medium: [styles.medium],
-    thick: type === 'dotted' ? 'border-[2px]' : styles.thick,
+    thin: [mergedStyles.thin],
+    medium: [mergedStyles.medium],
+    thick: type === 'dotted' ? 'border-[2px]' : mergedStyles.thick,
   }
 
 
   const cn = {
     root: cns(
-      styles.root,
-      orientation === 'horizontal' ? styles.horizontal : styles.vertical,
+      mergedStyles.root,
+      orientation === 'horizontal' ? mergedStyles.horizontal : mergedStyles.vertical,
       typeStyles[type],
       thicknessStyles[thickness],
       borderColorClass,

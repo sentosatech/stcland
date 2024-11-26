@@ -43,6 +43,17 @@ ExpandedByDefault.args = {
   defaultExpanded: true,
 }
 
+export const OnlyIconClickableTemplate: StoryFn = () => (
+  <Accordion id='only-icon-clickable-accordion'>
+    <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'/>} onlyIconClickable={true}>
+      <h3>Accordion Title</h3>
+    </AccordionSummary>
+    <AccordionDetails>
+      <p>This is the content inside the accordion section.</p>
+    </AccordionDetails>
+  </Accordion>
+)
+
 const MultipleTemplate: StoryFn = () => (
   <>
     <Accordion id="accordion-1">
