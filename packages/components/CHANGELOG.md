@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.14
+
+### Patch Changes
+
+- Added CheckboxGroup to STCLandia, some enhancements in Accordion/Divider/Select.
+
 ## 0.0.13
 
 ### Patch Changes

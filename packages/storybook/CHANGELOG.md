@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.18
+
+### Patch Changes
+
+- Added CheckboxGroup to STCLandia, some enhancements in Accordion/Divider/Select.
+- Updated dependencies
+  - @stcland/components@0.0.14
+
 ## 0.0.17
 
 ### Patch Changes
