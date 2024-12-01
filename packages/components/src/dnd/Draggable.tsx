@@ -20,7 +20,7 @@ export interface DraggableProps {
 // Components
 //*****************************************************************************
 
-const Draggable: React.FC<DraggableProps> = ({ id, children, bgColorClass = 'bg-gray-825', className, onRemove }) => {
+const Draggable = ({ id, children, bgColorClass = 'bg-gray-825', className, onRemove }: DraggableProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id })
   const { customStyles } = useCustomDndContext()
 

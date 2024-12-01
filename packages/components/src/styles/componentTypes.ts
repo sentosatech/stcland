@@ -110,7 +110,7 @@ export interface CheckBoxStyles extends BaseStyles {
   label: DivElementClassName;
 }
 
-export type SelectStyles = {
+export type SelectInputStyles = {
   root: DivElementClassName;
   label: DivElementClassName;
   menuButton: string;
@@ -157,6 +157,7 @@ export type ListStyles = {
 }
 
 export interface CheckboxStyles extends BaseStyles {
+  container: string
   rootWithoutCustomIcons: DivElementClassName
   primary: string
   secondary: string
@@ -171,8 +172,13 @@ export interface CheckboxStyles extends BaseStyles {
   mdChecked: string
   lgChecked: string
   disabled: DivElementClassName
-  checked: string
-  indeterminate: string // TODO: Not quite sure if this prop should be customizable.
+  indeterminatePrimary: string
+  indeterminateSecondary: string
+  indeterminateNeutral: string
+  labelPrimary: string
+  labelSecondary: string
+  labelNeutral: string
+  labelCustomIcon: string
 }
 
 export interface ModalStyles extends BaseStyles {
@@ -208,4 +214,53 @@ export interface DndStyles {
     content: string
     removeButton: string
   }
+}
+
+type RadioStyles = {
+  root: DivElementClassName
+  inputRoot: DivElementClassName
+  radio: DivElementClassName
+  radioDisabled: DivElementClassName
+  selected: DivElementClassName
+  innerCircle: DivElementClassName
+  text: DivElementClassName
+  textDisabled: DivElementClassName
+}
+
+export interface RadioGroupStyles {
+  radio: RadioStyles,
+  radioGroup: {
+    root: DivElementClassName
+    vertical: DivElementClassName
+    horizontal: DivElementClassName
+  },
+  isolatedRadio: RadioStyles
+}
+
+export interface SelectStyles extends BaseStyles {
+  label: DivElementClassName
+  optionContainer: DivElementClassName
+  menu: DivElementClassName
+  button: DivElementClassName
+  disabled: DivElementClassName
+  listItem: {
+    base: DivElementClassName
+    selected: DivElementClassName
+  },
+  selectedDefaultIcon: DivElementClassName
+}
+
+export interface DividerStyles extends BaseStyles {
+  horizontal: DivElementClassName
+  vertical: DivElementClassName
+  thin: DivElementClassName
+  medium: DivElementClassName
+  thick: DivElementClassName
+}
+
+
+export interface CheckboxGroupStyles extends BaseStyles {
+  vertical: DivElementClassName
+  horizontal: DivElementClassName
+  checkbox: CheckboxStyles
 }

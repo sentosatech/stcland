@@ -10,7 +10,7 @@ import {
   FormProps,
   NumberInput,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   StcStylesProvider,
   Text,
   TextArea,
@@ -25,7 +25,7 @@ import {
   Fieldset as FieldsetWithStyles,
   NumberInput as NumberInputWithStyles,
   RadioButtonGroup as RadioButtonGroupWithStyles,
-  Select as SelectWithStyles,
+  SelectInput as SelectWithStyles,
   Text as TextWithStyles,
   TextArea as TextAreaWithStyles,
   TimeInput as TimeInputWithStyles,
@@ -77,7 +77,7 @@ export default meta
 
 const FieldsetTemplate: StoryFn<DateInputProps> = (args) => (
   <Form {...args} onSubmit={(data: unknown) => console.log(data)}>
-    <Select
+    <SelectInput
       name="dropdown"
       label="Dropdown"
       required

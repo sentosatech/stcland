@@ -8,6 +8,7 @@ import { CheckboxStyles } from 'src/styles'
 interface BaseCheckBoxProps {
     checked: boolean
     onChange: () => void
+    label: string // The text displayed alongside the checkbox.
     indeterminate?: boolean // Controls wheter it is in a partial state, mostly used when there is a list of items, defaults to false.
     // Color variables
     primary?: boolean
@@ -37,6 +38,7 @@ export type CheckboxProps =
 const Checkbox = ({
   checked,
   onChange,
+  label,
   indeterminate = false,
   icon,
   checkedIcon,
@@ -55,11 +57,12 @@ const Checkbox = ({
 
 
   const defaultStyles: CheckboxStyles  = {
+    container: 'flex flex-row items-center gap-2',
     root: 'cursor-pointer',
     rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
-    primary: 'bg-primary-main border-primary-main',
-    secondary: 'bg-secondary-main border-secondary-main',
-    neutral: 'bg-gray-600 border-gray-600',
+    primary: 'bg-primary-main border-primary-main text-white',
+    secondary: 'bg-secondary-main border-secondary-main text-white',
+    neutral: 'bg-gray-600 border-gray-600 text-white',
     uncheckedPrimary: 'border-primary-main',
     uncheckedSecondary: 'border-secondary-main',
     uncheckedNeutral: 'border-gray-600',
@@ -69,9 +72,14 @@ const Checkbox = ({
     smChecked: 'text-xs',
     mdChecked: 'text-md',
     lgChecked: 'text-lg',
-    disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
-    checked: 'text-white',
-    indeterminate: 'absolute w-3/4 h-0.5',
+    disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
+    indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
+    indeterminateSecondary: 'absolute w-3/4 h-0.5',
+    indeterminateNeutral: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-primary-main',
+    labelSecondary: 'text-secondary-main',
+    labelNeutral: 'text-gray-700',
+    labelCustomIcon: 'text-gray-925'
   }
 
   const mergedStyles = appliedStyles<CheckboxStyles>(defaultStyles, customStyles)
@@ -98,10 +106,29 @@ const Checkbox = ({
     [mergedStyles.lgChecked]: lg
   }
 
+  const labelSizeVariants = {
+    'text-md' : sm,
+    'text-lg' : md || noSizeVariants,
+    'text-xl' : lg
+  }
+
   const uncheckedColorVariants = {
     [mergedStyles.uncheckedPrimary]: primary ||  noColorVariant,
     [mergedStyles.uncheckedSecondary]: secondary,
     [mergedStyles.uncheckedNeutral]: neutral
+  }
+
+  const indeterminateStyleVariants = {
+    [mergedStyles.indeterminatePrimary]: primary ||  noColorVariant,
+    [mergedStyles.indeterminateSecondary]: secondary,
+    [mergedStyles.indeterminateNeutral]: neutral
+  }
+
+  const labelStyleVariants = {
+    [mergedStyles.labelPrimary]: primary ||  noColorVariant,
+    [mergedStyles.labelSecondary]: secondary,
+    [mergedStyles.labelNeutral]: neutral,
+    [mergedStyles.labelCustomIcon]: icon
   }
 
   const checkedStyle = !icon && (checked ? colorVariants : uncheckedColorVariants)
@@ -109,27 +136,34 @@ const Checkbox = ({
   const indeterminateRoot = indeterminate && 'relative'
 
   const cn = {
+    container: mergedStyles.container,
+    label: cns(labelStyleVariants, labelSizeVariants, disabled && 'text-gray-400'),
     root: cns(mergedStyles.root, !icon && mergedStyles.rootWithoutCustomIcons, checkedStyle, !icon && sizeVariants, className, disabledStyle, indeterminateRoot),
-    checked: cns(checked ? mergedStyles.checked : 'text-transparent', checkedSizeVariants, disabledStyle),
-    indeterminate: cns(indeterminate ? colorVariants : '', mergedStyles.indeterminate)
+    checked: cns(!checked && 'text-transparent', checkedSizeVariants, disabledStyle),
+    indeterminate: cns(indeterminate ? colorVariants : '', indeterminateStyleVariants)
   }
 
   return (
-    <span
-      role="checkbox"
-      aria-checked={indeterminate ? 'mixed' : checked}
-      tabIndex={tabIndex}
-      onClick={!disabled ? onChange : undefined}
-      className={cn.root}
-    >
-      {indeterminate ? (
-        indeterminateIcon || <span className={cn.indeterminate}/>
-      ) : checked ? (
-        checkedIcon || <span className={cn.checked}>&#10003;</span>
-      ) : (
-        icon || <span className={cn.checked}>&#10003;</span>
-      )}
-    </span>
+    <div className={cn.container}>
+      <span
+        role="checkbox"
+        aria-checked={indeterminate ? 'mixed' : checked}
+        tabIndex={tabIndex}
+        onClick={!disabled ? onChange : undefined}
+        className={cn.root}
+      >
+        {indeterminate ? (
+          indeterminateIcon || <span className={cn.indeterminate}/>
+        ) : checked ? (
+          checkedIcon || <span className={cn.checked}>&#10003;</span>
+        ) : (
+          icon || <span className={cn.checked}>&#10003;</span>
+        )}
+      </span>
+      <div className={cn.label}>
+        {label}
+      </div>
+    </div>
   )
 }
 

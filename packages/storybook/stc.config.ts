@@ -115,7 +115,7 @@ const styles: StclandStyles = {
       'accent-sky-500 rounded-sm h-100 bg-white border-white dark:[color-scheme:light]',
     label: 'pt-0 mb-0 text-sky-500 text-md',
   },
-  select: {
+  selectInput: {
     label: 'text-sky-500 text-md',
     menuButton: 'bg-white text-slate-800 border-sky-200',
     menu: 'bg-slate-100  border border-sky-200',
@@ -164,7 +164,8 @@ const styles: StclandStyles = {
     },
   },
   checkbox: {
-    root: 'cursor-pointer',
+    container: 'flex flex-row gap-2',
+    root: '',
     rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-800',
     primary: 'bg-pink-400 border-pink-400',
     secondary: 'bg-purple-400 border-purple-400',
@@ -179,8 +180,10 @@ const styles: StclandStyles = {
     mdChecked: 'text-md',
     lgChecked: 'text-lg',
     disabled: 'bg-gray-800 border-gray-800 text-gray-600 hover:bg-gray-750',
-    checked: 'text-white',
-    indeterminate: 'absolute w-3/4 h-0.5',
+    indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-gray-200',
+    indeterminateSecondary: 'absolute w-3/4 h-0.5',
+    indeterminateNeutral: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-pink-400'
   },
   modal: {
     root: 'fixed inset-0 z-50 flex items-center justify-center',
@@ -214,6 +217,84 @@ const styles: StclandStyles = {
       dragging: 'opacity-50',
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+    }
+  },
+  radioGroup: {
+    radio: {
+      root: 'flex items-center gap-2',
+      inputRoot: 'sr-only',
+      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-primary-main bg-none',
+      radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
+      selected: 'bg-primary-main',
+      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
+      text: 'text-sm text-gray-200',
+      textDisabled: 'text-gray-400'
+    },
+    radioGroup: {
+      root: 'flex bg-gray-800 p-4 rounded-lg',
+      vertical: 'flex-col space-y-2',
+      horizontal: 'flex-row space-x-4'
+    },
+    isolatedRadio: {
+      root: 'flex items-center gap-2',
+      inputRoot: 'sr-only',
+      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-gray-800 bg-none',
+      radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
+      selected: 'bg-pink-500',
+      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
+      text: 'text-sm text-pink-500',
+      textDisabled: 'text-gray-200'
+    }
+  },
+  select: {
+    root: 'relative w-64',
+    label: 'block mb-2 text-sm font-medium text-pink-700',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-pink-900 border border-gray-400 text-neutral-200 rounded focus:outline-none',
+    menu: 'absolute z-10 w-full bg-pink-600 border border-gray-300 text-neutral-700 rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'disabled:bg-gray-400',
+    optionContainer: 'flex items-center p-2',
+    listItem: {
+      base: 'ml-10',
+      selected: 'ml-0',
+    },
+    selectedDefaultIcon: 'text-green-300'
+  },
+  divider: {
+    root: 'border-0',
+    horizontal: 'w-full border-t',
+    vertical: 'h-full border-l',
+    thin: 'border-0.5',
+    medium: 'border-[1px]',
+    thick: 'border-[2px]',
+  },
+  checkboxGroup: {
+    root: 'flex',
+    vertical: 'flex-col gap-2',
+    horizontal: 'flex-row gap-4',
+    checkbox: {
+      container: 'flex flex-row items-center gap-2',
+      root: 'cursor-pointer',
+      rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
+      primary: 'bg-purple-500 border-purple-500 text-white',
+      secondary: 'bg-green-500 border-green-500 text-white',
+      neutral: 'bg-gray-600 border-gray-600 text-white',
+      uncheckedPrimary: 'border-purple-500',
+      uncheckedSecondary: 'border-green-500',
+      uncheckedNeutral: 'border-gray-600',
+      sm: 'w-5 h-5',
+      md: 'w-6 h-6',
+      lg: 'w-8 h-8',
+      smChecked: 'text-xs',
+      mdChecked: 'text-md',
+      lgChecked: 'text-lg',
+      disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
+      indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
+      indeterminateSecondary: 'absolute w-3/4 h-0.5',
+      indeterminateNeutral: 'absolute w-3/4 h-0.5',
+      labelPrimary: 'text-purple-500',
+      labelSecondary: 'text-green-500',
+      labelNeutral: 'text-gray-700',
+      labelCustomIcon: 'text-gray-925'
     }
   }
 }
