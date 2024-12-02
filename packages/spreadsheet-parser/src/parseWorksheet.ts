@@ -13,24 +13,25 @@ import type {
   ParseDataTableResult, ParseDataCollectionResult, ParsedWorksheetResult,
   RowMeta, DataCellMeta, Meta, MetaTypeMap,
   Data, DataTableData,
-  DataType,  DataTableDataType, DataTypeMap,
+  DataType, DataTypeMap,
   DataCollectionData,
+  BaseDataTypes,
+  ListDataTypes
 } from './SpreadsheetParserTypes'
 
-import {
-  validDataLayouts,
-} from './SpreadsheetParserTypes'
+import { validDataLayouts } from './SpreadsheetParserTypes'
 
 import {
   cellValueToDate, cellValueToBool, cellValueToString, cellValueToNumber,
   cellValueToPasswordHash, cellValueFromJson, cellValueToUuid,
-  getPropNameFromCallValue, getDataTypeFromCallValue,
+  getPropNameFromCellValue, getDataTypeFromCellValue,
   getRowValues, getPropNamesFromRow, getDataTypesFromRow,
-  dataCellWarning, parserWarning, cellValueHasError, getCellError, rowWarning,
+  dataCellWarning, parserWarning, rowWarning,
+  cellValueHasError, getCellError,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
-  isNotValidDataTableDataType, isRowValueListType,
-  shouldSkipDataCollectionRow,
-  shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter
+  isNotValidDataTableDataType, isValidRowValueListType,
+  shouldSkipDataCollectionRow, shouldSkipDataTableValue,
+  getBaseDataType, rowIsDelimiter
 } from './spreadsheetParseUtils'
 
 //-----------------------------------------------------------------------------
@@ -172,7 +173,7 @@ const parseDataTable: ParseDataTable = (
 
 const parseTableDataRow = (
   propNames: string[],
-  dataTypes: DataType[],
+  dataTypes: BaseDataTypes[], //
   row: Row,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions
@@ -181,7 +182,7 @@ const parseTableDataRow = (
   const propValues = getRowValues(row)
   const data = propNames.reduce((accData, propName, colNumber) => {
 
-    const dataType = dataTypes[colNumber] as DataTableDataType
+    const dataType = dataTypes[colNumber]
     const propValue = propValues[colNumber]
 
     const dataCellMeta = {
@@ -189,7 +190,7 @@ const parseTableDataRow = (
     }
 
     if (isNotValidDataTableDataType(dataType)) {
-      const propTypeIsList = isRowValueListType(dataType)
+      const propTypeIsList = isValidRowValueListType(dataType)
       const warning =
         `Invalid data type for table data: '${dataType}'` +
         `${propTypeIsList ? ', row data lists not valid for table data' : ''}`
@@ -274,18 +275,18 @@ export const parseDataCollection: ParseDataCollection = (
 
     const rowValues = getRowValues(curRow)
 
-    const propName = getPropNameFromCallValue(rowValues[0], {
+    const propName = getPropNameFromCellValue(rowValues[0], {
       ...rowMeta, colNumber: 0
     })
 
-    const dataType = getDataTypeFromCallValue(rowValues[1], {
+    const dataType = getDataTypeFromCellValue(rowValues[1], {
       ...rowMeta, colNumber: 1
     })
 
     let propValue: any
 
-    // are we delaing with a list of row values?
-    if (isRowValueListType(dataType)) {
+    // Are we dealing with a list of row values?
+    if (isValidRowValueListType(dataType)) {
 
       // TODO: use row warning
       if (rowValues.length < 3) {
@@ -300,7 +301,7 @@ export const parseDataCollection: ParseDataCollection = (
       )
     }
 
-    // nomral propName, dataType, propValue row
+    // normal propName, dataType, propValue row
     else {
 
       if (rowValues.length !== 3) {
@@ -324,7 +325,7 @@ export const parseDataCollection: ParseDataCollection = (
     }
   })
 
-  // account for case when there was no ending delimiter
+  // Account for case when there was no ending delimiter
   if (!isEmpty(curDataEntry))
     data.push(curDataEntry)
   if (!isEmpty(curDataEntryTypeMap) && includeDataTypeMaps)
@@ -344,7 +345,7 @@ export const parseDataCollection: ParseDataCollection = (
 
 export const parseRowValueList = (
   propName: string,
-  dataType: DataType,
+  dataType: BaseDataTypes | ListDataTypes,
   rowValuesList: RowValues,
   rowMeta: RowMeta,
   parseOpts?: ParseOptions
@@ -439,7 +440,8 @@ export const parseFrontMatter: ParseFrontMatter = (
       '  This is indicitive an signifcant internall error',
       rowMeta, parseOpts
     )
-    meta.typeWarning = warningMsg as DataType
+    // TODO M: Why message as BaseDataType? Stevie
+    meta.typeWarning = warningMsg as BaseDataTypes
   }
 
   const result: ParseFrontMatterResult = {
