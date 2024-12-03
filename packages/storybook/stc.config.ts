@@ -213,7 +213,7 @@ const styles: StclandStyles = {
     },
     draggable: {
       root: 'cursor-grab relative p-2 rounded text-primary-main transition-opacity flex items-center justify-between',
-      bgColorClass: ' bg-pink-200',
+      bgColorClass: 'bg-pink-200',
       dragging: 'opacity-50',
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'

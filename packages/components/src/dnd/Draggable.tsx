@@ -20,13 +20,13 @@ export interface DraggableProps {
 // Components
 //*****************************************************************************
 
-const Draggable = ({ id, children, bgColorClass = 'bg-gray-825', className, onRemove }: DraggableProps) => {
+const Draggable = ({ id, children, bgColorClass, className, onRemove }: DraggableProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id })
   const { customStyles } = useCustomDndContext()
 
   const draggableStyles: DndStyles['draggable'] = {
     root: 'cursor-grab  p-2 mb-1 relative rounded-lg text-white transition-opacity flex items-center justify-between',
-    bgColorClass: bgColorClass,
+    bgColorClass: 'bg-gray-825',
     dragging: 'opacity-5',
     content: 'flex-1',
     removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
@@ -35,7 +35,7 @@ const Draggable = ({ id, children, bgColorClass = 'bg-gray-825', className, onRe
   const mergedStyles = appliedStyles(draggableStyles, customStyles?.draggable)
 
   const cn = {
-    root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, mergedStyles.bgColorClass, className),
+    root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, bgColorClass ?? mergedStyles.bgColorClass, className),
     content: mergedStyles.content,
     removeButton: mergedStyles.removeButton
   }

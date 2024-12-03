@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.15
+
+### Patch Changes
+
+- Fixing bgColorClass bug in dnd.
+
 ## 0.0.14
 
 ### Patch Changes

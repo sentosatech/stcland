@@ -20,13 +20,13 @@ export interface SortableItemProps {
 // Components
 //*****************************************************************************
 
-const SortableItem = ({ id, children, onRemove, bgColorClass = 'bg-gray-825', className }: SortableItemProps) => {
+const SortableItem = ({ id, children, onRemove, bgColorClass, className }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
   const { customStyles } = useCustomDndContext()
 
   const sortableItemStyles: DndStyles['sortableItem'] = {
     root: 'relative mb-1 p-2 rounded-lg text-white transition-opacity flex items-center justify-between',
-    bgColorClass: bgColorClass,
+    bgColorClass: 'bg-gray-825',
     dragging: 'opacity-50',
     content: 'flex-1',
     removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
@@ -35,7 +35,7 @@ const SortableItem = ({ id, children, onRemove, bgColorClass = 'bg-gray-825', cl
   const mergedStyles = appliedStyles(sortableItemStyles, customStyles?.sortableItem)
 
   const cn = {
-    root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, mergedStyles.bgColorClass, className),
+    root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, bgColorClass ?? mergedStyles.bgColorClass, className),
     content: mergedStyles.content,
     removeButton: mergedStyles.removeButton
   }

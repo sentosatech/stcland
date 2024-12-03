@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.19
+
+### Patch Changes
+
+- Fixing bgColorClass bug in dnd.
+- Updated dependencies
+  - @stcland/components@0.0.15
+
 ## 0.0.18
 
 ### Patch Changes
