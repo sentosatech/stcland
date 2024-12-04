@@ -41,4 +41,11 @@ export const handlers = [
     const rsp = await makeTestResponse(request, params, cookies, { message: 'delete successful' })
     return HttpResponse.json(rsp)
   }),
+
+  // Failling scenarios
+  http.post('*/failing-post*', async ({ request, params, cookies }) => {
+    const errorData = { message: 'Something went wrong!' }
+    const rsp = await makeTestResponse(request, params, cookies, errorData)
+    return HttpResponse.json(rsp, { status: 500 })
+  })
 ]

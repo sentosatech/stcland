@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node'
 
 import { handlers, SimpleGetRsp } from './handlers'
 
-import { StcRest } from '../src/restHooksTypes'
+import { StcRest } from '../src/RestHooksTypes'
 import { createRestClient } from '../src/restClient'
 import { useRestQuery } from '../src/restQueryHooks.ts'
 
