@@ -95,3 +95,6 @@ export { Select } from './select'
 
 export type { CheckboxGroupProps } from './checkboxGroup'
 export { CheckboxGroup } from './checkboxGroup'
+
+export type { TooltipProps } from './tooltip'
+export { Tooltip } from './tooltip'

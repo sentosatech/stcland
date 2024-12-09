@@ -1,0 +1,69 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import * as TooltipStories from './Tooltip.stories'
+
+<Meta of={TooltipStories} />
+
+# Tooltip Component
+
+The `Tooltip` component displays additional information when users hover over, focus on, click, or context-menu on a target element.  
+It is highly customizable with options for positioning, appearance, and behavior.
+
+---
+
+### Properties
+
+#### Tooltip:
+
+- **children** (`React.ReactNode`): The target element that triggers the tooltip.
+- **title** (`React.ReactNode | () => React.ReactNode`): The content displayed within the tooltip. Can be a node or a function returning a node.
+- **align** (`Record<string, unknown>`): Custom alignment for the tooltip content.
+- **arrow** (`boolean | { pointAtCenter: boolean }`): Controls the display of the tooltip's arrow. Defaults to `true`.
+- **autoAdjustOverflow** (`boolean`): Determines whether the tooltip should adjust its position to avoid overflowing. Defaults to `true`.
+- **colorClass** (`string`): Custom Tailwind classes for the tooltip.
+- **defaultOpen** (`boolean`): Determines if the tooltip is visible by default. Defaults to `false`.
+- **destroyTooltipOnHide** (`boolean`): Whether to remove the tooltip from the DOM when hidden. Defaults to `false`.
+- **mouseEnterDelay** (`number`): Delay in seconds before showing the tooltip on hover. Defaults to `0.1`.
+- **mouseLeaveDelay** (`number`): Delay in seconds before hiding the tooltip on mouse leave. Defaults to `0.1`.
+- **overlayClassName** (`string`): Additional CSS class names for the tooltip's outer wrapper.
+- **overlayStyle** (`React.CSSProperties`): Inline styles for the tooltip wrapper.
+- **overlayInnerStyle** (`React.CSSProperties`): Inline styles for the inner content of the tooltip.
+- **placement** (`'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight' | 'left' | 'leftTop' | 'leftBottom' | 'right' | 'rightTop' | 'rightBottom'`): Tooltip position relative to the target. Defaults to `'top'`.
+- **trigger** (`'hover' | 'focus' | 'click' | 'contextMenu' | Trigger[]`): Event(s) that trigger the tooltip's visibility. Defaults to `'hover'`.
+- **open** (`boolean`): Controls the tooltip's visibility in a controlled manner.
+- **zIndex** (`number`): Sets the CSS `z-index` property for the tooltip.
+- **onOpenChange** (`(open: boolean) => void`): Callback fired when the tooltip's visibility changes.
+
+---
+
+### Basic Example
+
+This example demonstrates the default usage of the `Tooltip` component with a title and default position.
+
+<Canvas of={TooltipStories.Default} />
+
+---
+
+### Custom Color Tooltip
+
+An example showing how to set a custom background color for the tooltip.
+
+<Canvas of={TooltipStories.CustomColor} />
+
+
+---
+
+### Placement Variants
+
+The tooltip supports multiple placement options. This example demonstrates a tooltip for each placement.
+
+<Canvas of={TooltipStories.CustomPlacement} />
+
+---
+
+### With Click Trigger
+
+The tooltip demostrated how to control the tooltip using `trigger = 'click'`
+
+<Canvas of={TooltipStories.ClickTrigger} />
+
+---
