@@ -27,7 +27,7 @@ It is highly customizable with options for positioning, appearance, and behavior
 - **overlayClassName** (`string`): Additional CSS class names for the tooltip's outer wrapper.
 - **overlayStyle** (`React.CSSProperties`): Inline styles for the tooltip wrapper.
 - **overlayInnerStyle** (`React.CSSProperties`): Inline styles for the inner content of the tooltip.
-- **placement** (`'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight' | 'left' | 'leftTop' | 'leftBottom' | 'right' | 'rightTop' | 'rightBottom'`): Tooltip position relative to the target. Defaults to `'top'`.
+- **placement** (`'top' | 'bottom' | 'left' | 'right'`): Tooltip position relative to the target. Defaults to `'top'`.
 - **trigger** (`'hover' | 'focus' | 'click' | 'contextMenu' | Trigger[]`): Event(s) that trigger the tooltip's visibility. Defaults to `'hover'`.
 - **open** (`boolean`): Controls the tooltip's visibility in a controlled manner.
 - **zIndex** (`number`): Sets the CSS `z-index` property for the tooltip.
@@ -65,5 +65,16 @@ The tooltip supports multiple placement options. This example demonstrates a too
 The tooltip demostrated how to control the tooltip using `trigger = 'click'`
 
 <Canvas of={TooltipStories.ClickTrigger} />
+
+---
+
+### With Styles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property.
+
+
+<Canvas of={TooltipStories.WithStyles} />
 
 ---

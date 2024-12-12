@@ -1,7 +1,10 @@
 import * as React from 'react'
 import type { Meta, StoryFn } from '@storybook/react'
 import type { TooltipProps } from '@stcland/components'
-import { Tooltip, Button } from '@stcland/components'
+import { Tooltip, Button, StcStylesProvider } from '@stcland/components'
+import { Tooltip as TooltipWithStyles } from '@stcland/components/withStyles'
+import { Icon } from '@stcland/components/icon'
+import customStyles from '../stc.config'
 
 export default {
   title: 'Components/Tooltip',
@@ -12,17 +15,17 @@ export default {
       control: 'select',
       options: [
         'top',
-        'topLeft',
-        'topRight',
+        // 'topLeft',
+        // 'topRight',
         'bottom',
-        'bottomLeft',
-        'bottomRight',
+        // 'bottomLeft',
+        // 'bottomRight',
         'left',
-        'leftTop',
-        'leftBottom',
+        // 'leftTop',
+        // 'leftBottom',
         'right',
-        'rightTop',
-        'rightBottom',
+        // 'rightTop',
+        // 'rightBottom',
       ],
       description: 'The position of the tooltip relative to the trigger element',
     },
@@ -77,3 +80,19 @@ export const CustomColor: StoryFn<TooltipProps> = (args) => (
   </Wrapper>
 )
 
+
+const TemplateWithStyles: StoryFn<TooltipProps> = (args) => (
+  <StcStylesProvider customStyles={customStyles}>
+    <Wrapper>
+      <TooltipWithStyles {...args}>
+        <Icon solid neutral iconName='InformationCircleIcon'/>
+      </TooltipWithStyles>
+    </Wrapper>
+  </StcStylesProvider>
+)
+
+export const WithStyles = TemplateWithStyles.bind({})
+WithStyles.args = {
+  title: 'Tooltip With Styles Wrapper',
+  placement: 'left',
+}

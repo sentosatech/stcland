@@ -15,7 +15,8 @@ import type {  AccordionStyles,
   RadioGroupStyles,
   SelectStyles,
   DividerStyles,
-  CheckboxGroupStyles
+  CheckboxGroupStyles,
+  TooltipStyles
 } from '.'
 
 export type StclandStyles = {
@@ -34,6 +35,7 @@ export type StclandStyles = {
   radioGroup?: Partial<RadioGroupStyles>
   select?: Partial<SelectStyles>
   divider?: Partial<DividerStyles>
+  tooltip?: Partial<TooltipStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -369,5 +371,12 @@ export const defaultStyles: StclandStyles = {
       labelNeutral: 'text-gray-700',
       labelCustomIcon: 'text-gray-925'
     }
+  },
+  tooltip: {
+    root: 'relative inline-block',
+    tooltipContainer: 'absolute z-50 p-3 rounded-md shadow-md text-sm w-max',
+    colorClass: 'bg-zinc-600 text-white',
+    arrow: 'absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
+    arrowColor: 'bg-zinc-600',
   }
 }

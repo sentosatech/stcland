@@ -264,3 +264,10 @@ export interface CheckboxGroupStyles extends BaseStyles {
   horizontal: DivElementClassName
   checkbox: CheckboxStyles
 }
+
+export interface TooltipStyles extends BaseStyles {
+  tooltipContainer: DivElementClassName
+  colorClass: DivElementClassName
+  arrow: DivElementClassName
+  arrowColor: DivElementClassName
+}

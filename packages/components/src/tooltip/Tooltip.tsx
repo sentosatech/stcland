@@ -1,44 +1,43 @@
 import * as React from 'react'
-import { cns } from '@stcland/utils'
+import { appliedStyles, cns } from '@stcland/utils'
+import { TooltipStyles } from 'src/styles'
 
 //*****************************************************************************
 // Interface
 //*****************************************************************************
 
+// TODO: extend correctly with other granular placements.
 type Placement =
   | 'top'
-  | 'topLeft'
-  | 'topRight'
+  // | 'topLeft'
+  // | 'topRight'
   | 'bottom'
-  | 'bottomLeft'
-  | 'bottomRight'
+  // | 'bottomLeft'
+  // | 'bottomRight'
   | 'left'
-  | 'leftTop'
-  | 'leftBottom'
+  // | 'leftTop'
+  // | 'leftBottom'
   | 'right'
-  | 'rightTop'
-  | 'rightBottom'
+  // | 'rightTop'
+  // | 'rightBottom'
 
 type Trigger = 'hover' | 'focus' | 'click' | 'contextMenu'
 
 export interface TooltipProps {
   children: React.ReactNode
   title: React.ReactNode | (() => React.ReactNode);
-  align?: Record<string, unknown>;
   arrow?: boolean | { pointAtCenter: boolean };
   colorClass?: string;
   defaultOpen?: boolean;
   destroyTooltipOnHide?: boolean;
   mouseEnterDelay?: number;
   mouseLeaveDelay?: number;
-  overlayClassName?: string;
-  overlayStyle?: React.CSSProperties;
   overlayInnerStyle?: React.CSSProperties;
   placement?: Placement;
   trigger?: Trigger | Trigger[];
   open?: boolean;
-  zIndex?: number;
   onOpenChange?: (open: boolean) => void;
+  customStyles?: Partial<TooltipStyles>
 }
 
 
@@ -48,22 +47,19 @@ export interface TooltipProps {
 
 const Tooltip = ({
   title,
-  align,
   arrow = true,
-  colorClass = 'bg-stone-800 text-white',
+  colorClass,
   defaultOpen = false,
   destroyTooltipOnHide = false,
   mouseEnterDelay = 0.1,
   mouseLeaveDelay = 0.1,
-  overlayClassName,
-  overlayStyle,
   overlayInnerStyle,
   placement = 'top',
   trigger = 'hover',
   open: controlledOpen,
-  zIndex,
   onOpenChange,
   children,
+  customStyles
 }: TooltipProps) => {
   const [visible, setVisible] = React.useState(defaultOpen)
   const tooltipRef = React.useRef<HTMLDivElement | null>(null)
@@ -147,22 +143,22 @@ const Tooltip = ({
     }
   }
 
-  // TODO: compose customStyles making sure is not interfering with the base behavior.
-  const cn = {
+  const tooltipStyles : TooltipStyles = {
     root: 'relative inline-block',
-    tooltipContainer: cns(
-      'absolute z-50 p-2 rounded-md shadow-md text-sm w-max',
-      getMarginStyle(),
-      overlayClassName,
-      colorClass,
-      getTooltipPosition(),
-    ),
-    arrow: cns(
-      'clip-bottom absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
-      colorClass ? colorClass : 'bg-stone-800',
-      getArrowPosition()
-    )
+    tooltipContainer: 'absolute z-50 p-3 rounded-md shadow-md text-sm w-max',
+    colorClass: 'bg-zinc-600 text-white',
+    arrow: 'absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
+    arrowColor: 'bg-zinc-600',
   }
+
+  const mergedStyles = appliedStyles<TooltipStyles>(tooltipStyles, customStyles)
+
+  const cn = {
+    root: mergedStyles.root,
+    tooltipContainer: cns(mergedStyles.tooltipContainer, colorClass ? colorClass : mergedStyles.colorClass),
+    arrow: cns('tooltip-arrow', mergedStyles.arrow, colorClass ? colorClass : mergedStyles.arrowColor)
+  }
+
 
   return (
     <div
@@ -175,17 +171,12 @@ const Tooltip = ({
       {(visible || controlledOpen || (!destroyTooltipOnHide && defaultOpen)) && (
         <div
           ref={tooltipRef}
-          className={cn.tooltipContainer}
-          style={{
-            ...overlayStyle,
-            zIndex,
-            ...align,
-          }}
+          className={cns(cn.tooltipContainer, getMarginStyle(), getTooltipPosition())}
         >
           <div style={overlayInnerStyle}>
             {typeof title === 'function' ? title() : title}
           </div>
-          {arrow && <div className={cn.arrow}></div>}
+          {arrow && <div className={cns(cn.arrow, getArrowPosition())}></div>}
         </div>
       )}
     </div>
