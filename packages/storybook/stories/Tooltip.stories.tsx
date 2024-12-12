@@ -38,7 +38,7 @@ export default {
 } as Meta
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className="min-h-[100px] min-w-[300px] p-10">{children}</div>
+  return <div className="min-h-[100px] min-w-[300px] p-10 flex flex-row justify-center">{children}</div>
 }
 
 // Default Tooltip Example
@@ -62,7 +62,7 @@ export const CustomPlacement: StoryFn<TooltipProps> = (args) => (
 // Tooltip with Click Trigger
 export const ClickTrigger: StoryFn<TooltipProps> = (args) => (
   <Wrapper>
-    <Tooltip {...args} title="Click-triggered Tooltip"  placement="bottom" trigger="click">
+    <Tooltip {...args} title="Click-triggered Tooltip"  placement="left" trigger="click">
       <Button secondary text='Click Me'/>
     </Tooltip>
   </Wrapper>
@@ -71,7 +71,7 @@ export const ClickTrigger: StoryFn<TooltipProps> = (args) => (
 // Tooltip with Custom Color
 export const CustomColor: StoryFn<TooltipProps> = (args) => (
   <Wrapper>
-    <Tooltip {...args} title="Custom Color Tooltip" colorClass="bg-pink-500 text-white">
+    <Tooltip {...args} title="Custom Color Tooltip"  placement='bottom' colorClass="bg-pink-500 text-white">
       <Button outlined text='Hover Me'/>
     </Tooltip>
   </Wrapper>

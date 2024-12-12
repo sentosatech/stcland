@@ -116,19 +116,34 @@ const Tooltip = ({
     }
   }
 
-  // TODO: fix arrow position and wider form.
   const getArrowPosition = () => {
     switch (placement) {
     case 'top':
-      return 'bottom-0 left-1/2 transform -translate-x-1/2 rotate-180'
+      return 'bottom-[-9px] left-1/2 transform -translate-x-1/2 rotate-180'
     case 'bottom':
-      return 'top-0 left-1/2 transform -translate-x-1/2 rotate-0'
+      return 'top-[-9px] left-1/2 transform -translate-x-1/2 rotate-0'
     case 'left':
-      return 'right-0 top-1/2 transform -translate-y-1/2 rotate-90'
+      return 'right-[-11px] top-1/2 transform -translate-y-1/2 rotate-90'
     case 'right':
-      return 'left-0 top-1/2 transform -translate-y-1/2 -rotate-90'
+      return 'left-[-11px] top-1/2 transform -translate-y-1/2 -rotate-90'
     default:
-      return 'bottom-0 left-1/2 transform -translate-x-1/2 rotate-180'
+      return 'bottom-[-9px] left-1/2 transform -translate-x-1/2 rotate-180'
+    }
+  }
+
+  // Margin between tooltip and children.
+  const getMarginStyle = () => {
+    switch (placement) {
+    case 'top':
+      return 'mb-3'
+    case 'bottom':
+      return 'mt-3'
+    case 'left':
+      return 'mr-3'
+    case 'right':
+      return 'ml-3'
+    default:
+      return 'mb-3'
     }
   }
 
@@ -136,14 +151,15 @@ const Tooltip = ({
   const cn = {
     root: 'relative inline-block',
     tooltipContainer: cns(
-      'absolute z-50 p-2 m-1 rounded-md shadow-md text-sm w-max',
+      'absolute z-50 p-2 rounded-md shadow-md text-sm w-max',
+      getMarginStyle(),
       overlayClassName,
       colorClass,
       getTooltipPosition(),
     ),
     arrow: cns(
-      'clip-bottom absolute w-2.5 h-2.5 border-t-2 border-r-2 border-transparent',
-      'border-gray-900 dark:border-gray-700 bg-stone-800',
+      'clip-bottom absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
+      colorClass ? colorClass : 'bg-stone-800',
       getArrowPosition()
     )
   }
