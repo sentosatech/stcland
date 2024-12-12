@@ -32,7 +32,6 @@ export interface TooltipProps {
   destroyTooltipOnHide?: boolean;
   mouseEnterDelay?: number;
   mouseLeaveDelay?: number;
-  overlayInnerStyle?: React.CSSProperties;
   placement?: Placement;
   trigger?: Trigger | Trigger[];
   open?: boolean;
@@ -53,7 +52,6 @@ const Tooltip = ({
   destroyTooltipOnHide = false,
   mouseEnterDelay = 0.1,
   mouseLeaveDelay = 0.1,
-  overlayInnerStyle,
   placement = 'top',
   trigger = 'hover',
   open: controlledOpen,
@@ -173,7 +171,7 @@ const Tooltip = ({
           ref={tooltipRef}
           className={cns(cn.tooltipContainer, getMarginStyle(), getTooltipPosition())}
         >
-          <div style={overlayInnerStyle}>
+          <div>
             {typeof title === 'function' ? title() : title}
           </div>
           {arrow && <div className={cns(cn.arrow, getArrowPosition())}></div>}

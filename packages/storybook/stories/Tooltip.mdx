@@ -16,7 +16,6 @@ It is highly customizable with options for positioning, appearance, and behavior
 
 - **children** (`React.ReactNode`): The target element that triggers the tooltip.
 - **title** (`React.ReactNode | () => React.ReactNode`): The content displayed within the tooltip. Can be a node or a function returning a node.
-- **align** (`Record<string, unknown>`): Custom alignment for the tooltip content.
 - **arrow** (`boolean | { pointAtCenter: boolean }`): Controls the display of the tooltip's arrow. Defaults to `true`.
 - **autoAdjustOverflow** (`boolean`): Determines whether the tooltip should adjust its position to avoid overflowing. Defaults to `true`.
 - **colorClass** (`string`): Custom Tailwind classes for the tooltip.
@@ -24,13 +23,9 @@ It is highly customizable with options for positioning, appearance, and behavior
 - **destroyTooltipOnHide** (`boolean`): Whether to remove the tooltip from the DOM when hidden. Defaults to `false`.
 - **mouseEnterDelay** (`number`): Delay in seconds before showing the tooltip on hover. Defaults to `0.1`.
 - **mouseLeaveDelay** (`number`): Delay in seconds before hiding the tooltip on mouse leave. Defaults to `0.1`.
-- **overlayClassName** (`string`): Additional CSS class names for the tooltip's outer wrapper.
-- **overlayStyle** (`React.CSSProperties`): Inline styles for the tooltip wrapper.
-- **overlayInnerStyle** (`React.CSSProperties`): Inline styles for the inner content of the tooltip.
 - **placement** (`'top' | 'bottom' | 'left' | 'right'`): Tooltip position relative to the target. Defaults to `'top'`.
 - **trigger** (`'hover' | 'focus' | 'click' | 'contextMenu' | Trigger[]`): Event(s) that trigger the tooltip's visibility. Defaults to `'hover'`.
 - **open** (`boolean`): Controls the tooltip's visibility in a controlled manner.
-- **zIndex** (`number`): Sets the CSS `z-index` property for the tooltip.
 - **onOpenChange** (`(open: boolean) => void`): Callback fired when the tooltip's visibility changes.
 
 ---
