@@ -1,6 +1,6 @@
 {
   "name": "@stcland/components",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "type": "module",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",

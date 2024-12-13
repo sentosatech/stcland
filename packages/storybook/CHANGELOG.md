@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.22
+
+### Patch Changes
+
+- Fixing default style in tooltip.
+- Updated dependencies
+  - @stcland/components@0.0.18
+
 ## 0.0.21
 
 ### Patch Changes
