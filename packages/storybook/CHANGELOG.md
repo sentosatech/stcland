@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.21
+
+### Patch Changes
+
+- Adding icon prop to DND, and outside click in Tooltip.
+- Updated dependencies
+  - @stcland/components@0.0.17
+
 ## 0.0.20
 
 ### Patch Changes

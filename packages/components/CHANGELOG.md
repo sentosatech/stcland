@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.17
+
+### Patch Changes
+
+- Adding icon prop to DND, and outside click in Tooltip.
+
 ## 0.0.16
 
 ### Patch Changes
