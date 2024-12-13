@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { appliedStyles, cns } from '@stcland/utils'
 import { TooltipStyles } from 'src/styles'
+import useOutsideClick from '../utils'
 
 //*****************************************************************************
 // Interface
@@ -94,6 +95,11 @@ const Tooltip = ({
       }
     }
   }
+
+  useOutsideClick(tooltipRef, {
+    onClickOutside: hideTooltip,
+    capture: false,
+  })
 
   const getTooltipPosition = () => {
     switch (placement) {

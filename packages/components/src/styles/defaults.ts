@@ -291,6 +291,7 @@ export const defaultStyles: StclandStyles = {
       dragging: 'opacity-50',
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+      iconContainer: ''
     },
     droppable: {
       root: '',
@@ -301,7 +302,8 @@ export const defaultStyles: StclandStyles = {
       bgColorClass: 'bg-gray-825',
       dragging: 'opacity-50',
       content: 'flex-1',
-      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+      iconContainer: ''
     }
   },
   radioGroup: {
