@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form'
 import ReactTailwindSelect from 'react-tailwindcss-select'
 import { appliedStyles, cns } from '@stcland/utils'
 import FormLabel from '../FormLabel'
-import { SelectStyles } from 'src/styles/componentTypes'
+import { SelectInputStyles } from 'src/styles'
 
 //*****************************************************************************
 // Interface
@@ -19,7 +19,7 @@ export interface Props {
   options: Option[];
   onSelectionChange?: (value: string) => void;
   disabled?: boolean;
-  customStyles?: Partial<SelectStyles>;
+  customStyles?: Partial<SelectInputStyles>;
   required?: boolean;
   hidden?: boolean;
 }

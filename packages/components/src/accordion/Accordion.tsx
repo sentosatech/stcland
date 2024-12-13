@@ -8,11 +8,11 @@ import type { AccordionStyles } from '../styles/'
 //*****************************************************************************
 
 export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  id: string;
-  defaultExpanded?: boolean;
-  className?: string;
-  customStyles?: Partial<AccordionStyles>
+  children: React.ReactNode; // Content to be rendered inside the accordion
+  id: string; // Unique identifier
+  defaultExpanded?: boolean; // If `true`, is expanded by default, this property state will applied to child elements, defaults to false.
+  className?: string; // Additional classes applied to the root.
+  customStyles?: Partial<AccordionStyles> // Additional specific classes per `AccordionStyles` type.
 }
 
 //*****************************************************************************
@@ -30,11 +30,11 @@ export const Accordion = ({
   const summaryId = `${id}-header`
   const detailsId = `${id}-content`
 
-  const accordionStyles = {
+  const accordionStyles : AccordionStyles['accordion'] = {
     root: cns('bg-gray-825', className),
   }
 
-  const cn  = appliedStyles( accordionStyles, customStyles?.accordion)
+  const cn  = appliedStyles<AccordionStyles['accordion']>( accordionStyles, customStyles?.accordion)
 
 
   return (
