@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Meta, StoryFn } from '@storybook/react'
 import { DragDropProvider, SortableList, SortableItem,
-  Draggable, Droppable, arrayMove, StcStylesProvider } from '@stcland/components'
+  Draggable, Droppable, arrayMove, StcStylesProvider, Tooltip } from '@stcland/components'
 import { DragDropProvider as DragDropProviderWithStyles } from '@stcland/components/withStyles'
 import customStyles from '../stc.config'
+import { Icon } from '@stcland/components/icon'
 
 const meta: Meta = {
   title: 'Components/DragAndDrop',
@@ -69,15 +70,22 @@ export const SortableWithRemoveButton: StoryFn = () => {
   }
 
   return (
-    <DragDropProvider onDragEnd={handleDragEnd as any}>
-      <SortableList items={items.map((item) => item.id)} >
-        {items.map((item) => (
-          <SortableItem key={item.id} id={item.id} onRemove={handleRemove}>
-            {item.name}
-          </SortableItem>
-        ))}
-      </SortableList>
-    </DragDropProvider>
+    <div className='ml-40'>
+      <DragDropProvider onDragEnd={handleDragEnd as any}>
+        <SortableList items={items.map((item) => item.id)}>
+          {items.map((item) => (
+            <SortableItem key={item.id} id={item.id} onRemove={handleRemove} icon={<Tooltip
+              placement='left'
+              trigger='click'
+              title='I am a tooltip!'>
+              <Icon solid sm iconName='InformationCircleIcon' className='p-0'/>
+            </Tooltip>}>
+              {item.name}
+            </SortableItem>
+          ))}
+        </SortableList>
+      </DragDropProvider>
+    </div>
   )
 }
 
@@ -162,7 +170,7 @@ const DraggableDroppableExample: StoryFn = () => {
 
 export const DraggableDroppableExampleStory = DraggableDroppableExample
 
-// Draggable and Droppable Example with Remove Button
+// Draggable and Droppable Example with Remove Button & Tooltip triggered by Icon onHover.
 const DraggableDroppableWithRemoveButton: StoryFn = () => {
   const [items, setItems] = useState([
     { id: 'item-1', content: 'Draggable Item 1' },
@@ -196,7 +204,7 @@ const DraggableDroppableWithRemoveButton: StoryFn = () => {
           key={item.id}
           id={item.id}
         >
-          <Draggable id={item.id} onRemove={handleRemove}>
+          <Draggable id={item.id} onRemove={handleRemove}  icon={<Tooltip title='Hover Me!'><Icon solid iconName='HeartIcon'/></Tooltip>}>
             {item.content}
           </Draggable>
         </Droppable>

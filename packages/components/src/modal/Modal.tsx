@@ -2,7 +2,7 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { appliedStyles, cns } from '@stcland/utils'
 import type { ModalStyles } from '../styles/'
-import useOutsideClick from './utils'
+import useOutsideClick from '../utils'
 
 //*****************************************************************************
 // Interface

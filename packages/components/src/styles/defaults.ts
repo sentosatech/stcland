@@ -291,6 +291,7 @@ export const defaultStyles: StclandStyles = {
       dragging: 'opacity-50',
       content: 'flex-1',
       removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+      iconContainer: ''
     },
     droppable: {
       root: '',
@@ -301,7 +302,8 @@ export const defaultStyles: StclandStyles = {
       bgColorClass: 'bg-gray-825',
       dragging: 'opacity-50',
       content: 'flex-1',
-      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+      iconContainer: ''
     }
   },
   radioGroup: {
@@ -373,7 +375,7 @@ export const defaultStyles: StclandStyles = {
     }
   },
   tooltip: {
-    root: 'relative inline-block',
+    root: 'relative',
     tooltipContainer: 'absolute z-50 p-3 rounded-md shadow-md text-sm w-max',
     colorClass: 'bg-zinc-600 text-white',
     arrow: 'absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',

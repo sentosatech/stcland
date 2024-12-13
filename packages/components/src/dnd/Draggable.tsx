@@ -14,13 +14,14 @@ export interface DraggableProps {
   onRemove?: (id: string) => void;
   bgColorClass?: string // Tailwind bg-color class
   className?: string; // Additional classes applied to the root.
+  icon?: React.ReactNode
 }
 
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
-const Draggable = ({ id, children, bgColorClass, className, onRemove }: DraggableProps) => {
+const Draggable = ({ id, children, bgColorClass, className, onRemove, icon }: DraggableProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id })
   const { customStyles } = useCustomDndContext()
 
@@ -29,6 +30,7 @@ const Draggable = ({ id, children, bgColorClass, className, onRemove }: Draggabl
     bgColorClass: 'bg-gray-825',
     dragging: 'opacity-5',
     content: 'flex-1',
+    iconContainer: 'mr-2 cursor-pointer',
     removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
   }
 
@@ -37,7 +39,8 @@ const Draggable = ({ id, children, bgColorClass, className, onRemove }: Draggabl
   const cn = {
     root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, bgColorClass ?? mergedStyles.bgColorClass, className),
     content: mergedStyles.content,
-    removeButton: mergedStyles.removeButton
+    removeButton: mergedStyles.removeButton,
+    iconContainer: icon ? mergedStyles.iconContainer : ''
   }
 
   const handleRemoveClick = (e: React.MouseEvent) => {
@@ -54,6 +57,13 @@ const Draggable = ({ id, children, bgColorClass, className, onRemove }: Draggabl
       }}
       className={cn.root}
     >
+      {/* Icon: This will not be part of the draggable area */}
+      {icon &&
+        <div className={cn.iconContainer}>
+          {icon}
+        </div>
+      }
+
       {/* Draggable Content: This is the actual draggable part */}
       <div
         ref={setNodeRef}
@@ -63,7 +73,6 @@ const Draggable = ({ id, children, bgColorClass, className, onRemove }: Draggabl
       >
         {children}
       </div>
-
       {/* Remove Button: This will not be part of the draggable area */}
       {onRemove && (
         <button
