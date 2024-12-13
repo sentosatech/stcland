@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.16
+
+### Patch Changes
+
+- Add Tooltip to STClandina.
+
 ## 0.0.15
 
 ### Patch Changes

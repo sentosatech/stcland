@@ -296,6 +296,13 @@ const styles: StclandStyles = {
       labelNeutral: 'text-gray-700',
       labelCustomIcon: 'text-gray-925'
     }
+  },
+  tooltip: {
+    root: 'relative inline-block',
+    tooltipContainer: 'absolute z-50 p-3 rounded-md shadow-md text-sm w-max',
+    colorClass: 'bg-indigo-600 text-white',
+    arrow: 'absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
+    arrowColor: 'bg-indigo-600',
   }
 }
 

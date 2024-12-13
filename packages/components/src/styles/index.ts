@@ -23,5 +23,6 @@ export type {
   RadioGroupStyles,
   SelectStyles,
   DividerStyles,
-  CheckboxGroupStyles
+  CheckboxGroupStyles,
+  TooltipStyles
 } from './componentTypes'
