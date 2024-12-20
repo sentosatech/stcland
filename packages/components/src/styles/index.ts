@@ -24,5 +24,6 @@ export type {
   SelectStyles,
   DividerStyles,
   CheckboxGroupStyles,
-  TooltipStyles
+  TooltipStyles,
+  TabsStyles
 } from './componentTypes'
