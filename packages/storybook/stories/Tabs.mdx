@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as TabsStories from './Tabs.stories';
+
+<Meta of={TabsStories} />
+
+# Tabs Component
+
+Tabs are implemented using a collection of related components:
+
+Tab: the tab element itself. Clicking on a tab displays its corresponding panel.
+Tabs: the container that houses the tabs. Responsible for handling focus and keyboard navigation between tabs.
+
+### Basic 
+
+<Canvas of={TabsStories.Basic} />
+
+### Vertical
+
+<Canvas of={TabsStories.Vertical} />
+
+### Vertical Scroll
+
+<Canvas of={TabsStories.ScrollableVerticalTabs} />
+
+### Horizontal Scroll
+
+<Canvas of={TabsStories.ScrollableHorizontalTabs} />

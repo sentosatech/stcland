@@ -98,3 +98,6 @@ export { CheckboxGroup } from './checkboxGroup'
 
 export type { TooltipProps } from './tooltip'
 export { Tooltip } from './tooltip'
+
+export type { TabsProps, TabProps, TabPanelProps } from './tabs'
+export { Tabs, Tab, TabPanel } from './tabs'
