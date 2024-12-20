@@ -1,9 +1,10 @@
 import * as React from 'react'
+import { TabsStyles } from 'src/styles'
 
 interface TabsContextValue {
   activeTab: number;
   setActiveTab: (index: number) => void;
-  customStyles?: Record<string, any>
+  customStyles?: Partial<TabsStyles>
 }
 
 export const TabsContext = React.createContext<TabsContextValue | undefined>(undefined)

@@ -1,16 +1,32 @@
 import * as React from 'react'
+import { appliedStyles, cns } from '@stcland/utils'
+import { TabsStyles } from 'src/styles'
 
 export interface TabPanelProps {
     value: number;
     index: number;
     children: React.ReactNode;
-    dir?: string;
+    className?: string
+    colorClass?: string
+    customStyles?: Partial<TabsStyles['tabPanel']>
   }
 
-const TabPanel = ({ value, index, children, dir }: TabPanelProps) => {
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
+
+const TabPanel = ({ value, index, children, className, colorClass, customStyles }: TabPanelProps) => {
+
+  const defaultTabPanelStyles = {
+    root: '',
+    colorClass: 'text-white'
+  }
+
+  const mergedStyles = appliedStyles(defaultTabPanelStyles, customStyles)
 
   const cn = {
-    root: 'text-white'
+    root: cns(mergedStyles.root, colorClass ?? mergedStyles.colorClass, className)
   }
 
   return (
@@ -19,7 +35,6 @@ const TabPanel = ({ value, index, children, dir }: TabPanelProps) => {
       role="tabpanel"
       hidden={value !== index}
       aria-labelledby={`tab-${index}`}
-      dir={dir}
     >
       {value === index && <div>{children}</div>}
     </div>

@@ -1,8 +1,9 @@
 import * as React from 'react'
 import { TabsContext } from './context/TabsContext'
-import { cns } from '@stcland/utils'
+import { appliedStyles, cns } from '@stcland/utils'
 import type { TabProps } from './Tab'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
+import type { TabsStyles } from 'src/styles'
 
 export interface TabsProps {
   defaultActiveTab?: number;
@@ -12,7 +13,13 @@ export interface TabsProps {
   colorIndicator?: string;
   colorClass?: string;
   scrollable?: boolean;
+  customStyles?: Partial<TabsStyles>
 }
+
+
+//*****************************************************************************
+// Components
+//*****************************************************************************
 
 const Tabs: React.FC<TabsProps> = ({
   defaultActiveTab = 0,
@@ -22,33 +29,46 @@ const Tabs: React.FC<TabsProps> = ({
   colorClass,
   className,
   scrollable = false,
+  customStyles
 }) => {
   const [activeTab, setActiveTab] = React.useState(defaultActiveTab)
   const tabContainerRef = React.useRef<HTMLDivElement>(null)
   const [isOverflowing, setIsOverflowing] = React.useState(false)
   const horizontal = orientation === 'horizontal'
 
+  const defaultTabsStyles = {
+    root: 'p-2 overflow-auto whitespace-nowrap w-full flex gap-2 relative',
+    colorClass: 'bg-gray-800 text-white',
+    rootWidth: 'w-max',
+    indicator: 'absolute transition-transform duration-300 ease-in-out',
+    horizontalIndicator: 'bottom-0 left-0 h-0.5 w-full',
+    verticalIndicator: 'right-0 w-0.5 h-full',
+    colorClassIndicator: 'bg-primary-main',
+    tabWrapper: 'w-full relative',
+    scrollButton: 'relative z-10 text-white rounded-full p-2',
+    scrollableIcon: 'text-white h-4.5 w-4.5',
+    scrollableWrapper: 'flex items-center'
+  }
+
+  const mergedStyles = appliedStyles(defaultTabsStyles, customStyles?.tabs)
+
   const cn = {
     root: cns(
-      'p-2 overflow-auto whitespace-nowrap w-full',
-      colorClass ? colorClass : 'bg-gray-800 text-white',
-      'flex gap-2 relative',
+      mergedStyles.root,
+      colorClass ?? mergedStyles.colorClass,
       horizontal ? 'flex-row' : 'flex-col',
-      'w-max',
+      mergedStyles.rootWidth,
       className
     ),
     indicator: cns(
-      'absolute transition-transform duration-300 ease-in-out',
-      horizontal ? 'w-full' : 'h-full',
-      colorIndicator ? colorIndicator : 'bg-primary-main',
-      horizontal ? 'bottom-0 left-0 h-1' : 'right-0 w-1'
+      mergedStyles.indicator,
+      colorIndicator ?? mergedStyles.colorClassIndicator,
+      horizontal ? mergedStyles.horizontalIndicator : mergedStyles.verticalIndicator
     ),
-    tabWrapper: 'w-full relative',
-    scrollButton: cns(
-      'relative z-10 text-white rounded-full p-2',
-    ),
-    icon: cns(!horizontal ? 'rotate-90' : '', 'text-white h-4.5 w-4.5'),
-    scrollableWrapper: cns('flex items-center', horizontal ? 'flex-row' : 'flex-col')
+    tabWrapper: mergedStyles.tabWrapper,
+    scrollButton: mergedStyles.scrollButton,
+    icon: cns(mergedStyles.scrollableIcon, !horizontal ? 'rotate-90' : ''),
+    scrollableWrapper: cns(mergedStyles.scrollableWrapper, horizontal ? 'flex-row' : 'flex-col')
   }
 
   const handleScroll = (direction: 'left' | 'right' | 'up' | 'down') => {
@@ -86,7 +106,7 @@ const Tabs: React.FC<TabsProps> = ({
   }, [horizontal])
 
   return (
-    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+    <TabsContext.Provider value={{ activeTab, setActiveTab, customStyles }}>
       <div className={cn.scrollableWrapper}>
         {/* Left or Top Button */}
         {scrollable && isOverflowing && (

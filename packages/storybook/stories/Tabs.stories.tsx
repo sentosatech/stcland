@@ -1,6 +1,8 @@
 import React from 'react'
-import { Tabs, Tab, TabPanel } from '@stcland/components'
+import { Tabs, Tab, TabPanel, StcStylesProvider } from '@stcland/components'
+import { Tabs as TabsWithStyles, TabPanel as TabPanelWithStyles } from '@stcland/components/withStyles'
 import type { TabsProps } from '@stcland/components'
+import customStyles from '../stc.config'
 
 export default {
   title: 'Components/Tabs',
@@ -70,3 +72,35 @@ export const ScrollableHorizontalTabs = () => (
     className="w-[100px]"
   />
 )
+
+
+export const TabsWithWrapperStyles = () => {
+  const [activeTab, setActiveTab] = React.useState(0)
+
+  return (
+    <div className='bg-pink-600 w-max'>
+      <StcStylesProvider customStyles={customStyles}>
+        <TabsWithStyles
+          defaultActiveTab={activeTab}
+          scrollable={true}
+          orientation='horizontal'
+          className='w-[150px]'
+        >
+          {tabsData.map(({ index, label }) => (
+            <Tab key={index} index={index} label={label} onClick={() => setActiveTab(index)}>
+              {label}
+            </Tab>
+          ))}
+        </TabsWithStyles>
+
+        <div className="p-4">
+          {tabsData.map(({ index, content }) => (
+            <TabPanelWithStyles key={index} value={activeTab} index={index}>
+              {content}
+            </TabPanelWithStyles>
+          ))}
+        </div>
+      </StcStylesProvider>
+    </div>
+  )
+}

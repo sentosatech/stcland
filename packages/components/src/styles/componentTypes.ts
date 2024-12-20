@@ -271,3 +271,29 @@ export interface TooltipStyles extends BaseStyles {
   arrow: DivElementClassName
   arrowColor: DivElementClassName
 }
+
+export interface TabsStyles {
+ tabs: {
+  root: DivElementClassName
+  colorClass: DivElementClassName
+  rootWidth: DivElementClassName
+  indicator: DivElementClassName
+  horizontalIndicator: DivElementClassName
+  verticalIndicator: DivElementClassName
+  colorClassIndicator: DivElementClassName
+  tabWrapper: DivElementClassName
+  scrollButton: DivElementClassName
+  scrollableIcon: DivElementClassName
+  scrollableWrapper: DivElementClassName
+ },
+ tab: {
+  root: DivElementClassName
+  activeStyle: DivElementClassName
+  colorClass: DivElementClassName
+  disabled: DivElementClassName
+ },
+ tabPanel: {
+  root: DivElementClassName
+  colorClass: DivElementClassName
+ }
+}
