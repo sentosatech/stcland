@@ -70,19 +70,22 @@ export const defaultStyles: StclandStyles = {
   button: {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
-      outlined:
-        'border border-primary-dark text-primary-main hover:border-primary-dark hover:bg-primary-range-200',
-      solid: 'bg-primary-dark hover:bg-primary-range-900 text-gray-50',
+      default: 'bg-primary-surface-default text-white',
+      hover: 'hover:bg-primary-surface-light hover:text-white',
+      pressed: 'pressed:bg-primary-surface-dark pressed:text-white',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
-    secondary: {
-      outlined:
-        'border border-secondary-dark text-secondary-dark hover:border-secondary-main hover:bg-secondary-range-200',
-      solid: 'bg-secondary-dark hover:bg-secondary-range-900 text-gray-50',
+    secondary:{
+      default: 'border border-primary-surface-default text-primary-surface-default',
+      hover: 'border hover:border-primary-surface-light hover:text-primary-text-icon-default',
+      pressed: 'border pressed:border-primary-surface-light pressed:bg-primary-surface-default',
+      disabled: 'border disabled:border-neutral-text-icon-disabled disabled:text-neutral-text-icon-disabled'
     },
-    neutral: {
-      outlined:
-        'border border-gray-700 text-gray-500 hover:border-gray-600 hover:bg-gray-200',
-      solid: 'bg-gray-700 hover:bg-gray-600 text-gray-300',
+    tertiary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'pressed:text-primary-surface-dark',
+      disabled: 'disabled:text-text-icon-disabled'
     },
     sm: 'p-2 text-1.5xs',
     md: 'p-3 text-sm',
@@ -90,9 +93,10 @@ export const defaultStyles: StclandStyles = {
     fullWidth: 'w-full',
     rounded: 'rounded-md',
     highlightOnHover: 'hover:bg-gray-600',
-    icon: 'w-1.5 h-1.5 inline',
+    leftIcon: 'w-3.5 h-3.5 inline',
+    rightIcon: 'w-3.5 h-3.5 inline',
     disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
-    button: 'w-full',
+    button: 'w-full'
   },
   icon: {
     root: 'p-2',

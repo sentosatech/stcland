@@ -11,18 +11,14 @@ The `Button` component is a versatile UI element that can be used in various sce
 #### Base:
 - **text** (`string`): Text label of the button. Defaults to `'No Text'`.
 - **onClick** (`() => void`): Function to be called when the button is clicked. Defaults to a no-operation function.
-- **icon** (`React.ComponentType`): Optional icon component that can be rendered alongside the button text.
+- **leftIcon** (`React.ComponentType`): Optional icon component that can be rendered alongside the button text.
+- **rightIcon** (`React.ComponentType`): Optional icon component that can be rendered alongside the button text.
 #### Size Variants:
-- **sm** (`boolean`): Applies small size variant. Defaults to `true`.
-- **md** (`boolean`): Applies medium size variant.
-- **lg** (`boolean`): Applies large size variant.
+- **size** (`sm | md | lg`): Applies size variant. Defaults to `md`.
 - **fullWidth** (`boolean`): If true, the button will take up the full width of its container. Defaults to `false`.
 #### Color Variants:
-- **outlined** (`boolean`): If true, renders the button with an outlined style otherwise with solid bg.
 - **highlightOnHover** (`boolean`): Changes background on hover when true.
-- **primary** (`boolean`): Applies the primary variant. Defaults to `true` unless `secondary` or `neutral` is true.
-- **secondary** (`boolean`): Applies the secondary variant, overriding primary and neutral.
-- **neutral** (`boolean`): Applies the neutral variant, overriding primary and secondary.
+- **type** (`[primary | secondary | tertiart]`): Applies the desired variant. Defaults to `primary`
 - **disabled** (`boolean`): Disables the button when true. Defaults to `false`.
 #### Shape Variants:
 - **rounded** (`boolean`): Applies rounded corners to the button. Defaults to `true`.
@@ -39,13 +35,15 @@ The `Button` component is a versatile UI element that can be used in various sce
 
 ### Secondary
 
-Variant using this prop combination:
 <Canvas of={ButtonStories.Secondary} />
 
+### Tertiary
 
-### Disabled
+<Canvas of={ButtonStories.Tertiary} />
 
-<Canvas of={ButtonStories.Disabled} />
+### With Both Icons
+
+<Canvas of={ButtonStories.WithIcons} />
 
 ### With Custom Styles
 

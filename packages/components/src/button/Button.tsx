@@ -5,10 +5,6 @@ import '../index.css'
 
 export const noop = () => {}
 
-const getActiveVariant = (variants: Record<string, boolean | undefined>, defaultVariant: string) => {
-  return Object.keys(variants).find(key => variants[key]) || defaultVariant
-}
-
 //*****************************************************************************
 // Interface
 //*****************************************************************************
@@ -23,23 +19,33 @@ export type ParentButtonPropsShape = {
 
 export interface Props {
   text?: string;
+    // Text label of the button. Defaults to 'No Text'.
   onClick?: () => void;
-  customStyles?: Partial<ButtonStyles>
-  icon?: React.ComponentType<{ className?: string }>
-  sm?: boolean
-  md?: boolean
-  lg?: boolean
-  outlined?: boolean
-  highlightOnHover?: boolean
-  primary?: boolean
-  neutral?: boolean
-  secondary?: boolean
-  fullWidth?: boolean;
+    // Fn to be called when the button is clicked. Defaults to a noop fn.
+  type?: 'primary' | 'secondary' | 'tertiary'
+    // The three button types. Defaults to primary.
+  size?: 'sm' | 'md' | 'lg'
+    // Size of the button. Defaults to md.
+  leftIcon?: React.ComponentType<{ className?: string }>
+    // Icon displayed before the text. Defaults to no icon.
+  rightIcon?: React.ComponentType<{ className?: string }>
+    // Icon displated after the text. Defaults to no icon.
   disabled?: boolean;
+    // Disables the button when true. Defaults to false.
+  highlightOnHover?: boolean
+    // Changes background on hover when true. Defaults to false.
+  fullWidth?: boolean;
+    // True: the button will take the full container width. Defaults to false.
   rounded?: boolean;
+    // Applies rounded corners to the button. Defaults to false.
+  customStyles?: Partial<ButtonStyles>
+    // Allow modifying custom styles for any button variant.
   parentButtonProps?: ParentButtonPropsShape;
-  className?: string;
+    // Additional button properties when handling forms.
+  className?: string
+    // Tailwind Classes Applied to root container.
 }
+
 
 //*****************************************************************************
 // Components
@@ -48,38 +54,40 @@ export interface Props {
 const Button = function ({
   text = 'No Text',
   onClick = noop,
-  icon,
-  primary = true,
-  secondary,
-  neutral,
+  leftIcon,
+  rightIcon,
+  type = 'primary',
   fullWidth = false,
   disabled = false,
-  rounded = true,
+  rounded = false,
   highlightOnHover = false,
-  sm,
-  md = true,
-  lg,
-  outlined = false,
+  size = 'md',
   parentButtonProps = {},
   customStyles = {},
   className,
 }: Props) {
 
-  const { type, form } = parentButtonProps || {}
+  const { type: formType, form } = parentButtonProps || {}
 
   const defaultStyles : ButtonStyles = {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
-      outlined: 'border border-primary-dark text-primary-main hover:border-primary-dark hover:bg-primary-range-200',
-      solid: 'bg-primary-dark hover:bg-primary-range-900 text-gray-50'
+      default: 'bg-primary-surface-default text-white',
+      hover: 'hover:bg-primary-surface-light hover:text-white',
+      pressed: 'active:bg-primary-surface-dark active:text-white',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
     secondary:{
-      outlined: 'border border-secondary-dark text-secondary-dark hover:border-secondary-main hover:bg-secondary-range-200',
-      solid: 'bg-secondary-dark hover:bg-secondary-range-900 text-gray-50',
+      default: 'border-2 border-primary-surface-default text-primary-surface-default',
+      hover: 'border-2 hover:border-primary-surface-light hover:text-primary-text-icon-default',
+      pressed: 'border-2 active:border-primary-surface-light active:bg-primary-surface-default active:text-primary-text-icon-default',
+      disabled: 'border-2 disabled:border-neutral-text-icon-disabled bg-white disabled:text-neutral-text-icon-disabled'
     },
-    neutral: {
-      outlined: 'border border-gray-700 text-gray-500 hover:border-gray-600 hover:bg-gray-200',
-      solid: 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+    tertiary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:text-text-icon-disabled bg-transparent'
     },
     sm: 'p-2 text-1.5xs',
     md: 'p-3 text-sm',
@@ -87,27 +95,24 @@ const Button = function ({
     fullWidth: 'w-full',
     rounded: 'rounded-md',
     highlightOnHover: 'hover:bg-gray-600',
-    icon: 'w-3.5 h-3.5 inline',
+    leftIcon: 'w-5 h-5 inline',
+    rightIcon: 'w-5 h-5 inline',
     disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
     button: 'w-full'
   }
 
-  if (secondary) {
-    primary = false
-    neutral = false
-  } else if (neutral) {
-    primary = false
-    secondary = false
-  }
+  const secondary = type === 'secondary'
+  const primary = type === 'primary'
+  const tertiary = type === 'tertiary'
 
   // Merge custom styles with default styles.
-  const mergedStyles = appliedStyles(defaultStyles, customStyles)
+  const mergedStyles = appliedStyles<ButtonStyles>(defaultStyles, customStyles)
 
   // Define styles based on props.
   const sizeVariants = {
-    [mergedStyles.sm] : sm,
-    [mergedStyles.md] : md,
-    [mergedStyles.lg] : lg,
+    [mergedStyles.sm] : size === 'sm',
+    [mergedStyles.md] : size === 'md',
+    [mergedStyles.lg] : size === 'lg',
     [mergedStyles.fullWidth] : fullWidth
   }
 
@@ -118,44 +123,42 @@ const Button = function ({
 
   const shapeVariant = rounded ? mergedStyles.rounded : 'rounded-sm'
 
-  const solidVariants = {
-    [mergedStyles.primary.solid]: primary,
-    [mergedStyles.secondary.solid]: secondary,
-    [mergedStyles.neutral.solid]: neutral,
-  }
-
-  const outlinedVariants = {
-    [mergedStyles.primary.outlined]: primary,
-    [mergedStyles.secondary.outlined]: secondary,
-    [mergedStyles.neutral.outlined]: neutral,
-  }
-
-  const colorVariants = outlined
-    ? getActiveVariant(outlinedVariants, mergedStyles.primary.outlined)
-    : getActiveVariant(solidVariants, mergedStyles.primary.solid)
+  const typeVariants = primary
+    ? mergedStyles.primary
+    : secondary
+      ? mergedStyles.secondary
+      : tertiary
+        ? mergedStyles.tertiary
+        : mergedStyles.primary // Default
 
   const cn = {
     root: cns(
       mergedStyles.root,
       sizeVariants,
       shapeVariant,
-      colorVariants,
       rootVariants,
+      {   [typeVariants.default]: !disabled,
+        [typeVariants.hover]: !disabled,
+        [typeVariants.pressed]: !disabled,
+        [typeVariants.disabled]: disabled,
+      },
       className
     ),
     button: mergedStyles.button,
-    icon: mergedStyles.icon as any
+    leftIcon: mergedStyles.leftIcon,
+    rightIcon: mergedStyles.rightIcon
   }
 
   return (
     <div className={cn.root}>
-      {icon && React.createElement(icon,{ className: cn.icon })}
+      {leftIcon && React.createElement(leftIcon,{ className: cn.leftIcon })}
       <button
-        {...{ type: type || 'button', form, onClick, disabled }}
+        {...{ type: formType || 'button', form, onClick, disabled }}
         className={cn.button}
       >
         {text}
       </button>
+      {rightIcon && React.createElement(rightIcon,{ className: cn.rightIcon })}
     </div>
   )
 }
