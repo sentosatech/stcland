@@ -63,12 +63,13 @@ export const config : Config = {
             default: twColors.indigo['800'],
             light: twColors.indigo['500'],
             subtle: twColors.indigo['500'],
-            dark: twColors.indigo['100']
+            dark: twColors.indigo['950']
           },
           'text-icon': {
             default: twColors.indigo['300'],
             light: twColors.indigo['100'],
-            dark: twColors.indigo['900']
+            dark: twColors.indigo['900'],
+            disabled: twColors.neutral['400']
           },
           main: twColors.sky['400'],
           light: twColors.sky['200'],

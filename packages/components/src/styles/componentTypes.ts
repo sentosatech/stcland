@@ -33,22 +33,26 @@ export interface TableStyles extends BaseStyles {
   subRow: string;
 }
 
-type StyleVariant = {
-  solid: string;
-  outlined: string;
-};
+type StateVariant = {
+  default: string;
+  hover: string;
+  pressed: string;
+  disabled: string;
+}
 
 export interface ButtonStyles extends BaseStyles {
-  primary: StyleVariant;
-  secondary: StyleVariant;
-  neutral: StyleVariant;
+  root: string
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
   fullWidth: string;
   rounded: string;
   highlightOnHover: string;
-  icon: string;
+  leftIcon: string;
+  rightIcon: string;
   disabled: string;
   button: string;
 }

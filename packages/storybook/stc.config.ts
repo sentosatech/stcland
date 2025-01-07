@@ -16,29 +16,33 @@ const styles: StclandStyles = {
   button: {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
-      outlined:
-        'border border-primary-range-300 text-primary-main hover:border-primary-dark hover:bg-primary-range-200',
-      solid: 'bg-secondary-main hover:bg-primary-range-900 text-primary-main',
+      default: 'bg-yellow-900 text-white',
+      hover: 'hover:bg-green-400 hover:text-yellow-900 border-2 border-yellow-900',
+      pressed: 'active:bg-primary-surface-dark active:text-yellow-700',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
-    secondary: {
-      outlined:
-        'border border-secondary-main text-secondary-main hover:border-secondary-dark hover:bg-secondary-range-200',
-      solid: 'bg-secondary-main hover:bg-secondary-range-900 text-gray-50',
+    secondary:{
+      default: 'border-2 border-primary-surface-subtle text-primary-surface-default',
+      hover: 'border-2 hover:border-primary-surface-subtle hover:text-primary-text-icon-default',
+      pressed: 'border-2 active:border-primary-surface-light active:bg-primary-surface-default active:text-primary-text-icon-default',
+      disabled: 'border-2 disabled:border-neutral-text-icon-disabled disabled:text-neutral-text-icon-disabled'
     },
-    neutral: {
-      outlined:
-        'border border-gray-700 text-gray-500 hover:border-gray-600 hover:bg-gray-200',
-      solid: 'bg-gray-700 hover:bg-gray-600 text-gray-300',
+    tertiary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:text-text-icon-disabled'
     },
     sm: 'p-2 text-1.5xs',
     md: 'p-3 text-sm',
     lg: 'p-3 text-md',
-    // fullWidth: 'w-full',
-    // rounded: 'rounded-md',
+    fullWidth: 'w-full',
+    rounded: 'rounded-md',
     highlightOnHover: 'hover:bg-gray-600',
-    icon: 'w-3 h-3 inline',
-    // disabled:  'bg-gray-300 text-gray-400 hover:bg-gray-350',
-    // button: 'w-full'
+    leftIcon: 'w-5 h-5 inline',
+    rightIcon: 'w-5 h-5 inline',
+    disabled: 'bg-gray-300 text-gray-400 hover:bg-gray-350',
+    button: 'w-full'
   },
   icon: {
     root: 'p-2',

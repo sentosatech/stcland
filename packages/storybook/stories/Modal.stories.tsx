@@ -21,8 +21,8 @@ const meta: Meta<typeof Modal> = {
 
 const renderActions = () =>
   <div className='flex gap-2'>
-    <Button outlined onClick={() => alert('Action Cancelled')} text="Cancel" />
-    <Button outlined onClick={() => alert('Action Confirmed')} text="Confirm" />
+    <Button type='secondary' onClick={() => alert('Action Cancelled')} text="Cancel" />
+    <Button type='secondary' onClick={() => alert('Action Confirmed')} text="Confirm" />
   </div>
 
 
@@ -99,7 +99,7 @@ const TemplateWithStyles: StoryFn<ModalProps> = (args) => {
 
   return (
     <div>
-      <Button secondary outlined onClick={handleOpen} text='Open Modal'/>
+      <Button type='secondary' onClick={handleOpen} text='Open Modal'/>
       <StcStylesProvider customStyles={customStyles}>
         {isOpen && (
           <ModalWithStyles {...args} open={isOpen} onClose={handleClose}/>

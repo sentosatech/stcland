@@ -86,8 +86,8 @@ const ActionsTemplate: StoryFn = () => (
       <p>This accordion includes action buttons below.</p>
     </AccordionDetails>
     <AccordionActions>
-      <Button text="Cancel" outlined className="mr-2" />
-      <Button text="Agree" primary outlined />
+      <Button text="Cancel"  className="mr-2" />
+      <Button text="Agree" />
     </AccordionActions>
   </Accordion>
 )
@@ -116,16 +116,16 @@ const NestedAccordionTemplate: StoryFn = () => (
               <p>This is the content inside the deepest nested accordion.</p>
             </AccordionDetails>
             <AccordionActions>
-              <Button text="Nested Cancel" outlined className="mr-2" />
-              <Button text="Nested Confirm" primary outlined />
+              <Button text="Nested Cancel" type='secondary'  className="mr-2" />
+              <Button text="Nested Confirm" type='secondary' />
             </AccordionActions>
           </Accordion>
         </AccordionDetails>
       </Accordion>
     </AccordionDetails>
     <AccordionActions>
-      <Button text="Cancel" outlined className="mr-2" />
-      <Button text="Confirm" primary outlined />
+      <Button text="Cancel"  className="mr-2" />
+      <Button text="Confirm" />
     </AccordionActions>
   </Accordion>
 )
@@ -142,8 +142,8 @@ const WithStylesTemplate: StoryFn = () => (
         <p>This accordion includes action buttons below.</p>
       </AccordionDetails>
       <AccordionActions>
-        <Button text="Cancel" secondary outlined className="mr-2" />
-        <Button text="Agree" outlined />
+        <Button text="Cancel" className="mr-2" />
+        <Button text="Agree"  />
       </AccordionActions>
     </AccordionWithStyles>
   </StcStylesProvider>
