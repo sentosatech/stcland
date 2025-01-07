@@ -100,23 +100,23 @@ export const defaultStyles: StclandStyles = {
   },
   icon: {
     root: 'p-2',
-    primary: {
-      default: 'bg-primary-surface-default text-white',
-      hover: 'hover:bg-primary-surface-light hover:text-white',
-      pressed: 'pressed:bg-primary-surface-dark pressed:text-white',
+    secondary:{
+      default: 'text-primary-surface-dark',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'active:text-primary-surface-dark',
       disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
-    secondary:{
-      default: 'border border-primary-surface-default text-primary-surface-default',
-      hover: 'border hover:border-primary-surface-light hover:text-primary-text-icon-default',
-      pressed: 'border pressed:border-primary-surface-light pressed:bg-primary-surface-default',
-      disabled: 'border disabled:border-neutral-text-icon-disabled disabled:text-neutral-text-icon-disabled'
+    primary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-surface-light',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
     tertiary: {
-      default: 'text-primary-surface-default',
-      hover: 'hover:text-primary-text-icon-default',
-      pressed: 'pressed:text-primary-surface-dark',
-      disabled: 'disabled:text-text-icon-disabled'
+      default: 'text-primary-surface-light',
+      hover: 'hover:text-primary-surface-subtle',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
     sm: 'h-4.5 w-4.5',
     md: 'h-6 w-6',
@@ -126,6 +126,8 @@ export const defaultStyles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50',
+    icon: '',
+    button: ''
   },
   accordion: {
     accordion: { root: 'border rounded bg-gray-825' },

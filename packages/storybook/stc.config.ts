@@ -46,9 +46,24 @@ const styles: StclandStyles = {
   },
   icon: {
     root: 'p-2',
-    secondary: 'text-gray-800',
-    primary: 'text-gray-100',
-    neutral: 'text-gray-600',
+    secondary:{
+      default: 'text-pink-700',
+      hover: 'hover:text-pink-500',
+      pressed: 'active:text-pink-900',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    primary: {
+      default: 'text-cyan-700',
+      hover: 'hover:text-cyan-300',
+      pressed: 'active:text-cyan-900',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    tertiary: {
+      default: 'text-gray-700',
+      hover: 'hover:text-gray-900',
+      pressed: 'active:text-text-500',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
     sm: 'h-4.5 w-4.5',
     md: 'h-6 w-6',
     lg: 'h-7 w-7',
@@ -57,6 +72,8 @@ const styles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50',
+    icon: '',
+    button: ''
   },
   accordion: {
     accordion: { root: 'border rounded bg-gray-700' },
