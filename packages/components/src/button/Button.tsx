@@ -131,17 +131,20 @@ const Button = function ({
         ? mergedStyles.tertiary
         : mergedStyles.primary // Default
 
+  const variantStyles =  {
+    [typeVariants.default]: !disabled,
+    [typeVariants.hover]: !disabled,
+    [typeVariants.pressed]: !disabled,
+    [typeVariants.disabled]: disabled,
+  }
+
   const cn = {
     root: cns(
       mergedStyles.root,
       sizeVariants,
       shapeVariant,
       rootVariants,
-      {   [typeVariants.default]: !disabled,
-        [typeVariants.hover]: !disabled,
-        [typeVariants.pressed]: !disabled,
-        [typeVariants.disabled]: disabled,
-      },
+      variantStyles,
       className
     ),
     button: mergedStyles.button,
