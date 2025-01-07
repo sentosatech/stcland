@@ -34,8 +34,8 @@ Default.args = {
   checked: false,
   disabled: false,
   required: false,
-  sm: true,
-  secondary: true,
+  size: 'sm',
+  type: 'secondary',
   label: 'Label'
 }
 
@@ -43,8 +43,8 @@ Default.args = {
 export const WithIcons = Template.bind({})
 WithIcons.args = {
   checked: true,
-  icon: <Icon primary lg iconName='HeartIcon'/>,
-  checkedIcon: <Icon primary lg solid iconName='HeartIcon' />,
+  icon: <Icon  size='lg'  iconName='HeartIcon'/>,
+  checkedIcon: <Icon size='lg' solid iconName='HeartIcon' />,
   disabled: false,
   required: false,
   label: 'Label'
@@ -81,8 +81,7 @@ export const Indeterminate = (args: CheckboxProps) => {
 
 Indeterminate.args = {
   indeterminate: true,
-  sm: true,
-  primary: true,
+  size: 'sm',
   label: 'Label'
 }
 
@@ -102,9 +101,9 @@ export const IndeterminateWithCustomIcons = (args: CheckboxProps) => {
       {...args}
       checked={checked}
       indeterminate={indeterminate}
-      indeterminateIcon={<Icon lg secondary iconName="MinusIcon" />}
-      icon={<Icon lg secondary iconName="ChatBubbleOvalLeftIcon" />}
-      checkedIcon={<Icon secondary lg solid iconName="ChatBubbleOvalLeftIcon" />}
+      indeterminateIcon={<Icon size='lg' type='secondary' iconName="MinusIcon" />}
+      icon={<Icon size='lg'  type='secondary'  iconName="ChatBubbleOvalLeftIcon" />}
+      checkedIcon={<Icon type='secondary' size='lg'  solid iconName="ChatBubbleOvalLeftIcon" />}
       onChange={handleChange}
     />
   )

@@ -70,7 +70,7 @@ export const defaultStyles: StclandStyles = {
   button: {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
-      default: 'bg-primary-surface-default text-white',
+      default: 'text-primary-surface-default',
       hover: 'hover:bg-primary-surface-light hover:text-white',
       pressed: 'pressed:bg-primary-surface-dark pressed:text-white',
       disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
@@ -100,9 +100,24 @@ export const defaultStyles: StclandStyles = {
   },
   icon: {
     root: 'p-2',
-    secondary: 'text-secondary-main',
-    primary: 'text-primary-main',
-    neutral: 'text-gray-600',
+    primary: {
+      default: 'bg-primary-surface-default text-white',
+      hover: 'hover:bg-primary-surface-light hover:text-white',
+      pressed: 'pressed:bg-primary-surface-dark pressed:text-white',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    secondary:{
+      default: 'border border-primary-surface-default text-primary-surface-default',
+      hover: 'border hover:border-primary-surface-light hover:text-primary-text-icon-default',
+      pressed: 'border pressed:border-primary-surface-light pressed:bg-primary-surface-default',
+      disabled: 'border disabled:border-neutral-text-icon-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    tertiary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'pressed:text-primary-surface-dark',
+      disabled: 'disabled:text-text-icon-disabled'
+    },
     sm: 'h-4.5 w-4.5',
     md: 'h-6 w-6',
     lg: 'h-7 w-7',

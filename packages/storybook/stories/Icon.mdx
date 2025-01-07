@@ -18,9 +18,7 @@ It can be used as a standalone decorative element, within buttons, or paired wit
 - **md** (`boolean`): Applies medium size variant.
 - **lg** (`boolean`): Applies large size variant.
 #### Color Variants:
-- **primary**(`boolean`): If true, renders the primary color variant.
-- **secondary**(`boolean`): If true, renders the secondary color variant.
-- **neutral**(`boolean`): If true, renders the neutral color variant.
+- **type**(`primary | secondary | tertiary`): Style color combination variant. Defaults to `primary`.
 - **solid** (`boolean`): If true, renders solid icon variant otherwise outlined.
 - **highlightOnHover** (`boolean`): Changes background icon color on hover, defaults to false
 - **brightenOnHover** (`boolean`): Brighten icon color on hover, defaults to false
@@ -32,9 +30,12 @@ It can be used as a standalone decorative element, within buttons, or paired wit
 - **customStyles** (`Partial<IconStyles>`): Allows passing custom styles for `root` and `button` directly.
 
 ## Icons
-
+**Primary:**
 <Canvas of={IconStories.Primary} />
+**Secondary:**
 <Canvas of={IconStories.Secondary} />
+**Tertiary:**
+<Canvas of={IconStories.Tertiary} />
 
 ## WithStyles Wrapper
 

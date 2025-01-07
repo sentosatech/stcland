@@ -85,7 +85,7 @@ const TemplateWithStyles: StoryFn<TooltipProps> = (args) => (
   <StcStylesProvider customStyles={customStyles}>
     <Wrapper>
       <TooltipWithStyles {...args}>
-        <Icon solid neutral iconName='InformationCircleIcon'/>
+        <Icon solid type='tertiary' iconName='InformationCircleIcon'/>
       </TooltipWithStyles>
     </Wrapper>
   </StcStylesProvider>
