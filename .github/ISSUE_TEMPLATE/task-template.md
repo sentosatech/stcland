@@ -1,5 +1,5 @@
 ---
-name: Task Templte
+name: Task Template
 about: For reasonably self contained tasks
 title: ''
 labels: ''
