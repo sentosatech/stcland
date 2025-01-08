@@ -45,14 +45,3 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/storybook
           buildScriptName: build-sb
-
-      # Capture and post the Chromatic build link to the PR
-      - name: Post Chromatic build URL as a comment
-        if: success()
-        run: |
-          echo "Chromatic build deployed successfully!"
-          echo "Build URL: ${{ steps.chromatic.outputs.buildUrl }}"
-          echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}
-          
-          # Comment the links on the PR
-          gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"
