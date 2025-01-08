@@ -58,17 +58,19 @@ export interface ButtonStyles extends BaseStyles {
 }
 
 export interface IconStyles extends BaseStyles {
-  primary: string;
-  secondary: string;
-  neutral: string;
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
-  muted: string;
   rounded: string;
   highlightOnHover: string;
-  brightenOnHover: string;
-  bright: string;
+  bright: string,
+  brightenOnHover: string
+  muted: string
+  icon: string;
+  button: string;
 }
 
 export interface FieldSetStyles extends BaseStyles {

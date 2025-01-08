@@ -70,7 +70,7 @@ export const defaultStyles: StclandStyles = {
   button: {
     root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
     primary: {
-      default: 'bg-primary-surface-default text-white',
+      default: 'text-primary-surface-default',
       hover: 'hover:bg-primary-surface-light hover:text-white',
       pressed: 'pressed:bg-primary-surface-dark pressed:text-white',
       disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
@@ -100,9 +100,24 @@ export const defaultStyles: StclandStyles = {
   },
   icon: {
     root: 'p-2',
-    secondary: 'text-secondary-main',
-    primary: 'text-primary-main',
-    neutral: 'text-gray-600',
+    secondary:{
+      default: 'text-primary-surface-dark',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    primary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-surface-light',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    tertiary: {
+      default: 'text-primary-surface-light',
+      hover: 'hover:text-primary-surface-subtle',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
     sm: 'h-4.5 w-4.5',
     md: 'h-6 w-6',
     lg: 'h-7 w-7',
@@ -111,6 +126,8 @@ export const defaultStyles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50',
+    icon: '',
+    button: ''
   },
   accordion: {
     accordion: { root: 'border rounded bg-gray-825' },
