@@ -43,8 +43,9 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/storybook
           buildScriptName: build-sb
-     
-     - name: Append Chromatic build URL
+
+      # Append Chromatic build URL
+      - name: Append Chromatic build URL
         run: |
           echo "Chromatic build deployed successfully!" >> build_log.txt
           echo "Build URL: ${{ steps.chromatic.outputs.buildUrl }}" >> build_log.txt
@@ -52,7 +53,8 @@ jobs:
           echo "Build completed at: $(date)" >> build_log.txt
         if: success()
 
-    - name: Post Chromatic build URL as a comment
+      # Post Chromatic build URL as a comment
+      - name: Post Chromatic build URL as a comment
         if: success()
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"          
+          gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"
