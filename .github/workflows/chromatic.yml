@@ -31,12 +31,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # Stcland
+      # Storybook workspace deps
       - name: Install workspace dependencies
         run: |
-          pnpm install --filter @stcland/utils --filter @stcland/components
-          pnpm --filter @stcland/utils build
-          pnpm --filter @stcland/components build
+          pnpm run install:sbdeps
 
       # Run Chromatic
       - name: Run Chromatic
@@ -45,3 +43,16 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/storybook
           buildScriptName: build-sb
+     
+     - name: Append Chromatic build URL
+        run: |
+          echo "Chromatic build deployed successfully!" >> build_log.txt
+          echo "Build URL: ${{ steps.chromatic.outputs.buildUrl }}" >> build_log.txt
+          echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}" >> build_log.txt
+          echo "Build completed at: $(date)" >> build_log.txt
+        if: success()
+
+    - name: Post Chromatic build URL as a comment
+        if: success()
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"          
