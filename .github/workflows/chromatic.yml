@@ -30,10 +30,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # Build @stcland/components before Storybook build
-      - name: Build @stcland/components
-        run: pnpm --filter @stcland/components build
-
       # Run Chromatic
       - name: Run Chromatic
         working-directory: packages/storybook
