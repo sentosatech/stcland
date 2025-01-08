@@ -7,22 +7,22 @@ import type { IconName } from './Icon'
 //*****************************************************************************
 
 export interface IconProps {
-  iconName: IconName
-  // Icon name from heroicons.
-  size?: 'sm' | 'md' | 'lg'
-  // Desire size. Defaults to `md`.
+ iconName: IconName
+   // Icon name from heroicons
+ size?: 'sm' | 'md' | 'lg'
+   // Desire size. Defaults to `md`.
  solid?: boolean
-  // if true renders solid icon otherwise renders outline icon, defaults to `false`.
+   // if true renders solid icon otherwise renders outline icon, defaults to `false`
  type?: 'primary' | 'secondary' | 'tertiary'
-  // Variant style. Defaults to `primary`.
+   // Variant style. Defaults to `primary`.
  bright?: boolean
-  // brighten icon color, defaults to false
+   // brighten icon color, defaults to false
  disabled?: boolean
- // disabled state. Defaults to `false`
+   // disabled state. Defaults to `false`
  muted?: boolean
    // display color as muted, defaults to false
  highlightOnHover?: boolean
-  // change bg icon color on hover, defaults to false
+   // change bg icon color on hover, defaults to false
  brightenOnHover?: boolean
    // brighten icon color on hover, defaults to false
  onClick?: () => void
