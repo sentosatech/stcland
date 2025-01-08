@@ -55,6 +55,8 @@ jobs:
 
       # Post Chromatic build URL as a comment
       - name: Post Chromatic build URL as a comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: success()
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"
