@@ -32,9 +32,10 @@ jobs:
         run: pnpm install
 
       # Stcland
-      - name: Install and build @stcland/components
+      - name: Install workspace dependencies
         run: |
-          pnpm install --filter @stcland/components
+          pnpm install --filter @stcland/utils --filter @stcland/components
+          pnpm --filter @stcland/utils build
           pnpm --filter @stcland/components build
 
       # Run Chromatic
