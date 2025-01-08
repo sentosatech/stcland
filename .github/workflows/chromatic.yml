@@ -52,11 +52,3 @@ jobs:
           echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}" >> build_log.txt
           echo "Build completed at: $(date)" >> build_log.txt
         if: success()
-
-      # Post Chromatic.
-      - name: Post Chromatic build URL as a comment
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: success()
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"
