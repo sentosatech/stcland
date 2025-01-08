@@ -31,6 +31,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # Stcland
+      - name: Install and build @stcland/components
+        run: |
+          pnpm install --filter @stcland/components
+          pnpm --filter @stcland/components build
+
       # Run Chromatic
       - name: Run Chromatic
         uses: chromaui/action@latest
