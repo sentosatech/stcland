@@ -30,9 +30,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # Build @stcland/components before Storybook build
+      - name: Build @stcland/components
+        run: pnpm --filter @stcland/components build
+
       # Run Chromatic
       - name: Run Chromatic
         working-directory: packages/storybook
+        uses: chromaui/action@v2
         env:
           CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         run: pnpm chromatic
