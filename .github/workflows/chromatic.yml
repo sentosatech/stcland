@@ -32,7 +32,7 @@ jobs:
         run: pnpm install
 
       # Run Chromatic
-     - name: Run Chromatic
+      - name: Run Chromatic
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
         run: |
           echo "Chromatic build deployed successfully!"
           echo "Build URL: ${{ steps.chromatic.outputs.buildUrl }}"
-          echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}"
+          echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}
           
           # Comment the links on the PR
           gh pr comment ${{ github.event.pull_request.number }} --body "Chromatic build preview: ${{ steps.chromatic.outputs.storybookUrl }} \n Full build details: ${{ steps.chromatic.outputs.buildUrl }}"
