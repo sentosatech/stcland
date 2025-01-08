@@ -53,7 +53,7 @@ jobs:
           echo "Build completed at: $(date)" >> build_log.txt
         if: success()
 
-      # Post Chromatic build URL as a comment
+      # Post Chromatic.
       - name: Post Chromatic build URL as a comment
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
