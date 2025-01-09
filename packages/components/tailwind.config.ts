@@ -112,7 +112,7 @@ export const config : Config = {
         },
         states: {
           error: {
-            default: twColors.red['400'],
+            default: twColors.red['700'],
             light: twColors.red['600'],
             subtle: twColors.red['400'],
             dark: twColors.red['800']

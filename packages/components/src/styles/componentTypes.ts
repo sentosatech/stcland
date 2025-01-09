@@ -85,10 +85,16 @@ export interface PanelStyles extends BaseStyles {
 
 export interface FormInputStyles extends BaseStyles {
   root: DivElementClassName;
-  inputRoot: React.HTMLAttributes<HTMLInputElement>['className'];
+  inputRoot: StateVariant;
   inputContainer: DivElementClassName;
   label: DivElementClassName;
   error: DivElementClassName;
+  errorContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   info: DivElementClassName;
 }
 
@@ -102,7 +108,13 @@ export interface RadioButtonGroupStyles extends BaseStyles {
   label: DivElementClassName;
   buttonContainer: DivElementClassName;
   radioContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  errorContainer: DivElementClassName;
   error: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   radioButton: React.HTMLAttributes<HTMLInputElement>['className'];
 }
 
@@ -112,7 +124,7 @@ export interface FormStyles extends BaseStyles {
 }
 
 export interface CheckBoxStyles extends BaseStyles {
-  inputRoot: DivElementClassName;
+  inputRoot: StateVariant;
   label: DivElementClassName;
 }
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryFn } from '@storybook/react'
-import { Text, StcStylesProvider, TextProps, Form } from '@stcland/components'
+import { Text, StcStylesProvider, TextInputProps, Form } from '@stcland/components'
 import { Text as TextWithStyles } from '@stcland/components/withStyles'
 import * as React from 'react'
 import customStyles from '../stc.config'
@@ -66,7 +66,7 @@ const meta: Meta<typeof Text> = {
 
 export default meta
 
-const TextTemplate: StoryFn<TextProps> = (args) => (
+const TextTemplate: StoryFn<TextInputProps> = (args) => (
   <Form withPanel>
     <Text {...args} />
   </Form>
@@ -75,14 +75,14 @@ const TextTemplate: StoryFn<TextProps> = (args) => (
 export const Default = TextTemplate.bind({})
 Default.args = {
   name: 'text',
-  placeholder: 'Text',
+  placeholder: 'Placeholder',
   label: 'Text Input',
 }
 
 export const Disabled = TextTemplate.bind({})
 Disabled.args = {
   name: 'text',
-  placeholder: 'Text',
+  placeholder: 'Placeholder',
   label: 'Text Input',
   disabled: true,
 }
@@ -90,7 +90,7 @@ Disabled.args = {
 export const Required = TextTemplate.bind({})
 Required.args = {
   name: 'text',
-  placeholder: 'Text',
+  placeholder: 'Placeholder',
   label: 'Text Input',
   required: true,
 }
@@ -98,12 +98,12 @@ Required.args = {
 export const Hidden = TextTemplate.bind({})
 Hidden.args = {
   name: 'text',
-  placeholder: 'Text',
+  placeholder: 'Placeholder',
   label: 'Text Input',
   hidden: true,
 }
 
-const TemplateWithStyles: StoryFn<TextProps> = (args) => (
+const TemplateWithStyles: StoryFn<TextInputProps> = (args) => (
   <StcStylesProvider customStyles={customStyles}>
     <Form withPanel>
       <TextWithStyles {...args} />
@@ -114,6 +114,6 @@ const TemplateWithStyles: StoryFn<TextProps> = (args) => (
 export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   name: 'text',
-  placeholder: 'Text',
+  placeholder: 'Placeholder',
   label: 'Text Input',
 }

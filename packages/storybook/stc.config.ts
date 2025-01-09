@@ -72,7 +72,7 @@ const styles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50',
-    icon: '',
+    icon: 'text-states-error-dark',
     button: ''
   },
   accordion: {
@@ -92,39 +92,70 @@ const styles: StclandStyles = {
   email: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
-  },
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },  },
   number: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   password: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-sky-200 border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   date: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot:
-      'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800 dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   text: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   textArea: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
-  },
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },  },
   time: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot:
-      'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800 dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'p-2 text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   fieldSet: {
     label: 'font-semibold text-sky-700 text-lg',
@@ -132,8 +163,12 @@ const styles: StclandStyles = {
   },
   checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
-    inputRoot:
-      'accent-sky-500 rounded-sm h-100 bg-white border-white dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'w-5 h-5 text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg  text-neutral-text-icon-body border',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     label: 'pt-0 mb-0 text-sky-500 text-md',
   },
   selectInput: {

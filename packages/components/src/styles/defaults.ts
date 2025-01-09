@@ -173,62 +173,95 @@ export const defaultStyles: StclandStyles = {
   },
   checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
-    inputRoot: 'accent-sky-500 rounded-sm h-100',
+    inputRoot: {
+      default: 'w-5 h-5 rounded-sm h-100',
+      hover: '',
+      pressed: '',
+      disabled: ''
+    },
     label: 'pt-0 mb-0',
   },
   date: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   email: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   number: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   password: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   text: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   textArea: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'h-14 px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
   time: {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
-    inputRoot:
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark] disabled:text-zinc-400',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     error: 'text-red-300 italic text-sm',
     info: '',
   },
@@ -238,7 +271,7 @@ export const defaultStyles: StclandStyles = {
     label: '',
     radioContainer: 'flex gap-2',
     error: 'text-red-300 italic text-sm',
-    radioButton: 'accent-sky-500 h-4 w-4',
+    radioButton: 'accent-sky-500 h-4 w-4 rounded-full focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default',
   },
   selectInput: {
     root: 'flex flex-col gap-2',
