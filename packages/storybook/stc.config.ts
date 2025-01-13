@@ -72,7 +72,7 @@ const styles: StclandStyles = {
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
     muted: 'opacity-50',
-    icon: '',
+    icon: 'text-states-error-dark',
     button: ''
   },
   accordion: {
@@ -92,39 +92,70 @@ const styles: StclandStyles = {
   email: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
-  },
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },  },
   number: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   password: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-sky-200 border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   date: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot:
-      'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800 dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   text: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   textArea: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot: 'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800',
-  },
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },  },
   time: {
     root: 'flex  w-100 gap-2 ',
     label: 'text-md text-sky-500',
-    inputRoot:
-      'px-2 py-2 bg-slate-300 border-sky-200 bg-white text-slate-800 dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'p-2 text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
   },
   fieldSet: {
     label: 'font-semibold text-sky-700 text-lg',
@@ -132,8 +163,12 @@ const styles: StclandStyles = {
   },
   checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
-    inputRoot:
-      'accent-sky-500 rounded-sm h-100 bg-white border-white dark:[color-scheme:light]',
+    inputRoot: {
+      default: 'w-5 h-5 text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg  text-neutral-text-icon-body border',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
+    },
     label: 'pt-0 mb-0 text-sky-500 text-md',
   },
   selectInput: {
@@ -270,11 +305,13 @@ const styles: StclandStyles = {
   select: {
     root: 'relative w-64',
     label: 'block mb-2 text-sm font-medium text-pink-700',
-    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-pink-900 border border-gray-400 text-neutral-200 rounded focus:outline-none',
-    menu: 'absolute z-10 w-full bg-pink-600 border border-gray-300 text-neutral-700 rounded shadow-lg max-h-60 overflow-auto',
-    disabled: 'disabled:bg-gray-400',
-    optionContainer: 'flex items-center p-2',
-    listItem: {
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-pink-900 border border-gray-400 text-neutral-200 rounded focus:primary-surface-dark',
+    menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'text-neutral-text-icon-disabled',
+    optionContainer: {
+      default: 'flex items-center hover:bg-neutral-surface-2 justify-between p-2 bg-primary-surface-subtle cursor-pointer',
+      selected: 'bg-primary-surface-subtle'
+    },     listItem: {
       base: 'ml-10',
       selected: 'ml-0',
     },

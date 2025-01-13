@@ -114,7 +114,7 @@ export const Icon: React.FC<IconProps> = ({
 
   const cn = {
     root: cns(mergedStyles.root, rootVariants, className),
-    icon: cns(iconVariants, variantStyles, sizeVariants, 'group-disabled:text-gray-600')
+    icon: cns(iconVariants, variantStyles, sizeVariants, mergedStyles.icon, 'group-disabled:text-gray-600')
   }
 
   return (
