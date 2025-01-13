@@ -208,6 +208,7 @@ export interface DndStyles {
     dragging: string
     content: string
     removeButton: string
+    iconContainer: string
   },
   droppable: {
     root: string
@@ -219,6 +220,7 @@ export interface DndStyles {
     dragging: string
     content: string
     removeButton: string
+    iconContainer: string
   }
 }
 

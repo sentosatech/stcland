@@ -14,13 +14,14 @@ export interface SortableItemProps {
   onRemove?: (id: string) => void;
   bgColorClass?: string // Talwind bg-color class.
   className?: string; // Additional classes applied to the root.
+  icon?: React.ReactNode // Icon that can serve to display tooltip, or do any additional action.
 }
 
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
-const SortableItem = ({ id, children, onRemove, bgColorClass, className }: SortableItemProps) => {
+const SortableItem = ({ id, children, onRemove, bgColorClass, icon, className }: SortableItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
   const { customStyles } = useCustomDndContext()
 
@@ -30,6 +31,7 @@ const SortableItem = ({ id, children, onRemove, bgColorClass, className }: Sorta
     dragging: 'opacity-50',
     content: 'flex-1',
     removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+    iconContainer: 'mr-2 cursor-pointer'
   }
 
   const mergedStyles = appliedStyles(sortableItemStyles, customStyles?.sortableItem)
@@ -37,7 +39,8 @@ const SortableItem = ({ id, children, onRemove, bgColorClass, className }: Sorta
   const cn = {
     root: cns(mergedStyles.root, isDragging && mergedStyles.dragging, bgColorClass ?? mergedStyles.bgColorClass, className),
     content: mergedStyles.content,
-    removeButton: mergedStyles.removeButton
+    removeButton: mergedStyles.removeButton,
+    iconContainer: mergedStyles.iconContainer
   }
 
   const handleRemoveClick = (e: React.MouseEvent) => {
@@ -55,6 +58,12 @@ const SortableItem = ({ id, children, onRemove, bgColorClass, className }: Sorta
         transition,
       }}
     >
+      {/* Icon: This will not be part of the draggable area */}
+      {icon &&
+        <div className={cn.iconContainer}>
+          {icon}
+        </div>
+      }
 
       {/* Draggable Content: This is the actual draggable part */}
       <div
