@@ -257,10 +257,13 @@ export interface RadioGroupStyles {
 
 export interface SelectStyles extends BaseStyles {
   label: DivElementClassName
-  optionContainer: DivElementClassName
-  menu: DivElementClassName
+  menu:  DivElementClassName
   button: DivElementClassName
   disabled: DivElementClassName
+  optionContainer: {
+    default: DivElementClassName
+    selected: DivElementClassName
+  }
   listItem: {
     base: DivElementClassName
     selected: DivElementClassName

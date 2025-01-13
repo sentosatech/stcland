@@ -378,10 +378,13 @@ export const defaultStyles: StclandStyles = {
   select: {
     root: 'relative w-64',
     label: 'block mb-2 text-sm font-medium text-gray-700',
-    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-900 border border-gray-400 text-neutral-400 rounded focus:outline-none',
-    menu: 'absolute z-10 w-full bg-zinc-700 border border-gray-300 text-neutral-400 rounded shadow-lg max-h-60 overflow-auto',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-900 border border-gray-400 text-neutral-400 rounded focus:border-primary-surface-dark',
+    menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
     disabled: 'disabled:bg-gray-400',
-    optionContainer: 'flex items-center p-2',
+    optionContainer: {
+      default: 'flex items-center hover:bg-neutral-surface-2 justify-between p-2 bg-primary-surface-subtle cursor-pointer',
+      selected: 'bg-primary-surface-subtle'
+    },
     listItem: {
       base: 'ml-10',
       selected: 'ml-0',

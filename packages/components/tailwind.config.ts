@@ -62,7 +62,7 @@ export const config : Config = {
           surface: {
             default: twColors.indigo['800'],
             light: twColors.indigo['500'],
-            subtle: twColors.indigo['500'],
+            subtle: twColors.indigo['100'],
             dark: twColors.indigo['950']
           },
           'text-icon': {

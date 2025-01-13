@@ -1,8 +1,7 @@
 import React from 'react'
-import ReactTailwindSelect from 'react-tailwindcss-select'
 import { appliedStyles, cns } from '@stcland/utils'
 import { SelectStyles } from 'src/styles'
-import { CheckIcon } from '@heroicons/react/24/solid'
+import  { Select as SelectComponent }  from '../shared/Select'
 
 //*****************************************************************************
 // Interface
@@ -36,7 +35,6 @@ export interface SelectProps {
 const Select: React.FC<SelectProps> = ({
   options,
   selected,
-  placeholder = 'Select an option',
   onChange,
   label,
   disabled = false,
@@ -47,15 +45,18 @@ const Select: React.FC<SelectProps> = ({
   const selectStyles = {
     root: 'relative w-64',
     label: 'block mb-2 text-sm font-medium text-gray-700',
-    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-900 border border-gray-400 text-neutral-400 rounded focus:outline-none cursor-pointer',
-    menu: 'absolute z-10 w-full bg-zinc-700 border border-gray-300 text-neutral-400 rounded shadow-lg max-h-60 overflow-auto',
-    disabled: 'disabled:bg-gray-400',
-    optionContainer: 'flex items-center p-2 cursor-pointer',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-surface-2 border border-stroke-default rounded focus:border-primary-surface-dark cursor-pointer',
+    menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'text-neutral-text-icon-disabled',
+    optionContainer: {
+      default: 'flex items-center hover:bg-neutral-surface-2 justify-between p-2 cursor-pointer',
+      selected: 'bg-primary-surface-subtle'
+    },
     listItem: {
-      base: 'ml-10',
+      base: '',
       selected: 'ml-0',
     },
-    selectedDefaultIcon: 'h-5 w-5 ml-2 mr-3 text-yellow-500'
+    selectedDefaultIcon: 'h-5 w-5 ml-2 mr-3 text-primary-surface-dark'
   }
 
   const mergedStyles = appliedStyles<SelectStyles>(selectStyles, customStyles)
@@ -63,7 +64,7 @@ const Select: React.FC<SelectProps> = ({
   const cn = {
     root: cns(mergedStyles.root, className),
     label: mergedStyles.label,
-    menu: mergedStyles.menu,
+    menu: cns(mergedStyles.menu, disabled && mergedStyles.disabled),
     button: mergedStyles.button,
     optionContainer: mergedStyles.optionContainer,
     listItem: mergedStyles.listItem,
@@ -77,30 +78,15 @@ const Select: React.FC<SelectProps> = ({
   }
 
   return (
-    <div className={cn.root}>
-      {label && <label className={cn.label}>{label}</label>}
-
-      <ReactTailwindSelect
-        options={options}
-        value={selectedOption}
-        primaryColor=''
-        onChange={handleSelectChange}
-        isDisabled={disabled}
-        placeholder={placeholder}
-        classNames={{
-          menuButton: () => cn.button!,
-          menu: cn.menu,
-        }}
-        formatOptionLabel={({ label, isSelected, icon, selectedIcon }: SelectOption) => (
-          <div className={cn.optionContainer}>
-            <span>
-              {isSelected ? (selectedIcon ? selectedIcon : <CheckIcon className={cn.selectedDefaultIcon}/>) : icon || null}
-            </span>
-            <span className={isSelected || icon ? cn.listItem.selected : cn.listItem.base}>{label}</span>
-          </div>
-        )}
-      />
-    </div>
+    <SelectComponent
+      options={options}
+      placeholder='Select an option'
+      selectedOption={selectedOption}
+      onHandleChange={handleSelectChange}
+      label={label}
+      disabled={disabled}
+      styles={cn}
+    />
   )
 }
 
