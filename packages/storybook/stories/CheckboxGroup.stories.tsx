@@ -46,7 +46,7 @@ Default.args = {
 export const DefaultHorizontal = Template.bind({})
 DefaultHorizontal.args = {
   orientation: 'horizontal',
-  className: 'bg-gray-900 p-4',
+  className: 'bg-gray-100 p-4',
   options: [
     { label: 'Option 1', value: 'option1', checked: true, sm: true, secondary: true },
     { label: 'Option 2', value: 'option2', checked: true , sm: true, secondary: true },

@@ -50,11 +50,12 @@ const Radio = ({ value, label, disabled, className, onChange, selectedValue: ext
 
   const radioStyles: RadioGroupStyles['radio'] = {
     root: 'flex items-center gap-2',
-    inputRoot: 'sr-only',
-    radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-gray-825 bg-none',
+    inputRoot:  cns(
+      'accent-primary-surface-default h-4 w-4 rounded-full',
+      // 'focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default',
+    ),
     radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
     selected: 'bg-primary-main',
-    innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-825',
     text: 'text-sm text-gray-825',
     textDisabled: 'text-gray-400',
   }
@@ -63,9 +64,7 @@ const Radio = ({ value, label, disabled, className, onChange, selectedValue: ext
 
   const cn = {
     root: cns(mergedStyles.root, `cursor-${disabled ? 'not-allowed' : 'pointer'}`, className),
-    inputRoot: mergedStyles.inputRoot,
-    radio: cns(mergedStyles.radio, isSelected && mergedStyles.selected, disabled && mergedStyles.radioDisabled),
-    innerCircle: mergedStyles.innerCircle,
+    inputRoot: cns(mergedStyles.inputRoot, disabled && mergedStyles.radioDisabled),
     text: cns(mergedStyles.text, disabled && mergedStyles.textDisabled),
   }
 
@@ -79,9 +78,6 @@ const Radio = ({ value, label, disabled, className, onChange, selectedValue: ext
         disabled={disabled}
         className={cn.inputRoot}
       />
-      <span className={cn.radio}>
-        {isSelected && <span className={cn.innerCircle} />}
-      </span>
       <span className={cn.text}>{label}</span>
     </label>
   )
