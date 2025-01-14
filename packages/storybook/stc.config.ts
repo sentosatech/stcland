@@ -222,11 +222,12 @@ const styles: StclandStyles = {
       grid: 'grid grid-cols-3 gap-4 p-4 bg-gray-200 rounded-md'
     },
     sortableItem: {
-      root: 'relative p-2 rounded text-pink-900 transition-opacity flex items-center justify-between',
-      bgColorClass: 'bg-pink-200',
+      root: 'relative p-1 rounded text-zinc-100 transition-opacity flex items-center justify-between',
+      bgColorClass: 'bg-indigo-600',
       dragging: 'opacity-50',
       content: 'flex-1',
-      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500',
+      removeButton: 'w-6 h-6 text-zinc-100 hover:text-gray-500',
+      iconContainer: ''
     },
     droppable: {
       root: '',
@@ -234,10 +235,11 @@ const styles: StclandStyles = {
     },
     draggable: {
       root: 'cursor-grab relative p-2 rounded text-primary-main transition-opacity flex items-center justify-between',
-      bgColorClass: 'bg-pink-200',
+      bgColorClass: ' bg-pink-200',
       dragging: 'opacity-50',
       content: 'flex-1',
-      removeButton: 'w-6 h-6 text-gray-300 hover:text-gray-500'
+      removeButton: 'w-6 h-6 text-zinc-900 hover:text-gray-500',
+      iconContainer: ''
     }
   },
   radioGroup: {

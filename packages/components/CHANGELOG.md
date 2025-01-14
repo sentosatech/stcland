@@ -1,5 +1,17 @@
 # @stcland/components
 
+## 0.0.20
+
+### Patch Changes
+
+- Design system code reviewed updates.
+
+## 0.0.19
+
+### Patch Changes
+
+- Design System updates.
+
 ## 0.0.18
 
 ### Patch Changes

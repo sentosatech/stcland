@@ -1,5 +1,20 @@
 # @stcland/storybook
 
+## 0.0.24
+
+### Patch Changes
+
+- Design system code reviewed updates.
+- Updated dependencies
+  - @stcland/components@0.0.20
+
+## 0.0.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @stcland/components@0.0.19
+
 ## 0.0.22
 
 ### Patch Changes
