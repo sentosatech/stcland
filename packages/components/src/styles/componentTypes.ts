@@ -179,10 +179,10 @@ export interface CheckboxStyles extends BaseStyles {
   rootWithoutCustomIcons: DivElementClassName
   primary: string
   secondary: string
-  neutral: string
+  tertiary: string
   uncheckedPrimary: string
   uncheckedSecondary: string
-  uncheckedNeutral: string
+  uncheckedTertiary: string
   sm: string
   md: string
   lg: string
@@ -192,7 +192,7 @@ export interface CheckboxStyles extends BaseStyles {
   disabled: DivElementClassName
   indeterminatePrimary: string
   indeterminateSecondary: string
-  indeterminateNeutral: string
+  indeterminateTertiary: string
   labelPrimary: string
   labelSecondary: string
   labelNeutral: string
@@ -237,10 +237,8 @@ export interface DndStyles {
 type RadioStyles = {
   root: DivElementClassName
   inputRoot: DivElementClassName
-  radio: DivElementClassName
   radioDisabled: DivElementClassName
   selected: DivElementClassName
-  innerCircle: DivElementClassName
   text: DivElementClassName
   textDisabled: DivElementClassName
 }

@@ -132,7 +132,7 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   label: 'With Styles Example',
   options: [
-    { value: 'music', label: 'Music', icon: <Icon  iconName='MusicalNoteIcon'/> },
+    { value: 'music', label: 'Music', icon: <Icon className='text-pink-100' iconName='MusicalNoteIcon'/> },
     { value: 'radio', label: 'Radio', icon: <Icon  iconName='RadioIcon' /> },
   ],
   selected: 'music',

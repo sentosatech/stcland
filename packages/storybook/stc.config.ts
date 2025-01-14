@@ -164,9 +164,9 @@ const styles: StclandStyles = {
   checkBox: {
     root: 'flex-row-reverse justify-end items-center py-4',
     inputRoot: {
-      default: 'w-5 h-5 text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg  text-neutral-text-icon-body border',
+      default: 'w-5 h-5 text-base px-4 py-4 border-pink-600 border-2 rounded-lg  text-pink-900 border',
       hover: 'hover:border-neutral-stroke-dark',
-      pressed: 'active:text-neutral-text-icon-body',
+      pressed: 'active:text-pink-600',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
     },
     label: 'pt-0 mb-0 text-sky-500 text-md',
@@ -220,26 +220,29 @@ const styles: StclandStyles = {
     },
   },
   checkbox: {
-    container: 'flex flex-row gap-2',
-    root: '',
-    rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-800',
-    primary: 'bg-pink-400 border-pink-400',
-    secondary: 'bg-purple-400 border-purple-400',
-    neutral: 'bg-gray-600 border-gray-600',
-    uncheckedPrimary: 'border-pink-400',
-    uncheckedSecondary: 'border-purple-400',
-    uncheckedNeutral: 'border-gray-600',
+    container: 'flex flex-row',
+    root: 'cursor-pointer',
+    rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
+    primary: 'bg-primary-main border-primary-main',
+    secondary: 'bg-secondary-main border-secondary-main',
+    tertiary: 'bg-gray-600 border-gray-600',
+    uncheckedPrimary: 'border-primary-main',
+    uncheckedSecondary: 'border-secondary-main',
+    uncheckedTertiary: 'border-gray-600',
     sm: 'w-5 h-5',
     md: 'w-6 h-6',
     lg: 'w-8 h-8',
     smChecked: 'text-xs',
     mdChecked: 'text-md',
     lgChecked: 'text-lg',
-    disabled: 'bg-gray-800 border-gray-800 text-gray-600 hover:bg-gray-750',
-    indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-gray-200',
+    disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350',
+    indeterminatePrimary: 'absolute w-3/4 h-0.5',
     indeterminateSecondary: 'absolute w-3/4 h-0.5',
-    indeterminateNeutral: 'absolute w-3/4 h-0.5',
-    labelPrimary: 'text-pink-400'
+    indeterminateTertiary: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-primary-main',
+    labelSecondary: 'text-secondary-main',
+    labelNeutral: 'text-gray-700',
+    labelCustomIcon: 'text-gray-925'
   },
   modal: {
     root: 'fixed inset-0 z-50 flex items-center justify-center',
@@ -278,26 +281,22 @@ const styles: StclandStyles = {
   radioGroup: {
     radio: {
       root: 'flex items-center gap-2',
-      inputRoot: 'sr-only',
-      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-primary-main bg-none',
+      inputRoot: 'accent-primary-surface-default h-4 w-4 rounded-full',
       radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
       selected: 'bg-primary-main',
-      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
-      text: 'text-sm text-gray-200',
+      text: 'text-sm text-primary-surface-dark',
       textDisabled: 'text-gray-400'
     },
     radioGroup: {
-      root: 'flex bg-gray-800 p-4 rounded-lg',
+      root: 'flex bg-primary-surface-subtle p-4 rounded-lg',
       vertical: 'flex-col space-y-2',
       horizontal: 'flex-row space-x-4'
     },
     isolatedRadio: {
-      root: 'flex items-center gap-2',
-      inputRoot: 'sr-only',
-      radio: 'w-4 h-4 rounded-full border-2 flex justify-center items-center border-gray-800 bg-none',
+      root: 'flex items-center gap-2 rounded-full',
+      inputRoot: 'accent-pink-700 h-4 w-4 rounded-full',
       radioDisabled: 'border-gray-400 bg-gray-100 cursor-not-allowed',
       selected: 'bg-pink-500',
-      innerCircle: 'w-1.5 h-1.5 rounded-full bg-gray-800',
       text: 'text-sm text-pink-500',
       textDisabled: 'text-gray-200'
     }
@@ -309,13 +308,13 @@ const styles: StclandStyles = {
     menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
     disabled: 'text-neutral-text-icon-disabled',
     optionContainer: {
-      default: 'flex items-center hover:bg-neutral-surface-2 justify-between p-2 bg-primary-surface-subtle cursor-pointer',
-      selected: 'bg-primary-surface-subtle'
+      default: 'flex items-center hover:bg-pink-400 justify-between p-2 bg-pink-900 cursor-pointer',
+      selected: 'bg-pink-200'
     },     listItem: {
       base: 'ml-10',
       selected: 'ml-0',
     },
-    selectedDefaultIcon: 'text-green-300'
+    selectedDefaultIcon: 'text-pink-900'
   },
   divider: {
     root: 'border-0',
@@ -333,12 +332,12 @@ const styles: StclandStyles = {
       container: 'flex flex-row items-center gap-2',
       root: 'cursor-pointer',
       rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
-      primary: 'bg-purple-500 border-purple-500 text-white',
-      secondary: 'bg-green-500 border-green-500 text-white',
-      neutral: 'bg-gray-600 border-gray-600 text-white',
-      uncheckedPrimary: 'border-purple-500',
-      uncheckedSecondary: 'border-green-500',
-      uncheckedNeutral: 'border-gray-600',
+      primary: 'bg-zinc-900 border-zinc-900 text-white',
+      secondary: 'bg-yellow-400 border-yellow-600 text-zinc-900',
+      tertiary: 'bg-gray-600 border-gray-600 text-white',
+      uncheckedPrimary: 'border-zinc-900',
+      uncheckedSecondary: 'border-yellow-600',
+      uncheckedTertiary: 'border-gray-600',
       sm: 'w-5 h-5',
       md: 'w-6 h-6',
       lg: 'w-8 h-8',
@@ -348,9 +347,9 @@ const styles: StclandStyles = {
       disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
       indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
       indeterminateSecondary: 'absolute w-3/4 h-0.5',
-      indeterminateNeutral: 'absolute w-3/4 h-0.5',
-      labelPrimary: 'text-purple-500',
-      labelSecondary: 'text-green-500',
+      indeterminateTertiary: 'absolute w-3/4 h-0.5',
+      labelPrimary: 'text-zinc-900',
+      labelSecondary: 'text-yellow-200',
       labelNeutral: 'text-gray-700',
       labelCustomIcon: 'text-gray-925'
     }

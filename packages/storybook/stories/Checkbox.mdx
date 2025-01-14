@@ -17,15 +17,9 @@ It is highly flexible and can be used independently to capture boolean selection
 - **indeterminate** (`boolean`): Controls wheter it is in a partial state, mostly used when there is a list of items. Defaults to `false`.
 
 #### Style Variants:
-- **primary** (`boolean`): Applies primary styling to the checkbox.
-- **neutral** (`boolean`): Applies neutral styling to the checkbox.
-- **secondary** (`boolean`): Applies secondary styling to the checkbox.
-- **disabled** (`boolean`): Disables the checkbox, preventing interaction. Defaults to `false`.
-
+- **type** (`primary | secondary | tertirary`): Defaults to `primary`. Applies variant styling to the checkbox.
 #### Size Variants:
-- **sm** (`boolean`): Applies small size variant. Defaults to `true`.
-- **md** (`boolean`): Applies medium size variant.
-- **lg** (`boolean`): Applies large size variant.
+- **size** (`sm | md | lg`): Applies size variant. Defaults to `md`.
 
 #### With Custom Icons:
 - **icon** (`React.ReactNode`): Icon displayed in the unchecked state. Requires `checkedIcon` to be passed if used.

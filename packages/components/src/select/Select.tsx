@@ -45,7 +45,7 @@ const Select: React.FC<SelectProps> = ({
   const selectStyles = {
     root: 'relative w-64',
     label: 'block mb-2 text-sm font-medium text-gray-700',
-    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-surface-2 border border-stroke-default rounded focus:border-primary-surface-dark cursor-pointer',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left text-neutral-text-icon-label focus:text-neutral-text-icon-body bg-neutral-surface-2 border border-stroke-default rounded focus:border-primary-surface-dark cursor-pointer',
     menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
     disabled: 'text-neutral-text-icon-disabled',
     optionContainer: {

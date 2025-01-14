@@ -8,19 +8,17 @@ import { CheckboxStyles } from 'src/styles'
 interface BaseCheckBoxProps {
     checked: boolean
     onChange: () => void
-    label: string // The text displayed alongside the checkbox.
-    indeterminate?: boolean // Controls wheter it is in a partial state, mostly used when there is a list of items, defaults to false.
-    // Color variables
-    primary?: boolean
-    neutral?: boolean
-    secondary?: boolean
-    // Size variables
-    sm?: boolean
-    md?: boolean
-    lg?: boolean
+    label: string
+     // The text displayed alongside the checkbox.
+    indeterminate?: boolean
+     // Controls wheter it is in a partial state, mostly used when there is a list of items, defaults to false.
+    type?: 'primary' | 'secondary' | 'tertiary'
+     //  Defaults to `primary`. Applies variant styling to the checkbox.
+    size?: 'sm' | 'md' | 'lg'
+     // Applies size variant. Defaults to `md`.
     disabled?: boolean
-
-    tabIndex?: number // Finer control over focus management, defaults to 0
+    tabIndex?: number
+     // Finer control over focus management, defaults to 0
     className?: string
     customStyles?: Partial<CheckboxStyles>
 }
@@ -44,12 +42,8 @@ const Checkbox = ({
   checkedIcon,
   indeterminateIcon,
   disabled = false,
-  primary,
-  neutral,
-  secondary,
-  sm,
-  md,
-  lg,
+  type = 'primary',
+  size = 'md',
   className,
   tabIndex = 0,
   customStyles
@@ -60,12 +54,12 @@ const Checkbox = ({
     container: 'flex flex-row items-center gap-2',
     root: 'cursor-pointer',
     rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
-    primary: 'bg-primary-main border-primary-main text-white',
-    secondary: 'bg-secondary-main border-secondary-main text-white',
-    neutral: 'bg-gray-600 border-gray-600 text-white',
+    primary: 'bg-primary-main border-primary-main',
+    secondary: 'bg-secondary-main border-secondary-main',
+    tertiary: 'bg-gray-600 border-gray-600',
     uncheckedPrimary: 'border-primary-main',
     uncheckedSecondary: 'border-secondary-main',
-    uncheckedNeutral: 'border-gray-600',
+    uncheckedTertiary: 'border-gray-600',
     sm: 'w-5 h-5',
     md: 'w-6 h-6',
     lg: 'w-8 h-8',
@@ -75,59 +69,62 @@ const Checkbox = ({
     disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
     indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
     indeterminateSecondary: 'absolute w-3/4 h-0.5',
-    indeterminateNeutral: 'absolute w-3/4 h-0.5',
-    labelPrimary: 'text-primary-main',
-    labelSecondary: 'text-secondary-main',
+    indeterminateTertiary: 'absolute w-3/4 h-0.5',
+    labelPrimary: 'text-primary-surface-default',
+    labelSecondary: 'text-primary-surface-default',
     labelNeutral: 'text-gray-700',
     labelCustomIcon: 'text-gray-925'
   }
 
   const mergedStyles = appliedStyles<CheckboxStyles>(defaultStyles, customStyles)
 
-  const noColorVariant = !secondary && !primary && !neutral
+  const primary = type === 'primary'
+  const secondary = type === 'secondary'
+  const tertiary = type === 'tertiary'
+  const sm = size === 'sm'
+  const md = size === 'md'
+  const lg = size === 'lg'
 
   const colorVariants = {
     [mergedStyles.secondary]: secondary,
-    [mergedStyles.primary]: primary || noColorVariant,
-    [mergedStyles.neutral]: neutral
+    [mergedStyles.primary]: primary,
+    [mergedStyles.tertiary]: tertiary
   }
-
-  const noSizeVariants = !sm && !md && !lg
 
   const sizeVariants = {
     [mergedStyles.sm]: sm,
-    [mergedStyles.md]: md || noSizeVariants,
-    [mergedStyles.lg]: lg
+    [mergedStyles.md]: md,
+    [mergedStyles.lg]:lg
   }
 
   const checkedSizeVariants = {
     [mergedStyles.smChecked]: sm,
-    [mergedStyles.mdChecked]: md || noSizeVariants,
+    [mergedStyles.mdChecked]: md,
     [mergedStyles.lgChecked]: lg
   }
 
   const labelSizeVariants = {
     'text-md' : sm,
-    'text-lg' : md || noSizeVariants,
+    'text-lg' : md,
     'text-xl' : lg
   }
 
   const uncheckedColorVariants = {
-    [mergedStyles.uncheckedPrimary]: primary ||  noColorVariant,
+    [mergedStyles.uncheckedPrimary]: primary,
     [mergedStyles.uncheckedSecondary]: secondary,
-    [mergedStyles.uncheckedNeutral]: neutral
+    [mergedStyles.uncheckedTertiary]: tertiary
   }
 
   const indeterminateStyleVariants = {
-    [mergedStyles.indeterminatePrimary]: primary ||  noColorVariant,
+    [mergedStyles.indeterminatePrimary]: primary,
     [mergedStyles.indeterminateSecondary]: secondary,
-    [mergedStyles.indeterminateNeutral]: neutral
+    [mergedStyles.indeterminateTertiary]: tertiary
   }
 
   const labelStyleVariants = {
-    [mergedStyles.labelPrimary]: primary ||  noColorVariant,
+    [mergedStyles.labelPrimary]: primary,
     [mergedStyles.labelSecondary]: secondary,
-    [mergedStyles.labelNeutral]: neutral,
+    [mergedStyles.labelNeutral]: tertiary,
     [mergedStyles.labelCustomIcon]: icon
   }
 

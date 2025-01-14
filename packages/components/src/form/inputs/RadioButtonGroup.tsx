@@ -71,7 +71,7 @@ function RadioButtonGroup(props: RadioButtonGroupProps) {
       error: 'text-states-error-default italic text-sm',
       radioButton: cns(
         'accent-primary-surface-default h-4 w-4 rounded-full',
-        'focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default',
+        // 'focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default',
         direction === 'horizontal' && 'flex-3'
       ),
       errorContainer: 'flex flex-row items-center pl-0',
