@@ -185,7 +185,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -197,7 +197,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -209,7 +209,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -221,7 +221,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -233,7 +233,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -245,7 +245,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
@@ -257,7 +257,7 @@ export const defaultStyles: StclandStyles = {
     root: 'flex flex-col w-100 gap-2',
     label: 'text-sm pt-2',
     inputRoot: {
-      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full dark:[color-scheme:dark]',
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
       hover: 'hover:border-neutral-stroke-dark',
       pressed: 'active:text-neutral-text-icon-body',
       disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'

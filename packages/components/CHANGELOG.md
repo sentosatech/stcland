@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.21
+
+### Patch Changes
+
+- Hotfix for Selfaudit in form inputs.
+
 ## 0.0.20
 
 ### Patch Changes
