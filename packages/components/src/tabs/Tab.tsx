@@ -36,18 +36,18 @@ const Tab = ({
 
   const tabDefaultStyles = {
     root: 'px-6 py-3',
-    activeStyle: 'font-bold',
-    colorClass: 'bg-gray-800 text-primary-main',
-    disabled: 'bg-gray-400'
+    activeStyle: 'font-bold text-primary-surface-default',
+    colorClass: 'bg-white text-neutral-text-icon-body',
+    disabled: 'text-gray-500 bg-white cursor-not-allowed'
   }
 
   const mergedStyles = appliedStyles(tabDefaultStyles, customStyles?.tab)
 
   const cn = {
-    root : cns(mergedStyles.root,isActive &&
-        mergedStyles.activeStyle,
-    colorClass ?? mergedStyles.colorClass,
-    disabled && mergedStyles.disabled, className)
+    root : cns(mergedStyles.root,
+      colorClass ?? mergedStyles.colorClass,
+      isActive && mergedStyles.activeStyle,
+      disabled && mergedStyles.disabled, className)
   }
 
   return (

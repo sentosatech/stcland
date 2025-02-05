@@ -19,8 +19,8 @@ export interface TabPanelProps {
 const TabPanel = ({ value, index, children, className, colorClass, customStyles }: TabPanelProps) => {
 
   const defaultTabPanelStyles = {
-    root: '',
-    colorClass: 'text-white'
+    root: 'p-4',
+    colorClass: 'bg-white text-primary-surface-default'
   }
 
   const mergedStyles = appliedStyles(defaultTabPanelStyles, customStyles)

@@ -36,40 +36,6 @@ const Tabs: React.FC<TabsProps> = ({
   const [isOverflowing, setIsOverflowing] = React.useState(false)
   const horizontal = orientation === 'horizontal'
 
-  const defaultTabsStyles = {
-    root: 'p-2 overflow-auto whitespace-nowrap w-full flex gap-2 relative',
-    colorClass: 'bg-gray-800 text-white',
-    rootWidth: 'w-max',
-    indicator: 'absolute transition-transform duration-300 ease-in-out',
-    horizontalIndicator: 'bottom-0 left-0 h-0.5 w-full',
-    verticalIndicator: 'right-0 w-0.5 h-full',
-    colorClassIndicator: 'bg-primary-main',
-    tabWrapper: 'w-full relative',
-    scrollButton: 'relative z-10 text-white rounded-full p-2',
-    scrollableIcon: 'text-white h-4.5 w-4.5',
-    scrollableWrapper: 'flex items-center'
-  }
-
-  const mergedStyles = appliedStyles(defaultTabsStyles, customStyles?.tabs)
-
-  const cn = {
-    root: cns(
-      mergedStyles.root,
-      colorClass ?? mergedStyles.colorClass,
-      horizontal ? 'flex-row' : 'flex-col',
-      mergedStyles.rootWidth,
-      className
-    ),
-    indicator: cns(
-      mergedStyles.indicator,
-      colorIndicator ?? mergedStyles.colorClassIndicator,
-      horizontal ? mergedStyles.horizontalIndicator : mergedStyles.verticalIndicator
-    ),
-    tabWrapper: mergedStyles.tabWrapper,
-    scrollButton: mergedStyles.scrollButton,
-    icon: cns(mergedStyles.scrollableIcon, !horizontal ? 'rotate-90' : ''),
-    scrollableWrapper: cns(mergedStyles.scrollableWrapper, horizontal ? 'flex-row' : 'flex-col')
-  }
 
   const handleScroll = (direction: 'left' | 'right' | 'up' | 'down') => {
     if (tabContainerRef.current) {
@@ -104,6 +70,42 @@ const Tabs: React.FC<TabsProps> = ({
       }
     }
   }, [horizontal])
+
+
+  const defaultTabsStyles = {
+    root: 'p-2 overflow-auto bg-white whitespace-nowrap w-full flex gap-2 relative',
+    colorClass: 'bg-white text-neutral-text-icon-body',
+    rootWidth: 'w-max',
+    indicator: 'absolute transition-transform duration-300 ease-in-out',
+    horizontalIndicator: 'bottom-0 left-0 h-1 w-full',
+    verticalIndicator: 'right-0 w-1 h-full',
+    colorClassIndicator: 'bg-primary-surface-default',
+    tabWrapper: 'w-full relative',
+    scrollButton: 'relative z-10 text-white rounded-full p-2',
+    scrollableIcon: 'text-neutral-text-icon-body h-4.5 w-4.5',
+    scrollableWrapper: 'flex items-center'
+  }
+
+  const mergedStyles = appliedStyles(defaultTabsStyles, customStyles?.tabs)
+
+  const cn = {
+    root: cns(
+      mergedStyles.root,
+      colorClass ?? mergedStyles.colorClass,
+      horizontal ? 'flex-row' : 'flex-col',
+      mergedStyles.rootWidth,
+      className
+    ),
+    indicator: cns(
+      mergedStyles.indicator,
+      colorIndicator ?? mergedStyles.colorClassIndicator,
+      horizontal ? mergedStyles.horizontalIndicator : mergedStyles.verticalIndicator
+    ),
+    tabWrapper: mergedStyles.tabWrapper,
+    scrollButton: mergedStyles.scrollButton,
+    icon: cns(mergedStyles.scrollableIcon, !horizontal ? 'rotate-90' : ''),
+    scrollableWrapper: cns(mergedStyles.scrollableWrapper, horizontal ? 'flex-row' : 'flex-col')
+  }
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab, customStyles }}>

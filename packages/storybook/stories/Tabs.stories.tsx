@@ -20,7 +20,7 @@ const TabsExample = ({ orientation = 'horizontal', scrollable = false, className
   const [activeTab, setActiveTab] = React.useState(0)
 
   return (
-    <div className={`bg-gray-800 ${containerClass}`}>
+    <div className={containerClass}>
       <Tabs
         defaultActiveTab={activeTab}
         orientation={orientation}
@@ -78,7 +78,7 @@ export const TabsWithWrapperStyles = () => {
   const [activeTab, setActiveTab] = React.useState(0)
 
   return (
-    <div className='bg-pink-600 w-max'>
+    <div>
       <StcStylesProvider customStyles={customStyles}>
         <TabsWithStyles
           defaultActiveTab={activeTab}
@@ -93,13 +93,13 @@ export const TabsWithWrapperStyles = () => {
           ))}
         </TabsWithStyles>
 
-        <div className="p-4">
+        <>
           {tabsData.map(({ index, content }) => (
             <TabPanelWithStyles key={index} value={activeTab} index={index}>
               {content}
             </TabPanelWithStyles>
           ))}
-        </div>
+        </>
       </StcStylesProvider>
     </div>
   )
