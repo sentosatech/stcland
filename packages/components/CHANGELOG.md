@@ -1,5 +1,35 @@
 # @stcland/components
 
+## 0.0.21
+
+### Patch Changes
+
+- Hotfix for Selfaudit in form inputs.
+
+## 0.0.20
+
+### Patch Changes
+
+- Design system code reviewed updates.
+
+## 0.0.19
+
+### Patch Changes
+
+- Design System updates.
+
+## 0.0.18
+
+### Patch Changes
+
+- Fixing default style in tooltip.
+
+## 0.0.17
+
+### Patch Changes
+
+- Adding icon prop to DND, and outside click in Tooltip.
+
 ## 0.0.16
 
 ### Patch Changes

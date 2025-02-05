@@ -153,7 +153,6 @@ const FieldsetTemplate: StoryFn<DateInputProps> = (args) => (
     <Button
       parentButtonProps={{ type: 'submit' }}
       text="Submit"
-      primary
       rounded
     />
   </Form>
@@ -278,7 +277,6 @@ const TemplateWithStyles: StoryFn<FormProps> = (args) => (
       <ButtonWithStyles
         parentButtonProps={{ type: 'submit' }}
         text="Submit"
-        primary
         rounded
       />
     </FormWithStyles>

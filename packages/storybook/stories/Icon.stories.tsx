@@ -20,14 +20,20 @@ export const Primary = IconTemplate.bind({})
 Primary.args = {
   iconName: 'HomeIcon',
   solid: true,
-  md: true,
 }
 
 export const Secondary = Icon.bind({})
 Secondary.args = {
   iconName: 'HeartIcon',
-  md: true,
-  secondary: true
+  type: 'secondary',
+  solid: true
+}
+
+export const Tertiary = Icon.bind({})
+Tertiary.args = {
+  iconName: 'HeartIcon',
+  type: 'tertiary',
+  solid: false
 }
 
 const TemplateWithStyles: StoryFn<IconProps> = (args) =>
@@ -40,6 +46,4 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   iconName: 'CurrencyDollarIcon',
   lg: true,
-  solid: true,
-  secondary: true
 }

@@ -88,9 +88,9 @@ WithoutLabel.args = {
 export const WithIcons= Template.bind({})
 WithIcons.args = {
   options: [
-    { value: 'apple', label: 'Apple', icon: <Icon secondary iconName='FaceSmileIcon'/> },
-    { value: 'banana', label: 'Banana',  icon: <Icon solid secondary iconName='EyeIcon'/> },
-    { value: 'cherry', label: 'Cherry',  icon: <Icon solid secondary iconName='LightBulbIcon'/>  },
+    { value: 'apple', label: 'Apple', icon: <Icon  iconName='FaceSmileIcon'/> },
+    { value: 'banana', label: 'Banana',  icon: <Icon solid  iconName='EyeIcon'/> },
+    { value: 'cherry', label: 'Cherry',  icon: <Icon solid  iconName='LightBulbIcon'/>  },
   ],
   selected: 'banana',
   placeholder: 'Select a fruit',
@@ -101,9 +101,9 @@ WithIcons.args = {
 export const WithSelectedIcon= Template.bind({})
 WithSelectedIcon.args = {
   options: [
-    { value: 'heart', label: 'Heart', selectedIcon: <Icon secondary iconName='HeartIcon'/> },
-    { value: 'fire', label: 'Fire',  selectedIcon: <Icon solid secondary iconName='FireIcon'/> },
-    { value: 'moon', label: 'Moon',  selectedIcon: <Icon solid secondary iconName='MoonIcon'/>  },
+    { value: 'heart', label: 'Heart', selectedIcon: <Icon  iconName='HeartIcon'/> },
+    { value: 'fire', label: 'Fire',  selectedIcon: <Icon solid  iconName='FireIcon'/> },
+    { value: 'moon', label: 'Moon',  selectedIcon: <Icon solid  iconName='MoonIcon'/>  },
   ],
   selected: 'moon',
   placeholder: 'Select an option',
@@ -132,8 +132,8 @@ export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   label: 'With Styles Example',
   options: [
-    { value: 'music', label: 'Music', icon: <Icon neutral iconName='MusicalNoteIcon'/> },
-    { value: 'radio', label: 'Radio', icon: <Icon neutral iconName='RadioIcon' /> },
+    { value: 'music', label: 'Music', icon: <Icon className='text-pink-100' iconName='MusicalNoteIcon'/> },
+    { value: 'radio', label: 'Radio', icon: <Icon  iconName='RadioIcon' /> },
   ],
   selected: 'music',
   placeholder: 'Please pick an option'

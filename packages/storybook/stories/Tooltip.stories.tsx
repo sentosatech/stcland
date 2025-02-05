@@ -66,7 +66,7 @@ export const CustomPlacement: StoryFn<TooltipProps> = (args) => (
 export const ClickTrigger: StoryFn<TooltipProps> = (args) => (
   <Wrapper>
     <Tooltip {...args} title="Click-triggered Tooltip"  placement="left" trigger="click">
-      <Button secondary text='Click Me'/>
+      <Button type='secondary' text='Click Me'/>
     </Tooltip>
   </Wrapper>
 )
@@ -75,7 +75,7 @@ export const ClickTrigger: StoryFn<TooltipProps> = (args) => (
 export const CustomColor: StoryFn<TooltipProps> = (args) => (
   <Wrapper>
     <Tooltip {...args} title="Custom Color Tooltip"  placement='bottom' colorClass="bg-pink-500 text-white">
-      <Button outlined text='Hover Me'/>
+      <Button type='secondary' text='Hover Me'/>
     </Tooltip>
   </Wrapper>
 )
@@ -85,7 +85,7 @@ const TemplateWithStyles: StoryFn<TooltipProps> = (args) => (
   <StcStylesProvider customStyles={customStyles}>
     <Wrapper>
       <TooltipWithStyles {...args}>
-        <Icon solid neutral iconName='InformationCircleIcon'/>
+        <Icon solid type='tertiary' iconName='InformationCircleIcon'/>
       </TooltipWithStyles>
     </Wrapper>
   </StcStylesProvider>

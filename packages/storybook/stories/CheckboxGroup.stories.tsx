@@ -46,7 +46,7 @@ Default.args = {
 export const DefaultHorizontal = Template.bind({})
 DefaultHorizontal.args = {
   orientation: 'horizontal',
-  className: 'bg-gray-900 p-4',
+  className: 'bg-gray-100 p-4',
   options: [
     { label: 'Option 1', value: 'option1', checked: true, sm: true, secondary: true },
     { label: 'Option 2', value: 'option2', checked: true , sm: true, secondary: true },
@@ -61,21 +61,21 @@ WithIcons.args = {
       label: 'Option 1',
       value: 'option1',
       checked: false,
-      icon: <Icon neutral lg iconName="HeartIcon" />,
-      checkedIcon: <Icon neutral lg solid iconName="HeartIcon" />,
+      icon: <Icon type='tertiary' size='lg' iconName="HeartIcon" />,
+      checkedIcon: <Icon type='tertiary' size='lg' solid iconName="HeartIcon" />,
     },
     {
       label: 'Option 2',
       value: 'option2',
       checked: true,
-      icon: <Icon neutral lg iconName="ChatBubbleOvalLeftIcon" />,
-      checkedIcon: <Icon neutral lg solid iconName="ChatBubbleOvalLeftIcon" />,
+      icon: <Icon  type='tertiary' size='lg' iconName="ChatBubbleOvalLeftIcon" />,
+      checkedIcon: <Icon  type='tertiary' size='lg' solid iconName="ChatBubbleOvalLeftIcon" />,
     },
     {
       label: 'Option 3',
       value: 'option3',
-      icon: <Icon neutral lg iconName="ShieldCheckIcon" />,
-      checkedIcon: <Icon neutral lg solid iconName="ShieldCheckIcon" />,
+      icon: <Icon  type='tertiary' size='lg' iconName="ShieldCheckIcon" />,
+      checkedIcon: <Icon  type='tertiary' size='lg' solid iconName="ShieldCheckIcon" />,
       checked: false,
     },
   ],

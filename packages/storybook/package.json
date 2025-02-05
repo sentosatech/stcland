@@ -1,6 +1,6 @@
 {
   "name": "@stcland/storybook",
-  "version": "0.0.20",
+  "version": "0.0.25",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,8 @@
     "sb-docs": "storybook dev --docs",
     "sb-build-docs": "storybook build --docs",
     "build-sb": "storybook build",
-    "clean:all": "rimraf ./node_modules"
+    "clean:all": "rimraf ./node_modules",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name build-sb"
   },
   "keywords": [],
   "author": "",
@@ -41,6 +42,7 @@
     "@tailwindcss/typography": "^0.5.14",
     "@types/d3-interpolate": "^3.0.4",
     "@types/react": "^18.3.3",
+    "chromatic": "^11.22.0",
     "eslint": "^8.56.0",
     "prop-types": "15.8.1",
     "rimraf": "^6.0.1",

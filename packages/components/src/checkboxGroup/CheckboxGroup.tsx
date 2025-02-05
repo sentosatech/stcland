@@ -3,17 +3,17 @@ import { CheckboxGroupStyles } from 'src/styles'
 import { Checkbox } from '../checkbox/'
 
 interface CheckboxOptionBase {
-  label: string; // Label displayed alongside the checkbox
-  value: string; // Unique identifier for the checkbox
-  checked: boolean; // Determines if the checkbox is selected
-  disabled?: boolean; // Optionally disable specific checkboxes
+  label: string;
+    // Label displayed alongside the checkbox
+  value: string;
+   // Unique identifier for the checkbox
+  checked: boolean;
+   // Determines if the checkbox is selected
+  disabled?: boolean;
+   // Optionally disable specific checkboxes
   indeterminate?: boolean
-  primary?: boolean;
-  secondary?: boolean;
-  neutral?: boolean;
-  sm?: boolean;
-  md?: boolean;
-  lg?: boolean;
+  type?: 'primary' | 'secondary' | 'tertiary'
+  size: 'sm' | 'md' | 'lg'
 }
 
 export type CheckboxOption =
@@ -22,10 +22,14 @@ export type CheckboxOption =
 
 
 export interface CheckboxGroupProps {
-  options: CheckboxOption[]; // Array of checkboxes
-  onChange: (updatedOptions: CheckboxOption[]) => void; // Callback for parent to handle state changes
-  orientation?: 'vertical' | 'horizontal'; // Layout of checkboxes
-  className?: string; // Additional styling for the group
+  options: CheckboxOption[];
+   // Array of checkboxes
+  onChange: (updatedOptions: CheckboxOption[]) => void;
+   // Callback for parent to handle state changes
+  orientation?: 'vertical' | 'horizontal';
+   // Layout of checkboxes
+  className?: string;
+   // Additional styling for the group
   customStyles?: Partial<CheckboxGroupStyles>;
 }
 
@@ -52,12 +56,12 @@ const CheckboxGroup = ({
       container: 'flex flex-row items-center gap-2',
       root: 'cursor-pointer',
       rootWithoutCustomIcons: 'rounded-sm border-2 flex items-center justify-center border-gray-400',
-      primary: 'bg-zinc-900 border-zinc-900 text-white',
-      secondary: 'bg-yellow-400 border-yellow-600 text-zinc-900',
-      neutral: 'bg-gray-600 border-gray-600 text-white',
-      uncheckedPrimary: 'border-zinc-900',
-      uncheckedSecondary: 'border-yellow-600',
-      uncheckedNeutral: 'border-gray-600',
+      primary: 'bg-primary-main border-primary-main',
+      secondary: 'bg-secondary-main border-secondary-main',
+      tertiary: 'bg-gray-600 border-gray-600',
+      uncheckedPrimary: 'border-primary-main',
+      uncheckedSecondary: 'border-secondary-main',
+      uncheckedTertiary: 'border-gray-600',
       sm: 'w-5 h-5',
       md: 'w-6 h-6',
       lg: 'w-8 h-8',
@@ -67,7 +71,7 @@ const CheckboxGroup = ({
       disabled: 'bg-gray-300 border-gray-300 text-gray-400 hover:bg-gray-350 cursor-auto',
       indeterminatePrimary: 'absolute w-3/4 h-0.5 bg-primary-main',
       indeterminateSecondary: 'absolute w-3/4 h-0.5',
-      indeterminateNeutral: 'absolute w-3/4 h-0.5',
+      indeterminateTertiary: 'absolute w-3/4 h-0.5',
       labelPrimary: 'text-zinc-900',
       labelSecondary: 'text-yellow-200',
       labelNeutral: 'text-gray-700',
@@ -97,12 +101,8 @@ const CheckboxGroup = ({
           indeterminateIcon={option.indeterminateIcon}
           onChange={() => handleCheckboxChange(index)}
           disabled={option.disabled}
-          primary={option.primary}
-          secondary={option.secondary}
-          neutral={option.neutral}
-          sm={option.sm}
-          md={option.md}
-          lg={option.lg}
+          type={option.type}
+          size={option.size}
           customStyles={cn.checkbox}
         />
       ))}

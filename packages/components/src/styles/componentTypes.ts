@@ -33,38 +33,44 @@ export interface TableStyles extends BaseStyles {
   subRow: string;
 }
 
-type StyleVariant = {
-  solid: string;
-  outlined: string;
-};
+type StateVariant = {
+  default: string;
+  hover: string;
+  pressed: string;
+  disabled: string;
+}
 
 export interface ButtonStyles extends BaseStyles {
-  primary: StyleVariant;
-  secondary: StyleVariant;
-  neutral: StyleVariant;
+  root: string
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
   fullWidth: string;
   rounded: string;
   highlightOnHover: string;
-  icon: string;
+  leftIcon: string;
+  rightIcon: string;
   disabled: string;
   button: string;
 }
 
 export interface IconStyles extends BaseStyles {
-  primary: string;
-  secondary: string;
-  neutral: string;
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
-  muted: string;
   rounded: string;
   highlightOnHover: string;
-  brightenOnHover: string;
-  bright: string;
+  bright: string,
+  brightenOnHover: string
+  muted: string
+  icon: string;
+  button: string;
 }
 
 export interface FieldSetStyles extends BaseStyles {
@@ -79,10 +85,16 @@ export interface PanelStyles extends BaseStyles {
 
 export interface FormInputStyles extends BaseStyles {
   root: DivElementClassName;
-  inputRoot: React.HTMLAttributes<HTMLInputElement>['className'];
+  inputRoot: StateVariant;
   inputContainer: DivElementClassName;
   label: DivElementClassName;
   error: DivElementClassName;
+  errorContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   info: DivElementClassName;
 }
 
@@ -96,7 +108,13 @@ export interface RadioButtonGroupStyles extends BaseStyles {
   label: DivElementClassName;
   buttonContainer: DivElementClassName;
   radioContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  errorContainer: DivElementClassName;
   error: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   radioButton: React.HTMLAttributes<HTMLInputElement>['className'];
 }
 
@@ -106,7 +124,7 @@ export interface FormStyles extends BaseStyles {
 }
 
 export interface CheckBoxStyles extends BaseStyles {
-  inputRoot: DivElementClassName;
+  inputRoot: StateVariant;
   label: DivElementClassName;
 }
 
@@ -161,10 +179,10 @@ export interface CheckboxStyles extends BaseStyles {
   rootWithoutCustomIcons: DivElementClassName
   primary: string
   secondary: string
-  neutral: string
+  tertiary: string
   uncheckedPrimary: string
   uncheckedSecondary: string
-  uncheckedNeutral: string
+  uncheckedTertiary: string
   sm: string
   md: string
   lg: string
@@ -174,7 +192,7 @@ export interface CheckboxStyles extends BaseStyles {
   disabled: DivElementClassName
   indeterminatePrimary: string
   indeterminateSecondary: string
-  indeterminateNeutral: string
+  indeterminateTertiary: string
   labelPrimary: string
   labelSecondary: string
   labelNeutral: string
@@ -202,6 +220,7 @@ export interface DndStyles {
     dragging: string
     content: string
     removeButton: string
+    iconContainer: string
   },
   droppable: {
     root: string
@@ -213,16 +232,15 @@ export interface DndStyles {
     dragging: string
     content: string
     removeButton: string
+    iconContainer: string
   }
 }
 
 type RadioStyles = {
   root: DivElementClassName
   inputRoot: DivElementClassName
-  radio: DivElementClassName
   radioDisabled: DivElementClassName
   selected: DivElementClassName
-  innerCircle: DivElementClassName
   text: DivElementClassName
   textDisabled: DivElementClassName
 }
@@ -239,10 +257,13 @@ export interface RadioGroupStyles {
 
 export interface SelectStyles extends BaseStyles {
   label: DivElementClassName
-  optionContainer: DivElementClassName
-  menu: DivElementClassName
+  menu:  DivElementClassName
   button: DivElementClassName
   disabled: DivElementClassName
+  optionContainer: {
+    default: DivElementClassName
+    selected: DivElementClassName
+  }
   listItem: {
     base: DivElementClassName
     selected: DivElementClassName
