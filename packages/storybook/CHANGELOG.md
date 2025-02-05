@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.26
+
+### Patch Changes
+
+- Adding Tabs to STCLandia.
+- Updated dependencies
+  - @stcland/components@0.0.22
+
 ## 0.0.25
 
 ### Patch Changes
