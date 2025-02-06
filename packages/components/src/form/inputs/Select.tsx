@@ -1,9 +1,9 @@
 import { isEmpty, isNil } from 'ramda'
 import { Controller } from 'react-hook-form'
-import ReactTailwindSelect from 'react-tailwindcss-select'
 import { appliedStyles, cns } from '@stcland/utils'
 import FormLabel from '../FormLabel'
-import { SelectStyles } from 'src/styles/componentTypes'
+import { SelectStyles } from 'src/styles'
+import  { Select }  from '../../shared/Select'
 
 //*****************************************************************************
 // Interface
@@ -46,20 +46,35 @@ const SelectMenuInput = ({
 }: Props) => {
   if (isNil(options) || isEmpty(options) || hidden) return null
 
-  const cn = appliedStyles(
-    {
-      root: 'flex flex-col gap-2',
-      label: '',
-      menuButton:
-        'flex px-4 py-1 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full items-center [&>*:first-child]:grow',
-      menu: 'absolute z-10 min-w-full bg-zinc-700 rounded py-1 mt-1.5 text-base',
-      listItem: {
-        base: 'block transition duration-200 px-2 cursor-pointer select-none truncate rounded text-lg text-zinc-400 bg-zinc-700 hover:bg-zinc-600 py-2',
-        selected: 'text-white hover:opacity-80',
-      },
+  const selectStyles = {
+    root: 'relative w-64',
+    label: 'block mb-2 text-sm font-medium text-gray-700',
+    button: 'flex flex-row items-center justify-between w-full px-4 py-2 text-left bg-neutral-surface-2 border border-stroke-default rounded focus:border-neutral-text-icon-body cursor-pointer',
+    buttonSelected: 'border-primary-surface-dark',
+    menu: 'absolute z-10 w-full bg-neutral-surface-1 border border-gray-300 text-neutral-text-icon-body rounded shadow-lg max-h-60 overflow-auto',
+    disabled: 'text-neutral-text-icon-disabled',
+    optionContainer: {
+      default: 'flex items-center hover:bg-neutral-surface-2 justify-between p-2 cursor-pointer',
+      selected: 'bg-primary-surface-subtle'
     },
-    customStyles
-  )
+    listItem: {
+      base: '',
+      selected: 'ml-0',
+    },
+    selectedDefaultIcon: 'h-5 w-5 ml-2 mr-3 text-primary-surface-dark'
+  }
+
+  const mergedStyles = appliedStyles<SelectStyles>(selectStyles, customStyles)
+
+  const cn = {
+    root: mergedStyles.root,
+    label: mergedStyles.label,
+    menu: mergedStyles.menu,
+    button: cns(mergedStyles.button, disabled && mergedStyles.disabled),
+    optionContainer: mergedStyles.optionContainer,
+    listItem: mergedStyles.listItem,
+    selectedDefaultIcon: mergedStyles.selectedDefaultIcon
+  }
 
   function renderForm(props: FormProps) {
     const field = props.field
@@ -76,23 +91,15 @@ const SelectMenuInput = ({
       }
     }
 
-    const listItem = ({ isSelected }: { isSelected?: boolean }) => {
-      const { base, selected } = cn.listItem
-      return cns(base, isSelected && selected)
-    }
 
     return (
-      <ReactTailwindSelect
+      <Select
         options={options}
-        value={value}
-        onChange={handleChange}
-        isDisabled={disabled}
-        primaryColor="text-primary-main"
-        classNames={{
-          menuButton: () => cn.menuButton,
-          menu: cn.menu,
-          listItem,
-        }}
+        selectedOption={value}
+        onHandleChange={handleChange}
+        placeholder='Select an option'
+        disabled={disabled}
+        styles={cn}
       />
     )
   }

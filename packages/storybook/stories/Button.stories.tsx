@@ -3,7 +3,7 @@ import type { Meta, StoryFn } from '@storybook/react'
 import { ButtonProps, Button, StcStylesProvider } from '@stcland/components'
 import { Button as ButtonWithStyles } from '@stcland/components/withStyles'
 import customStyles from '../stc.config'
-import { HeartIcon, CheckIcon }  from '@heroicons/react/24/solid'
+import { HeartIcon, CheckIcon, ArrowRightIcon, HomeIcon, LinkIcon }  from '@heroicons/react/24/solid'
 
 
 const meta : Meta<typeof Button> = {
@@ -12,24 +12,16 @@ const meta : Meta<typeof Button> = {
   argTypes: {
     text: {
       control: 'text',
-      defaultValue: 'Solid',
+      defaultValue: 'Text',
     },
-    outlined: {
-      control: 'boolean',
-      defaultValue: false,
+    type: {
+      control: 'text',
+      defaultValue: 'primary',
     },
-    primary: {
-      control: 'boolean',
-      defaultValue: true,
-    },
-    secondary: {
-      control: 'boolean',
-      defaultValue: false,
-    },
-    neutral: {
-      control: 'boolean',
-      defaultValue: false,
-    },
+    size: {
+      control: 'text',
+      defaultValue: 'sm'
+    }
   },
 }
 
@@ -43,8 +35,9 @@ Primary.args = {
   disabled: false,
   outlined: false,
   text: 'Change',
-  icon: HeartIcon,
-  md: true,
+  rounded: true,
+  leftIcon: HeartIcon,
+  size: 'lg',
   customStyles: {
     icon: 'w-5 h-5 inline'
   }
@@ -53,29 +46,43 @@ Primary.args = {
 export const Secondary = Template.bind({})
 Secondary.args = {
   disabled: false,
-  secondary: true,
+  rounded: true,
+  type: 'secondary',
+  leftIcon: HomeIcon,
   outlined: true,
-  text: 'Save',
-  md: true,
+  text: 'Secondary',
 }
 
-export const Disabled = Template.bind({})
-Disabled.args = {
-  disabled: true,
-  text: 'Disabled Variant'
+export const Tertiary = Template.bind({})
+Tertiary.args = {
+  disabled: false,
+  type: 'tertiary',
+  outlined: true,
+  text: 'Tertiary',
+  rightIcon: LinkIcon,
 }
+
+
+export const WithIcons = Template.bind({})
+WithIcons.args = {
+  type: 'secondary',
+  size: 'lg',
+  leftIcon: HeartIcon,
+  rightIcon: ArrowRightIcon,
+  text: 'Hey'
+}
+
 
 export const WithCustomStyles = Template.bind({})
 WithCustomStyles.args = {
   primary: true,
-  lg: true,
   text: 'Custom Styles',
   customStyles: {
     primary: {
-      outlined: 'border border-primary-main text-secondary-main hover:border-secondary-dark hover:bg-primary-range-200',
-      solid: 'bg-secondary-dark hover:bg-secondary-range-900 text-gray-50'
+      default: 'border border-primary-main text-secondary-main hover:border-secondary-dark hover:bg-primary-range-200',
+      pressed: 'active:bg-secondary-dark active:text-secondary-range-900 text-gray-50',
+      hover: 'hover:bg-pink-600',
     },
-    lg: 'p-3 text-lg'
   }
 }
 
@@ -88,6 +95,5 @@ const TemplateWithStyles: StoryFn<ButtonProps> = (args) =>
 export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   text: 'With Styles',
-  lg: true,
-  icon: CheckIcon,
+  leftIcon: CheckIcon,
 }
