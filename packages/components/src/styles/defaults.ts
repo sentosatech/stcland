@@ -16,7 +16,8 @@ import type {  AccordionStyles,
   SelectStyles,
   DividerStyles,
   CheckboxGroupStyles,
-  TooltipStyles
+  TooltipStyles,
+  TabsStyles
 } from '.'
 
 export type StclandStyles = {
@@ -36,6 +37,7 @@ export type StclandStyles = {
   select?: Partial<SelectStyles>
   divider?: Partial<DividerStyles>
   tooltip?: Partial<TooltipStyles>
+  tabs?: Partial<TabsStyles>
 
    // Form styles
    form?: Partial<FormStyles>;
@@ -435,5 +437,30 @@ export const defaultStyles: StclandStyles = {
     colorClass: 'bg-zinc-600 text-white',
     arrow: 'absolute w-3.5 h-2.5 border-t-2 border-r-2 border-transparent',
     arrowColor: 'bg-zinc-600',
+  },
+  tabs: {
+    tabs: {
+      root: 'p-2 overflow-auto bg-white whitespace-nowrap w-full flex gap-2 relative',
+      colorClass: 'bg-white text-neutral-text-icon-body',
+      rootWidth: 'w-max',
+      indicator: 'absolute transition-transform duration-300 ease-in-out',
+      horizontalIndicator: 'bottom-0 left-0 h-1 w-full',
+      verticalIndicator: 'right-0 w-1 h-full',
+      colorClassIndicator: 'bg-primary-surface-default',
+      tabWrapper: 'w-full relative',
+      scrollButton: 'relative z-10 text-white rounded-full p-2',
+      scrollableIcon: 'text-neutral-text-icon-body h-4.5 w-4.5',
+      scrollableWrapper: 'flex items-center'
+    },
+    tab: {
+      root: 'px-6 py-3',
+      activeStyle: 'font-bold text-primary-surface-default',
+      colorClass: 'bg-white text-neutral-text-icon-body',
+      disabled: 'text-gray-500 bg-white cursor-not-allowed'
+    },
+    tabPanel: {
+      root: 'p-4',
+      colorClass: 'bg-white text-primary-surface-default'
+    }
   }
 }
