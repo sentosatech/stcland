@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.23
+
+### Patch Changes
+
+- Clean mouse leave/enter tooltip, add example with multiple elements.
+
 ## 0.0.22
 
 ### Patch Changes

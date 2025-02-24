@@ -91,6 +91,24 @@ const TemplateWithStyles: StoryFn<TooltipProps> = (args) => (
   </StcStylesProvider>
 )
 
+export const MultipleBadges: StoryFn<TooltipProps> = (args) => {
+  const badges = Array.from({ length: 50 }, (_, i) => `Badge ${i + 1}`)
+
+  return (
+    <Wrapper>
+      <div className="flex flex-wrap gap-2">
+        {badges.map((badge) => (
+          <Tooltip key={badge} {...args} title={`Badge: ${badge}`} placement="bottom">
+            <button className="flex flex-row gap-2 items-center justify-center py-1 rounded bg-primary-surface-subtle hover:bg-primary-surface-default group hover:text-white min-w-[75px]">
+              {badge}
+            </button>
+          </Tooltip>
+        ))}
+      </div>
+    </Wrapper>
+  )
+}
+
 export const WithStyles = TemplateWithStyles.bind({})
 WithStyles.args = {
   title: 'Tooltip With Styles Wrapper',

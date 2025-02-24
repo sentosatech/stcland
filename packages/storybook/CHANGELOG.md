@@ -1,5 +1,13 @@
 # @stcland/storybook
 
+## 0.0.27
+
+### Patch Changes
+
+- Clean mouse leave/enter tooltip, add example with multiple elements.
+- Updated dependencies
+  - @stcland/components@0.0.23
+
 ## 0.0.26
 
 ### Patch Changes

@@ -62,6 +62,7 @@ const Tooltip = ({
 }: TooltipProps) => {
   const [visible, setVisible] = React.useState(defaultOpen)
   const tooltipRef = React.useRef<HTMLDivElement | null>(null)
+  const timerRef = React.useRef<number | null>(null)
   const isControlled = controlledOpen !== undefined
 
   const showTooltip = () => {
@@ -74,15 +75,24 @@ const Tooltip = ({
     onOpenChange?.(false)
   }
 
+  const clearExistingTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+  }
+
   const handleMouseEnter = (e: React.MouseEvent) => {
     if (trigger === 'hover' || (Array.isArray(trigger) && trigger.includes('hover'))) {
-      setTimeout(() => showTooltip(), mouseEnterDelay * 1000)
+      clearExistingTimer()
+      timerRef.current = window.setTimeout(() => showTooltip(), mouseEnterDelay * 1000)
     }
   }
 
   const handleMouseLeave = (e: React.MouseEvent) => {
     if (trigger === 'hover' || (Array.isArray(trigger) && trigger.includes('hover'))) {
-      setTimeout(() => hideTooltip(), mouseLeaveDelay * 1000)
+      clearExistingTimer()
+      timerRef.current = window.setTimeout(() => hideTooltip(), mouseLeaveDelay * 1000)
     }
   }
 
