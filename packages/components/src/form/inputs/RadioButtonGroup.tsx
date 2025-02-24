@@ -3,6 +3,7 @@ import { path } from 'ramda'
 import { useFormContext } from 'react-hook-form'
 import { RadioButtonGroupStyles } from 'src/styles/componentTypes'
 import { nullFormContext } from '../Form'
+import { Icon } from '../../icon'
 import FormLabel from '../FormLabel'
 
 //*****************************************************************************
@@ -65,13 +66,20 @@ function RadioButtonGroup(props: RadioButtonGroupProps) {
     {
       root: 'mb-2 flex gap-2 flex-col',
       buttonContainer: 'flex gap-2',
-      label: '',
+      label: 'text-neutral-text-icon-body',
       radioContainer: 'flex gap-2',
-      error: 'text-red-300 italic text-sm',
+      error: 'text-states-error-default italic text-sm',
       radioButton: cns(
-        'accent-sky-500 h-4 w-4',
+        'accent-primary-surface-default h-4 w-4 rounded-full',
+        // 'focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default',
         direction === 'horizontal' && 'flex-3'
       ),
+      errorContainer: 'flex flex-row items-center pl-0',
+      errorInput: 'border-2 border-states-error-dark',
+      icon: {
+        icon: 'text-states-error-dark',
+        root: 'p-0 pr-2'
+      }
     },
     customStyles
   )
@@ -106,14 +114,17 @@ function RadioButtonGroup(props: RadioButtonGroupProps) {
         ))}
       </div>
       {errorText && (
-        <div
-          className={cn.error}
-          onClick={() => {
-            clearErrors(name)
-            setFocus(name)
-          }}
-        >
-          {name} {errorText}
+        <div className={cn.errorContainer}>
+          <Icon iconName='ExclamationCircleIcon' customStyles={{ icon: cn.icon.icon, root: cn.icon.root }}/>
+          <div
+            className={cn.error}
+            onClick={() => {
+              clearErrors(name)
+              setFocus(name)
+            }}
+          >
+            {name} {errorText}
+          </div>
         </div>
       )}
     </div>

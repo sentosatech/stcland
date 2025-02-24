@@ -1,0 +1,85 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import * as DndStories from './Dnd.stories'
+
+<Meta of={DndStories} />
+
+# Drag And Drop
+
+A customizable drag-and-drop components that provides 
+flexible and powerful building blocks for creating sortable lists, grids, and draggable or droppable elements, using under-the-hood
+[DND-KIT](https://docs.dndkit.com/)
+
+## Properties
+
+### DragDropProvider
+- **customStyles** (`Partial<DndStyles>`): An object that will managed `customStyles` for any of the childrens below, since this Component will be always the wrapper.
+- **onDragEnd** (`(event: DragEndEvent) => void`): Callback triggered when a drag operation ends. Receives a DragEndEvent containing the source and destination IDs.
+- **onDragStart** (`(event: DragStartEvent) => void`): Callback triggered when a drag operation starts.
+
+### SortableList
+- **items** (`string[]`):  An array of item identifiers as strings. Each ID should match the corresponding SortableItem's id.
+- **children** (`React.ReactNode`): Typically, an array of SortableItem components. Can also include a wrapper div or similar elements.
+- **strategy** (`StrategyName`): Either (`grid` | `vertical` | `horizontal`): 
+Determines the sorting strategy. Maps to @dnd-kit/sortable strategies (`rectSortingStrategy`, `verticalListSortingStrategy`, `horizontalListSortingStrategy`). 
+Defaults to `vertical`.
+
+### SortableItem 
+- **id** (`string`): Unique identifier for the item. Must match an ID in the parent SortableList's items array.
+- **children** (`React.ReactNode`): Node that will be rendered as the `item`.
+- **onRemove** (`(id: string) => void`): Node that will be rendered as the `item`.
+- **bgColorClass** (`string`): Tailwind background-color class.
+- **className** (`string`): Additional classes applied to the root.
+
+### Droppable
+- **id** (`string`):  Unique identifier for the droppable area. Used to track where items can be dropped.
+- **children** (`React.ReactNode`):  The content of the droppable area, usually composed of Draggable items.
+- **className** (`string`): Additional classes applied to the root.
+
+### Draggable
+- **id** (`string`):  Unique identifier for the draggable item.
+- **children** (`React.ReactNode`): The content of the draggable item, typically the visual representation.
+- **onRemove** (`(id: string) => void`): Node that will be rendered as the `item`.
+- **bgColorClass** (`string`): Tailwind background-color class.
+- **className** (`string`): Additional classes applied to the root.
+
+---
+
+## Examples
+
+### Sortable List Example
+
+This example shows a basic Sortable List using `verticalListSortingStrategy`
+
+<Canvas of={DndStories.SortableListExample} />
+
+### Sortable List Example With Remove Button
+
+This example shows a Sortable Item with remove button, icon that triggers a left side Tooltip.
+
+<Canvas of={DndStories.SortableWithRemoveButton} />
+
+### Sortable Grid Example
+
+This example shows a Sortable Grid using `rectSortingStrategy`
+
+<Canvas of={DndStories.SortableGridExample} />
+
+### Draggable and Droppable 
+
+This example shows a basic grad-and-drop interaction.
+
+<Canvas of={DndStories.DraggableDroppableExampleStory} />
+
+### Draggable and Droppable with Remove Button
+
+This example combines draggable and droppable functionality with a remove button, and a helper icon that when hovered displays an tooltip.
+
+<Canvas of={DndStories.DraggableDroppableWithRemove} />
+
+### WithStyles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property as the **With Custom Styles** example above.
+
+<Canvas of={DndStories.SortableGridWithCustomStyles} />
