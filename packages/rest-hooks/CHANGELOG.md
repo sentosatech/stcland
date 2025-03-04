@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.17
+
+### Patch Changes
+
+- Handling 401 error in restClient resp interceptor.
+
 ## 0.0.16
 
 ### Patch Changes
