@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { assocPath, keys, toUpper } from 'ramda'
@@ -89,7 +89,7 @@ export const createRestClient: StcRest.CreateRestClient = (
     (error) => {
       return onPostProcessorResponseError({
         error, onAuthFailureFn: clientConfig?.onAuthFailureFn
-      })
+      })(error)
     }
   )
   return restClient
@@ -157,12 +157,15 @@ const onPostProcessorResponseSuccess =
     }
 
 
-const onPostProcessorResponseError = (opts: _RequestPostProcessorOptionsError) => {
-  const { error, onAuthFailureFn } = opts
-  if (error.status === 401 && onAuthFailureFn) {
-    onAuthFailureFn(error)
-  }
-}
+const onPostProcessorResponseError =
+   (opts: _RequestPostProcessorOptionsError) =>
+     (rspError: AxiosError) => {
+       const { error, onAuthFailureFn } = opts
+       if (error.status === 401 && onAuthFailureFn) {
+         onAuthFailureFn(error)
+       }
+       return rspError
+     }
 
 /**
  * @function _expandRestPath

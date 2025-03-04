@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { describe, test, expect } from 'vitest'
 import { setupServer } from 'msw/node'
 
@@ -105,7 +105,7 @@ describe('Test Rest Client', () => {
   }
 
   // used accross multiple tests, so declared here
-  let rsp: StcRestTest.TestResponse
+  let rsp: StcRestTest.TestResponse |  AxiosError
   let body: any
   let restParams: StcRest.RestParams
   let expectedRsp: StcRestTest.TestResponse
@@ -253,9 +253,8 @@ describe('Test Rest Client', () => {
     )
     const postData = { name: 'bill' }
 
-    rsp = await restClient.post('/post-unauth', postData) as unknown as StcRestTest.TestResponse
-    expect(rsp).toBe(undefined)
-    // Make sure it is called just once, should not retry.
+    rsp  = await restClient.post('/post-unauth', postData) as AxiosError
+    expect(rsp.status).toBe(401)
     expect(unauthCount).toBe(1)
   })
 
