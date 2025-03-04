@@ -240,6 +240,7 @@ describe('Test Rest Client', () => {
   test('Test Unauthorized Post', async () => {
     let unauthCount = 0
     const onAuthFailureFn = (error: any) => {
+      expect(unauthCount).toBe(0)
       expect(error.status).toBe(401)
       unauthCount++
     }
