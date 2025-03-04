@@ -24,6 +24,13 @@ export const handlers = [
     return HttpResponse.json(rsp)
   }),
 
+  http.post('*/post-unauth*', () =>
+    HttpResponse.json(
+      { error: 'Unauthorized', message: 'Authentication required' },
+      { status: 401 }
+    )
+  ),
+
   // Generic put handler
   http.put('*/simple-put*', async ({ request, params, cookies }) => {
     const rsp = await makeTestResponse(request, params, cookies, { message: 'put successful' })
@@ -47,5 +54,12 @@ export const handlers = [
     const errorData = { message: 'Something went wrong!' }
     const rsp = await makeTestResponse(request, params, cookies, errorData)
     return HttpResponse.json(rsp, { status: 500 })
-  })
+  }),
+
+  http.post('*/failing-post*', async ({ request, params, cookies }) => {
+    const errorData = { message: 'Something went wrong!' }
+    const rsp = await makeTestResponse(request, params, cookies, errorData)
+    return HttpResponse.json(rsp, { status: 500 })
+  }),
+
 ]
