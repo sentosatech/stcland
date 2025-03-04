@@ -78,10 +78,19 @@ export const createRestClient: StcRest.CreateRestClient = (
   )
 
   restClient.axiosClient.interceptors.response.use(
-    _responsePostProcessor({
-      verbose: !!clientConfig?.verbose,
-      responsePostProcessor: clientConfig?.responsePostProcessorFn
-    })
+    (response) => {
+      // onSuccess response handling
+      return onPostProcessorResponseSuccess({
+        verbose: !!clientConfig?.verbose,
+        responsePostProcessor: clientConfig?.responsePostProcessorFn,
+      })(response)
+    },
+    // OnError response handling
+    (error) => {
+      return onPostProcessorResponseError({
+        error, onAuthFailureFn: clientConfig?.onAuthFailureFn
+      })
+    }
   )
   return restClient
 }
@@ -115,9 +124,14 @@ const _requestPreprocessor =
         : req
     }
 
-interface _RequestPostProcessorOptions {
+interface _RequestPostProcessorOptionsSuccess {
   verbose?: boolean
   responsePostProcessor?: (rsp: AxiosResponse) => AxiosResponse
+}
+
+interface _RequestPostProcessorOptionsError {
+  error: any
+  onAuthFailureFn?: (error: any) => void
 }
 
 export const f = async () => {
@@ -126,8 +140,8 @@ export const f = async () => {
 
 
 
-const _responsePostProcessor =
-  (opts: _RequestPostProcessorOptions) =>
+const onPostProcessorResponseSuccess =
+  (opts: _RequestPostProcessorOptionsSuccess) =>
     (rsp: AxiosResponse) =>
     {
 
@@ -141,6 +155,14 @@ const _responsePostProcessor =
 
       return responsePostProcessor(rsp)
     }
+
+
+const onPostProcessorResponseError = (opts: _RequestPostProcessorOptionsError) => {
+  const { error, onAuthFailureFn } = opts
+  if (error.status === 401 && onAuthFailureFn) {
+    onAuthFailureFn(error)
+  }
+}
 
 /**
  * @function _expandRestPath

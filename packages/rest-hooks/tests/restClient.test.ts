@@ -95,7 +95,8 @@ describe('Test Rest Client', () => {
     verbose: false,
     getAccessToken: () => 'testing-access-token',
     // This fxn strips all of the AxiosResponse except for the data
-    responsePostProcessorFn: (rsp: AxiosResponse) => rsp?.data || rsp
+    responsePostProcessorFn: (rsp: AxiosResponse) => rsp?.data || rsp,
+    // onAuthFailure: (error: any) => void
   }
 
   const defaultServerConfig: StcRest.ServerConfig = {
@@ -234,6 +235,27 @@ describe('Test Rest Client', () => {
       }
     }
     assertResponse(rsp, expectedRsp)
+  })
+
+  test('Test Unauthorized Post', async () => {
+    let unauthCount = 0
+    const onAuthFailureFn = (error: any) => {
+      expect(error.status).toBe(401)
+      unauthCount++
+    }
+
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      onAuthFailureFn
+    },
+    defaultServerConfig
+    )
+    const postData = { name: 'bill' }
+
+    rsp = await restClient.post('/post-unauth', postData) as unknown as StcRestTest.TestResponse
+    expect(rsp).toBe(undefined)
+    // Make sure it is called just once, should not retry.
+    expect(unauthCount).toBe(1)
   })
 
   test('Test PostFn', async () => {
