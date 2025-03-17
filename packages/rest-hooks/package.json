@@ -1,6 +1,6 @@
 {
   "name": "@stcland/rest-hooks",
-  "version": "0.0.16",
+  "version": "0.0.20",
   "description": "",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -52,7 +52,8 @@
     "build": "pnpm run clean && tsup",
     "clean": "rimraf ./dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test::rest-hooks": "vitest --run restClient.test.ts"
   },
   "publishConfig": {
     "access": "public",

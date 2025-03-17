@@ -1,5 +1,29 @@
 # @stcland/rest-hooks
 
+## 0.0.20
+
+### Patch Changes
+
+- Update mutate hooks to use the consumer restClient instance.'
+
+## 0.0.19
+
+### Patch Changes
+
+- Return response error when 401 in RestClient
+
+## 0.0.18
+
+### Patch Changes
+
+- Handling 401 error in restClient resp interceptor.
+
+## 0.0.17
+
+### Patch Changes
+
+- Handling 401 error in restClient resp interceptor.
+
 ## 0.0.16
 
 ### Patch Changes
