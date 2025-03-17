@@ -69,7 +69,6 @@ export const createRestClient: StcRest.CreateRestClient = (
   }
 
   // all clients use these middlewares
-
   restClient.axiosClient.interceptors.request.use(
     _requestPreprocessor({
       verbose: !!clientConfig?.verbose,

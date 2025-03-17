@@ -5,7 +5,14 @@ import { setupServer } from 'msw/node'
 import { handlers } from './handlers'
 import { useRestCreate, useRestUpdate, useRestPatch, useRestDelete, _getCacheId } from '../src/restMutateHooks'
 import { makeReactQueryRenderHook } from './reactQueryRenderHook'
+import { createRestClient } from '../src/restClient'
 
+
+const clientConfig : StcRest.ClientConfig = { verbose: false, getAccessToken: () => 'token' }
+const serverConfig : StcRest.ServerConfig = { defaultBaseUrl: 'http://localhost:3000/api', timeout: 5000 }
+
+
+const restClient = createRestClient(clientConfig, serverConfig)
 
 const createStatefulFunction = <T extends string | null>() => {
   let state: T = null as T
@@ -159,7 +166,7 @@ describe('Test Rest Mutate Query Hooks', () => {
     baseUrl = 'http://testhost.com:1234'
 
 
-    const { result } = reactQueryRenderHook(() => useRestCreate(restPath,
+    const { result } = reactQueryRenderHook(() => useRestCreate(restClient, restPath,
       { mutationFnName: 'useRestCreateTest',
         baseUrl,
         toastSuccessFn: toastFnWrapper.fn,
@@ -221,7 +228,7 @@ describe('Test Rest Mutate Query Hooks', () => {
     baseUrl = 'http://testhost.com:6666'
 
 
-    const { result } = reactQueryRenderHook(() => useRestUpdate(restPath,
+    const { result } = reactQueryRenderHook(() => useRestUpdate(restClient, restPath,
       { mutationFnName: 'useRestUpdateTest',
         toastSuccessFn: toastFnWrapper.fn,
         toastErrorFn: toastFnWrapper.fn,
@@ -279,7 +286,7 @@ describe('Test Rest Mutate Query Hooks', () => {
     baseUrl = 'http://testhost.com:9999'
 
 
-    const { result } = reactQueryRenderHook(() => useRestPatch(restPath,
+    const { result } = reactQueryRenderHook(() => useRestPatch(restClient, restPath,
       { mutationFnName: 'useRestPatchTest',
         toastSuccessFn: toastFnWrapper.fn,
         toastErrorFn: toastFnWrapper.fn,
@@ -337,7 +344,7 @@ describe('Test Rest Mutate Query Hooks', () => {
     baseUrl = 'http://testhost.com:5555'
 
 
-    const { result } = reactQueryRenderHook(() => useRestDelete(restPath,
+    const { result } = reactQueryRenderHook(() => useRestDelete(restClient, restPath,
       { mutationFnName: 'useRestDeleteTest',
         toastSuccessFn: toastFnWrapper.fn,
         toastErrorFn: toastFnWrapper.fn,
@@ -394,7 +401,7 @@ describe('Test Rest Mutate Query Hooks', () => {
 
 
     const { result } = reactQueryRenderHook(() =>
-      useRestCreate(restPath, {
+      useRestCreate(restClient, restPath, {
         mutationFnName: 'useRestCreateFailTest',
         baseUrl,
         toastSuccessFn: toastFnWrapper.fn,

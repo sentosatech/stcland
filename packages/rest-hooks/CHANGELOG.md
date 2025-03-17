@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.20
+
+### Patch Changes
+
+- Update mutate hooks to use the consumer restClient instance.'
+
 ## 0.0.19
 
 ### Patch Changes
