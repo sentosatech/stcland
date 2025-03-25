@@ -46,12 +46,11 @@ export interface Props {
     // Tailwind Classes Applied to root container.
 }
 
-
 //*****************************************************************************
 // Components
 //*****************************************************************************
 
-const Button = function ({
+const Button = ({
   text = 'No Text',
   onClick = noop,
   leftIcon,
@@ -65,19 +64,18 @@ const Button = function ({
   parentButtonProps = {},
   customStyles = {},
   className,
-}: Props) {
-
+}: Props) => {
   const { type: formType, form } = parentButtonProps || {}
 
-  const defaultStyles : ButtonStyles = {
-    root: 'flex w-fit items-center gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800',
+  const defaultStyles: ButtonStyles = {
+    root: 'flex items-center justify-between gap-1 min-w-32 p-2.5 text-sm font-medium text-gray-800 w-fit',
     primary: {
       default: 'bg-primary-surface-default text-white',
       hover: 'hover:bg-primary-surface-light hover:text-white',
       pressed: 'active:bg-primary-surface-dark active:text-white',
       disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
     },
-    secondary:{
+    secondary: {
       default: 'border-2 border-primary-surface-default text-primary-surface-default',
       hover: 'border-2 hover:border-primary-surface-light hover:text-primary-text-icon-default',
       pressed: 'border-2 active:border-primary-surface-light active:bg-primary-surface-default active:text-primary-text-icon-default',
@@ -101,68 +99,46 @@ const Button = function ({
     button: 'w-full'
   }
 
-  const secondary = type === 'secondary'
-  const primary = type === 'primary'
-  const tertiary = type === 'tertiary'
-
-  // Merge custom styles with default styles.
   const mergedStyles = appliedStyles<ButtonStyles>(defaultStyles, customStyles)
 
-  // Define styles based on props.
-  const sizeVariants = {
-    [mergedStyles.sm] : size === 'sm',
-    [mergedStyles.md] : size === 'md',
-    [mergedStyles.lg] : size === 'lg',
-    [mergedStyles.fullWidth] : fullWidth
-  }
-
-  const rootVariants = {
-    [mergedStyles.highlightOnHover] : highlightOnHover,
-    [mergedStyles.disabled] : disabled,
-  }
-
-  const shapeVariant = rounded ? mergedStyles.rounded : 'rounded-sm'
-
-  const typeVariants = primary
-    ? mergedStyles.primary
-    : secondary
-      ? mergedStyles.secondary
-      : tertiary
-        ? mergedStyles.tertiary
-        : mergedStyles.primary // Default
-
-  const variantStyles =  {
-    [typeVariants.default]: !disabled,
-    [typeVariants.hover]: !disabled,
-    [typeVariants.pressed]: !disabled,
-    [typeVariants.disabled]: disabled,
-  }
+  const typeVariants = {
+    primary: mergedStyles.primary,
+    secondary: mergedStyles.secondary,
+    tertiary: mergedStyles.tertiary
+  }[type] || mergedStyles.primary
 
   const cn = {
     root: cns(
       mergedStyles.root,
-      sizeVariants,
-      shapeVariant,
-      rootVariants,
-      variantStyles,
-      className
+      mergedStyles[size],
+      fullWidth && mergedStyles.fullWidth,
+      rounded && mergedStyles.rounded,
+      highlightOnHover && mergedStyles.highlightOnHover,
+      typeVariants.default,
+      !disabled && typeVariants.hover,
+      !disabled && typeVariants.pressed,
+      disabled && typeVariants.disabled,
+      className,
     ),
-    button: mergedStyles.button,
     leftIcon: mergedStyles.leftIcon,
-    rightIcon: mergedStyles.rightIcon
+    rightIcon: mergedStyles.rightIcon,
+    button: mergedStyles.button
   }
 
   return (
-    <div className={cn.root}>
-      {leftIcon && React.createElement(leftIcon,{ className: cn.leftIcon })}
-      <button
-        {...{ type: formType || 'button', form, onClick, disabled }}
-        className={cn.button}
-      >
-        {text}
-      </button>
-      {rightIcon && React.createElement(rightIcon,{ className: cn.rightIcon })}
-    </div>
+    <button
+      type={formType || 'button'}
+      form={form}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn.root}
+      aria-disabled={disabled}
+      aria-label={text || 'Button'}
+    >
+      {leftIcon && React.createElement(leftIcon, { className: cn.leftIcon })}
+      {text}
+      {rightIcon && React.createElement(rightIcon, { className: cn.rightIcon })}
+    </button>
   )
 }
 
