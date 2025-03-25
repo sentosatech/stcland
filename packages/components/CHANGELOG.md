@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.24
+
+### Patch Changes
+
+- Fixed button structure.
+
 ## 0.0.23
 
 ### Patch Changes
