@@ -8,6 +8,7 @@ import { appliedStyles, cns } from '@stcland/utils'
 import { FormInputStyles } from 'src/styles/componentTypes'
 import { nullFormContext } from './Form'
 import Label from './FormLabel'
+import { Icon } from '../icon'
 
 //*****************************************************************************
 // Interface
@@ -114,26 +115,51 @@ const FormInput = ({
     message: 'is required',
   }
 
-  const inputStyles: FormInputStyles = appliedStyles(
-    {
-      root: 'flex flex-col w-100 gap-2',
-      label: 'text-sm pt-2',
-      inputRoot: cns(
-        type !== FieldType.TEXTAREA && 'h-14',
-        'px-4 py-4 border-gray-600 border-solid rounded-lg bg-neutral-700 text-lg border text-white w-full dark:[color-scheme:dark]',
-        'disabled:text-zinc-400'
-      ),
-      inputContainer: 'relative',
-      error: 'text-red-300 italic text-sm',
-      info: '',
+
+  const defaultcn: FormInputStyles = {
+    root: 'flex flex-col w-100 gap-2',
+    label: 'text-neutral-text-icon-body text-sm pt-2',
+    inputRoot: {
+      default: 'text-base px-4 py-4 border-neutral-stroke-default border-2 rounded-lg bg-neutral-surface-2 text-neutral-text-icon-body border w-full',
+      hover: 'hover:border-neutral-stroke-dark',
+      pressed: 'active:text-neutral-text-icon-body',
+      disabled: 'disabled:text-neutral-stroke-default disabled:bg-neutral-surface-disabled'
     },
-    customStyles
-  )
+    inputContainer: 'relative',
+    errorContainer: 'flex flex-row items-center',
+    error: 'text-states-error-default italic text-sm',
+    errorInput: 'border-2 border-states-error-dark',
+    info: '',
+    icon: {
+      icon:'text-states-error-dark' ,
+      root: 'p-0 pr-2'
+    }
+  }
+
+  const mergedStyles = appliedStyles<FormInputStyles>(defaultcn, customStyles)
+
+  const cn = {
+    root: cns(mergedStyles.root, type === FieldType.CHECKBOX && 'flex-col items-start'),
+    label: mergedStyles.label,
+    inputRoot: cns(
+      type !== FieldType.TEXTAREA && 'h-14',
+      mergedStyles.inputRoot.default,
+      mergedStyles.inputRoot.hover,
+      mergedStyles.inputRoot.pressed,
+      mergedStyles.inputRoot.disabled,
+      errorText && mergedStyles.errorInput
+    ),
+    inputContainer: cns(mergedStyles.inputContainer),
+    errorContainer: mergedStyles.errorContainer,
+    error: mergedStyles.error,
+    info: mergedStyles.info,
+    icon: mergedStyles.icon
+  }
 
   const inputProps = {
     type,
     placeholder: !errorText ? placeholder : '',
-    className: inputStyles.inputRoot,
+    className: cn.inputRoot,
     id: id || name,
     disabled,
     onFocus,
@@ -146,34 +172,40 @@ const FormInput = ({
   }
 
   const FormInputComponent = (
-    <div className={inputStyles.root}>
-      {label && (
-        <Label
-          customStyles={{ root: inputStyles.label }}
-          {...{ labelText: label, required }}
-        />
-      )}
-      <div className={inputStyles.inputContainer}>
-        {type === FieldType.TEXTAREA ? (
-          <textarea {...inputProps} className={inputStyles.inputRoot} />
-        ) : (
-          <input
-            defaultValue={defaultValue}
-            {...inputProps}
-            type={String(inputProps.type)}
-            className={inputStyles.inputRoot}
+    <div className={cn.root}>
+      <div className={type === FieldType.CHECKBOX ? 'flex flex-row-reverse gap-2' : ''}>
+        {label && (
+          <Label
+            customStyles={{ root: cn.label }}
+            {...{ labelText: label, required }}
           />
         )}
+
+        <div className={cn.inputContainer}>
+          {type === FieldType.TEXTAREA ? (
+            <textarea {...inputProps} className={cn.inputRoot} />
+          ) : (
+            <input
+              defaultValue={defaultValue}
+              {...inputProps}
+              type={String(inputProps.type)}
+              className={cn.inputRoot}
+            />
+          )}
+        </div>
       </div>
       {errorText && !value && (
-        <div
-          className={inputStyles.error}
-          onClick={() => {
-            clearErrors(name)
-            setFocus(name)
-          }}
-        >
-          {name} {errorText}
+        <div className={cn.errorContainer}>
+          <Icon iconName='ExclamationCircleIcon' customStyles={{ icon: cn.icon.icon, root: cn.icon.root }}/>
+          <div
+            className={cn.error}
+            onClick={() => {
+              clearErrors(name)
+              setFocus(name)
+            }}
+          >
+            {name} {errorText}
+          </div>
         </div>
       )}
     </div>

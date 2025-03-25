@@ -1,0 +1,54 @@
+name: Chromatic Deployment
+
+on:
+  pull_request:
+    paths:
+      - 'packages/storybook/**'
+      - '.github/workflows/chromatic.yml'
+
+jobs:
+  chromatic-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository with full history
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install
+
+      # Storybook workspace deps
+      - name: Install workspace dependencies
+        run: |
+          pnpm run install:sbdeps
+
+      # Run Chromatic
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: packages/storybook
+          buildScriptName: build-sb
+
+      # Append Chromatic build URL
+      - name: Append Chromatic build URL
+        run: |
+          echo "Chromatic build deployed successfully!" >> build_log.txt
+          echo "Build URL: ${{ steps.chromatic.outputs.buildUrl }}" >> build_log.txt
+          echo "Storybook preview URL: ${{ steps.chromatic.outputs.storybookUrl }}" >> build_log.txt
+          echo "Build completed at: $(date)" >> build_log.txt
+        if: success()
