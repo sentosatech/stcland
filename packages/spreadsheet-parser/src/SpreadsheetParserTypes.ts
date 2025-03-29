@@ -2,12 +2,10 @@ import { Worksheet, Workbook, Row, CellValue } from 'exceljs'
 
 import type { PredFn } from '@stcland/utils'
 
-
 // TODO
 // - RowValueList -> RowDataList (DataRow?)
 // - DataType = for the core types, EhnahcedDataTypes for lists, forget the uinions with :list
-
-//--- common -------------------------------------------------------------------
+//--- Common -------------------------------------------------------------------
 
 export interface WorksheetMeta  {
   worksheetName: string
@@ -22,7 +20,7 @@ export interface CellMeta extends RowMeta {
 
 export interface DataCellMeta extends CellMeta {
   propName: string;
-  dataType: DataType;
+  dataType: DataCollectionDataType;
 }
 
 export type DelimiterActions = 'stop' | 'continue'
@@ -39,19 +37,58 @@ export interface ParseOptions {
 
 }
 
-//--- data types --------------------------------------------------------------
+//--- Data Types --------------------------------------------------------------
 
-export type DataTableDataType =
-'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid'
+export type BaseDataTypes =
+  | 'string'
+  | 'number'
+  | 'boolean'
+  | 'date'
+  | 'password'
+  | 'json'
+  | 'uuid';
 
-export const validDataTableDataTypes: DataTableDataType[] = [
+export type ListDataTypes =
+  | 'string:list'
+  | 'number:list'
+  | 'boolean:list'
+  | 'date:list'
+  | 'password:list'
+  | 'json:list'
+  | 'uuid:list';
+
+export const validBaseDataTypes: BaseDataTypes[] = [
+  'string',
+  'number',
+  'boolean',
+  'date',
+  'password',
+  'json',
+  'uuid',
+]
+
+export const validListDataTypes: ListDataTypes[] = [
+  'string:list',
+  'number:list',
+  'boolean:list',
+  'date:list',
+  'password:list',
+  'json:list',
+  'uuid:list',
+]
+
+export type DataCollectionDataType = BaseDataTypes | ListDataTypes;
+
+export const validDataCollectionDataTypes: DataCollectionDataType[] = [
+  ...validBaseDataTypes,
+  ...validListDataTypes,
+]
+
+export const validDataTableDataTypes: BaseDataTypes[] = [
   'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid'
 ]
 
-export type RowValueListType =
-  'string:list' | 'number:list' | 'boolean:list' | 'date:list' | 'password:list' | 'json:list' | 'uuid:list'
-
-export const validRowValueListTypes: RowValueListType[] = [
+export const validRowValueListTypes: ListDataTypes[] = [
   'string:list', 'number:list', 'boolean:list', 'date:list', 'password:list', 'json:list', 'uuid:list'
 ]
 
@@ -59,15 +96,10 @@ export type InvalidDataTypeWarning = 'invalid-data-type'
 export type InvalidListTypeWarning = 'invalid-list-type'
 export type InvalidTypeWarning = InvalidDataTypeWarning | InvalidListTypeWarning
 
-export type DataCollectionDataType =  RowValueListType | DataTableDataType
 
-export const validDataCollectionDataTypes: DataCollectionDataType[] = [
-  ...validRowValueListTypes, ...validDataTableDataTypes
-]
+export type DataType = DataCollectionDataType
 
-export type DataType = DataTableDataType | DataCollectionDataType
-
-// using a set to remove duplicates
+// Using a set to remove duplicates
 export const validDataTypes: DataType[] = Array.from(new Set([
   ...validDataTableDataTypes,
   ...validDataCollectionDataTypes
@@ -77,8 +109,7 @@ export type DataTypeMap = Record<string, DataType> | Record<string, DataType>[]
 export type Meta = Record<string, any>
 export type MetaTypeMap = Record<string, DataType>
 
-
-//--- data layout -------------------------------------------------------------
+//--- Data Layout -------------------------------------------------------------
 
 export type DataLayout = 'dataCollection' | 'dataTable' | 'frontMatterOnly'
 
@@ -97,7 +128,8 @@ export type ParseDataLayout = (
 
 export type Data = Record<string, any>
 
-//--- front matter ------------------------------------------------------------
+
+//--- Front Matter ------------------------------------------------------------
 
 export interface ParseFrontMatterResult {
   meta?: Meta
@@ -112,7 +144,7 @@ export type ParseFrontMatter = (
 ) => ParseFrontMatterResult;
 
 
-//--- data table --------------------------------------------------------------
+//--- Data Table --------------------------------------------------------------
 
 // list of data objects
 export type DataTableData = Data[]
@@ -131,14 +163,14 @@ export type ParseDataTable = (
 ) => ParseDataTableResult;
 
 
-// --- data collections -------------------------------------------------------
+// --- Data Collections -------------------------------------------------------
 
 // list of data objects
 export type DataCollectionData = Data[]
 
 export interface ParseDataCollectionResult {
-  data: DataCollectionData | undefined
-  dataTypeMap: DataTypeMap | undefined
+  data?: DataCollectionData
+  dataTypeMap?: DataTypeMap
   numDataEntriesParsed: number
   nextRowNum: number
 }
@@ -150,7 +182,7 @@ export type ParseDataCollection = (
 ) => ParseDataCollectionResult;
 
 
-// --- worksheet parsing ------------------------------------------------------
+// --- Worksheet Parsing ------------------------------------------------------
 
 export interface ParsedWorksheetResult {
   worksheetName: string,
@@ -204,7 +236,8 @@ export type ForEachSheet = (
 // - parseSpreadsheet by both spreadsheet path and workbook
 
 
-// --- utility functions ------------------------------------------------------
+
+// --- Utility functions ------------------------------------------------------
 
 /*
   Given a workbook, returns an array of worksheets that pass all filter functions
@@ -218,7 +251,7 @@ export type GetWorkSheetList = (
   filterFns?: PredFn<Worksheet>[] // list of functions to filter unwante worksheets
 ) => Worksheet[];
 
-export type GetDataTypesFromRow = (row: Row) => DataType[];
+export type GetDataTypesFromRow = (row: Row) => BaseDataTypes[];
 
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];
