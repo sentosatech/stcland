@@ -17,6 +17,7 @@ It offers flexibility for content organization and supports custom styling, stat
 - **children** (`React.ReactNode`): Content to be rendered inside the accordion.
 - **id** (`string`): Unique identifier for accessibility purposes. Required for proper WAI-ARIA support.
 - **defaultExpanded** (`boolean`): If `true`, the accordion is expanded by default. Defaults to `false`.
+- **expandAll** (`boolean`): if `true`, all child accordions are expanded. `Optional`
 - **className** (`string`): Additional CSS classes for styling.
 - **customStyles**(`Partial<AccordionStyles>`): Allows passing custom styles for all child elements.
 - **...rest**: Other HTML props such as `aria-*` or `data-*` attributes.
@@ -103,3 +104,10 @@ Apply custom styles to the Accordion component and all of its child elements wit
 a `customStyles` property to the parent `Accordion`.
 
 <Canvas of={AccordionStories.WithStyles} />
+
+
+---
+
+### Expand-Collapse All
+
+<Canvas of={AccordionStories.ExpandAll} />

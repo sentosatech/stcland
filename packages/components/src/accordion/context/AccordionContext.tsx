@@ -10,12 +10,14 @@ interface AccordionContextType {
   toggle: () => void;
   summaryId: string;
   detailsId: string;
-  customStyles?: Partial<AccordionStyles>
+  expandAll?: boolean;
+  customStyles?: Partial<AccordionStyles>;
 }
 
-interface AccordionProviderProps extends Omit<AccordionContextType, 'toggle' | 'expanded'> {
+interface AccordionProviderProps extends Omit<AccordionContextType, 'toggle' | 'expanded' | 'toggleAll'> {
   children: React.ReactNode;
   defaultExpanded?: boolean;
+  expandAll?: boolean
 }
 
 const AccordionContext = React.createContext<AccordionContextType | undefined>(undefined)
@@ -36,12 +38,19 @@ export const useAccordionContext = () => {
 // Components
 //*****************************************************************************
 
-export const AccordionProvider = ({ children, summaryId, detailsId, defaultExpanded = false, customStyles }: AccordionProviderProps) => {
+export const AccordionProvider = ({ children, summaryId, detailsId, defaultExpanded = false, customStyles, expandAll }: AccordionProviderProps) => {
   const [expanded, setExpanded] = React.useState(defaultExpanded)
-  const toggle = () => setExpanded((prev) => !prev)
+
+  const toggle = () => setExpanded(prev => !prev)
+
+  React.useEffect(() => {
+    if (expandAll !== undefined) {
+      setExpanded(expandAll)
+    }
+  }, [expandAll])
 
   return (
-    <AccordionContext.Provider value={{ expanded, toggle, summaryId, detailsId, customStyles }}>
+    <AccordionContext.Provider value={{ expanded, toggle, summaryId, detailsId, customStyles, expandAll }}>
       {children}
     </AccordionContext.Provider>
   )

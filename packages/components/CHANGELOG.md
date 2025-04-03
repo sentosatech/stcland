@@ -1,5 +1,11 @@
 # @stcland/components
 
+## 0.0.25
+
+### Patch Changes
+
+- Added expand/collapse all in Accordions.
+
 ## 0.0.24
 
 ### Patch Changes

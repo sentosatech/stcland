@@ -11,6 +11,7 @@ export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode; // Content to be rendered inside the accordion
   id: string; // Unique identifier
   defaultExpanded?: boolean; // If `true`, is expanded by default, this property state will applied to child elements, defaults to false.
+  expandAll?: boolean // if `true` all are expanded else collapsed.
   className?: string; // Additional classes applied to the root.
   customStyles?: Partial<AccordionStyles> // Additional specific classes per `AccordionStyles` type.
 }
@@ -23,6 +24,7 @@ export const Accordion = ({
   children,
   id,
   defaultExpanded = false,
+  expandAll,
   className = '',
   customStyles,
   ...rest
@@ -38,7 +40,12 @@ export const Accordion = ({
 
 
   return (
-    <AccordionProvider summaryId={summaryId} detailsId={detailsId} customStyles={customStyles} defaultExpanded={defaultExpanded}>
+    <AccordionProvider
+      summaryId={summaryId}
+      detailsId={detailsId}
+      customStyles={customStyles}
+      defaultExpanded={defaultExpanded}
+      expandAll={expandAll}>
       <div
         role='region'
         aria-labelledby={summaryId}

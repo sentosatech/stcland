@@ -6,6 +6,7 @@ import { Accordion as AccordionWithStyles } from '@stcland/components/withStyles
 import { Button } from '@stcland/components'
 import { Icon } from '@stcland/components/icon'
 import customStyles from '../stc.config'
+import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from '@heroicons/react/24/solid'
 
 const meta: Meta<AccordionProps> = {
   title: 'Components/Accordion',
@@ -131,6 +132,41 @@ const NestedAccordionTemplate: StoryFn = () => (
 )
 
 export const NestedAccordions = NestedAccordionTemplate.bind({})
+
+const ExpandAllTemplate: StoryFn = () => {
+  const [expandAll, setExpandAll] = React.useState(false)
+
+  const data = [
+    { id: '1', title: 'Expand Me 1', content: 'Details about... 1' },
+    { id: '2', title: 'Expand Me 2', content: 'Details about... 2' },
+    { id: '3', title: 'Expand Me 3', content: 'Details about... 3' },
+  ]
+
+  return (
+    <div className='flex flex-col gap-3'>
+      <Button
+        className='rounded-lg'
+        leftIcon={expandAll ? ArrowsPointingInIcon : ArrowsPointingOutIcon}
+        text={expandAll ? 'Collapse All' : 'Expand All'}
+        onClick={() => setExpandAll(!expandAll)}
+      />
+
+      {data.map(({ id, title, content }) => (
+        <Accordion key={id} id={id} expandAll={expandAll}>
+          <AccordionSummary expandIcon={<Icon iconName='ChevronDownIcon'/>}>
+            <h3>{title}</h3>
+          </AccordionSummary>
+          <AccordionDetails>
+            <p>{content}</p>
+          </AccordionDetails>
+        </Accordion>
+      ))}
+    </div>
+  )
+}
+
+export const ExpandAll = ExpandAllTemplate.bind({})
+
 
 const WithStylesTemplate: StoryFn = () => (
   <StcStylesProvider customStyles={customStyles}>
