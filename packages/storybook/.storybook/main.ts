@@ -4,9 +4,9 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 
 const config: StorybookConfig = {
-   stories: [
-   '../../**/**/*.{stories,stories.*}.@(js|jsx|ts|tsx)',
-    '../../**/**/*.mdx',
+  stories: [
+    '../stories/*.stories.@(js|jsx|ts|tsx)',
+    '../stories/*.mdx',
   ],
   addons: [
     "@storybook/addon-links",
@@ -21,11 +21,14 @@ const config: StorybookConfig = {
   },
  async viteFinal(config) {
   return mergeConfig(config, {
+    optimizeDeps: {
+      exclude: ["node_modules/.cache/sb-vite"],
+    },
     assetsInclude: ["/sb-preview/runtime.js"], 
       css: {
       postcss: {
         plugins: [
-          tailwindcss(),
+          tailwindcss('./tailwind.config.ts'),
           autoprefixer(),
         ],
       },

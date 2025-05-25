@@ -1,0 +1,105 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import * as AccordionStories from './Accordion.stories'
+
+<Meta of={AccordionStories} />
+
+# Accordion Components
+
+The `Accordion` component provides collapsible sections, 
+following the WAI-ARIA pattern for show/hide functionality. 
+It offers flexibility for content organization and supports custom styling, state management, and accessibility.
+
+---
+
+## Properties
+
+### Accordion
+- **children** (`React.ReactNode`): Content to be rendered inside the accordion.
+- **id** (`string`): Unique identifier for accessibility purposes. Required for proper WAI-ARIA support.
+- **defaultExpanded** (`boolean`): If `true`, the accordion is expanded by default. Defaults to `false`.
+- **className** (`string`): Additional CSS classes for styling.
+- **customStyles**(`Partial<AccordionStyles>`): Allows passing custom styles for all child elements.
+- **...rest**: Other HTML props such as `aria-*` or `data-*` attributes.
+
+---
+
+### AccordionSummary
+Base:
+- **children** (`React.ReactNode`): The header or title of the accordion section.
+- **className** (`string`): Additional CSS classes for styling.
+
+With Expanded Icon:
+- **expandIcon** (`React.ReactNode`): Icon displayed to indicate expansion/collapse.
+- **onlyIconClickable** (`boolean`): Optional, defaults to false. If true, only the `expandedIcon` is clickable.
+
+---
+
+### AccordionDetails
+- **children** (`React.ReactNode`): The main content of the accordion section, revealed upon expansion.
+- **className** (`string`): Additional CSS classes for styling.
+
+---
+
+### AccordionActions
+- **children** (`React.ReactNode`): Action buttons (like Cancel/Agree) placed at the bottom of the accordion.
+- **className** (`string`): Additional CSS classes for styling.
+- **disableSpacing** (`boolean`): If `true`, removes the spacing between actions. Defaults to `false`.
+
+---
+
+## Examples
+
+### Default 
+
+This example shows a basic accordion with default styles and props.
+
+<Canvas of={AccordionStories.Default} />
+
+---
+
+### Expanded 
+
+This example shows a basic accordion with `defaultExpanded` property set to `true`.
+
+<Canvas of={AccordionStories.ExpandedByDefault} />
+
+---
+
+### Only Icon Clickable 
+
+This example shows a basic accordion with `onlyIconClickable` property.
+
+<Canvas of={AccordionStories.OnlyIconClickableTemplate} />
+
+---
+
+### With Multiple Sections
+
+This variant demonstrates multiple accordion items with independent expand/collapse functionality.
+
+<Canvas of={AccordionStories.MultipleSections} />
+
+---
+
+### With Actions
+
+This example includes action buttons within the `AccordionActions` component.
+
+<Canvas of={AccordionStories.WithActions} />
+
+---
+
+### Nested Accordion
+
+This example includes Nested Accordions.
+
+<Canvas of={AccordionStories.NestedAccordions} />
+
+---
+
+### WithStyles Wrapper
+
+Apply custom styles to the Accordion component and all of its child elements without the need to pass explicitly 
+a `customStyles` property to the parent `Accordion`.
+
+<Canvas of={AccordionStories.WithStyles} />

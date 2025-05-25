@@ -1,5 +1,17 @@
 # @stcland/utils
 
+## 0.0.6
+
+### Patch Changes
+
+- Icon added to components, some clean up in utils done.
+
+## 0.0.5
+
+### Patch Changes
+
+- Added components package, remove table and theme, update storybook.
+
 ## 0.0.4
 
 ### Patch Changes

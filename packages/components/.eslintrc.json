@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "extends": ["../config/eslint.react.base.json"],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "ignorePatterns": ["dist", ".eslintrc.json"],
+   "rules": {
+    "no-console": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
+    "react/display-name": "off"
+  }
+}
+

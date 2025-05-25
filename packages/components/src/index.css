@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tooltip-arrow {
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }

@@ -1,27 +1,31 @@
 {
   "name": "@stcland/storybook",
-  "version": "0.0.1",
+  "version": "0.0.28",
   "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint . --ext .js,.ts",
+    "lint": "eslint . --ext .js,.ts 'stories/**/*.{js,jsx,ts,tsx}' --fix",
     "sb": "storybook dev -p 6006",
     "sb-docs": "storybook dev --docs",
     "sb-build-docs": "storybook build --docs",
     "build-sb": "storybook build",
-    "clean:all": "rimraf ./node_modules"
+    "clean:all": "rimraf ./node_modules",
+    "chromatic": "npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name build-sb"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
+    "@stcland/components": "workspace:^",
     "@storybook/addon-docs": "^8.2.9",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
     "@storybook/addon-links": "^8.2.9",
     "@storybook/react": "^8.2.9",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@tanstack/react-table": "^8.20.5",
+    "@vitejs/plugin-react-swc": "^3.5.0",
     "autoprefixer": "^10.4.20",
     "d3-interpolate": "^3.0.1",
     "postcss": "^8.4.41",
@@ -37,12 +41,16 @@
     "@storybook/theming": "^8.2.9",
     "@tailwindcss/typography": "^0.5.14",
     "@types/d3-interpolate": "^3.0.4",
-    "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
+    "chromatic": "^11.22.0",
     "eslint": "^8.56.0",
     "prop-types": "15.8.1",
     "rimraf": "^6.0.1",
     "storybook": "^8.2.9",
     "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
