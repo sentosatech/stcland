@@ -8,14 +8,14 @@ import type {
   IfDbDoesNotExistOnGet,
   IfCollectionDoesNotExistOnGet,
   ArangoHostConfig,
-  CreateDatabaseUser
+  CreateDatabaseUserOptions
 } from '../utils/ArangoUtilsTypes'
 
 
 import { CollectionType } from '../utils'
 
-// re-export arang types
-export { CreateDatabaseUser }
+// re-export arango types
+export { CreateDatabaseUserOptions }
 
 export type IfTargetDbDoesNotExist = IfDbDoesNotExistOnGet
 export type IfTargetCollectionDoesNotExist = IfCollectionDoesNotExistOnGet
@@ -24,7 +24,7 @@ export interface LoadSpreadsheetDataOpts extends
   Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
   ifTargetDbDoesNotExist?: IfTargetDbDoesNotExist
     // defaults to create
-  users?: CreateDatabaseUser[]
+  users?: CreateDatabaseUserOptions[]
     // only needed if IfTargertDbDoesNotExist is Create
     // defaults to []
   ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
@@ -67,4 +67,3 @@ export interface ArangoDataLoaderClientData {
 export const validWorksheetTypes = [
   'docCollection', 'edgeCollection','graph'
 ]
-
