@@ -32,6 +32,9 @@ export interface LoadSpreadsheetDataOpts extends
   validateEdgeTargets?: boolean
     // For edge collections, validate that the _from and _to docs exist
     // defaults to true
+  validateGraphCollections?: boolean
+    // graphs, validate that the from and to collections exist
+    // defaults to true
 }
 
 export interface LoadSpreadsheetDataResult {
