@@ -5,7 +5,7 @@ import { Database } from 'arangojs'
 import type {
   DocumentCollection,
   EdgeCollection,
-} from 'arangojs/collection'
+} from 'arangojs/collections'
 
 // import { EdgeDefinitionOptions } from 'arangojs/graph'
 
