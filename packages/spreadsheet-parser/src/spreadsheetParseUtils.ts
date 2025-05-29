@@ -11,16 +11,96 @@ import {
 
 import {
   validDataTableDataTypes, validRowValueListTypes,
-  validDataCollectionDataTypes, validDataTypes,
+  validDataCollectionDataTypes, validDataTypes
 } from './SpreadsheetParserTypes'
 
 import type {
   ParseOptions,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
   CellMeta, DataCellMeta, RowMeta,
-  DataType, DataTableDataType, RowValueListType, DataCollectionDataType,
+  DataType, DataCollectionDataType,
   InvalidTypeWarning,
+  BaseDataTypes,
+  ListDataTypes,
 } from './SpreadsheetParserTypes'
+
+
+
+// --- Utility Type Guards ----------------------------------------------------
+
+export const isBaseDataType = (value: string): value is BaseDataTypes =>
+  validDataCollectionDataTypes.includes(value as BaseDataTypes)
+
+export const isListDataType = (value: string): value is ListDataTypes =>
+  validRowValueListTypes.includes(value as ListDataTypes)
+
+
+
+// TODO M: Discuss with Stevie.
+// --- Reusable Warning Helper ------------------------------------------------
+
+// const genericDataCellWarning = (
+//   message: string,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ) => {
+//   if (options?.reportWarnings !== false) console.warn(message, meta)
+//   return undefined
+// }
+
+// // --- Generic Value Parsers --------------------------------------------------
+
+// const parseCellValue = <T>(
+//   value: CellValue,
+//   validate: (v: CellValue) => boolean,
+//   transform: (v: CellValue) => T,
+//   errorMessage: string,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ): T | undefined =>
+//     validate(value) ? transform(value) : genericDataCellWarning(errorMessage, meta, options)
+
+
+// // --- Specific Parsers Using the Generic Function ----------------------------
+
+// export const cellValueToString = (
+//   value: CellValue,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ) => parseCellValue(value, isString, String, `Invalid string: ${value}`, meta, options)
+
+// export const cellValueToNumber = (
+//   value: CellValue,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ) => parseCellValue(value, isNotNaN, Number, `Invalid number: ${value}`, meta, options)
+
+// export const cellValueToBool = (
+//   value: CellValue,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ) => parseCellValue(
+//   value,
+//   isBoolean,
+//   Boolean,
+//   `Invalid boolean: ${value}`,
+//   meta,
+//   options
+// )
+
+// export const cellValueToPasswordHash = (
+//   value: CellValue,
+//   meta: DataCellMeta,
+//   options?: ParseOptions
+// ) =>
+//   parseCellValue(
+//     value,
+//     isStringOrNumber,
+//     v => sha256().update(v?.toString()).digest('hex'),
+//     `Invalid password: ${value}`,
+//     meta,
+//     options
+//   )
 
 
 // --- Cell value parsers -----------------------------------------------------
@@ -68,11 +148,11 @@ export const cellValueToBool = (
     const boolText = cellValue.toLowerCase()
     return boolText === 'true'
   }
-  // shoud not get here
+    // shoud not get here
   return dataCellWarning(`Invalid boolean value: ${cellValue}`, dataCellMeta, parseOpts)
 }
 
-// If the cell has text, then we will prepend it to the uuid
+  // If the cell has text, then we will prepend it to the uuid
 export const cellValueToUuid = (
   cellValue: CellValue,
   dataCellMeta: DataCellMeta,
@@ -115,7 +195,7 @@ export const cellValueFromJson = (
 }
 
 
-//--- data/data-info getters --------------------------------------------------
+//--- Data/Data-Info Getters --------------------------------------------------
 
 export const getCellValue = (cell: Cell): CellValue =>
   cellValueIsFormula(cell) ? cell?.result : cell?.value
@@ -153,7 +233,7 @@ export const getPropNamesFromRow = (row: Row): string[] => {
   return propNames as string[]
 }
 
-export const getPropNameFromCallValue = (
+export const getPropNameFromCellValue = (
   cellValue: CellValue,
   cellMeta: CellMeta,
 ) => {
@@ -169,7 +249,7 @@ export const getPropNameFromCallValue = (
   return propName
 }
 
-export const getDataTypeFromCallValue = (
+export const getDataTypeFromCellValue = (
   cellValue: CellValue,
   cellMeta: CellMeta,
 ) => {
@@ -188,7 +268,7 @@ export const getDataTypeFromCallValue = (
 
 export const getDataTypesFromRow: GetDataTypesFromRow = (row: Row) => {
 
-  const dataTypes = getRowValuesAsStrings(row) as DataType[]
+  const dataTypes  = getRowValuesAsStrings(row) as BaseDataTypes[]
 
   if (dataTypes.length === 0 )
     throw new Error(`No property names found in worksheet ${row.worksheet.name}`)
@@ -203,7 +283,7 @@ export const getDataTypesFromRow: GetDataTypesFromRow = (row: Row) => {
       `  should be one of ${toJson(validDataTypes.join(', '))}`
     )
   }
-  return dataTypes as DataType[]
+  return dataTypes as BaseDataTypes[]
 }
 
 // excludes 'hidden' worksheets (i.e. worksheet name begins with a '.')
@@ -219,8 +299,8 @@ export const getWorksheetList: GetWorkSheetList = (wb, filterFns = []) => {
 
 // returns data type if valid or false if not a valid list
 export const getRowValueListBaseType = (
-  dataType: DataType
-): DataType | 'invalid-list-type' => {
+  dataType: BaseDataTypes | ListDataTypes
+): BaseDataTypes | ListDataTypes | 'invalid-list-type' => {
 
   if (!dataType.includes(':')) return 'invalid-list-type'
   const [subType] = dataType.split(':') as [DataType]
@@ -234,29 +314,26 @@ export const getBaseDataType = (dataType: DataType): DataType | InvalidTypeWarni
 export const getCellError = (cellValue: CellValue): string =>
   cellValueHasError(cellValue) ? (cellValue as any).error : ''
 
-//--- data validation ---------------------------------------------------------
 
-export const isValidDataTableDataType = (dataType: DataType) =>
-  isString(dataType) && validDataTableDataTypes.includes(dataType as DataTableDataType)
 
-export const isValidRowValueListType = (dataType: DataType) =>
-  isString(dataType) && validRowValueListTypes.includes(dataType as RowValueListType)
+//--- Data Validation ---------------------------------------------------------
 
-export const isRowValueListType = isValidRowValueListType
+export const isValidDataTableDataType = (dataType: unknown): dataType is BaseDataTypes =>
+  isString(dataType) && validDataTableDataTypes.includes(dataType as BaseDataTypes)
 
-export const isValidDataCollectionDataType = (dataType: DataType) =>
+export const isValidRowValueListType = (dataType: unknown): dataType is ListDataTypes =>
+  isString(dataType) && validRowValueListTypes.includes(dataType as ListDataTypes)
+
+export const isValidDataCollectionDataType = (dataType: unknown): dataType is DataCollectionDataType =>
   isString(dataType) && validDataCollectionDataTypes.includes(dataType as DataCollectionDataType)
 
-export const isValidDataType = (dataType: DataType) =>
-  isString(dataType) && validDataTypes.includes(dataType)
 
-export const isValidDataTypeList = (dataTypes: DataType[]) : {
-  valid: boolean;
-  invalidTypes: DataType[];
-} => {
-  const valid = dataTypes.every(isValidDataType)
-  const invalidTypes = dataTypes.filter(dataType => !validDataTypes.includes(dataType))
-  return { valid, invalidTypes }
+export const isValidDataType = (dataType: unknown): dataType is DataType =>
+  isString(dataType) && validDataTypes.includes(dataType as DataType)
+
+export const isValidDataTypeList = (dataTypes: unknown[]): { valid: boolean; invalidTypes: DataType[] } => {
+  const invalidTypes = dataTypes.filter((d): d is DataType => !isValidDataType(d))
+  return { valid: invalidTypes.length === 0, invalidTypes }
 }
 
 export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
@@ -266,6 +343,8 @@ export const isNotValidDataCollectionDataType = complement(isValidDataCollection
 export const isNotValidDataType = complement(isValidDataType)
 export const isNotValidDataTypeList = complement(isValidDataTypeList)
 
+
+//--- Property Name Validation ---------------------------------------------------------
 export const invalidDataTypeIdx = (dataTypes: DataType[]) =>
   dataTypes.findIndex(isNotValidDataType)
 
@@ -274,6 +353,7 @@ export const isValidPropName = (propName: string) =>
 
 export const isValidPropNameList = (propNames: CellValue[]) =>
   propNames.every(isValidPropName)
+
 
 export const isNotValidPropName = complement(isValidPropName)
 export const isNotValidPropNameList = complement(isValidPropNameList)
@@ -307,8 +387,9 @@ export const isEmptyCell = (cellValue: CellValue) => {
 export const cellValueHasError = (cellValue: CellValue) =>
   isObject(cellValue) && isNotNil((cellValue as any)?.error)
 
-export const dataTypeFromRowValueListType = (rowListType: RowValueListType) =>
+export const dataTypeFromRowValueListType = (rowListType: ListDataTypes) =>
   `list:${rowListType}`
+
 
 //--- Logging -----------------------------------------------------------------
 
@@ -328,10 +409,10 @@ export const dataCellWarning = (
   if (reportWarnings) {
     console.warn(
       '\nParsing error:\n' +
-      `   Worksheet: ${dataCellMeta.worksheetName}\n` +
-      `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
-      `   propName = '${dataCellMeta.propName}' | dataType = '${dataCellMeta.dataType}'\n` +
-      `   ${msg}\n`
+        `   Worksheet: ${dataCellMeta.worksheetName}\n` +
+        `   Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}\n` +
+        `   propName = '${dataCellMeta.propName}' | dataType = '${dataCellMeta.dataType}'\n` +
+        `   ${msg}\n`
     )
   }
   return `${msg} -> WS:${dataCellMeta.worksheetName}, Row:${(dataCellMeta.rowNumber)} Col:${colNumToText(dataCellMeta.colNumber)}`
@@ -389,7 +470,7 @@ export const passwordHash = (password: string) =>
   sha256().update(password).digest('hex')
 
 
-// Allows usser to add worksheets to the file that won't be parsed
+// Allows user to add worksheets to the file that won't be parsed.
 export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 
 export const colNumToText = (colNum: number) =>
@@ -401,7 +482,7 @@ export const shouldSkipDataCollectionRow = (rowValues: CellValue[]) =>
 export const shouldSkipDataTableValue = (callValue: CellValue) =>
   callValue?.toString().trim() === '_skip_'
 
-// currently supports A-BZ
+// Currently supports A-BZ
 export const colNumToTextMap: { [key: number]: string } = {
   0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J',
   10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O', 15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',

@@ -16,7 +16,7 @@ import {
   DataTableData, DataCollectionData, Meta, Data
 } from '../src/SpreadsheetParserTypes'
 
-import { getBaseDataType, getWorksheetList, isRowValueListType } from '../src/spreadsheetParseUtils'
+import { getBaseDataType, getWorksheetList, isValidRowValueListType } from '../src/spreadsheetParseUtils'
 import type { ValidateOpts } from './testUtils'
 import { assertConsistentDefinedState, dataTypeToTestFns } from './testUtils'
 import { forEachSheet } from '../src/parseSpreadsheet'
@@ -363,7 +363,7 @@ const assertParsedData = (
       validateFn, expectedValForLoggingFn, parsedValForLoggingFn
     } = dataTypeToTestFns(dataType, validateOpts)
 
-    if (isRowValueListType(dataType)) {
+    if (isValidRowValueListType(dataType)) {
       expect(isArray(parsedProp)).toEqual(true)
       expect(isArray(parsedProp)).toEqual(true)
       expect(parsedProp.length).toEqual(expectedProp.length)
