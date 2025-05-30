@@ -124,6 +124,35 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
+  UuidsRefs: {
+    worksheetName: 'UuidsRefs',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this sheet will be auto generated and then referenced as appropraite from other sheets',
+    },
+    dataTypeMap: {
+      uuid: 'uuid',
+      name: 'string',
+    },
+    data: [
+      {
+        uuid: [],
+        name: 'uuid1',
+      },
+      {
+        uuid: [],
+        name: 'uuid2',
+      },
+      {
+        uuid: [],
+        name: 'uuid3',
+      }
+    ],
+  },
   FormulaAndRefParsing: {
     worksheetName: 'FormulaAndRefParsing',
     dataLayout: 'dataTable',

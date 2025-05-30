@@ -42,10 +42,10 @@ export interface ParseOptions {
 //--- data types --------------------------------------------------------------
 
 export type DataTableDataType =
-'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid'
+'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid' | 'uuid:ref'
 
 export const validDataTableDataTypes: DataTableDataType[] = [
-  'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid'
+  'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid', 'uuid:ref'
 ]
 
 export type RowValueListType =
@@ -127,6 +127,7 @@ export interface ParseDataTableResult {
 export type ParseDataTable = (
   ws: Worksheet,
   startingRowNum: number,
+  referencedData: ReferencedData,
   parseOpts?: ParseOptions
 ) => ParseDataTableResult;
 
@@ -162,8 +163,11 @@ export interface ParsedWorksheetResult {
   dataTypeMap?: DataTypeMap
 }
 
+export type ReferencedData = Record<string, Record<string, any>>;
+
 export type ParseWorksheet = (
   ws: Worksheet,
+  referencedData: ReferencedData,
   parseOpts?: ParseOptions,
   startingRowNum?: number, // defaults to 1
 ) => ParsedWorksheetResult;
@@ -222,4 +226,3 @@ export type GetDataTypesFromRow = (row: Row) => DataType[];
 
 // Returnn values from a worksheet row
 export type GetRowValues = (row: Row) => CellValue[];
-

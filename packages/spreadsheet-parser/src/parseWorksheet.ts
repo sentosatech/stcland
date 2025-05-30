@@ -1,6 +1,6 @@
 import { CellValue, Row, RowValues, Worksheet } from 'exceljs'
 
-import { isNil, isEmpty, isNotNil, } from 'ramda'
+import { isNil, isEmpty, isNotNil } from 'ramda'
 import { isUndefined } from 'ramda-adjunct'
 
 import { toJson } from '@stcland/utils'
@@ -15,6 +15,7 @@ import type {
   Data, DataTableData,
   DataType,  DataTableDataType, DataTypeMap,
   DataCollectionData,
+  ReferencedData,
 } from './SpreadsheetParserTypes'
 
 import {
@@ -30,13 +31,15 @@ import {
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
   isNotValidDataTableDataType, isRowValueListType,
   shouldSkipDataCollectionRow,
-  shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter
+  shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter,
+  isReferencedDataType, getReferencedDataType, getReferencedData,
+  cellWarning
 } from './spreadsheetParseUtils'
 
 //-----------------------------------------------------------------------------
 
 export const parseWorksheet: ParseWorksheet = (
-  ws, parseOpts = {}, startingRowNum = 1
+  ws, referencedData, parseOpts = {}, startingRowNum = 1
 ) => {
 
   const { reportProgress = true } = parseOpts || {}
@@ -65,7 +68,7 @@ export const parseWorksheet: ParseWorksheet = (
 
   switch (dataLayout) {
   case 'dataTable':
-    parsedData = parseDataTable(ws, nextRowNum, {
+    parsedData = parseDataTable(ws, nextRowNum, referencedData, {
       ...parseOpts, onDelimiter: 'stop'
     })
     break
@@ -102,6 +105,7 @@ export const parseWorksheet: ParseWorksheet = (
 const parseDataTable: ParseDataTable = (
   ws: Worksheet,
   startingRowNum: number,
+  referencedData: ReferencedData,
   parseOpts?: ParseOptions
 ) => {
 
@@ -151,7 +155,9 @@ const parseDataTable: ParseDataTable = (
       worksheetName: ws.name, rowNumber: curRowNumber
     }
 
-    const rowData = parseTableDataRow(propNames, dataTypes, curRow, rowMeta, parseOpts)
+    const rowData = parseTableDataRow(
+      propNames, dataTypes, curRow, rowMeta, referencedData, parseOpts
+    )
     data.push(rowData)
   })
 
@@ -175,6 +181,7 @@ const parseTableDataRow = (
   dataTypes: DataType[],
   row: Row,
   rowMeta: RowMeta,
+  referencedData: ReferencedData,
   parseOpts?: ParseOptions
 ): Data => {
 
@@ -204,7 +211,29 @@ const parseTableDataRow = (
     if (shouldSkipDataTableValue(propValue))
       return accData
 
-    const dataValue = parseDataCell(dataType, propValue, dataCellMeta, parseOpts)
+    let dataValue: any
+    if (isReferencedDataType(dataType)) {
+
+      const referencedDataType = getReferencedDataType(dataType, dataCellMeta)
+      const {
+        referencedDataKey, referencedDataValue
+      } = getReferencedData(propValue, dataCellMeta)
+
+      dataValue = parseDataCell(referencedDataType, referencedDataValue, dataCellMeta, parseOpts)
+
+      // Add this to the referended data
+      const worksheetName = rowMeta?.worksheetName
+      if (isNil(worksheetName)) {
+        throw new Error(cellWarning(
+          `Worksheet name is undefined for referenced data type '${referencedDataType}'`,dataCellMeta
+        ))
+      }
+      if (!referencedData[worksheetName]) referencedData[worksheetName] = {}
+      referencedData[worksheetName][referencedDataKey] = dataValue
+    }
+    else {
+      dataValue = parseDataCell(dataType, propValue, dataCellMeta, parseOpts)
+    }
 
     return {
       ...accData, [propName]: dataValue

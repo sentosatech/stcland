@@ -1,4 +1,4 @@
-import { complement, isNil } from 'ramda'
+import { complement, isEmpty, isNil } from 'ramda'
 import { isBoolean, isObject, isString, isNotNaN, isDate, isNotNil } from 'ramda-adjunct'
 
 import { Worksheet, Row, Cell, CellValue } from 'exceljs'
@@ -310,6 +310,60 @@ export const cellValueHasError = (cellValue: CellValue) =>
 export const dataTypeFromRowValueListType = (rowListType: RowValueListType) =>
   `list:${rowListType}`
 
+export const isReferencedDataType = (dataType: DataType) =>
+  isString(dataType) && dataType.includes(':ref')
+
+export const isNotReferencedDataType = complement(isReferencedDataType)
+
+export const getReferencedDataType = (
+  dataType: DataType,
+  cellMeta: CellMeta,
+) => {
+  if (isNotReferencedDataType(dataType)) {
+    throw new Error(cellWarning(
+      `referencedDataType(): non referenced data type provided '${dataType}'`, cellMeta))
+  }
+
+  const refTokens = dataType.split(':')
+  if (refTokens.length !== 2 || refTokens[1] !== 'ref') {
+    throw new Error(cellWarning(
+      `Invalid referenced data type: '${dataType}', should be DATA_TYPE:ref`, cellMeta))
+  }
+
+  const referencedDataType = dataType.split(':')[0] as DataType
+  if (isNotValidDataType(referencedDataType)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data type: '${dataType}', should be one of ${toJson(validDataTypes)}`, cellMeta))
+  }
+  return referencedDataType
+}
+
+export const getReferencedData = (cellValue: CellValue, cellMeta: CellMeta) => {
+
+  const cellText = cellValue?.toString()
+  if (isNil(cellText) || cellText.trim() === '')
+    throw new Error(cellWarning('Empty referenced data value', cellMeta))
+
+  const referencedDataTokens = cellText.split(':')
+  if (referencedDataTokens.length !== 2) {
+    throw new Error(cellWarning(
+      `Invalid referenced data value: '${cellText}', should be REF_NAME:REF_VALUE`, cellMeta))
+  }
+
+  const referencedDataKey = referencedDataTokens[0]
+  if (isEmpty(referencedDataKey) || !strIsValidObjectKey(referencedDataKey)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data key: '${referencedDataKey}', should be a valid object key`, cellMeta))
+  }
+
+  const referencedDataValue = referencedDataTokens[1]
+  if (isEmpty(referencedDataValue)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data value: '${referencedDataValue}', should not be empty`, cellMeta))
+  }
+
+  return { referencedDataKey, referencedDataValue }
+}
 //--- Logging -----------------------------------------------------------------
 
 export const parserWarning = (msg: string, parseOpts?: ParseOptions) => {
@@ -415,4 +469,3 @@ export const colNumToTextMap: { [key: number]: string } = {
   62: 'BK', 63: 'BL', 64: 'BM', 65: 'BN', 66: 'BO', 67: 'BP', 68: 'BQ', 69: 'BR', 70: 'BS', 71: 'BT',
   72: 'BU', 73: 'BV', 74: 'BW', 75: 'BX', 76: 'BY', 77: 'BZ',
 }
-
