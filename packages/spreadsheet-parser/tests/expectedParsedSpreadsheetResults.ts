@@ -139,18 +139,29 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       name: 'string',
     },
     data: [
-      {
-        uuid: [],
-        name: 'uuid1',
-      },
-      {
-        uuid: [],
-        name: 'uuid2',
-      },
-      {
-        uuid: [],
-        name: 'uuid3',
-      }
+      { uuid: [], name: 'uuid1' },
+      { uuid: [], name: 'uuid2' },
+      { uuid: [], name: 'uuid3' }
+    ],
+  },
+  UuidLinks: {
+    worksheetName: 'UuidLinks',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this will reference uuids that were auto generated in the UuidRefs sheet',
+    },
+    dataTypeMap: {
+      name: 'string',
+      linkedUuid: 'string',
+    },
+    data: [
+      { name: 'ref To Uuid 1', linkedUuid: 'UuidsToRef.u1' },
+      { name: 'ref To Uuid 2', linkedUuid: 'UuidsToRef.u2' },
+      { name: 'ref To Uuid 3', linkedUuid: 'UuidsToRef.u3' }
     ],
   },
   FormulaAndRefParsing: {

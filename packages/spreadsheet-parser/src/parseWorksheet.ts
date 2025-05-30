@@ -165,7 +165,14 @@ const parseDataTable: ParseDataTable = (
 
   if (includeDataTypeMaps) {
     dataTypeMap  = propNames.reduce((acc, propName, i) => {
-      return { ...acc, [propName]: dataTypes[i] }
+      const cellMeta: DataCellMeta = {
+        worksheetName, rowNumber: startingRowNum+2, colNumber: i,
+        propName, dataType: dataTypes[i]
+      }
+      const dataType = isReferencedDataType(dataTypes[i])
+        ? getReferencedDataType(dataTypes[i], cellMeta)
+        : dataTypes[i]
+      return { ...acc, [propName]: dataType }
     }, {})
   }
 

@@ -101,7 +101,6 @@ const assertParsedWorksheet = async (
   } = parsedWorksheet
 
   console.log('parsedData: ', parsedData)
-  return
 
   expect(worksheetName).toEqual(expectedSheetName)
   expect(dataLayout).toEqual(expectedDataLayout)
