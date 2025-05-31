@@ -1,0 +1,61 @@
+import { Canvas, Meta } from '@storybook/blocks'
+import * as ModalStories from './Modal.stories'
+import { Modal } from '@stcland/components'
+
+<Meta of={ModalStories} />
+
+# Modal
+
+A customizable modal component that can be used to show dialogs, forms, or any other content on top of your page content.
+
+### Properties
+
+- **open** (`boolean`): Controls whether the modal is visible.
+- **onClose** (`(event?: MouseEvent | React.KeyboardEvent<HTMLDivElement>) => void`): Callback function triggered when the modal is requested to close, either by clicking outside, pressing the escape key (if enabled), or clicking the close button.
+- **ariaDescribedBy** (`string`): Sets an `aria-describedby` attribute for accessibility, referencing an element that provides additional information about the modal.
+- **ariaLabelledBy** (`string`): Sets an `aria-labelledby` attribute for accessibility, referencing an element that labels the modal.
+- **disableEscapeKeyDown** (`boolean`): If `true`, the modal will not close when the escape key is pressed. Defaults to `false`.
+- **fullScreen** (`boolean`): If `true`, the modal will occupy the entire screen. Defaults to `false`.
+- **maxWidth** (`number`): Sets the maximum width of the modal in pixels. Ignored if `fullScreen` is `true`. Defaults to `650`.
+- **children** (`React.ReactNode`): The content rendered inside the modal.
+- **header** (`React.ReactNode`): Content for the modal's header section, which can include text or other elements.
+- **content** (`React.ReactNode`): The main content of the modal, typically containing the body text or form elements.
+- **actions** (`React.ReactNode`): Elements, such as buttons, to be rendered at the bottom of the modal for user actions.
+- **className** (`string`): Additional CSS class for custom styling of the modal root element.
+- **customStyles** (`Partial<ModalStyles>`): Object containing custom styles for specific parts of the modal, such as `root`, `modal`, `backdrop`, `closeButton`, `header`, `content`, and `actions`.
+
+
+---
+
+## Examples
+
+### Default Modal
+
+This example shows a basic Modal.
+
+<Canvas of={ModalStories.Default} />
+
+---
+
+### Fullscreen Modal
+
+This example shows a Fullscreen Modal.
+
+<Canvas of={ModalStories.FullScreen} />
+
+---
+
+### Custom Width Modal
+
+This example shows a Modal with custom width.
+
+<Canvas of={ModalStories.CustomWidth} />
+
+---
+### WithStyles Wrapper
+
+When a component is exported from the `@stcland/components/withStyles` module and wrapped in the `StcStylesProvider` it allow 
+users to access styled versions of the core components. These components enhance the base functionality with added styling without
+the need to pass a `customStyles` property as the **With Custom Styles** example above.
+
+<Canvas of={ModalStories.WithStyles} />

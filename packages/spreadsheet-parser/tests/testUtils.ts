@@ -117,13 +117,3 @@ export const assertConsistentDefinedState = (
   if (isNotUndefined(second))
     assert(false, `WS:${worksheetName}: \n` + secondDefinedButNotFirstMsg)
 }
-
-
-
-
-
-
-
-
-
-

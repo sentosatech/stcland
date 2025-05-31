@@ -1,6 +1,6 @@
 {
   "name": "@stcland/arango",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "description": "Arango DB utilities",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,7 +29,7 @@
     "@stcland/errors": "workspace:^",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
-    "arangojs": "^9.0.0",
+    "arangojs": "^10.1.1",
     "path-exists": "^5.0.0",
     "ramda": "^0.29.1",
     "ramda-adjunct": "^4.1.1",
