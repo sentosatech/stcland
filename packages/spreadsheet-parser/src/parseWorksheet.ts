@@ -31,7 +31,7 @@ import {
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
   isNotValidDataTableDataType, isRowValueListType,
   shouldSkipDataCollectionRow,
-  shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter,
+  shouldSkipDataTableValue, getBaseDataType, getDataType, rowIsDelimiter,
   isReferencedDataType, getReferencedDataType, getReferencedData,
   isLinkedDataType, getLinkedDataRef,
   cellWarning
@@ -170,7 +170,7 @@ const parseDataTable: ParseDataTable = (
         worksheetName, rowNumber: startingRowNum+2, colNumber: i,
         propName, dataType: dataTypes[i]
       }
-      const dataType = getBaseDataType(dataTypes[i], cellMeta)
+      const dataType = getDataType(dataTypes[i], cellMeta)
       return { ...acc, [propName]: dataType }
     }, {})
   }
@@ -411,7 +411,7 @@ export const parseRowValueList = (
   if (isNil(rowValuesList))
     return [dataCellWarning('Row value list is undefined', dataCellMeta, parseOpts)]
 
-  const baseDataType = getBaseDataType(dataType, dataCellMeta)
+  const baseDataType = getBaseDataType(dataType)
   if (baseDataType === 'invalid-data-type') return [
     dataCellWarning(
       `Invalid data type for row value list: '${dataType}'`,

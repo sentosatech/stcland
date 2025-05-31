@@ -229,13 +229,21 @@ export const getRowValueListBaseType = (
 
 export const getBaseDataType = (
   dataType: DataType,
+): DataType | InvalidTypeWarning =>
+  isValidRowValueListType(dataType) ? getRowValueListBaseType(dataType) :
+  isValidDataTableDataType(dataType) ? dataType :
+  'invalid-data-type'
+
+export const getDataType = (
+  dataType: DataType,
   cellMeta: CellMeta
 ): DataType | InvalidTypeWarning =>
   isReferencedDataType(dataType) ? getReferencedDataType(dataType, cellMeta) :
   isLinkedDataType(dataType) ? getLinkidDataType(dataType, cellMeta) :
-  isValidRowValueListType(dataType) ? getRowValueListBaseType(dataType) :
+  isValidRowValueListType(dataType) ? dataType :
   isValidDataTableDataType(dataType) ? dataType :
   'invalid-data-type'
+
 
 export const getCellError = (cellValue: CellValue): string =>
   cellValueHasError(cellValue) ? (cellValue as any).error : ''
