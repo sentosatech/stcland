@@ -42,10 +42,10 @@ export interface ParseOptions {
 //--- data types --------------------------------------------------------------
 
 export type DataTableDataType =
-'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid' | 'uuid:ref'
+'string' | 'number' | 'boolean' | 'date' | 'password' | 'json' | 'uuid' | 'uuid:ref' | 'uuid:link'
 
 export const validDataTableDataTypes: DataTableDataType[] = [
-  'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid', 'uuid:ref'
+  'string', 'number', 'boolean', 'date', 'password', 'json', 'uuid', 'uuid:ref', 'uuid:link'
 ]
 
 export type RowValueListType =

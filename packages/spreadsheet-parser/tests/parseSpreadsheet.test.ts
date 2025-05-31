@@ -100,6 +100,7 @@ const assertParsedWorksheet = async (
     metaTypeMap: parsedMetaTypeMap
   } = parsedWorksheet
 
+  console.log('parsedDataTypeMap: ', parsedDataTypeMap)
   console.log('parsedData: ', parsedData)
 
   expect(worksheetName).toEqual(expectedSheetName)

@@ -33,6 +33,7 @@ import {
   shouldSkipDataCollectionRow,
   shouldSkipDataTableValue, getBaseDataType, rowIsDelimiter,
   isReferencedDataType, getReferencedDataType, getReferencedData,
+  isLinkedDataType, getLinkedDataRef,
   cellWarning
 } from './spreadsheetParseUtils'
 
@@ -169,9 +170,7 @@ const parseDataTable: ParseDataTable = (
         worksheetName, rowNumber: startingRowNum+2, colNumber: i,
         propName, dataType: dataTypes[i]
       }
-      const dataType = isReferencedDataType(dataTypes[i])
-        ? getReferencedDataType(dataTypes[i], cellMeta)
-        : dataTypes[i]
+      const dataType = getBaseDataType(dataTypes[i], cellMeta)
       return { ...acc, [propName]: dataType }
     }, {})
   }
@@ -237,6 +236,26 @@ const parseTableDataRow = (
       }
       if (!referencedData[worksheetName]) referencedData[worksheetName] = {}
       referencedData[worksheetName][referencedDataKey] = dataValue
+    }
+    else if (isLinkedDataType(dataType)) {
+      const {
+        linkedDataSheetName, linkedDataRefKey
+      } = getLinkedDataRef(propValue, dataCellMeta)
+
+      if (!referencedData[linkedDataSheetName]) {
+        throw new Error(cellWarning(
+          `Linked data sheet '${linkedDataSheetName}' not found in referenced data`,
+          dataCellMeta
+        ))
+      }
+
+      if( !referencedData[linkedDataSheetName][linkedDataRefKey]) {
+        throw new Error(cellWarning(
+          `Linked data key '${linkedDataSheetName}:${linkedDataRefKey}' not found in sheet '${linkedDataSheetName}'`,
+          dataCellMeta
+        ))
+      }
+      dataValue = referencedData[linkedDataSheetName][linkedDataRefKey]
     }
     else {
       dataValue = parseDataCell(dataType, propValue, dataCellMeta, parseOpts)
@@ -392,7 +411,7 @@ export const parseRowValueList = (
   if (isNil(rowValuesList))
     return [dataCellWarning('Row value list is undefined', dataCellMeta, parseOpts)]
 
-  const baseDataType = getBaseDataType(dataType)
+  const baseDataType = getBaseDataType(dataType, dataCellMeta)
   if (baseDataType === 'invalid-data-type') return [
     dataCellWarning(
       `Invalid data type for row value list: '${dataType}'`,

@@ -156,12 +156,12 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
     },
     dataTypeMap: {
       name: 'string',
-      linkedUuid: 'string',
+      linkedUuid: 'uuid',
     },
     data: [
-      { name: 'ref To Uuid 1', linkedUuid: 'UuidsToRef.u1' },
-      { name: 'ref To Uuid 2', linkedUuid: 'UuidsToRef.u2' },
-      { name: 'ref To Uuid 3', linkedUuid: 'UuidsToRef.u3' }
+      { name: 'ref To Uuid 1', linkedUuid: [] },
+      { name: 'ref To Uuid 2', linkedUuid: [] },
+      { name: 'ref To Uuid 3', linkedUuid: [] }
     ],
   },
   FormulaAndRefParsing: {
