@@ -124,6 +124,46 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       }
     ],
   },
+  UuidsRefs: {
+    worksheetName: 'UuidsRefs',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this sheet will be auto generated and then referenced as appropraite from other sheets',
+    },
+    dataTypeMap: {
+      uuid: 'uuid',
+      name: 'string',
+    },
+    data: [
+      { uuid: [], name: 'uuid1' },
+      { uuid: [], name: 'uuid2' },
+      { uuid: [], name: 'uuid3' }
+    ],
+  },
+  UuidLinks: {
+    worksheetName: 'UuidLinks',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this will reference uuids that were auto generated in the UuidRefs sheet',
+    },
+    dataTypeMap: {
+      name: 'string',
+      linkedUuid: 'uuid',
+    },
+    data: [
+      { name: 'ref To Uuid 1', linkedUuid: [] },
+      { name: 'ref To Uuid 2', linkedUuid: [] },
+      { name: 'ref To Uuid 3', linkedUuid: [] }
+    ],
+  },
   FormulaAndRefParsing: {
     worksheetName: 'FormulaAndRefParsing',
     dataLayout: 'dataTable',
@@ -168,7 +208,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         expectAllErrors: true,
         key: 'errors',
         divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
-        badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
+        badRefProp: 'Invalid number: Invalid Date -> WS:ErrorCasesParsing, Row:7 Col:C',
         badStringList: ['Invalid data type for table data: \'string:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:D'],
         badBoolList: ['Invalid data type for table data: \'boolean:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:E'],
         badUuidList: ['Invalid data type for table data: \'uuid:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:F'],
