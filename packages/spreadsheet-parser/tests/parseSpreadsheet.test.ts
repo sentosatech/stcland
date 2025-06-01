@@ -76,6 +76,8 @@ const assertParsedWorksheet = async (
   const { worksheetName } = parsedWorksheet
   const expectedParsedWorksheet = expectedSpreadsheetResults[worksheetName]
 
+  console.log('parsedWorksheet', JSON.stringify(parsedWorksheet, null, 2))
+
   if (!expectedParsedWorksheet) {
     console.log(`    No expected data for worksheet: ${worksheetName} (skipping)`)
     return true
