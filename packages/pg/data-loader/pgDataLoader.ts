@@ -63,12 +63,12 @@ export const loadWorksheetData: LoadWorksheetData = async (
   clientData,
 ) => {
 
-  const {
-    data, worksheetName,
-  } = parsedWorksheet
+  // const {
+  //   data, worksheetName,
+  // } = parsedWorksheet
 
-  console.log(`\n\nWorksheet ${worksheetName}`)
-  console.log('data', JSON.stringify(data, null, 2))
+  // console.log(`\n\nWorksheet ${worksheetName}`)
+  // console.log('data', JSON.stringify(data, null, 2))
 
 
   // // it is possible to have no data for front matter only worksheets

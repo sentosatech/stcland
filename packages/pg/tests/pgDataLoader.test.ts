@@ -57,7 +57,7 @@ describe('Test @stcland/pg/spreadsheet-loader', async () => {
     // const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'
     const opts = {
       // dbUsers, ifTargetDbDoesNotExist,
-      reportWarnings: true, reportProgress: true
+      reportWarnings: true, reportProgress: false
     }
 
     // const results =

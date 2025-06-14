@@ -1,7 +1,7 @@
-import type { Sql } from 'postgres'
+import type { Sql as SqlDb } from 'postgres'
 
 // re-export postgres types so clients can use directly
-export type { Sql as SqlDb }
+export type { SqlDb }
 
 
 export const enum PostgresRolePrivilege {
@@ -36,22 +36,75 @@ export interface PgHostConfig {
 export type GetSysDb = (
   hostConfig: PgHostConfig,
   getSysDbOpts?: { checkConnection: boolean }
-) => Promise<Sql>
+) => Promise<SqlDb>
 
 export type CanConnectToServer = (hostConfig: PgHostConfig) => Promise<boolean>
 export type CanNotConnectToServer = (hostConfig: PgHostConfig) => Promise<boolean>
 
 // --- DB utils ----------------------------------------------------------------
 
-export type DbIsConnected = (db: Sql) => Promise<boolean>
-export type DbIsNotConnected = (db: Sql) => Promise<boolean>
+export type DbIsConnected = (db: SqlDb) => Promise<boolean>
+export type DbIsNotConnected = (db: SqlDb) => Promise<boolean>
 
-export type IsSysDb = (db: Sql) => Promise<boolean>
-export type IsNotSysDb = (db: Sql) => Promise<boolean>
+export type IsSysDb = (db: SqlDb) => Promise<boolean>
+export type IsNotSysDb = (db: SqlDb) => Promise<boolean>
 
 export type DbExists = {
   (hostConfig: PgHostConfig, dbName: string): Promise<boolean>;
-  (sysDb: Sql, dbName: string): Promise<boolean>;
+  (sysDb: SqlDb, dbName: string): Promise<boolean>;
 }
 
 export type DbDoesNotExist = DbExists
+
+export type DropDb = {
+  (hostConfig: PgHostConfig, dbName: string): Promise<boolean>;
+  (sysDb: SqlDb, dbName: string): Promise<boolean>;
+}
+
+export type GetDbName = (db: SqlDb) => Promise<string>
+
+// --- Table utils ----------------------------------------------------------------
+
+export type TableExists = {
+  (db: SqlDb, tableName: string, schema?: string): Promise<boolean>;
+}
+
+export type TableDoesNotExist = TableExists
+
+export type OnNonExistentTable = 'ThrowError' | 'Silent' | 'Warning'
+
+export type DropTableOptions = {
+  onNonExistentTable ?: OnNonExistentTable // defaults to false
+  schema?: string // defaults to 'public'
+}
+
+export type DropTable = (
+  db: SqlDb,
+  tableName: string,
+  options?: DropTableOptions
+) => Promise<boolean>
+
+// --- DB creation ------------------------------------------------------------
+
+export type IfDbExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
+
+
+export interface CreateDbOptions {
+  ifDbExists?: IfDbExistsOnCreate
+}
+
+export type CreateDb = {
+  (hostConfig: PgHostConfig, dbName: string, options?: CreateDbOptions): Promise<boolean>;
+  (sysDb: SqlDb, dbName: string, options?: CreateDbOptions): Promise<boolean>;
+}
+
+export interface CreateDbFromSqlScriptOptions extends CreateDbOptions{
+  scriptSource?: 'filePath' | 'string' // defaults to 'string'
+}
+
+export type CreateDbFromSqlScript = (
+  hostConfig: PgHostConfig,
+  dbName: string,
+  sqlScript: string,
+  options?: CreateDbFromSqlScriptOptions
+) => Promise<SqlDb>
