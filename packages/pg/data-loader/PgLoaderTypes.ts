@@ -6,12 +6,13 @@ import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-par
 // import type {
 // } from '../utils/ArangoUtilsTypes'
 
-// import type {
-//   IfDbDoesNotExistOnGet,
-//   IfCollectionDoesNotExistOnGet,
-//   ArangoHostConfig,
-//   CreateDatabaseUserOptions
-// } from '../utils/ArangoUtilsTypes'
+import type {
+  PgHostConfig, ScriptScource,
+  // IfDbDoesNotExistOnGet,
+  // IfCollectionDoesNotExistOnGet,
+  // ArangoHostConfig,
+  // CreateDatabaseUserOptions
+} from '../utils/PgUtilsTypes'
 
 
 // import { CollectionType } from '../utils'
@@ -23,7 +24,7 @@ import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-par
 // export type IfTargetCollectionDoesNotExist = IfCollectionDoesNotExistOnGet
 
 export type LoadSpreadsheetDataOpts =
-  Pick<ParseOptions, 'reportProgress' | 'reportWarnings'>
+  Pick<ParseOptions, 'reportProgress' | 'reportWarnings' | 'includeDataTypeMaps'>
 
 // export interface LoadSpreadsheetDataOpts extends
 //   Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
@@ -35,13 +36,19 @@ export type LoadSpreadsheetDataOpts =
 // }
 
 export interface LoadSpreadsheetDataResult {
-  numDocsLaoaded: Record<string, number> // { collectionName: numDocsLoaded }
-  numGraphsCreated: number
+  numRecordsLaoaded: Record<string, number> // { tableName: numRecprdsLoaded }
+}
+
+export interface PgLoadSpreadsheetDataOpts extends LoadSpreadsheetDataOpts {
+  sqlScript?: string // sql scropt to be executed prior to loading the data
+  scriptSource?: ScriptScource
 }
 
 export type LoadSpreadsheetData = (
   excelFilePath: string,
-  dataLoadOpts?: LoadSpreadsheetDataOpts
+  pgHostConfig: PgHostConfig,
+  dbName: string,
+  dataLoadOpts?: PgLoadSpreadsheetDataOpts
 // ) => Promise<LoadSpreadsheetDataResult>;
 ) => Promise<any>; // TODO: figure out how to get LoadSpreadsheetDataResult when working with forEachSheet
 

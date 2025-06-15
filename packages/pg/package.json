@@ -46,6 +46,7 @@
     "clean": "rimraf ./dist",
     "clean:all": "pnpm run clean && rimraf ./node_modules pnpm-lock.yaml",
     "test": "vitest --run",
+    "test:loader": "vitest --run pgDataLoader.test.ts",
     "pg:up": "docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=pw postgres:17",
     "pg:down": "docker stop postgres && docker rm postgres",
     "pg:terminal": "docker exec -it postgres sh",

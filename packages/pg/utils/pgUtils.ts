@@ -10,7 +10,7 @@ import type {
   CanConnectToServer, CanNotConnectToServer,
   DbIsConnected, DbIsNotConnected, DbExists, DbDoesNotExist,
   IsSysDb, IsNotSysDb, SqlDb, DropDb, GetDbName,
-  CreateDb, CreateDbOptions,
+  CreateDb, CreateDbOptions, GetDbList, GetTableList,
   CreateDbFromSqlScript, CreateDbFromSqlScriptOptions,
   TableExists, TableDoesNotExist, DropTable, DropTableOptions,
 } from './PgUtilsTypes'
@@ -251,6 +251,28 @@ export const getDbName : GetDbName = async (db: SqlDb): Promise<string> => {
   }
 }
 
+export const getDbList: GetDbList = async (
+  sysDbOrHostConfig: SqlDb | PgHostConfig
+): Promise<string[]> => {
+  const sysDb = await getSysDbFromVarious(sysDbOrHostConfig)
+  const shouldCloseConnection = isHostConfig(sysDbOrHostConfig)
+
+  try {
+    const result = await sysDb`
+      SELECT datname as name
+      FROM pg_database
+      WHERE datallowconn = true
+      ORDER BY datname
+    `
+    return result.map(row => row.name)
+
+  } finally {
+    if (shouldCloseConnection) await sysDb.end()
+  }
+}
+
+
+
 // --- Table Utils -------------------------------------------------------------
 
 export const tableExists: TableExists = async (
@@ -310,6 +332,38 @@ export const dropTable: DropTable = async (
     console.error(`dropTable(): Failed to drop table '${tableName}':`, error)
     return false
   }}
+
+export const getTableList: GetTableList = async (
+  db: SqlDb,
+  schema?: string
+): Promise<string[]> => {
+  try {
+    if (schema) {
+      // Get tables from specific schema
+      const result = await db`
+        SELECT table_name as name
+        FROM information_schema.tables
+        WHERE table_schema = ${schema} AND table_type = 'BASE TABLE'
+        ORDER BY table_name
+      `
+      return result.map(row => row.name)
+    } else {
+      // Get tables from user schemas only (exclude system schemas)
+      const result = await db`
+        SELECT table_name as name
+        FROM information_schema.tables
+        WHERE table_type = 'BASE TABLE'
+        AND table_schema NOT IN ('information_schema', 'pg_catalog', 'pg_toast')
+        AND table_schema NOT LIKE 'pg_temp_%'
+        AND table_schema NOT LIKE 'pg_toast_temp_%'
+        ORDER BY table_name
+      `
+      return result.map(row => row.name)
+    }
+  } catch (error) {
+    return []
+  }
+}
 
 // --- Helper functions -------------------------------------------------------
 

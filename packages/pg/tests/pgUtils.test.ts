@@ -14,9 +14,9 @@ import {
   type CreateDbFromSqlScriptOptions,
   getSysDb, isDbInstance, isHostConfig,
   canConnectToServer, canNotConnectToServer,
-  dbIsConnected, dbIsNotConnected, isSysDb, isNotSysDb,
+  dbIsConnected, dbIsNotConnected, isSysDb, isNotSysDb, getDbList,
   dbExists, dbDoesNotExist, createDb, dropDb, createDbFromSqlScript,
-  tableExists, tableDoesNotExist, dropTable
+  tableExists, tableDoesNotExist, dropTable, getTableList,
 } from '../utils'
 
 const hostConfig: PgHostConfig = {
@@ -34,10 +34,8 @@ const invalidHostConfig: PgHostConfig = {
   password: 'pw',
 }
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const sqlScriptPath = path.join(__dirname, 'test-pg-data.sql')
-
+const cwd = path.dirname(fileURLToPath(import.meta.url))
+const sqlScriptPath = path.join(cwd, 'test-pg-data.sql')
 
 let sysDb: SqlDb
 
@@ -311,24 +309,55 @@ describe('Test @stcland/postgres/utils', async () => {
       expect(await tableExists(targetDb, 'hands_players', 'public')).toBe(false)
       expect(await tableExists(targetDb, 'hand_actions', 'public')).toBe(false)
 
-
-
     } finally {
       // Always close connection if it was created
       if (targetDb) {
         await targetDb.end()
       }
 
-    // Always clean up database
+      // Always clean up database
       await dropDb(hostConfig, dbName)
     }
   })
 
+  test('getDbList - lists all databases', async () => {
+  // Test with sysDb instance
+    const databasesFromSysDb = await getDbList(sysDb)
+    expect(Array.isArray(databasesFromSysDb)).toBe(true)
+    expect(databasesFromSysDb.length).toBeGreaterThan(0)
+
+  // Should include system databases
+    expect(databasesFromSysDb).toContain('postgres')
+
+  // Test with host config
+    const databasesFromHostConfig = await getDbList(hostConfig)
+    expect(Array.isArray(databasesFromHostConfig)).toBe(true)
+
+    // Both methods should return the same results
+    expect(databasesFromSysDb.sort()).toEqual(databasesFromHostConfig.sort())
+
+    // Create a test database and verify it appears in the list
+    const testDbName = 'test_list_databases'
+    if (await dbExists(sysDb, testDbName)) {
+      await dropDb(sysDb, testDbName)
+    }
+
+    await createDb(sysDb, testDbName)
+
+    try {
+      const updatedList = await getDbList(sysDb)
+      expect(updatedList).toContain(testDbName)
+      expect(updatedList.length).toBe(databasesFromSysDb.length + 1)
+
+    } finally {
+      await dropDb(sysDb, testDbName)
+    }
+  })
 
   test('tableExists - verifies table existence with schema support', async () => {
     const dbName = 'test_table_exists'
 
-  // Clean up if exists
+    // Clean up if exists
     if (await dbExists(sysDb, dbName)) {
       await dropDb(sysDb, dbName)
     }
@@ -490,6 +519,59 @@ describe('Test @stcland/postgres/utils', async () => {
           onNonExistentTable: 'ThrowError'
         })
       ).rejects.toThrow()
+
+    } finally {
+      await targetDb.end()
+      await dropDb(hostConfig, dbName)
+    }
+  })
+
+  test('getTableList - lists tables with and without schema', async () => {
+    const dbName = 'test_get_table_list'
+
+  // Clean up if exists
+    if (await dbExists(sysDb, dbName)) {
+      await dropDb(sysDb, dbName)
+    }
+
+    const testSql = `
+    CREATE TABLE users (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100)
+    );
+
+    CREATE SCHEMA test_schema;
+
+    CREATE TABLE test_schema.products (
+      id SERIAL PRIMARY KEY,
+      title VARCHAR(100)
+    );
+  `
+
+    const targetDb = await createDbFromSqlScript(hostConfig, dbName, testSql)
+
+    try {
+      // Test getting all tables (no schema specified)
+      const allTables = await getTableList(targetDb)
+      expect(allTables).toContain('users')
+      expect(allTables).toContain('products')
+      expect(allTables.length).toBe(2)
+
+      // Test getting tables from specific schema
+      const publicTables = await getTableList(targetDb, 'public')
+      expect(publicTables).toContain('users')
+      expect(publicTables).not.toContain('products')
+      expect(publicTables.length).toBe(1)
+
+
+      const testSchemaTables = await getTableList(targetDb, 'test_schema')
+      expect(testSchemaTables).toContain('products')
+      expect(testSchemaTables).not.toContain('users')
+
+      // Test non-existent schema
+      const nonExistentSchemaTables = await getTableList(targetDb, 'nonexistent_schema')
+      expect(nonExistentSchemaTables).toEqual([])
+      expect(testSchemaTables.length).toBe(1)
 
     } finally {
       await targetDb.end()

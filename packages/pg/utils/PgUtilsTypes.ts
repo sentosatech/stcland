@@ -63,6 +63,11 @@ export type DropDb = {
 
 export type GetDbName = (db: SqlDb) => Promise<string>
 
+export type GetDbList = {
+  (hostConfig: PgHostConfig): Promise<string[]>;
+  (sysDb: SqlDb): Promise<string[]>;
+}
+
 // --- Table utils ----------------------------------------------------------------
 
 export type TableExists = {
@@ -84,6 +89,11 @@ export type DropTable = (
   options?: DropTableOptions
 ) => Promise<boolean>
 
+export type GetTableList = (
+  db: SqlDb,
+  schema?: string
+) => Promise<string[]>
+
 // --- DB creation ------------------------------------------------------------
 
 export type IfDbExistsOnCreate = 'ThrowError' | 'Overwrite' | 'ReturnExisting'
@@ -98,8 +108,10 @@ export type CreateDb = {
   (sysDb: SqlDb, dbName: string, options?: CreateDbOptions): Promise<boolean>;
 }
 
+export type ScriptScource = 'filePath' | 'string'
+
 export interface CreateDbFromSqlScriptOptions extends CreateDbOptions{
-  scriptSource?: 'filePath' | 'string' // defaults to 'string'
+  scriptSource: ScriptScource
 }
 
 export type CreateDbFromSqlScript = (
