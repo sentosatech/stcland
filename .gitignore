@@ -6,6 +6,10 @@ build
 dist
 .env-production
 
+# spreadsheet recovery files
+~$*.xlsx
+~$*.xls
+
 # misc
 .DS_Store
 *.pem

@@ -54,7 +54,7 @@ describe('Test Spreadsheet Parser', () => {
   test('forEach worksheet', async () => {
 
     const parseOpts: ParseOptions = {
-      reportProgress: true,
+      reportProgress: false,
       reportWarnings: false,
       includeDataTypeMaps: true
     }
@@ -75,8 +75,6 @@ const assertParsedWorksheet = async (
 
   const { worksheetName } = parsedWorksheet
   const expectedParsedWorksheet = expectedSpreadsheetResults[worksheetName]
-
-  console.log('parsedWorksheet', JSON.stringify(parsedWorksheet, null, 2))
 
   if (!expectedParsedWorksheet) {
     console.log(`    No expected data for worksheet: ${worksheetName} (skipping)`)

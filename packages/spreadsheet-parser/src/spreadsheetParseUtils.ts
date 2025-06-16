@@ -529,6 +529,13 @@ export const shouldSkipDataCollectionRow = (rowValues: CellValue[]) =>
 export const shouldSkipDataTableValue = (callValue: CellValue) =>
   callValue?.toString().trim() === '_skip_'
 
+
+export const isNullValueInCollectionRow = (rowValues: CellValue[]) =>
+  rowValues[2]?.toString().trim() === '_null_'
+
+export const isNullDataTableValue = (callValue: CellValue) =>
+  callValue?.toString().trim() === '_null_'
+
 // currently supports A-BZ
 export const colNumToTextMap: { [key: number]: string } = {
   0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J',

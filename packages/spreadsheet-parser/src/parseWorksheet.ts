@@ -30,7 +30,7 @@ import {
   dataCellWarning, parserWarning, cellValueHasError, getCellError, rowWarning,
   isEmptyCell, colNumToText, doesNotHaveFrontMatter,
   isNotValidDataTableDataType, isRowValueListType,
-  shouldSkipDataCollectionRow,
+  shouldSkipDataCollectionRow, isNullValueInCollectionRow, isNullDataTableValue,
   shouldSkipDataTableValue, getBaseDataType, getDataType, rowIsDelimiter,
   isReferencedDataType, getReferencedDataType, getReferencedData,
   isLinkedDataType, getLinkedDataRef,
@@ -217,6 +217,9 @@ const parseTableDataRow = (
     if (shouldSkipDataTableValue(propValue))
       return accData
 
+    if (isNullDataTableValue(propValue))
+      return { ...accData, [propName]: null }
+
     let dataValue: any
     if (isReferencedDataType(dataType)) {
 
@@ -367,9 +370,14 @@ export const parseDataCollection: ParseDataCollection = (
 
       if (shouldSkipDataCollectionRow(rowValues)) return // TODO: hmmmmm, make sure this is OK
 
-      propValue = parseDataCell(
-        dataType, rowValues[2], { ...rowMeta, colNumber: 2, propName, dataType }, parseOpts
-      )
+      if(isNullValueInCollectionRow(rowValues)) {
+        propValue = null
+      }
+      else {
+        propValue = parseDataCell(
+          dataType, rowValues[2], { ...rowMeta, colNumber: 2, propName, dataType }, parseOpts
+        )
+      }
     }
 
     curDataEntry = { ...curDataEntry, [propName]: propValue }

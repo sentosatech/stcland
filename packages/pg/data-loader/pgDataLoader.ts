@@ -40,7 +40,6 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   // excelFilePath, arangoHostConfig, dbName, dataLoadOpts = {}
 
 ) => {
-
   const { sqlScript, scriptSource } = dataLoadOpts
   // const dbList = await getDbList(pgHostConfig)
   // console.log('dbList: ', dbList)
@@ -65,7 +64,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   // TEMP: just dropping for new while I am tinkering
 
 
-  // TODO: should i Just be using the incoming opts directly?
+    // TODO: should i Just be using the incoming opts directly?
   const opts: CreateDbFromSqlScriptOptions = {
     ifDbExists: 'Overwrite',
     scriptSource: scriptSource || 'string',
@@ -126,11 +125,18 @@ export const loadWorksheetData: LoadWorksheetData = async (
     return
   }
 
+  let tempInsert = data
+
+  if (tableName === 'players') {
+    tempInsert = data.map((row) => row.user_id ? row : { ...row, user_id: null  })
+  }
+
+  console.log('tableName: ', tempInsert)
 
   const fullTableName = `core.${tableName}`
   try {
     const result = await sqlDb`
-      INSERT INTO ${sqlDb(fullTableName)} ${sqlDb(data)}
+      INSERT INTO ${sqlDb(fullTableName)} ${sqlDb(tempInsert)}
     `
     console.log('result: ', result)
   } catch (error) {

@@ -7,7 +7,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   BasicParsing: {
     worksheetName: 'BasicParsing',
     dataLayout: 'dataTable',
-    numDataEntriesParsed: 10,
+    numDataEntriesParsed: 11,
     metaTypeMap: {
       name: 'string',
       someNumber: 'number',
@@ -103,6 +103,17 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         uuidProp: []
       },
       {
+        expectAllUndefined: false,
+        key: 'someNulls',
+        numProp: 1,
+        stringProp: null,
+        boolProp: true,
+        dateProp: null,
+        passwordHash: 'hola', // pre-hash
+        jsonProp: 'all in',
+        uuidProp: null
+      },
+      {
         expectAllUndefined: true,
         key: 'empty',
         numProp: undefined,
@@ -116,11 +127,11 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       {
         expectAllErrors: true,
         key: 'invalid',
-        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:18 Col:B',
-        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:18 Col:D',
-        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:18 Col:E',
-        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:18 Col:G',
-        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:18 Col:H'
+        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:19 Col:B',
+        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:19 Col:D',
+        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:19 Col:E',
+        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:19 Col:G',
+        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:19 Col:H'
       }
     ],
   },
