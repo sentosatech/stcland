@@ -1,5 +1,6 @@
 import postgres from 'postgres'
 import { complement } from 'ramda'
+import { isArray } from 'ramda-adjunct'
 
 import {
   asyncComplement, readTextFile,
@@ -52,6 +53,24 @@ export const getSysDb: GetSysDb = async (
     }
   }
   return sysDb
+}
+
+export const conditionValueForSql = (value: any) => {
+  // postgres expects arrays to be formatted as PostgreSQL array literals
+  // e.g. '{value1,value2,value3}'
+  if (isArray(value)) {
+    const formattedValues = value.map(item => {
+      if (typeof item === 'object' && item !== null) {
+        return JSON.stringify(item)
+      } else if (typeof item === 'string') {
+        // Escape quotes in strings for PostgreSQL
+        return `"${item.replace(/"/g, '\\"')}"`
+      }
+      return item
+    })
+    return `{${formattedValues.join(',')}}`
+  }
+  return value
 }
 
 // --- Database Creation ---------------------------------------------------------

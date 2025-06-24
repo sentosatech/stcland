@@ -1,5 +1,40 @@
 CREATE SCHEMA IF NOT EXISTS core;
 
+CREATE TYPE core.HAND_RESULT AS ENUM (
+    'WON',
+    'LOST',
+    'SPLIT'
+);
+
+CREATE TYPE core.TABLE_POSITION AS ENUM (
+    'SB',   -- Small Blind
+    'BB',   -- Big Blind
+    'UTG',  -- Under the Gun
+    'UTG+1', -- Under the Gun +1
+    'UTG+2', -- Under the Gun +2
+    'UTG+3',
+    'LJ',   -- Low Jack
+    'HJ',   -- Hijack
+    'CO',   -- Cutoff
+    'BTN'   -- Button
+);
+
+CREATE TYPE core.CARD AS ENUM (
+  '2h', '2d', '2c', '2s',
+  '3h', '3d', '3c', '3s',
+  '4h', '4d', '4c', '4s',
+  '5h', '5d', '5c', '5s',
+  '6h', '6d', '6c', '6s',
+  '7h', '7d', '7c', '7s',
+  '8h', '8d', '8c', '8s',
+  '9h', '9d', '9c', '9s',
+  'Th', 'Td', 'Tc', 'Ts',
+  'Jh', 'Jd', 'Jc', 'Js',
+  'Qh', 'Qd', 'Qc', 'Qs',
+  'Kh', 'Kd', 'Kc', 'Ks',
+  'Ah', 'Ad', 'Ac', 'As'
+);
+
 CREATE TABLE core.ORGANIZATIONS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(100) NOT NULL,
@@ -46,6 +81,7 @@ CREATE INDEX PLAYERS_USER_ID_IDX ON core.PLAYERS (USER_ID ASC);
 
 CREATE TYPE core.HAND_GROUP_TYPE AS ENUM (
     'SESSION',
+    'FEATURED_PLAYER',
     'HOMEWORK'
 );
 
@@ -66,7 +102,9 @@ CREATE TABLE core.HANDS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hand_group_id UUID,
     hand_number INTEGER NOT NULL, -- Sequential number of the hand in the session (e.g. 1st hand, 2nd hand)
-    dealer_position INTEGER, -- Position of the dealer for this specific hand
+    num_players_seated INTEGER, -- Number of players seated for this hand (some may not be players though)
+    dealer_seat_num INTEGER, -- Seat number of the dealer for this specific hand
+    community_cards core.CARD[] DEFAULT NULL,
     updated_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
     UNIQUE(hand_group_id, hand_number),
@@ -76,40 +114,6 @@ CREATE TABLE core.HANDS (
 );
 
 CREATE INDEX HANDS_HAND_GROUP_ID_IDX ON core.HANDS (HAND_GROUP_ID ASC);
-
-CREATE TYPE core.HAND_RESULT AS ENUM (
-    'WON',
-    'LOST',
-    'SPLIT'
-);
-
-CREATE TYPE core.TABLE_POSITION AS ENUM (
-    'SB',   -- Small Blind
-    'BB',   -- Big Blind
-    'UTG',  -- Under the Gun
-    'UTG+1',
-    'UTG+2',
-    'MP',   -- Middle Position
-    'HJ',   -- Hijack
-    'CO',   -- Cutoff
-    'BTN'   -- Button
-);
-
-CREATE TYPE core.CARD AS ENUM (
-  '2h', '2d', '2c', '2s',
-  '3h', '3d', '3c', '3s',
-  '4h', '4d', '4c', '4s',
-  '5h', '5d', '5c', '5s',
-  '6h', '6d', '6c', '6s',
-  '7h', '7d', '7c', '7s',
-  '8h', '8d', '8c', '8s',
-  '9h', '9d', '9c', '9s',
-  'Th', 'Td', 'Tc', 'Ts',
-  'Jh', 'Jd', 'Jc', 'Js',
-  'Qh', 'Qd', 'Qc', 'Qs',
-  'Kh', 'Kd', 'Kc', 'Ks',
-  'Ah', 'Ad', 'Ac', 'As'
-);
 
 CREATE TABLE core.HANDS_PLAYERS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -152,8 +156,9 @@ CREATE TYPE core.ACTION AS ENUM (
 CREATE TABLE core.HAND_ACTIONS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hand_player_id UUID NOT NULL,
-    action core.ACTION,
     street core.STREET,
+    action core.ACTION,
+    amount NUMERIC(10,2), -- Amount for BET/RAISE actions
     action_sequence INTEGER NOT NULL,
     is_all_in BOOLEAN,
     updated_at TIMESTAMP DEFAULT NOW(),

@@ -15,10 +15,9 @@ import {
   type CreateDbFromSqlScriptOptions,
   createDbFromSqlScript,
   getTableList,
-  tableExists
+  conditionValueForSql,
+  // tableExists
 } from '../utils'
-
-
 
 // import {
 //   validWorksheetTypes
@@ -112,8 +111,6 @@ export const loadWorksheetData: LoadWorksheetData = async (
   const { data, worksheetName  } = parsedWorksheet
 
   const tableName = worksheetName
-  const tableDoesExist = await tableExists(sqlDb, tableName)
-  console.log(`\n ${tableName} tableDoesExist: `, tableDoesExist)
 
   if (isNotArray(data)) {
     console.warn(`loadWorksheetData: Worksheet ${worksheetName} data is not an array`)
@@ -125,20 +122,64 @@ export const loadWorksheetData: LoadWorksheetData = async (
     return
   }
 
-  let tempInsert = data
+  // let tempInsert = data
 
-  if (tableName === 'players') {
-    tempInsert = data.map((row) => row.user_id ? row : { ...row, user_id: null  })
-  }
+  // if (tableName === 'players') {
+  //   tempInsert = data.map((row) => row.user_id ? row : { ...row, user_id: null  })
+  // }
 
-  console.log('tableName: ', tempInsert)
+  // console.log('tableName: ', tempInsert)
+
+  // TODO: check for arrays use postgres array syntax sql.array()
+
+  console.log('tableName: ', tableName)
+  console.log('data: ', data)
+
+  // const conditionValueForSql = (value: any) => isArray(value) ? sqlDb.array(value) : value
+  // const conditionValueForSql = (value: any) => {
+  //   if (isArray(value)) {
+  //     const formattedValues = value.map(item => {
+  //       if (typeof item === 'object' && item !== null) {
+  //         return JSON.stringify(item)
+  //       } else if (typeof item === 'string') {
+  //       // Escape quotes in strings for PostgreSQL
+  //         return `"${item.replace(/"/g, '\\"')}"`
+  //       }
+  //       return item
+  //     })
+  //     return `{${formattedValues.join(',')}}`
+  //   }
+  //   return value
+  // }
+
+
+  // const conditionValueForSql = (value: any) => {
+  //   // postgres SQL can not accept arrays directly in the insert statement
+  //   if (isArray(value)) {
+  //     if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {
+  //       const stringifiedValues = value.map(v => JSON.stringify(v))
+  //       return `{${stringifiedValues.join(',')}}`
+  //     } else {
+  //       return `{${value.join(',')}}`
+  //     }
+  //   }
+  //   return value
+  // }
+
+  const conditionedData = data.map((row) => {
+    const conditionedRow: Record<string, any> = {}
+    for (const [key, value] of Object.entries(row)) {
+      conditionedRow[key] = conditionValueForSql(value)
+    }
+    return conditionedRow
+  })
+
 
   const fullTableName = `core.${tableName}`
   try {
-    const result = await sqlDb`
-      INSERT INTO ${sqlDb(fullTableName)} ${sqlDb(tempInsert)}
+    await sqlDb`
+      INSERT INTO ${sqlDb(fullTableName)} ${sqlDb(conditionedData)}
     `
-    console.log('result: ', result)
   } catch (error) {
     console.error(`Error inserting into ${worksheetName}:`, error)
     throw error
