@@ -1,27 +1,21 @@
 import { isNotArray } from 'ramda-adjunct'
-// import { isNil } from 'ramda'
-// import { pathExists } from 'path-exists'
+import { pathExists } from 'path-exists'
 
-// import { throwIf } from '@stcland/errors'
 // import { toJson } from '@stcland/utils'
 
 import {
-  // type DataTableData, type DataCollectionData,
   forEachSheet
 } from '@stcland/spreadsheet-parser'
 
 
 import {
   type CreateDbFromSqlScriptOptions,
+  type DbCreationResult,
   createDbFromSqlScript,
-  getTableList,
+  canConnectToServer,
+  createDb,
   conditionValueForSql,
-  // tableExists
 } from '../utils'
-
-// import {
-//   validWorksheetTypes
-// } from './PgLoaderTypes'
 
 import type {
   LoadWorksheetData, LoadSpreadsheetData,
@@ -36,65 +30,44 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
   pgHostConfig,
   dbName,
   dataLoadOpts = {}
-  // excelFilePath, arangoHostConfig, dbName, dataLoadOpts = {}
-
 ) => {
-  const { sqlScript, scriptSource } = dataLoadOpts
-  // const dbList = await getDbList(pgHostConfig)
-  // console.log('dbList: ', dbList)
+  const { sqlScript, scriptSource, ifTargetDBExists = 'Append' } = dataLoadOpts
 
-  // const dbDoesExist = await dbExists(pgHostConfig, dbName  )
-  // console.log('dbDoesExist: ', dbDoesExist)
+  // first, lets make sure the spreadsheet actually exists
+  const spreadsheetExists = await pathExists(excelFilePath)
+  if (!spreadsheetExists)
+    throw new Error(`Postgres spreadsheet loader: Spreadsheet file not found: ${excelFilePath}`)
 
-// export const createDbFromSqlScript : CreateDbFromSqlScript = async (
-//   hostConfig: PgHostConfig,
-//   dbName: string,
-//   sqlScript: string,
-//   options?: CreateDbFromSqlScriptOptions
-// ): Promise<SqlDb> => {
-
-  // TODO: For now assume script exists, will make more flexible in a bit
-
-  // const options: CreateDbFromSqlScriptOptions = {
-  //     ifDbExists: 'ThrowError',
-  //     scriptSource: 'filePath',
-  //   }
-
-  // TEMP: just dropping for new while I am tinkering
-
-
-    // TODO: should i Just be using the incoming opts directly?
-  const opts: CreateDbFromSqlScriptOptions = {
-    ifDbExists: 'Overwrite',
-    scriptSource: scriptSource || 'string',
+  // lets make sure that we can connect to the arango host
+  const canConnect = await canConnectToServer(pgHostConfig)
+  if (!canConnect) {
+    const hostInfo = `${pgHostConfig.host}:${pgHostConfig.port}`
+    throw new Error(`Postgres spreadsheet loader: Cannot connect to postgres host: ${hostInfo}`)
   }
 
-  const sqlDb = await createDbFromSqlScript(
-    pgHostConfig, dbName, sqlScript || '',  opts
-  )
+  const ifDbExistsAction =
+      ifTargetDBExists === 'Append' ? 'ReturnExisting' : ifTargetDBExists
 
-  const tableList = await getTableList(sqlDb)
-  console.log('tableList: ', tableList)
+  let dbCreationResult: DbCreationResult | undefined
+  if (sqlScript && scriptSource ) {
 
-  // const { users = [] } = dataLoadOpts
-  // const ifDbDoesNotExist: IfDbDoesNotExistOnGet =
-  //   dataLoadOpts?.ifTargetDbDoesNotExist || 'Create'
+    const opts: CreateDbFromSqlScriptOptions = {
+      ifDbExists: ifDbExistsAction,
+      scriptSource: scriptSource || 'string',
+    }
 
-  // // Lets make sure the file actually exists
-  // const spreadsheetExists = await pathExists(excelFilePath)
-  // if (!spreadsheetExists)
-  //   throw new Error(`Arango spreadsheet loader: Spreadsheet file not found: ${excelFilePath}`)
+    dbCreationResult = await createDbFromSqlScript(
+      pgHostConfig, dbName, sqlScript || '',  opts
+    )
+  }
+  else {
+    dbCreationResult = await createDb(
+      pgHostConfig, dbName, { ifDbExists: ifDbExistsAction }
+    )
+  }
 
-  // // lets make sure that we can connect to the arango host
-  // const canConnect = await canConnectToServer(arangoHostConfig)
-  // if (!canConnect)
-  //   throw new Error(`Arango spreadsheet loader: Cannot connect to Arango host: ${arangoHostConfig.url}`)
+  const clientData = { sqlDb: dbCreationResult.sqlDb }
 
-  // const db = await getDb(arangoHostConfig, dbName, { ifDbDoesNotExist, users })
-
-  const clientData = { sqlDb }
-
-  // OK, loop through the worksheets and load the data appropriratly
   await forEachSheet(loadWorksheetData, excelFilePath, clientData, dataLoadOpts)
 
   return 0
@@ -122,50 +95,6 @@ export const loadWorksheetData: LoadWorksheetData = async (
     return
   }
 
-  // let tempInsert = data
-
-  // if (tableName === 'players') {
-  //   tempInsert = data.map((row) => row.user_id ? row : { ...row, user_id: null  })
-  // }
-
-  // console.log('tableName: ', tempInsert)
-
-  // TODO: check for arrays use postgres array syntax sql.array()
-
-  console.log('tableName: ', tableName)
-  console.log('data: ', data)
-
-  // const conditionValueForSql = (value: any) => isArray(value) ? sqlDb.array(value) : value
-  // const conditionValueForSql = (value: any) => {
-  //   if (isArray(value)) {
-  //     const formattedValues = value.map(item => {
-  //       if (typeof item === 'object' && item !== null) {
-  //         return JSON.stringify(item)
-  //       } else if (typeof item === 'string') {
-  //       // Escape quotes in strings for PostgreSQL
-  //         return `"${item.replace(/"/g, '\\"')}"`
-  //       }
-  //       return item
-  //     })
-  //     return `{${formattedValues.join(',')}}`
-  //   }
-  //   return value
-  // }
-
-
-  // const conditionValueForSql = (value: any) => {
-  //   // postgres SQL can not accept arrays directly in the insert statement
-  //   if (isArray(value)) {
-  //     if (value.length > 0 && typeof value[0] === 'object' && value[0] !== null) {
-  //       const stringifiedValues = value.map(v => JSON.stringify(v))
-  //       return `{${stringifiedValues.join(',')}}`
-  //     } else {
-  //       return `{${value.join(',')}}`
-  //     }
-  //   }
-  //   return value
-  // }
-
   const conditionedData = data.map((row) => {
     const conditionedRow: Record<string, any> = {}
     for (const [key, value] of Object.entries(row)) {
@@ -173,7 +102,6 @@ export const loadWorksheetData: LoadWorksheetData = async (
     }
     return conditionedRow
   })
-
 
   const fullTableName = `core.${tableName}`
   try {

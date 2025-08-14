@@ -1,6 +1,8 @@
 import postgres from 'postgres'
 import { complement } from 'ramda'
 import { isArray } from 'ramda-adjunct'
+import { pathExists } from 'path-exists'
+
 
 import {
   asyncComplement, readTextFile,
@@ -14,6 +16,7 @@ import type {
   CreateDb, CreateDbOptions, GetDbList, GetTableList,
   CreateDbFromSqlScript, CreateDbFromSqlScriptOptions,
   TableExists, TableDoesNotExist, DropTable, DropTableOptions,
+  GetDb, GetDbOptions, DbCreationResult
 } from './PgUtilsTypes'
 
 const SYSTEM_DATABASES = ['postgres', 'template0', 'template1']
@@ -98,54 +101,55 @@ const postgresIdentifierHint = (name: string): string => {
   return ''
 }
 
-// Then use for both:
 const isValidDbName = isValidPostgresIdentifier
 const isValidTableName = isValidPostgresIdentifier
 const dbNameHint = postgresIdentifierHint
 const tableNameHint = postgresIdentifierHint
 
 export const createDb : CreateDb = async (
-  sysDbOrHostConfig: SqlDb | PgHostConfig,
+  hostConfig: PgHostConfig,
   dbName: string,
   options?: CreateDbOptions
-): Promise<boolean> => {
+): Promise<DbCreationResult> => {
 
   if (!isValidDbName(dbName)) {
     throw new Error(`createDb(): Invalid database name: ${dbName} (${dbNameHint(dbName)})`)
   }
-
-  const sysDb = await getSysDbFromVarious(sysDbOrHostConfig)
-  const shouldCloseConnection = isHostConfig(sysDbOrHostConfig)
-
   const { ifDbExists = 'ThrowError' } = options || {}
+  const sysDb = await getSysDbFromVarious(hostConfig)
 
   try {
-    const dbAlreadyExists = await dbExists(sysDb, dbName)
+    const dbAlreadyExisted = await dbExists(sysDb, dbName)
 
-    if (dbAlreadyExists && ifDbExists === 'ThrowError') {
+    if (dbAlreadyExisted && ifDbExists === 'ThrowError') {
       throw new Error(`Database '${dbName}' already exists`)
     }
 
-    if (dbAlreadyExists && ifDbExists === 'ReturnExisting') {
-      return false // didn't create, already existed
+    if (dbAlreadyExisted && ifDbExists === 'ReturnExisting') {
+      return {
+        dbAlreadyExisted,
+        sqlDb: postgres({ ...hostConfig, database: dbName }),
+      }
     }
 
-    let needToCreate = !dbAlreadyExists
+    let needToCreate = !dbAlreadyExisted
 
-    if (dbAlreadyExists && ifDbExists === 'Overwrite') {
+    if (dbAlreadyExisted && ifDbExists === 'Overwrite') {
       await dropDb(sysDb, dbName)
       needToCreate = true
     }
 
     if (needToCreate) {
       await sysDb.unsafe(`CREATE DATABASE "${dbName}"`)
-      return true // created
     }
 
-    return false // didn't create
+    return {
+      dbAlreadyExisted,
+      sqlDb: postgres({ ...hostConfig, database: dbName }),
+    }
 
   } finally {
-    if (shouldCloseConnection) await sysDb.end()
+    await sysDb.end()
   }
 }
 
@@ -154,26 +158,24 @@ export const createDbFromSqlScript : CreateDbFromSqlScript = async (
   dbName: string,
   sqlScript: string,
   options?: CreateDbFromSqlScriptOptions
-): Promise<SqlDb> => {
+): Promise<DbCreationResult> => {
   const { scriptSource = 'string', ...createDbOpts } = options || {}
 
+  // lets make sure the script file exists if scriptSource is 'filePath'
+  if (scriptSource === 'filePath' && !(await pathExists(sqlScript))) {
+    throw new Error(`pg: createDbFromSqlScript(): SQL script file not found: ${sqlScript}`)
+  }
+
   // Just pass through the createDb options directly
-  await createDb(hostConfig, dbName, createDbOpts)
+  const creationResults = await createDb(hostConfig, dbName, createDbOpts)
 
   // Handle script source
   const script = scriptSource === 'filePath'
     ? await readTextFile(sqlScript)
     : sqlScript
 
-  const targetDb = postgres({ ...hostConfig, database: dbName })
-
-  try {
-    await targetDb.unsafe(script)
-    return targetDb
-  } catch (error) {
-    await dropDb(hostConfig, dbName)
-    throw error
-  }
+  await creationResults.sqlDb.unsafe(script)
+  return creationResults
 }
 
 // --- Database Utils ---------------------------------------------------------
@@ -290,7 +292,31 @@ export const getDbList: GetDbList = async (
   }
 }
 
+export const getDb: GetDb = async (
+  hostConfig: PgHostConfig,
+  dbName: string,
+  getDbOpts?: GetDbOptions
+): Promise<SqlDb> => {
 
+  if (!isValidDbName(dbName)) {
+    throw new Error(`getDb(): Invalid database name: ${dbName} (${dbNameHint(dbName)})`)
+  }
+
+  const { ifDbDoesNotExist = 'ThrowError' } = getDbOpts || { }
+
+  const requestedDbExists = await dbExists(hostConfig, dbName)
+
+  if (!requestedDbExists && ifDbDoesNotExist === 'ThrowError') {
+    throw new Error(`Attempting to fetch database '${dbName}', but it does not exist`)
+  }
+
+  if (!requestedDbExists && ifDbDoesNotExist === 'Create' ) {
+    await createDb(hostConfig, dbName, getDbOpts)
+  }
+
+  // Create connection to the target database
+  return postgres({ ...hostConfig, database: dbName })
+}
 
 // --- Table Utils -------------------------------------------------------------
 

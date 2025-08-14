@@ -3,7 +3,8 @@ CREATE SCHEMA IF NOT EXISTS core;
 CREATE TYPE core.HAND_RESULT AS ENUM (
     'WON',
     'LOST',
-    'SPLIT'
+    'SPLIT',
+    'IN_PROGRESS'
 );
 
 CREATE TYPE core.TABLE_POSITION AS ENUM (
@@ -64,12 +65,23 @@ CREATE INDEX USERS_ORGANIZATIONS_USER_ID_IDX on core.USERS_ORGANIZATIONS (USER_I
 
 CREATE INDEX USERS_ORGANIZATIONS_ORGANIZATION_ID_IDX on core.USERS_ORGANIZATIONS (ORGANIZATION_ID ASC);
 
+CREATE TYPE core.PLAYER_ARCHETYPE AS ENUM (
+    'CRUSHER',
+    'REGULAR',
+    'CALLING_STATION',
+    'OLD_MAN_COFFEE',
+    'NIT',
+    'MANIAC',
+    'FISH'
+);
+
 CREATE TABLE core.PLAYERS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID, -- This is nullable as not every PLAYER is an USER
-    nickname VARCHAR(100) NOT NULL, -- Name to show for this player in-game
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(100) NOT NULL,
+    archetype core.PLAYER_ARCHETYPE,
     updated_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
 
@@ -98,12 +110,27 @@ CREATE TABLE core.HAND_GROUPS (
 
 CREATE INDEX HAND_GROUPS_AGENT_ID_IDX ON core.HAND_GROUPS (AGENT_ID ASC);
 
+CREATE TYPE core.CURRENCY AS ENUM (
+  'USD',
+  'EUR',
+  'GBP',
+  'JPY',
+  'CNY',
+  'INR',
+  'AUD',
+  'CAD',
+  'CHF',
+  'NZD'
+);
+
 CREATE TABLE core.HANDS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hand_group_id UUID,
     hand_number INTEGER NOT NULL, -- Sequential number of the hand in the session (e.g. 1st hand, 2nd hand)
+    currency core.CURRENCY DEFAULT 'USD',
     num_players_seated INTEGER, -- Number of players seated for this hand (some may not be players though)
     dealer_seat_num INTEGER, -- Seat number of the dealer for this specific hand
+    hero_position core.TABLE_POSITION, -- Position of the hero in this hand
     community_cards core.CARD[] DEFAULT NULL,
     updated_at TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW(),
@@ -114,6 +141,30 @@ CREATE TABLE core.HANDS (
 );
 
 CREATE INDEX HANDS_HAND_GROUP_ID_IDX ON core.HANDS (HAND_GROUP_ID ASC);
+
+
+CREATE TYPE core.FORCED_BET_TYPE AS ENUM (
+    'SMALL_BLIND',
+    'BIG_BLIND',
+    'STRADDLE',
+    'ANTE'
+);
+
+CREATE TABLE core.FORCED_BETS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hand_id UUID NOT NULL,
+    bet_number INTEGER NOT NULL, -- Sequential number of the forced bet in the hand
+    type core.FORCED_BET_TYPE NOT NULL,
+    position core.TABLE_POSITION NOT NULL,
+    amount NUMERIC(10,2),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    FOREIGN KEY (HAND_ID) REFERENCES core.HANDS(id) ON DELETE CASCADE
+);
+
+
+
 
 CREATE TABLE core.HANDS_PLAYERS (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

@@ -103,10 +103,16 @@ export interface CreateDbOptions {
   ifDbExists?: IfDbExistsOnCreate
 }
 
-export type CreateDb = {
-  (hostConfig: PgHostConfig, dbName: string, options?: CreateDbOptions): Promise<boolean>;
-  (sysDb: SqlDb, dbName: string, options?: CreateDbOptions): Promise<boolean>;
+export interface DbCreationResult {
+  sqlDb: SqlDb
+  dbAlreadyExisted: boolean
 }
+
+export type CreateDb = (
+  hostConfig: PgHostConfig,
+  dbName: string,
+  options?: CreateDbOptions
+) => Promise<DbCreationResult>;
 
 export type ScriptScource = 'filePath' | 'string'
 
@@ -119,4 +125,16 @@ export type CreateDbFromSqlScript = (
   dbName: string,
   sqlScript: string,
   options?: CreateDbFromSqlScriptOptions
-) => Promise<SqlDb>
+) => Promise<DbCreationResult>
+
+export type IfDbDoesNotExistOnGet = 'ThrowError' | 'Create'
+
+export type GetDbOptions = CreateDbOptions & {
+  ifDbDoesNotExist?: IfDbDoesNotExistOnGet // default is 'ThrowError'
+}
+
+export type GetDb = (
+  hostConfig: PgHostConfig,
+  dbName: string,
+  getDbOpts?: GetDbOptions
+) => Promise<SqlDb>;

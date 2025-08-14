@@ -49,9 +49,10 @@
     "test:loader": "vitest --run pgDataLoader.test.ts",
     "pg:up": "docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=pw postgres:17",
     "pg:down": "docker stop postgres && docker rm postgres",
+    "pg:restart": "docker restart postgres",
     "pg:terminal": "docker exec -it postgres sh",
     "pg:shell": "docker exec -it postgres psql -U postgres -d testdb",
-    "??pg:clean": "docker stop postgres && docker rm postgres && docker volume rm postgres_data",
+    "pg:clean": "docker stop postgres && docker rm postgres && docker volume rm postgres_data",
     "??postgres:logs": "docker logs -f postgres"
   }
 }
