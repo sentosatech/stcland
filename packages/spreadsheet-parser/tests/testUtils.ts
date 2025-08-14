@@ -1,8 +1,10 @@
 import { assert } from 'vitest'
-
-import { equals } from 'ramda'
-import { isNotDate, isNotString, isUndefined, isNotUndefined } from 'ramda-adjunct'
 import { validate as isValidUuid4 } from 'uuid'
+import { equals, isNil  } from 'ramda'
+import {
+  isNotDate, isDate, isNotString, isUndefined, isNotUndefined, isNull
+} from 'ramda-adjunct'
+
 
 import { getBaseDataType, passwordHash } from '../src/spreadsheetParseUtils'
 import { passthrough, toJson } from '@stcland/utils'
@@ -18,6 +20,7 @@ export const dateEquals: ValidateFn = (
   execptedDataStr: string,
   date: Date
 ) => {
+  if (isNull(execptedDataStr)) return execptedDataStr as any === date as any
   if (isNotDate(date)) return false
   return date.getTime() === new Date(execptedDataStr).getTime()
 }
@@ -34,7 +37,6 @@ export const uuidEquals : ValidateFn = (
   expectedModifiers: [string, string],
   parsedUuid: string,
 ) => {
-
   if (isNotString(parsedUuid)) return false
 
   const [pre, post] = expectedModifiers
@@ -51,6 +53,7 @@ export const expectedPasswordHashStr = (pw: string) =>
   `${pw} => ${passwordHash(pw)}`
 
 export const expectedUuidString = (modifiers: [string, string]) => {
+  if (isNull(modifiers)) return null
   const [pre, post] = modifiers
   return `${pre || ''}[vaiid-uuid]${post || ''}`
 }
@@ -77,7 +80,7 @@ export const dataTypeToTestFns = (
 
   case 'date':
     validateFn = dateEquals
-    parsedValForLoggingFn = (d: Date) => d.toISOString()
+    parsedValForLoggingFn = (d: Date) => isDate(d) ? d.toISOString() : d
     break
   case 'password':
     validateFn = passwordToHashEquals
@@ -93,7 +96,12 @@ export const dataTypeToTestFns = (
     break
   }
 
-  return { validateFn, expectedValForLoggingFn, parsedValForLoggingFn }
+  return {
+    validateFn: (expected: any, actual: any ) =>
+      isNull(expected) ? equals(expected, actual) : validateFn(expected, actual),
+    expectedValForLoggingFn,
+    parsedValForLoggingFn
+  }
 }
 
 export const assertConsistentDefinedState = (

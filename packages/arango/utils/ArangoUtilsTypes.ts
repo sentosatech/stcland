@@ -157,7 +157,7 @@ export type GetEdgeCollection = (
   db: Database,
   collectionName: string,
   ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet, // default is ThrowError
-  ) => Promise<DocumentCollection>;
+  ) => Promise<EdgeCollection>;
 
 export type GetCollectionType = {
   (collection: DocumentCollection | EdgeCollection) : Promise<CollectionType>;
