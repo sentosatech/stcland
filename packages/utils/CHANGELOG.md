@@ -1,5 +1,11 @@
 # @stcland/utils
 
+## 0.0.7
+
+### Patch Changes
+
+- Primarily, added postgres spreadsheet parser
+
 ## 0.0.6
 
 ### Patch Changes

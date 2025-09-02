@@ -1,5 +1,14 @@
 # @stcland/arango
 
+## 0.1.2
+
+### Patch Changes
+
+- Primarily, added postgres spreadsheet parser
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.5
+  - @stcland/utils@0.0.7
+
 ## 0.1.1
 
 ### Patch Changes

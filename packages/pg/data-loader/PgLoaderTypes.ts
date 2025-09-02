@@ -8,7 +8,7 @@ import type {
 
 export interface LoadSpreadsheetDataOpts
     extends Pick<ParseOptions, 'reportProgress' | 'reportWarnings' | 'includeDataTypeMaps'> {
-    ifTargetDBExists?: 'Append' | 'Overwrite' | 'ReturnExisting' | 'ThrowError' // defaults to 'Append'
+    ifTargetDBExists?: 'Append' | 'Overwrite' | 'ThrowError' // defaults to 'Append'
   }
 
 export interface LoadSpreadsheetDataResult {
@@ -16,8 +16,8 @@ export interface LoadSpreadsheetDataResult {
 }
 
 export interface PgLoadSpreadsheetDataOpts extends LoadSpreadsheetDataOpts {
-  sqlScript?: string // sql script to be executed prior to loading the data
-  scriptSource?: ScriptScource
+  sqlScript?: string // sql script to be executed prior to loading the data (optional)
+  scriptSource?: ScriptScource // required if sqlScript is provided
 }
 
 export type LoadSpreadsheetData = (

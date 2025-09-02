@@ -1,5 +1,13 @@
 # @stcland/spreadsheet-parser
 
+## 0.0.5
+
+### Patch Changes
+
+- Primarily, added postgres spreadsheet parser
+- Updated dependencies
+  - @stcland/utils@0.0.7
+
 ## 0.0.4
 
 ### Patch Changes
