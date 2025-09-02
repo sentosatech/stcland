@@ -1,5 +1,6 @@
 # @stcland/arango
 
+<<<<<<< HEAD
 ## 0.0.2
 
 ### Patch Changes
@@ -9,6 +10,8 @@
   - @stcland/spreadsheet-parser@0.0.5
   - @stcland/utils@0.0.7
 
+=======
+>>>>>>> master
 ## 0.1.1
 
 ### Patch Changes
