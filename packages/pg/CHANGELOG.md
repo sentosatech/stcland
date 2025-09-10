@@ -1,5 +1,11 @@
 # @stcland/arango
 
+## 0.0.5
+
+### Patch Changes
+
+- Add data-loader to index.ts
+
 ## 0.0.4
 
 ### Patch Changes

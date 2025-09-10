@@ -1,6 +1,6 @@
 {
   "name": "@stcland/pg",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Postgres DB utilities",
   "type": "module",
   "main": "./dist/index.cjs",
