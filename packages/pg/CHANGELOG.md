@@ -1,5 +1,11 @@
 # @stcland/arango
 
+## 0.0.4
+
+### Patch Changes
+
+- Close db connection at the end of spreadsheet parser
+
 ## 0.1.1
 
 ### Patch Changes
