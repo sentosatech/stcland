@@ -45,32 +45,42 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     throw new Error(`Postgres spreadsheet loader: Cannot connect to postgres host: ${hostInfo}`)
   }
 
-  const ifDbExistsAction =
+  let dbCreationResult: DbCreationResult | undefined
+  try {
+    const ifDbExistsAction =
       ifTargetDBExists === 'Append' ? 'ReturnExisting' : ifTargetDBExists
 
-  let dbCreationResult: DbCreationResult | undefined
-  if (sqlScript && scriptSource ) {
+    if (sqlScript && scriptSource) {
 
-    const opts: CreateDbFromSqlScriptOptions = {
-      ifDbExists: ifDbExistsAction,
-      scriptSource: scriptSource || 'string',
+      const opts: CreateDbFromSqlScriptOptions = {
+        ifDbExists: ifDbExistsAction,
+        scriptSource: scriptSource || 'string',
+      }
+
+      dbCreationResult = await createDbFromSqlScript(
+        pgHostConfig, dbName, sqlScript || '', opts
+      )
+    }
+    else {
+      dbCreationResult = await createDb(
+        pgHostConfig, dbName, { ifDbExists: ifDbExistsAction }
+      )
     }
 
-    dbCreationResult = await createDbFromSqlScript(
-      pgHostConfig, dbName, sqlScript || '',  opts
-    )
+    const clientData = { sqlDb: dbCreationResult.sqlDb }
+
+    await forEachSheet(loadWorksheetData, excelFilePath, clientData, dataLoadOpts)
+
+    return 0
+  } finally {
+    if (dbCreationResult?.sqlDb) {
+      try {
+        await dbCreationResult.sqlDb.end()
+      } catch (cleanupError) {
+        console.error('Error closing database connection:', cleanupError)
+      }
+    }
   }
-  else {
-    dbCreationResult = await createDb(
-      pgHostConfig, dbName, { ifDbExists: ifDbExistsAction }
-    )
-  }
-
-  const clientData = { sqlDb: dbCreationResult.sqlDb }
-
-  await forEachSheet(loadWorksheetData, excelFilePath, clientData, dataLoadOpts)
-
-  return 0
 }
 
 //------------------------------------------------------------------------------
