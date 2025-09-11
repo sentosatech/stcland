@@ -90,7 +90,7 @@ export const loadWorksheetData: LoadWorksheetData = async (
 ) => {
 
   const { sqlDb } = clientData
-  const { data, worksheetName  } = parsedWorksheet
+  const { data, worksheetName } = parsedWorksheet
 
   const tableName = worksheetName
 
