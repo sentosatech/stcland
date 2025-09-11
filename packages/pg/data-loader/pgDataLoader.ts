@@ -82,6 +82,7 @@ export const loadSpreadsheetData: LoadSpreadsheetData = async (
     }
   }
 }
+
 //------------------------------------------------------------------------------
 
 export const loadWorksheetData: LoadWorksheetData = async (
