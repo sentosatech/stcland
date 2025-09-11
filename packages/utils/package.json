@@ -1,6 +1,6 @@
 {
   "name": "@stcland/utils",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "General Utils",
   "type": "module",
   "main": "./dist/index.cjs",

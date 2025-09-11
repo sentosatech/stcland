@@ -1,6 +1,6 @@
 {
   "name": "@stcland/storybook",
-  "version": "0.0.29",
+  "version": "0.0.31",
   "description": "",
   "main": "index.js",
   "type": "module",

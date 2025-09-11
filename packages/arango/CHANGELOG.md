@@ -1,5 +1,23 @@
 # @stcland/arango
 
+## 0.1.4
+
+### Patch Changes
+
+- fix pg merge conflicts
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.7
+  - @stcland/utils@0.0.9
+
+## 0.1.3
+
+### Patch Changes
+
+- progress postgres data loading
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.6
+  - @stcland/utils@0.0.8
+
 ## 0.1.2
 
 ### Patch Changes

@@ -136,6 +136,7 @@ export const createDb : CreateDb = async (
 
     if (dbAlreadyExisted && ifDbExists === 'Overwrite') {
       await dropDb(sysDb, dbName)
+      // const clearedTables = await clearAllTables (sysDb, true)
       needToCreate = true
     }
 
@@ -262,6 +263,66 @@ export const dropDb: DropDb = async (
     if (shouldCloseConnection) await sysDb.end()
   }
 }
+
+export const clearTable = async (
+  db: SqlDb,
+  tableName: string,
+  allowCascade: boolean = false
+): Promise<string[]> => {
+  // Check what tables would be affected
+  const dependencies = await db.unsafe(`
+    SELECT DISTINCT
+      tc.table_name as dependent_table
+    FROM information_schema.table_constraints tc
+    JOIN information_schema.key_column_usage kcu
+      ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage ccu
+      ON ccu.constraint_name = tc.constraint_name
+    WHERE tc.constraint_type = 'FOREIGN KEY'
+      AND ccu.table_name = '${tableName}'
+  `)
+
+  if (dependencies.length > 0 && !allowCascade) {
+    throw new Error(`Cannot truncate ${tableName}. Dependent tables: ${dependencies.map(d => d.dependent_table).join(', ')}`)
+  }
+
+  await db.unsafe(`TRUNCATE TABLE "${tableName}" RESTART IDENTITY ${allowCascade ? 'CASCADE' : ''}`)
+
+  return dependencies.map(d => d.dependent_table)
+}
+
+export const clearAllTables = async (
+  db: SqlDb,
+  allowCascade: boolean = false
+): Promise<string[]> => {
+  // Get all user tables (excluding system tables)
+  const tableNames = await getTableList(db)
+
+  if (tableNames.length === 0) {
+    return []
+  }
+
+  const clearedTables: string[] = []
+
+  for (const tableName of tableNames) {
+    try {
+      const affectedTables = await clearTable(db, tableName, allowCascade)
+      clearedTables.push(tableName)
+      for (const affected of affectedTables) {
+        if (!clearedTables.includes(affected)) {
+          clearedTables.push(affected)
+        }
+      }
+    } catch (error) {
+      // Skip tables that can't be cleared and continue with others
+      console.warn(`Failed to clear table ${tableName}:`, error.message)
+    }
+  }
+
+  return clearedTables
+}
+
+
 
 export const getDbName : GetDbName = async (db: SqlDb): Promise<string> => {
   try {

@@ -1,6 +1,6 @@
 {
   "name": "@stcland/spreadsheet-parser",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Utility to parse spreadsheet data",
   "type": "module",
   "main": "./dist/index.cjs",

@@ -1,5 +1,17 @@
 # @stcland/utils
 
+## 0.0.9
+
+### Patch Changes
+
+- fix pg merge conflicts
+
+## 0.0.8
+
+### Patch Changes
+
+- progress postgres data loading
+
 ## 0.0.7
 
 ### Patch Changes
