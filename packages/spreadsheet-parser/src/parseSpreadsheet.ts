@@ -17,8 +17,10 @@ export const forEachSheet: ForEachSheet = async (
   await workbook.xlsx.readFile(spreadsheetPath)
   const worksheets = getWorksheetList(workbook)
 
+  const referencedData = {}
+
   for (const ws of worksheets) {
-    const parsedWorksheet = parseWorksheet(ws, parseOpts, firstRowNum)
+    const parsedWorksheet = parseWorksheet(ws, referencedData, parseOpts, firstRowNum)
     const rsp = await cb(parsedWorksheet, clientDatas)
     if (rsp === false) break
   }

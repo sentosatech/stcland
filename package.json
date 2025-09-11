@@ -13,6 +13,7 @@
   "scripts": {
     "sanity": "pnpm clean:all && pnpm install && pnpm build:all  && pnpm lint:all && pnpm test:all",
     "lint:all": "pnpm run -r --filter=./packages/* lint",
+    "install:sbdeps": "pnpm install --filter @stcland/utils --filter @stcland/components && pnpm --filter @stcland/utils build && pnpm --filter @stcland/components build", 
     "build:all": "pnpm run -r --filter=./packages/* build",
     "clean:all": "pnpm run -r clean:all",
     "list:all": "pnpm recursive list --only-projects",

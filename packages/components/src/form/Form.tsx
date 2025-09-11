@@ -56,7 +56,7 @@ const Form = function (props: Props) {
       root: '',
       form: '',
       panelStyle: {
-        root: 'p-4 flex flex-col gap-2 bg-gray-800 text-xl',
+        root: 'p-4 flex flex-col gap-2 text-xl',
       },
     },
     customStyles

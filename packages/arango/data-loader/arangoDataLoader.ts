@@ -182,7 +182,6 @@ export const loadEdgeCollection = async (
   // validate edge targets if reqested
 
   const validateEdgeTargets = dataLoadOpts?.validateEdgeTargets ?? true
-  console.log('validateEdgeTargets: ', validateEdgeTargets)
   if (validateEdgeTargets) {
     for (const { _from, _to } of data ) {
 
@@ -215,6 +214,51 @@ export const loadGraph = async (
   data: DataCollectionData,
   dataLoadOpts?: LoadSpreadsheetDataOpts,
 ) => {  // TODO: what type to return
-  console.warn('~~> loadGraph(), skipping')
-  console.log('data: ', data)
+
+  const validateGraphCollections = dataLoadOpts?.validateGraphCollections ?? true
+
+  // make sure that specificed collections exist if requested
+  if (validateGraphCollections) {
+
+    for (const { edgeCollection, fromCollections, toCollections } of data) {
+
+      throwIf(
+        !(await collectionExists(db, edgeCollection)),
+        `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
+          `  Attempting to create graph '${graphName}'\n` +
+          `  Edge collection does not exist: '${edgeCollection}'`
+      )
+
+      for (const fromCollection of fromCollections) {
+        throwIf(
+          !(await collectionExists(db, fromCollection)),
+          `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
+          `  Attempting to create graph '${graphName}'\n` +
+          `  From collection does not exist: '${fromCollection}'`
+        )
+      }
+
+      for (const toCollection of toCollections) {
+        throwIf(
+          !(await collectionExists(db, toCollection)),
+          `ArangoSpreadSheet loader, worksheet ${worksheetName}:\n` +
+          `  Attempting to create graph '${graphName}'\n` +
+          `  To collection does not exist: '${toCollection}'`
+        )
+      }
+    }
+  }
+
+
+  const edgeDefinitions = data.map(({
+    edgeCollection, fromCollections, toCollections
+  }) => ({
+    collection: edgeCollection,
+    from: fromCollections,
+    to: toCollections,
+  }))
+
+  // create the graph
+  await db.createGraph(graphName, edgeDefinitions )
+
 }

@@ -24,8 +24,8 @@ import {
 } from './InputSet'
 import type { RadioButtonGroupProps } from './RadioButtonGroup'
 import RadioButtonGroup from './RadioButtonGroup'
-import Select from './Select'
-import type { Props as SelectProps } from './Select'
+import SelectInput from './Select'
+import type { Props as SelectInputProps } from './Select'
 
 export {
   CheckBox,
@@ -37,7 +37,7 @@ export {
   Password,
   RadioButton,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   Text,
   TextArea,
   TimeInput,
@@ -54,5 +54,5 @@ export type {
   TextInputProps,
   TimeInputProps,
   CheckBoxProps,
-  SelectProps,
+  SelectInputProps,
 }

@@ -6,17 +6,17 @@ export interface BaseStyles {
 
 export type AccordionStyles = {
   accordion: {
-    root: string;
+    root: DivElementClassName;
   };
   accordionSummary: {
-    root: string;
+    root: DivElementClassName;
     icon: string;
   };
   accordionDetails: {
-    root: string;
+    root: DivElementClassName;
   };
   accordionAction: {
-    root: string;
+    root: DivElementClassName;
     spacing: string;
   };
 };
@@ -33,38 +33,44 @@ export interface TableStyles extends BaseStyles {
   subRow: string;
 }
 
-type StyleVariant = {
-  solid: string;
-  outlined: string;
-};
+type StateVariant = {
+  default: string;
+  hover: string;
+  pressed: string;
+  disabled: string;
+}
 
 export interface ButtonStyles extends BaseStyles {
-  primary: StyleVariant;
-  secondary: StyleVariant;
-  neutral: StyleVariant;
+  root: string
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
   fullWidth: string;
   rounded: string;
   highlightOnHover: string;
-  icon: string;
+  leftIcon: string;
+  rightIcon: string;
   disabled: string;
   button: string;
 }
 
 export interface IconStyles extends BaseStyles {
-  primary: string;
-  secondary: string;
-  neutral: string;
+  primary: StateVariant;
+  secondary: StateVariant;
+  tertiary: StateVariant;
   sm: string;
   md: string;
   lg: string;
-  muted: string;
   rounded: string;
   highlightOnHover: string;
-  brightenOnHover: string;
-  bright: string;
+  bright: string,
+  brightenOnHover: string
+  muted: string
+  icon: string;
+  button: string;
 }
 
 export interface FieldSetStyles extends BaseStyles {
@@ -79,10 +85,16 @@ export interface PanelStyles extends BaseStyles {
 
 export interface FormInputStyles extends BaseStyles {
   root: DivElementClassName;
-  inputRoot: React.HTMLAttributes<HTMLInputElement>['className'];
+  inputRoot: StateVariant;
   inputContainer: DivElementClassName;
   label: DivElementClassName;
   error: DivElementClassName;
+  errorContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   info: DivElementClassName;
 }
 
@@ -96,7 +108,13 @@ export interface RadioButtonGroupStyles extends BaseStyles {
   label: DivElementClassName;
   buttonContainer: DivElementClassName;
   radioContainer: DivElementClassName;
+  errorInput: DivElementClassName;
+  errorContainer: DivElementClassName;
   error: DivElementClassName;
+  icon: {
+    icon: DivElementClassName;
+    root: DivElementClassName;
+  }
   radioButton: React.HTMLAttributes<HTMLInputElement>['className'];
 }
 
@@ -106,11 +124,11 @@ export interface FormStyles extends BaseStyles {
 }
 
 export interface CheckBoxStyles extends BaseStyles {
-  inputRoot: DivElementClassName;
+  inputRoot: StateVariant;
   label: DivElementClassName;
 }
 
-export type SelectStyles = {
+export type SelectInputStyles = {
   root: DivElementClassName;
   label: DivElementClassName;
   menuButton: string;
@@ -120,3 +138,183 @@ export type SelectStyles = {
     selected: string;
   };
 };
+
+
+export type ListStyles = {
+  list: {
+    root: DivElementClassName
+    dense: string
+    padding: string
+    divider: string
+    gutters: string
+    ordered: string
+    subheader: DivElementClassName,
+  }
+  listItem: {
+    root: DivElementClassName
+    padding: string
+    divider: string
+    dense: string
+  }
+  listItemButton: {
+    root: DivElementClassName
+    dense: string
+    divider: string
+    selected: string
+    hover: string
+    disabled: string
+    disabledChilds: string
+  }
+  listItemText: {
+    root: DivElementClassName
+    inset: string
+    disabledByParent: string
+    primaryText: DivElementClassName
+    secondaryText: DivElementClassName
+  }
+}
+
+export interface CheckboxStyles extends BaseStyles {
+  container: string
+  rootWithoutCustomIcons: DivElementClassName
+  primary: string
+  secondary: string
+  tertiary: string
+  uncheckedPrimary: string
+  uncheckedSecondary: string
+  uncheckedTertiary: string
+  sm: string
+  md: string
+  lg: string
+  smChecked: string
+  mdChecked: string
+  lgChecked: string
+  disabled: DivElementClassName
+  indeterminatePrimary: string
+  indeterminateSecondary: string
+  indeterminateTertiary: string
+  labelPrimary: string
+  labelSecondary: string
+  labelNeutral: string
+  labelCustomIcon: string
+}
+
+export interface ModalStyles extends BaseStyles {
+  modal: string
+  backdrop: string
+  fullScreen: string
+  closeButton: string
+  headerContentContainer: string
+  header: DivElementClassName
+  content: DivElementClassName
+  actions: DivElementClassName
+}
+
+export interface DndStyles {
+  sortableList: {
+    grid: string
+  },
+  sortableItem: {
+    root: string
+    bgColorClass: string
+    dragging: string
+    content: string
+    removeButton: string
+    iconContainer: string
+  },
+  droppable: {
+    root: string
+    dropping: string
+  },
+  draggable: {
+    root: string
+    bgColorClass: string
+    dragging: string
+    content: string
+    removeButton: string
+    iconContainer: string
+  }
+}
+
+type RadioStyles = {
+  root: DivElementClassName
+  inputRoot: DivElementClassName
+  radioDisabled: DivElementClassName
+  selected: DivElementClassName
+  text: DivElementClassName
+  textDisabled: DivElementClassName
+}
+
+export interface RadioGroupStyles {
+  radio: RadioStyles,
+  radioGroup: {
+    root: DivElementClassName
+    vertical: DivElementClassName
+    horizontal: DivElementClassName
+  },
+  isolatedRadio: RadioStyles
+}
+
+export interface SelectStyles extends BaseStyles {
+  label: DivElementClassName
+  menu:  DivElementClassName
+  button: DivElementClassName
+  disabled: DivElementClassName
+  optionContainer: {
+    default: DivElementClassName
+    selected: DivElementClassName
+  }
+  listItem: {
+    base: DivElementClassName
+    selected: DivElementClassName
+  },
+  selectedDefaultIcon: DivElementClassName
+}
+
+export interface DividerStyles extends BaseStyles {
+  horizontal: DivElementClassName
+  vertical: DivElementClassName
+  thin: DivElementClassName
+  medium: DivElementClassName
+  thick: DivElementClassName
+}
+
+
+export interface CheckboxGroupStyles extends BaseStyles {
+  vertical: DivElementClassName
+  horizontal: DivElementClassName
+  checkbox: CheckboxStyles
+}
+
+export interface TooltipStyles extends BaseStyles {
+  tooltipContainer: DivElementClassName
+  colorClass: DivElementClassName
+  arrow: DivElementClassName
+  arrowColor: DivElementClassName
+}
+
+export interface TabsStyles {
+ tabs: {
+  root: DivElementClassName
+  colorClass: DivElementClassName
+  rootWidth: DivElementClassName
+  indicator: DivElementClassName
+  horizontalIndicator: DivElementClassName
+  verticalIndicator: DivElementClassName
+  colorClassIndicator: DivElementClassName
+  tabWrapper: DivElementClassName
+  scrollButton: DivElementClassName
+  scrollableIcon: DivElementClassName
+  scrollableWrapper: DivElementClassName
+ },
+ tab: {
+  root: DivElementClassName
+  activeStyle: DivElementClassName
+  colorClass: DivElementClassName
+  disabled: DivElementClassName
+ },
+ tabPanel: {
+  root: DivElementClassName
+  colorClass: DivElementClassName
+ }
+}

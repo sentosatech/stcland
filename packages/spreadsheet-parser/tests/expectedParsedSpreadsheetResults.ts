@@ -7,7 +7,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
   BasicParsing: {
     worksheetName: 'BasicParsing',
     dataLayout: 'dataTable',
-    numDataEntriesParsed: 10,
+    numDataEntriesParsed: 11,
     metaTypeMap: {
       name: 'string',
       someNumber: 'number',
@@ -103,6 +103,17 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         uuidProp: []
       },
       {
+        expectAllUndefined: false,
+        key: 'someNulls',
+        numProp: 1,
+        stringProp: null,
+        boolProp: true,
+        dateProp: null,
+        passwordHash: 'hola', // pre-hash
+        jsonProp: 'all in',
+        uuidProp: null
+      },
+      {
         expectAllUndefined: true,
         key: 'empty',
         numProp: undefined,
@@ -116,12 +127,52 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
       {
         expectAllErrors: true,
         key: 'invalid',
-        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:18 Col:B',
-        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:18 Col:D',
-        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:18 Col:E',
-        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:18 Col:G',
-        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:18 Col:H'
+        numProp: 'Invalid number: not-num -> WS:BasicParsing, Row:19 Col:B',
+        boolProp: 'Invalid boolean value: \'not-bool\' -> WS:BasicParsing, Row:19 Col:D',
+        dateProp: 'Invalid date: not-date -> WS:BasicParsing, Row:19 Col:E',
+        jsonProp: 'Invalid JSON: not-json -> WS:BasicParsing, Row:19 Col:G',
+        uuidProp: 'Invalid UUID: invalid-uuid -> WS:BasicParsing, Row:19 Col:H'
       }
+    ],
+  },
+  UuidsRefs: {
+    worksheetName: 'UuidsRefs',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this sheet will be auto generated and then referenced as appropraite from other sheets',
+    },
+    dataTypeMap: {
+      uuid: 'uuid',
+      name: 'string',
+    },
+    data: [
+      { uuid: [], name: 'uuid1' },
+      { uuid: [], name: 'uuid2' },
+      { uuid: [], name: 'uuid3' }
+    ],
+  },
+  UuidLinks: {
+    worksheetName: 'UuidLinks',
+    dataLayout: 'dataTable',
+    numDataEntriesParsed: 3,
+    metaTypeMap: {
+      note: 'string',
+    },
+    meta: {
+      note: 'uuids in this will reference uuids that were auto generated in the UuidRefs sheet',
+    },
+    dataTypeMap: {
+      name: 'string',
+      linkedUuid: 'uuid',
+    },
+    data: [
+      { name: 'ref To Uuid 1', linkedUuid: [] },
+      { name: 'ref To Uuid 2', linkedUuid: [] },
+      { name: 'ref To Uuid 3', linkedUuid: [] }
     ],
   },
   FormulaAndRefParsing: {
@@ -168,7 +219,7 @@ export const expectedSpreadsheetResults: ExpectedParsedSpreadsheetResults = {
         expectAllErrors: true,
         key: 'errors',
         divZeroProp: 'Cell has an error: #DIV/0! -> WS:ErrorCasesParsing, Row:7 Col:B',
-        badRefProp: 'Cell has an error: #REF! -> WS:ErrorCasesParsing, Row:7 Col:C',
+        badRefProp: 'Invalid number: Invalid Date -> WS:ErrorCasesParsing, Row:7 Col:C',
         badStringList: ['Invalid data type for table data: \'string:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:D'],
         badBoolList: ['Invalid data type for table data: \'boolean:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:E'],
         badUuidList: ['Invalid data type for table data: \'uuid:list\', row data lists not valid for table data -> WS:ErrorCasesParsing, Row:7 Col:F'],

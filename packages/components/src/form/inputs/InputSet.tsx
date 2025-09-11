@@ -114,8 +114,13 @@ const CheckBox = ({ ...props }: CheckBoxProps) => {
   const cn: CheckBoxStyles = appliedStyles(
     {
       root: 'flex-row-reverse justify-end items-center py-4',
-      inputRoot: 'accent-sky-500 rounded-sm h-100',
-      label: 'pt-0 mb-0',
+      inputRoot: {
+        default: 'w-5 h-5 border-neutral-stroke-default bg-neutral-surface-default accent-primary-surface-default rounded-sm',
+        hover: '',
+        pressed: 'focus:ring-offset-2 focus:ring-2 focus:ring-primary-surface-default rounded-lg',
+        disabled: ''
+      },
+      label: 'pt-0 mb-0 text-base',
     },
     props.customStyles
   )
