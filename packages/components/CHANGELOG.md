@@ -1,5 +1,12 @@
 # @stcland/components
 
+## 0.0.28
+
+### Patch Changes
+
+- Updated dependencies
+  - @stcland/utils@0.0.10
+
 ## 0.0.27
 
 ### Patch Changes

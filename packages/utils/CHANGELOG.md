@@ -1,5 +1,11 @@
 # @stcland/utils
 
+## 0.0.10
+
+### Patch Changes
+
+- Fix pg data loader but (thanks Gabriel)
+
 ## 0.0.9
 
 ### Patch Changes

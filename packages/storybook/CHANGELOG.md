@@ -1,5 +1,11 @@
 # @stcland/storybook
 
+## 0.0.32
+
+### Patch Changes
+
+- @stcland/components@0.0.28
+
 ## 0.0.31
 
 ### Patch Changes

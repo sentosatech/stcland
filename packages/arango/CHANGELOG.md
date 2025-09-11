@@ -1,5 +1,13 @@
 # @stcland/arango
 
+## 0.1.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.8
+  - @stcland/utils@0.0.10
+
 ## 0.1.4
 
 ### Patch Changes

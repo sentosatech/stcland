@@ -1,5 +1,12 @@
 # @stcland/rest-hooks
 
+## 0.0.16
+
+### Patch Changes
+
+- Updated dependencies
+  - @stcland/utils@0.0.10
+
 ## 0.0.15
 
 ### Patch Changes

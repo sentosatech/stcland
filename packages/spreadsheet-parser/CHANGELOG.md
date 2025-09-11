@@ -1,5 +1,13 @@
 # @stcland/spreadsheet-parser
 
+## 0.0.8
+
+### Patch Changes
+
+- Fix pg data loader but (thanks Gabriel)
+- Updated dependencies
+  - @stcland/utils@0.0.10
+
 ## 0.0.7
 
 ### Patch Changes
