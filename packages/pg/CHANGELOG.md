@@ -1,16 +1,40 @@
 # @stcland/arango
 
-## 0.0.5
+## 0.0.8
 
 ### Patch Changes
 
-- Add data-loader to index.ts
+- Fix pg data loader but (thanks Gabriel)
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.8
+  - @stcland/utils@0.0.10
 
-## 0.0.4
+## 0.0.3
 
 ### Patch Changes
 
-- Close db connection at the end of spreadsheet parser
+- fix pg merge conflicts
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.7
+  - @stcland/utils@0.0.9
+
+## 0.0.2
+
+### Patch Changes
+
+- progress postgres data loading
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.6
+  - @stcland/utils@0.0.8
+
+## 0.0.2
+
+### Patch Changes
+
+- Primarily, added postgres spreadsheet parser
+- Updated dependencies
+  - @stcland/spreadsheet-parser@0.0.5
+  - @stcland/utils@0.0.7
 
 ## 0.1.1
 

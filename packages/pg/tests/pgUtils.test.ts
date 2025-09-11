@@ -189,11 +189,10 @@ describe('Test @stcland/postgres/utils', async () => {
     expect(await dbExists(hostConfig, dbName)).toBe(true)
     expect(await dbDoesNotExist(hostConfig, dbName)).toBe(false)
 
-  // Clean up
     await dropDb(sysDb, dbName)
   })
 
-  test.skip('createDbFromSqlScript - sql string', async () => {
+  test('createDbFromSqlScript - sql string', async () => {
     const dbName = 'test_create_db_from_sql_script_simple'
 
     // Clean up if exists
@@ -231,7 +230,7 @@ describe('Test @stcland/postgres/utils', async () => {
     }
   })
 
-  test.skip('createDbFromSqlScript - sql file', async () => {
+  test('createDbFromSqlScript - sql file', async () => {
     const dbName = 'test_create_db_from_sql_file'
 
     // Clean up if exists
