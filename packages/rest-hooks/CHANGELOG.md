@@ -1,9 +1,34 @@
 # @stcland/rest-hooks
 
+## 0.0.20
+
+### Patch Changes
+
+- Update mutate hooks to use the consumer restClient instance.'
+
+## 0.0.19
+
+### Patch Changes
+
+- Return response error when 401 in RestClient
+
+## 0.0.18
+
+### Patch Changes
+
+- Handling 401 error in restClient resp interceptor.
+
+## 0.0.17
+
+### Patch Changes
+
+- Handling 401 error in restClient resp interceptor.
+
 ## 0.0.16
 
 ### Patch Changes
 
+- Forgot to build before publishing, UGH!!!!!
 - Updated dependencies
   - @stcland/utils@0.0.10
 
@@ -11,6 +36,7 @@
 
 ### Patch Changes
 
+- Updating type signatures.
 - Updated dependencies
   - @stcland/utils@0.0.9
 
@@ -18,6 +44,7 @@
 
 ### Patch Changes
 
+- Update MutateBaseProps signature, update mutate hooks signatures to accept generics.
 - Updated dependencies
   - @stcland/utils@0.0.8
 
@@ -25,6 +52,7 @@
 
 ### Patch Changes
 
+- Add mutation hooks.
 - Updated dependencies
   - @stcland/utils@0.0.7
 
