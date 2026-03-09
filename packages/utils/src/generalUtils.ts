@@ -1,4 +1,6 @@
-import { curry, equals, findIndex, keys, complement } from 'ramda'
+import {
+  curry, equals, findIndex, keys, complement
+} from 'ramda'
 
 // if propName is on sourceObj, returns object with propName added to targetObj with value sourceObj[propName]
 export const copyPasteProp: (
@@ -38,3 +40,37 @@ export const objectsHaveSameKeys = <T extends object>(obj1: T, obj2: T): boolean
 }
 
 export const objectsDoNotHaveSameKeys = complement(objectsHaveSameKeys)
+
+// add a propoerty as the first in an object
+export const assocFront: Record<string, any> = curry((
+  key: string,
+  value: any,
+  obj: Record<string, any>
+) => ({ [key]: value, ...obj }))
+
+// add a property to an object if a condition is met
+// could not get @ts-expect-error to work, nor get the typing to work
+// F typescript: TODO:
+// export const assocIf = curry((
+//   pred: boolean,
+//   propKey: string,
+//   propVal: any,
+//   incomingObject: Record<string, any>
+// ) => pred ? assoc(propKey, propVal, incomingObject) : incomingObject)
+
+// add an item to an array if a condition is met
+// could not get @ts-expect-error to work, nor get the typing to work
+// F typescript: TODO:
+// export const appendIf = curry((
+//   condition: boolean,
+//   toAppend: any[],
+//   targetList: any[]
+// ) => condition ? append(toAppend, targetList) : targetList)
+
+// concatenate an array to another array if a condition is met
+// could not get @ts-expect-error to work, nor get the typing to work
+// F typescript: TODO:
+// export const concatIf = curry((
+//   condition: boolean, toConcat: any[], targetList: any[]
+// ) => condition ? concat(toConcat, targetList) : targetList)
+

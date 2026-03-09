@@ -1,0 +1,36 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as TextAreaStories from './InputTextArea.stories';
+
+<Meta of={TextAreaStories} />
+# TextArea Input Component
+
+The `TextArea` component is used for multi line plain text inputs
+
+## Properties
+- **name** (`string`): Required. The input elements name, this will become the key of the input on form submission. Can be nested using dot notation ie (fieldset.email)
+- **value** (`string`): Nullable. String value to make the input element as a controlled component, can be used to set defaultValue. 
+- **defaultValue** (`string`): Nullable. String value to set the value of the input element without turning it into a controlled component.
+- **id** (`string`): Nullable. used to tag the input element with an Id. must be unique
+- **rows** (`number`): Nullable. determines how many lines does the text area have on render
+- **label** (`string`): Nullable. label text that appears on top of the input element
+- **placeholder** (`string`): Nullable. property to determine the placeholder text of the input element
+- **required** (`boolean`): Nullable. used to determine if field is required.
+- **disabled** (`boolean`): Nullable. used to determine if field is disabled.
+- **hidden** (`boolean`): Nullable. used to determine if field is hidden. Can be used to have prefilled content without being visible to the end user
+- **touched** (`boolean`): Nullable. used to determine if field has been touched.
+- **dirty** (`boolean`): Nullable. used to determine if field dirty
+- **onFocus** (`function`): Nullable. used to hook into html onFocus input event.
+- **onChange** (`function`): Nullable. used to hook into html onChange input event.
+
+### Variants:
+#### Default
+<Canvas of={TextAreaStories.Default} />
+#### Disabled
+<Canvas of={TextAreaStories.Disabled} />
+#### Required
+<Canvas of={TextAreaStories.Required} />
+#### Hidden
+<Canvas of={TextAreaStories.Hidden} />
+#### WithStyles
+<Canvas of={TextAreaStories.WithStyles} />
+---

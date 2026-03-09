@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as SelectStories from './InputSelect.stories';
+
+<Meta of={SelectStories} />
+# Select Component
+
+The `SelectInput` component is used for plain text form inputs.
+
+## Properties
+- **name** (`string`): Required. The input elements name, this will become the key of the input on form submission. Can be nested using dot notation ie (fieldset.email)
+- **label** (`string`): Nullable. label text that appears on top of the input element
+- **required** (`boolean`): Nullable. used to determine if field is required.
+- **disabled** (`boolean`): Nullable. used to determine if field is disabled.
+- **hidden** (`boolean`): Nullable. used to determine if field is hidden. Can be used to have prefilled content without being visible to the end user
+- **options** (`Array<{value: string, label: string}>`): Required. options for the checkbox
+- **onSelectionChange** (`(value:string) => void`): Callback function to return the selected value when user selects an option
+
+### Variants:
+#### Default
+<Canvas of={SelectStories.Default} />
+
+#### Required
+<Canvas of={SelectStories.Required} />
+
+#### Disabled
+<Canvas of={SelectStories.Disabled} />
+
+#### Hidden
+<Canvas of={SelectStories.Hidden} />
+
+#### WithStyles
+<Canvas of={SelectStories.WithStyles} />
+---

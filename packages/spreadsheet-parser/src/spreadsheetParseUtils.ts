@@ -1,4 +1,4 @@
-import { complement, isNil } from 'ramda'
+import { complement, isEmpty, isNil } from 'ramda'
 import { isBoolean, isObject, isString, isNotNaN, isDate, isNotNil } from 'ramda-adjunct'
 
 import { Worksheet, Row, Cell, CellValue } from 'exceljs'
@@ -11,16 +11,14 @@ import {
 
 import {
   validDataTableDataTypes, validRowValueListTypes,
-  validDataListDataTypes, validDataTypes,
+  validDataCollectionDataTypes, validDataTypes,
 } from './SpreadsheetParserTypes'
 
 import type {
-  ParseOptions, DataLayout,
+  ParseOptions,
   GetWorkSheetList, GetRowValues, GetDataTypesFromRow,
-  CellMeta, DataCellMeta,
-  DataTableDataType, RowValueListType, DataListDataType,
-  // Data, DataTableData, DataListData,
-  DataType,
+  CellMeta, DataCellMeta, RowMeta,
+  DataType, DataTableDataType, RowValueListType, DataCollectionDataType,
   InvalidTypeWarning,
 } from './SpreadsheetParserTypes'
 
@@ -114,26 +112,6 @@ export const cellValueFromJson = (
     }
   }
   return dataCellWarning(`Cell had no JSON content: ${cellValue}`, dataCellMeta)
-}
-
-// TODO: eventually will want cellValueFromList, where we pass in the type, and
-//       that is able to handle list:number, list:uuid, etc ...
-export const cellValueFromStringList = (
-  dataLayout: DataLayout,
-  colStart: number,
-  rowStart: number,
-  dataCellMeta: DataCellMeta,
-  parseOpts?: ParseOptions
-) : string[] => {
-
-  if (dataLayout !== 'dataList') {
-    const warningMsg = dataCellWarning(
-      `Invalid property type 'string:list' for dataLayout '${dataLayout}'.  string:list' is only valid for 'dataList' dataLayout`,
-      dataCellMeta, parseOpts
-    )
-    return [warningMsg]
-  }
-  return ['']
 }
 
 
@@ -249,9 +227,23 @@ export const getRowValueListBaseType = (
   return validDataTypes.includes(subType) ? subType : 'invalid-list-type'
 }
 
-export const getBaseDataType = (dataType: DataType): DataType | InvalidTypeWarning =>
+export const getBaseDataType = (
+  dataType: DataType,
+): DataType | InvalidTypeWarning =>
   isValidRowValueListType(dataType) ? getRowValueListBaseType(dataType) :
-  isValidDataTableDataType(dataType) ? dataType : 'invalid-data-type'
+  isValidDataTableDataType(dataType) ? dataType :
+  'invalid-data-type'
+
+export const getDataType = (
+  dataType: DataType,
+  cellMeta: CellMeta
+): DataType | InvalidTypeWarning =>
+  isReferencedDataType(dataType) ? getReferencedDataType(dataType, cellMeta) :
+  isLinkedDataType(dataType) ? getLinkidDataType(dataType, cellMeta) :
+  isValidRowValueListType(dataType) ? dataType :
+  isValidDataTableDataType(dataType) ? dataType :
+  'invalid-data-type'
+
 
 export const getCellError = (cellValue: CellValue): string =>
   cellValueHasError(cellValue) ? (cellValue as any).error : ''
@@ -266,8 +258,8 @@ export const isValidRowValueListType = (dataType: DataType) =>
 
 export const isRowValueListType = isValidRowValueListType
 
-export const isValidDataListDataType = (dataType: DataType) =>
-  isString(dataType) && validDataListDataTypes.includes(dataType as DataListDataType)
+export const isValidDataCollectionDataType = (dataType: DataType) =>
+  isString(dataType) && validDataCollectionDataTypes.includes(dataType as DataCollectionDataType)
 
 export const isValidDataType = (dataType: DataType) =>
   isString(dataType) && validDataTypes.includes(dataType)
@@ -284,7 +276,7 @@ export const isValidDataTypeList = (dataTypes: DataType[]) : {
 export const isNotValidDataTableDataType = complement(isValidDataTableDataType)
 export const isNotValidRowValueListType = complement(isValidRowValueListType)
 export const isNotRowValueListType = isNotValidRowValueListType
-export const isNotValidDataListDataType = complement(isValidDataListDataType)
+export const isNotValidDataCollectionDataType = complement(isValidDataCollectionDataType)
 export const isNotValidDataType = complement(isValidDataType)
 export const isNotValidDataTypeList = complement(isValidDataTypeList)
 
@@ -332,6 +324,120 @@ export const cellValueHasError = (cellValue: CellValue) =>
 export const dataTypeFromRowValueListType = (rowListType: RowValueListType) =>
   `list:${rowListType}`
 
+export const isReferencedDataType = (dataType: DataType) =>
+  isString(dataType) && dataType.includes(':ref')
+
+export const isLinkedDataType = (dataType: DataType) =>
+  isString(dataType) && dataType.includes(':link')
+
+export const isNotReferencedDataType = complement(isReferencedDataType)
+export const isNotLinkedDataType = complement(isLinkedDataType)
+
+export const getReferencedDataType = (
+  dataType: DataType,
+  cellMeta: CellMeta,
+) => {
+  if (isNotReferencedDataType(dataType)) {
+    throw new Error(cellWarning(
+      `Non referenced data type provided '${dataType}'`, cellMeta))
+  }
+
+  const refTokens = dataType.split(':')
+  if (refTokens.length !== 2 || refTokens[1] !== 'ref') {
+    throw new Error(cellWarning(
+      `Invalid referenced data type: '${dataType}', should be DATA_TYPE:ref`, cellMeta))
+  }
+
+  const referencedDataType = refTokens[0] as DataType
+  if (isNotValidDataType(referencedDataType)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data type: '${dataType}', should be one of ${toJson(validDataTypes)}`, cellMeta))
+  }
+  return referencedDataType
+}
+
+export const getLinkidDataType = (
+  dataType: DataType,
+  cellMeta: CellMeta,
+) => {
+  if (isNotLinkedDataType(dataType)) {
+    throw new Error(cellWarning(
+      `Non linked data type provided '${dataType}'`, cellMeta))
+  }
+
+  const linkTokens = dataType.split(':')
+  if (linkTokens.length !== 2 || linkTokens[1] !== 'link') {
+    throw new Error(cellWarning(
+      `Invalid linked data type: '${dataType}', should be DATA_TYPE:link`, cellMeta))
+  }
+
+  const linkedDataType = linkTokens[0] as DataType
+  if (isNotValidDataType(linkedDataType)) {
+    throw new Error(cellWarning(
+      `Invalid linked data type: '${dataType}', should be one of ${toJson(validDataTypes)}`, cellMeta))
+  }
+  return linkedDataType
+}
+
+export const getReferencedData = (cellValue: CellValue, cellMeta: CellMeta) => {
+
+  const cellText = cellValue?.toString()
+  if (isNil(cellText) || cellText.trim() === '')
+    throw new Error(cellWarning('Empty referenced data value', cellMeta))
+
+  const referencedDataTokens = cellText.split(':')
+  if (referencedDataTokens.length !== 2) {
+    throw new Error(cellWarning(
+      `Invalid referenced data value: '${cellText}', should be REF_NAME:REF_VALUE`, cellMeta))
+  }
+
+  const referencedDataKey = referencedDataTokens[0]
+  if (isEmpty(referencedDataKey) || !strIsValidObjectKey(referencedDataKey)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data key: '${referencedDataKey}', should be a valid object key`, cellMeta))
+  }
+
+  const referencedDataValue = referencedDataTokens[1]
+  if (isEmpty(referencedDataValue)) {
+    throw new Error(cellWarning(
+      `Invalid referenced data value: '${referencedDataValue}', should not be empty`, cellMeta))
+  }
+
+  return { referencedDataKey, referencedDataValue }
+}
+
+export const getLinkedDataRef = (cellValue: CellValue, cellMeta: CellMeta) => {
+
+  const cellText = cellValue?.toString()
+  if (isNil(cellText) || cellText.trim() === '')
+    throw new Error(cellWarning('Empty linked data value', cellMeta))
+
+  const linkedDataTokens = cellText.split('.')
+  if (linkedDataTokens.length !== 2) {
+    throw new Error(cellWarning(
+      `Invalid linked data referemce: '${cellText}', should be WORKSHEET_NAME:REF_KEY`, cellMeta))
+  }
+
+  const linkedDataSheetName = linkedDataTokens[0]
+  if (isEmpty(linkedDataSheetName) || !strIsValidObjectKey(linkedDataSheetName)) {
+    throw new Error(cellWarning(
+      `Invalid linked data worksheet: '${linkedDataSheetName}' should be string`, cellMeta))
+  }
+
+  const linkedDataRefKey = linkedDataTokens[1]
+  if (isEmpty(linkedDataRefKey)) {
+    throw new Error(cellWarning(
+      `Invalid linked data ref key: '${linkedDataRefKey}', should not be empty`, cellMeta))
+  }
+
+  return { linkedDataSheetName, linkedDataRefKey }
+}
+
+
+
+
+
+
 //--- Logging -----------------------------------------------------------------
 
 export const parserWarning = (msg: string, parseOpts?: ParseOptions) => {
@@ -376,17 +482,35 @@ export const cellWarning = (
   return `${msg} -> WS:${cellMeta.worksheetName}, Row:${(cellMeta.rowNumber)} Col:${colNumToText(cellMeta.colNumber)}`
 }
 
+export const rowWarning = (
+  msg: string,
+  rowMeta: RowMeta,
+  parseOpts?: ParseOptions
+): string =>  {
+  const { reportWarnings = true } = parseOpts || {}
+  if (reportWarnings) {
+    console.warn(
+      '\nParsing error:\n' +
+      `   Worksheet: ${rowMeta.worksheetName} Row:${(rowMeta.rowNumber)}\n` +
+      `   ${msg}\n`
+    )
+  }
+  return `${msg} -> WS:${rowMeta.worksheetName}, Row:${(rowMeta.rowNumber)}`
+}
+
+
 //--- General Parsing Utils ---------------------------------------------------
 
-export const rowIsFrontMatterDelimiter = (row: Row) =>
-  row.getCell(1).value === '---'
+
+export const rowIsDelimiter = (row: Row) =>
+  row.getCell(1).toString().trim().startsWith('---')
 
 export const worksheetHasFrontmatter = (ws: Worksheet, startingRow: number) => {
   const row = ws.getRow(startingRow)
-  return rowIsFrontMatterDelimiter(row)
+  return rowIsDelimiter(row)
 }
 
-export const rowIsNotFrontMatterDelimiter = complement(rowIsFrontMatterDelimiter)
+export const rowIsNotFrontMatterDelimiter = complement(rowIsDelimiter)
 export const doesNotHaveFrontMatter = complement(worksheetHasFrontmatter)
 
 export const passwordHash = (password: string) =>
@@ -399,11 +523,18 @@ export const worksheetNotHidden = (ws: Worksheet) => ws.name[0] !== '.'
 export const colNumToText = (colNum: number) =>
   colNumToTextMap[colNum] || `invalid column number ${colNum}`
 
-export const shouldSkipDataListRow = (rowValues: CellValue[]) =>
+export const shouldSkipDataCollectionRow = (rowValues: CellValue[]) =>
   rowValues[2]?.toString().trim() === '_skip_'
 
 export const shouldSkipDataTableValue = (callValue: CellValue) =>
   callValue?.toString().trim() === '_skip_'
+
+
+export const isNullValueInCollectionRow = (rowValues: CellValue[]) =>
+  rowValues[2]?.toString().trim() === '_null_'
+
+export const isNullDataTableValue = (callValue: CellValue) =>
+  callValue?.toString().trim() === '_null_'
 
 // currently supports A-BZ
 export const colNumToTextMap: { [key: number]: string } = {
@@ -419,4 +550,3 @@ export const colNumToTextMap: { [key: number]: string } = {
   62: 'BK', 63: 'BL', 64: 'BM', 65: 'BN', 66: 'BO', 67: 'BP', 68: 'BQ', 69: 'BR', 70: 'BS', 71: 'BT',
   72: 'BU', 73: 'BV', 74: 'BW', 75: 'BX', 76: 'BY', 77: 'BZ',
 }
-

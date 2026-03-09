@@ -1,0 +1,26 @@
+import { Canvas, Meta } from '@storybook/blocks';
+import * as FieldStories from './Form.stories.tsx';
+
+<Meta of={FieldStories} />
+# Form Component
+
+The `Form` component is used to surround all the inputs and process the submission of the form data. Underneath this component its using `react-hook-form` 
+
+## Properties
+- **title** (`string`): Nullable. Title of the form
+- **id** (`string`): Nullable. Used as the form's DOM id.
+- **withPanel** (`boolean`): Nullable. used to determine if form should have a panel
+- **customStyles** (`Object`): Nullable. used to override default form styles
+
+### Variants:
+#### Default
+<Canvas of={FieldStories.Default} />
+#### WithoutPanel
+<Canvas of={FieldStories.WithoutPanel} />
+#### WithoutTitle
+<Canvas of={FieldStories.WithoutTitle} />
+#### DebugEnabled
+<Canvas of={FieldStories.Debug} />
+#### WithContextStyles
+<Canvas of={FieldStories.WithStyles} />
+---

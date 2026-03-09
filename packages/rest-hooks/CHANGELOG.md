@@ -29,24 +29,32 @@
 ### Patch Changes
 
 - Forgot to build before publishing, UGH!!!!!
+- Updated dependencies
+  - @stcland/utils@0.0.10
 
 ## 0.0.15
 
 ### Patch Changes
 
 - Updating type signatures.
+- Updated dependencies
+  - @stcland/utils@0.0.9
 
 ## 0.0.14
 
 ### Patch Changes
 
 - Update MutateBaseProps signature, update mutate hooks signatures to accept generics.
+- Updated dependencies
+  - @stcland/utils@0.0.8
 
 ## 0.0.13
 
 ### Patch Changes
 
 - Add mutation hooks.
+- Updated dependencies
+  - @stcland/utils@0.0.7
 
 ## 0.0.12
 

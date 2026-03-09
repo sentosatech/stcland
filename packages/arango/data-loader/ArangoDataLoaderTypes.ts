@@ -1,29 +1,30 @@
 import { ParsedSpreadheetCallBack, ParseOptions } from '@stcland/spreadsheet-parser'
-import {
-  ArangoHostConfig,
-  IfDbDoesNotExistOnGet, // IfDbExistsOnCreate,
-  IfCollectionDoesNotExistOnGet,
-  DataBaseUser as ArangoDataBaseUser
-} from '../utils/ArangoUtilsTypes'
 import { Database } from 'arangojs'
 
-export const enum IfTargetDbDoesNotExist {
-  ThrowError = IfDbDoesNotExistOnGet.ThrowError,
-  Create =  IfDbDoesNotExistOnGet.Create
-}
+import type {
+} from '../utils/ArangoUtilsTypes'
 
-export const enum IfTargetCollectionDoesNotExist {
-  ThrowError = IfCollectionDoesNotExistOnGet.ThrowError,
-  Create = IfCollectionDoesNotExistOnGet.Create
-}
+import type {
+  IfDbDoesNotExistOnGet,
+  IfCollectionDoesNotExistOnGet,
+  ArangoHostConfig,
+  CreateDatabaseUserOptions
+} from '../utils/ArangoUtilsTypes'
 
-export type DataBaseUser = Pick<ArangoDataBaseUser, 'username' | 'passwd'>
+
+import { CollectionType } from '../utils'
+
+// re-export arango types
+export { CreateDatabaseUserOptions }
+
+export type IfTargetDbDoesNotExist = IfDbDoesNotExistOnGet
+export type IfTargetCollectionDoesNotExist = IfCollectionDoesNotExistOnGet
 
 export interface LoadSpreadsheetDataOpts extends
   Pick<ParseOptions, 'reportProgress' | 'reportWarnings'> {
   ifTargetDbDoesNotExist?: IfTargetDbDoesNotExist
     // defaults to create
-  dbUsers?: DataBaseUser[]
+  users?: CreateDatabaseUserOptions[]
     // only needed if IfTargertDbDoesNotExist is Create
     // defaults to []
   ifTargetCollectionDoesNotEist?: IfTargetCollectionDoesNotExist
@@ -31,30 +32,41 @@ export interface LoadSpreadsheetDataOpts extends
   validateEdgeTargets?: boolean
     // For edge collections, validate that the _from and _to docs exist
     // defaults to true
+  validateGraphCollections?: boolean
+    // graphs, validate that the from and to collections exist
+    // defaults to true
+}
+
+export interface LoadSpreadsheetDataResult {
+  numDocsLaoaded: Record<string, number> // { collectionName: numDocsLoaded }
+  numGraphsCreated: number
 }
 
 export type LoadSpreadsheetData = (
   excelFilePath: string,
   arangoHostConfig: ArangoHostConfig,
   dbName: string,
-  opts: LoadSpreadsheetDataOpts
-) => Promise<number>;
-    // number of records loaded
+  dataLoadOpts?: LoadSpreadsheetDataOpts
+// ) => Promise<LoadSpreadsheetDataResult>;
+) => Promise<any>; // TODO: figure out how to get LoadSpreadsheetDataResult when working with forEachSheet
 
 export type LoadWorksheetData = ParsedSpreadheetCallBack
 
 export interface ArangoDataLoaderMeta {
-  type: 'docCollection' | 'edgeCollection' | 'graph'
+  arangoType : 'docCollection' | 'edgeCollection' | 'graph'
+  [key: string]: any
+}
+
+export const collectionTypeMap: Record<'docCollection' | 'edgeCollection', CollectionType> = {
+  docCollection: CollectionType.DOCUMENT_COLLECTION,
+  edgeCollection: CollectionType.EDGE_COLLECTION,
 }
 
 export interface ArangoDataLoaderClientData {
   db: Database
-  opts: LoadSpreadsheetDataOpts
+  dataLoadOpts: LoadSpreadsheetDataOpts
 }
 
-
-export const ValidWorksheetTypes = [
-  'docCollection',
-  'edgeCollection',
-  'graph'
+export const validWorksheetTypes = [
+  'docCollection', 'edgeCollection','graph'
 ]
