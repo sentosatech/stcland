@@ -10,14 +10,13 @@ import {
 } from '@stcland/utils'
 
 import type { StcRest } from './RestHooksTypes'
-import { useRestClient } from './state/restState'
 
 
 export const useRestCreate = <TData = unknown, TError = unknown>(
+  restClient: StcRest.RestClient,
   restPath: string,
   options: StcRest.MutateBaseProps['options'] = {}
 ): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
-  const { restClient } = useRestClient()
   return useRestMutate(restClient.createPostFn, restPath, options)
 }
 
@@ -35,10 +34,10 @@ export const useRestCreate = <TData = unknown, TError = unknown>(
     example options: { mutationFnName: updateThing }
 */
 export const useRestUpdate  = <TData = unknown, TError = unknown>(
+  restClient: StcRest.RestClient,
   restPath: string,
   options: StcRest.MutateBaseProps['options'] = {}
 ): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
-  const { restClient } = useRestClient()
   return useRestMutate(restClient.createPutFn, restPath, options)
 }
 
@@ -56,10 +55,10 @@ export const useRestUpdate  = <TData = unknown, TError = unknown>(
     example options: { mutationFnName: updateThing }
 */
 export const useRestPatch  = <TData = unknown, TError = unknown>(
+  restClient: StcRest.RestClient,
   restPath: string,
   options: StcRest.MutateBaseProps['options'] = {}
 ): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
-  const { restClient } = useRestClient()
   return useRestMutate(restClient.createPatchFn, restPath, options)
 }
 
@@ -77,10 +76,10 @@ export const useRestPatch  = <TData = unknown, TError = unknown>(
     example options: { mutationFnName: deleteThing }
 */
 export const useRestDelete  = <TData = unknown, TError = unknown>(
+  restClient: StcRest.RestClient,
   restPath: string,
   options: StcRest.MutateBaseProps['options'] = {}
 ): UseMutationResult<AxiosResponse<TData>, TError, StcRest.MutateFnOptions | undefined> => {
-  const { restClient } = useRestClient()
   return useRestMutate(restClient.createDeleteFn, restPath, options)
 }
 

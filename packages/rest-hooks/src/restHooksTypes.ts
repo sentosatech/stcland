@@ -87,6 +87,7 @@ export namespace StcRest {
     getAccessToken?: () => string;
       // Optional function to call to get the access token for the current user.
       // If not provided, the client will not add an access token to requests.
+    onAuthFailureFn?: (error: any )=> void
   }
 
   /**
