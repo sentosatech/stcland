@@ -9,7 +9,7 @@ import {
   isNotStringOrArrayOrFunction,
 } from '@stcland/utils'
 
-import type { StcRest } from './RestHooksTypes'
+import type { StcRest } from './restHooksTypes'
 
 
 export const useRestCreate = <TData = unknown, TError = unknown>(
@@ -105,6 +105,7 @@ export const useRestMutate : StcRest.UseRestMutate = <
     onMutate = {},
     onError = {},
     baseUrl = '',
+    axiosOptions: consumerAxiosOptions,
     navigateFn,
     toastSuccessFn,
     toastErrorFn,
@@ -113,7 +114,12 @@ export const useRestMutate : StcRest.UseRestMutate = <
   const baseSuccessActions = { navigateFn, toastSuccessFn }
   const baseErrorActions = { navigateFn, toastErrorFn }
 
-  const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
+  // axiosOptions.baseURL takes precedence if explicitly provided,
+  // otherwise fall back to the baseUrl shorthand, otherwise use restClient default
+  const resolvedBaseUrl = consumerAxiosOptions?.baseURL || baseUrl
+  const axiosOptions = consumerAxiosOptions || resolvedBaseUrl
+    ? { ...consumerAxiosOptions, ...(resolvedBaseUrl ? { baseURL: resolvedBaseUrl } : {}) }
+    : undefined
 
   const queryClient = useQueryClient()
 
