@@ -253,9 +253,13 @@ describe('Test Rest Client', () => {
     )
     const postData = { name: 'bill' }
 
-    rsp  = await restClient.post('/post-unauth', postData) as AxiosError
-    expect(rsp.status).toBe(401)
-    expect(unauthCount).toBe(1)
+    try {
+      await restClient.post('/post-unauth', postData)
+      expect.unreachable('Should have thrown on 401')
+    } catch (error: any) {
+      expect(error.status).toBe(401)
+      expect(unauthCount).toBe(1)
+    }
   })
 
   test('Test PostFn', async () => {
