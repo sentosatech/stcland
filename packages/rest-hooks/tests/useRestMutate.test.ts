@@ -1,4 +1,4 @@
-import type { StcRest } from '../src/RestHooksTypes'
+import type { StcRest } from '../src/restHooksTypes'
 import type { StcRestTest } from './testTypes'
 import { describe, test, expect, beforeEach, vi } from 'vitest'
 import { setupServer } from 'msw/node'
@@ -389,6 +389,97 @@ describe('Test Rest Mutate Query Hooks', () => {
     assertOnMutateSuccess(mutationOptions)
   })
 
+
+  test('useRestCreate with custom axiosOptions headers', async () => {
+    restPath = '/simple-post/:animal'
+    baseUrl = 'http://testhost.com:1234'
+
+    const { result } = reactQueryRenderHook(() => useRestCreate(restClient, restPath,
+      {
+        mutationFnName: 'createWithCustomHeaders',
+        baseUrl,
+        axiosOptions: {
+          headers: {
+            'X-Upload-Source': 'test-client',
+            'X-Request-Id': 'req-12345'
+          }
+        },
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
+      }))
+
+    const restParams = { pathParams: { animal: 'cat' } }
+    const data = { file: 'base64-encoded-content', description: 'Test upload' }
+
+    response = await result.current.mutateAsync({ data, restParams })
+
+    // Verify custom headers are passed through to the request
+    expect(response.data.meta.headers['x-upload-source']).toEqual('test-client')
+    expect(response.data.meta.headers['x-request-id']).toEqual('req-12345')
+    // Verify authorization header is still applied by the interceptor
+    expect(response.data.meta.headers.authorization).toEqual('Bearer token')
+    expect(response.data.data.message).toEqual('post successful')
+    expect(response.data.meta.url).toEqual(`${baseUrl}/simple-post/cat`)
+  })
+
+  test('useRestUpdate with custom axiosOptions headers and baseURL via axiosOptions', async () => {
+    restPath = '/simple-put'
+    baseUrl = 'http://testhost.com:1234'
+
+    const { result } = reactQueryRenderHook(() => useRestUpdate(restClient, restPath,
+      {
+        mutationFnName: 'updateWithCustomHeaders',
+        axiosOptions: {
+          baseURL: baseUrl,
+          headers: {
+            'X-Upload-Source': 'test-client',
+            'X-Request-Id': 'req-67890'
+          },
+          timeout: 30000
+        },
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
+      }))
+
+    const data = { file: 'updated-content', description: 'Updated file' }
+
+    response = await result.current.mutateAsync({ data })
+
+    // Verify custom headers are sent
+    expect(response.data.meta.headers['x-upload-source']).toEqual('test-client')
+    expect(response.data.meta.headers['x-request-id']).toEqual('req-67890')
+    expect(response.data.meta.headers.authorization).toEqual('Bearer token')
+    expect(response.data.data.message).toEqual('put successful')
+    // Verify baseURL was applied via axiosOptions (not baseUrl shorthand)
+    expect(response.data.meta.url).toEqual(`${baseUrl}/simple-put`)
+  })
+
+  test('useRestCreate axiosOptions.baseURL takes precedence over baseUrl shorthand', async () => {
+    restPath = '/simple-post/:animal'
+    const axiosBaseUrl = 'http://other-service.com:9999'
+
+    const { result } = reactQueryRenderHook(() => useRestCreate(restClient, restPath,
+      {
+        mutationFnName: 'createWithPrecedence',
+        baseUrl: 'http://should-be-overridden.com:0000',
+        axiosOptions: {
+          baseURL: axiosBaseUrl,
+          headers: { 'X-Upload-Source': 'precedence-test' }
+        },
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
+      }))
+
+    const restParams = { pathParams: { animal: 'dog' } }
+    const data = { file: 'file-data' }
+    response = await result.current.mutateAsync({ data, restParams })
+
+    // axiosOptions.baseURL should take precedence over baseUrl shorthand
+    expect(response.data.meta.url).toEqual(`${axiosBaseUrl}/simple-post/dog`)
+    // Custom headers should still be applied
+    expect(response.data.meta.headers['x-upload-source']).toEqual('precedence-test')
+    expect(response.data.meta.headers.authorization).toEqual('Bearer token')
+  })
 
   // Failling test cases.
   test('useRestCreate mutate hook - optimistic rollback on failure', async () => {

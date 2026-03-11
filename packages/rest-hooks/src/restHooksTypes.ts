@@ -18,6 +18,11 @@ export namespace StcRest {
       // Will be returned as results when query returns `undefined`
     baseUrl?: string
       // base url for the query (if not provided default rest client url will be used)
+    axiosOptions?: Partial<AxiosRequestConfig>
+      // Optional Axios request configuration per hook instance.
+      // Allows overriding headers, timeout, responseType, etc.
+      // Example: { headers: { 'Content-Type': 'multipart/form-data' } }
+      // Note: baseUrl option is a shorthand for axiosOptions.baseURL
     transformResult?: (rsp: any) => any
       // Transform the data referenced by resultsPropName before returning
       // Note: this will be appliaed to the data selected by the `pickResults` function
@@ -518,6 +523,11 @@ export namespace StcRest {
       onError?: OnErrorOptions | (()=> void)
       onMutate?: OnMutateOptions | (()=> void)
       baseUrl?: string
+      axiosOptions?: Partial<AxiosRequestConfig>
+        // Optional Axios request configuration per hook instance.
+        // Allows overriding headers, timeout, responseType, etc.
+        // Example: { headers: { 'Content-Type': 'multipart/form-data' } }
+        // Note: baseUrl option is a shorthand for axiosOptions.baseURL
       navigateFn?: (routeTo?: string) => void
       toastSuccessFn?: (toastMessage?: string) => void
       toastErrorFn?: (toastMessage?: string) => void

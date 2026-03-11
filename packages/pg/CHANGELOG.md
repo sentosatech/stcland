@@ -1,5 +1,13 @@
 # @stcland/arango
 
+## 0.0.10
+
+### Patch Changes
+
+- 9a11d32: arhggg
+- 9a11d32: build before pub"
+- 9a11d32: Fix versioning
+
 ## 0.0.8
 
 ### Patch Changes

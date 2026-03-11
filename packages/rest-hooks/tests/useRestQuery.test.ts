@@ -5,7 +5,7 @@ import { setupServer } from 'msw/node'
 
 import { handlers, SimpleGetRsp } from './handlers'
 
-import { StcRest } from '../src/RestHooksTypes'
+import { StcRest } from '../src/restHooksTypes'
 import { createRestClient } from '../src/restClient'
 import { useRestQuery } from '../src/restQueryHooks.ts'
 
@@ -297,6 +297,71 @@ describe('Test Rest Query Hooks', () => {
     expect(restConfig.method).toEqual('get')
     expect(restConfig.url).toEqual('/simple-get-no-meta')
     expect(restConfig.headers.Authorization).toEqual('Bearer just-another-token')
+  })
+
+  test('useRestQuery with custom axiosOptions headers', async () => {
+
+    const useGetWithCustomHeaders = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
+      const path = '/custom-headers-get'
+      const queryKey: any = ['custom-headers-get']
+      const op = 'customHeadersGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op,
+          pickResults: pickResultsThreeDeep,
+          pickMeta: pickMetaThreeDeep,
+          resultsPropName, defaultResponse,
+          axiosOptions: {
+            headers: { 'X-Custom-Header': 'custom-value' }
+          }
+        }
+      )
+    }
+
+    const { result } = reactQueryRenderHook(() => useGetWithCustomHeaders())
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true)
+    })
+
+    const meta = result.current.meta
+    expect(meta?.headers['x-custom-header']).toEqual('custom-value')
+    expect(meta?.headers.authorization).toEqual('Bearer just-another-token')
+  })
+
+  test('useRestQuery axiosOptions.baseURL takes precedence over baseUrl shorthand', async () => {
+
+    const useGetWithAxiosBaseUrl = (options?: Partial<StcRest.UseRestQueryOptions<DefaultType>>) => {
+      const path = '/simple-get'
+      const queryKey: any = ['simple-get-axios-baseurl']
+      const op = 'simpleGet'
+      const resultsPropName = 'simpleGetResponse'
+      const defaultResponse = {}
+      return useRestQuery<DataType, EmptyObject>(
+        restClient, queryKey, path, {
+          ...options, op,
+          pickResults: pickResultsThreeDeep,
+          pickMeta: pickMetaThreeDeep,
+          resultsPropName, defaultResponse,
+          baseUrl: 'http://should-be-overridden.com:0000',
+          axiosOptions: {
+            baseURL: 'http://testhost.com:7777',
+          }
+        }
+      )
+    }
+
+    const { result } = reactQueryRenderHook(() => useGetWithAxiosBaseUrl())
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true)
+    })
+
+    const meta = result.current.meta
+    // axiosOptions.baseURL should take precedence over baseUrl shorthand
+    expect(meta?.url).toEqual('http://testhost.com:7777/simple-get')
   })
 
   test('useRestQuery with no Meta and axios stripped', async () => {

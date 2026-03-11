@@ -1,4 +1,4 @@
 export * from './restClient'
-export * from './RestHooksTypes'
+export * from './restHooksTypes'
 export * from './restQueryHooks'
 export * from './restMutateHooks'

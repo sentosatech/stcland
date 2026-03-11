@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.21
+
+### Patch Changes
+
+- Expose axiosOptions to consumer per hook instance.
+
 ## 0.0.20
 
 ### Patch Changes

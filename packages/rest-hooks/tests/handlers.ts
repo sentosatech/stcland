@@ -49,6 +49,12 @@ export const handlers = [
     return HttpResponse.json(rsp)
   }),
 
+  // Custom headers echo handler
+  http.get('*/custom-headers-get*', async ({ request, params, cookies }) => {
+    const rsp = await makeTestResponse(request, params, cookies, { message: 'get with custom headers' })
+    return HttpResponse.json(rsp)
+  }),
+
   // Failling scenarios
   http.post('*/failing-post*', async ({ request, params, cookies }) => {
     const errorData = { message: 'Something went wrong!' }

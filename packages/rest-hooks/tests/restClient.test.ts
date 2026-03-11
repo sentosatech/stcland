@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node'
 
 import { handlers } from './handlers'
 
-import { StcRest } from '../src/RestHooksTypes'
+import { StcRest } from '../src/restHooksTypes'
 import { StcRestTest } from './testTypes'
 import { expandRestPath, createRestClient } from '../src/restClient'
 
