@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { assocPath, keys, toUpper } from 'ramda'
@@ -48,24 +48,31 @@ export const createRestClient: StcRest.CreateRestClient = (
 
     createPostFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams } = {}) => {
-          return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, mergedOptions)
         },
 
     createPutFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams } = {}) =>
-          restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, mergedOptions)
+        },
 
     createPatchFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams } = {}) =>
-          restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, mergedOptions)
+        },
 
     createDeleteFn:
       (restPath, axiosOptions) =>
-        ({ restParams } = {}) =>
-          restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
+        ({ restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), mergedOptions)
+        }
   }
 
   // all clients use these middlewares
@@ -97,6 +104,21 @@ export const createRestClient: StcRest.CreateRestClient = (
 //*****************************************************************************
 // Module Only Stuff
 //*****************************************************************************
+
+// Merges hook-level and call-level axios options.
+// Call-level options take precedence, with headers deep-merged.
+const mergeAxiosOptions = (
+  hookOptions?: Partial<AxiosRequestConfig>,
+  callOptions?: Partial<AxiosRequestConfig>
+): Partial<AxiosRequestConfig> | undefined => {
+  if (!callOptions) return hookOptions
+  if (!hookOptions) return callOptions
+  return {
+    ...hookOptions,
+    ...callOptions,
+    headers: { ...hookOptions.headers, ...callOptions.headers }
+  }
+}
 
 interface _RequestPreProcessorOptions {
   verbose?: boolean

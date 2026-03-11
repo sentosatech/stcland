@@ -481,6 +481,75 @@ describe('Test Rest Mutate Query Hooks', () => {
     expect(response.data.meta.headers.authorization).toEqual('Bearer token')
   })
 
+  test('useRestCreate with per-call axiosOptions (e.g. onUploadProgress)', async () => {
+    restPath = '/simple-post/:animal'
+    baseUrl = 'http://testhost.com:1234'
+
+    const { result } = reactQueryRenderHook(() => useRestCreate(restClient, restPath,
+      {
+        mutationFnName: 'uploadWithProgress',
+        baseUrl,
+        axiosOptions: {
+          headers: { 'X-Hook-Level': 'from-hook' }
+        },
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
+      }))
+
+    const restParams = { pathParams: { animal: 'cat' } }
+    const data = { file: 'file-content' }
+
+    const onUploadProgress = vi.fn()
+
+    response = await result.current.mutateAsync({
+      data,
+      restParams,
+      axiosOptions: {
+        headers: { 'X-Call-Level': 'from-call' },
+        onUploadProgress
+      }
+    })
+
+    // Verify hook-level header is still present
+    expect(response.data.meta.headers['x-hook-level']).toEqual('from-hook')
+    // Verify call-level header is also present
+    expect(response.data.meta.headers['x-call-level']).toEqual('from-call')
+    // Auth interceptor still works
+    expect(response.data.meta.headers.authorization).toEqual('Bearer token')
+    expect(response.data.data.message).toEqual('post successful')
+    expect(response.data.meta.url).toEqual(`${baseUrl}/simple-post/cat`)
+  })
+
+  test('useRestCreate per-call axiosOptions overrides hook-level axiosOptions', async () => {
+    restPath = '/simple-post/:animal'
+    baseUrl = 'http://testhost.com:1234'
+
+    const { result } = reactQueryRenderHook(() => useRestCreate(restClient, restPath,
+      {
+        mutationFnName: 'overrideTest',
+        baseUrl,
+        axiosOptions: {
+          headers: { 'X-Source': 'hook-level' }
+        },
+        toastSuccessFn: toastFnWrapper.fn,
+        toastErrorFn: toastFnWrapper.fn,
+      }))
+
+    const restParams = { pathParams: { animal: 'dog' } }
+    const data = { file: 'file-content' }
+
+    response = await result.current.mutateAsync({
+      data,
+      restParams,
+      axiosOptions: {
+        headers: { 'X-Source': 'call-level' }
+      }
+    })
+
+    // Call-level should override hook-level for same header key
+    expect(response.data.meta.headers['x-source']).toEqual('call-level')
+  })
+
   // Failling test cases.
   test('useRestCreate mutate hook - optimistic rollback on failure', async () => {
     toastMessage = 'Failed to create item!'
