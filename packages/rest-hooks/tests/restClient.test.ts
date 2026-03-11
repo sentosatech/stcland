@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { describe, test, expect } from 'vitest'
 import { setupServer } from 'msw/node'
 
@@ -95,7 +95,8 @@ describe('Test Rest Client', () => {
     verbose: false,
     getAccessToken: () => 'testing-access-token',
     // This fxn strips all of the AxiosResponse except for the data
-    responsePostProcessorFn: (rsp: AxiosResponse) => rsp?.data || rsp
+    responsePostProcessorFn: (rsp: AxiosResponse) => rsp?.data || rsp,
+    // onAuthFailure: (error: any) => void
   }
 
   const defaultServerConfig: StcRest.ServerConfig = {
@@ -104,7 +105,7 @@ describe('Test Rest Client', () => {
   }
 
   // used accross multiple tests, so declared here
-  let rsp: StcRestTest.TestResponse
+  let rsp: StcRestTest.TestResponse |  AxiosError
   let body: any
   let restParams: StcRest.RestParams
   let expectedRsp: StcRestTest.TestResponse
@@ -234,6 +235,31 @@ describe('Test Rest Client', () => {
       }
     }
     assertResponse(rsp, expectedRsp)
+  })
+
+  test('Test Unauthorized Post', async () => {
+    let unauthCount = 0
+    const onAuthFailureFn = (error: any) => {
+      expect(unauthCount).toBe(0)
+      expect(error.status).toBe(401)
+      unauthCount++
+    }
+
+    const restClient = createRestClient({
+      ...defaultClientConfig,
+      onAuthFailureFn
+    },
+    defaultServerConfig
+    )
+    const postData = { name: 'bill' }
+
+    try {
+      await restClient.post('/post-unauth', postData)
+      expect.unreachable('Should have thrown on 401')
+    } catch (error: any) {
+      expect(error.status).toBe(401)
+      expect(unauthCount).toBe(1)
+    }
   })
 
   test('Test PostFn', async () => {
@@ -614,7 +640,7 @@ describe('Test Rest Client', () => {
     // with query params
 
     restParams = { queryParams: { life: 'bills' } }
-    rsp = (await deleteFn(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFn({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data:  {
@@ -634,7 +660,7 @@ describe('Test Rest Client', () => {
     const deleteFnWithPathParams = restClient.createDeleteFn('/simple-delete/:problem')
     restParams = { pathParams: { problem: 'traffic' } }
 
-    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFnWithPathParams({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data: {
@@ -656,7 +682,7 @@ describe('Test Rest Client', () => {
       queryParams: { scope: 'global' },
     }
 
-    rsp = (await deleteFnWithPathParams(restParams)) as unknown as StcRestTest.TestResponse
+    rsp = (await deleteFnWithPathParams({ restParams })) as unknown as StcRestTest.TestResponse
 
     expectedRsp = {
       data: {

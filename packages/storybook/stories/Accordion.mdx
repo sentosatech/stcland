@@ -3,7 +3,7 @@ import * as AccordionStories from './Accordion.stories'
 
 <Meta of={AccordionStories} />
 
-# Accordion Component
+# Accordion Components
 
 The `Accordion` component provides collapsible sections, 
 following the WAI-ARIA pattern for show/hide functionality. 
@@ -24,10 +24,13 @@ It offers flexibility for content organization and supports custom styling, stat
 ---
 
 ### AccordionSummary
+Base:
 - **children** (`React.ReactNode`): The header or title of the accordion section.
-- **expandIcon** (`React.ReactNode`): Icon displayed to indicate expansion/collapse.
 - **className** (`string`): Additional CSS classes for styling.
-- **focusVisibleClassName** (`string`): CSS class applied when the element gains focus through keyboard interaction.
+
+With Expanded Icon:
+- **expandIcon** (`React.ReactNode`): Icon displayed to indicate expansion/collapse.
+- **onlyIconClickable** (`boolean`): Optional, defaults to false. If true, only the `expandedIcon` is clickable.
 
 ---
 
@@ -62,6 +65,14 @@ This example shows a basic accordion with `defaultExpanded` property set to `tru
 
 ---
 
+### Only Icon Clickable 
+
+This example shows a basic accordion with `onlyIconClickable` property.
+
+<Canvas of={AccordionStories.OnlyIconClickableTemplate} />
+
+---
+
 ### With Multiple Sections
 
 This variant demonstrates multiple accordion items with independent expand/collapse functionality.
@@ -92,5 +103,3 @@ Apply custom styles to the Accordion component and all of its child elements wit
 a `customStyles` property to the parent `Accordion`.
 
 <Canvas of={AccordionStories.WithStyles} />
-
----

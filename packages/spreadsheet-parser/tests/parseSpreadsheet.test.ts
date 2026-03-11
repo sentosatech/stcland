@@ -54,7 +54,7 @@ describe('Test Spreadsheet Parser', () => {
   test('forEach worksheet', async () => {
 
     const parseOpts: ParseOptions = {
-      reportProgress: true,
+      reportProgress: false,
       reportWarnings: false,
       includeDataTypeMaps: true
     }

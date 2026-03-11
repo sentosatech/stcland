@@ -5,7 +5,7 @@ import { Database } from 'arangojs'
 import type {
   DocumentCollection,
   EdgeCollection,
-} from 'arangojs/collection'
+} from 'arangojs/collections'
 
 // import { EdgeDefinitionOptions } from 'arangojs/graph'
 
@@ -329,7 +329,7 @@ export const getEdgeCollection: GetEdgeCollection = async (
   ifCollectionDoesNotExist = 'ThrowError',
 ) => getCollection(
   db, collectionName, ifCollectionDoesNotExist, CollectionType.EDGE_COLLECTION
-)
+) as Promise<EdgeCollection>
 
 export const getCollectionType: GetCollectionType = async (
   collectionOrDb: DocumentCollection | EdgeCollection | Database,
@@ -372,7 +372,7 @@ export const graphExists: GraphExists = (
 ) => db.graph(graphName).exists()
 
 export const graphDoesNotExist: GraphDoesNotExist =
-  asyncComplement(collectionExists)
+  asyncComplement(graphExists)
 
 export const createGraph: CreateGraph = async (
   db, graphName, edgeDefinitions, createGraphOpts

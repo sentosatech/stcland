@@ -15,6 +15,7 @@ export const useRestQuery: StcRest.UseRestQuery = <
 
   const {
     baseUrl,
+    axiosOptions: consumerAxiosOptions,
     defaultResponse,
     pathParams,
     queryParams,
@@ -24,7 +25,12 @@ export const useRestQuery: StcRest.UseRestQuery = <
     resultsPropName = 'missingPropName' // should never happen
   } = options
 
-  const axiosOptions = baseUrl ? { baseURL: baseUrl } : undefined
+  // axiosOptions.baseURL takes precedence if explicitly provided,
+  // otherwise fall back to the baseUrl shorthand, otherwise use restClient default
+  const resolvedBaseUrl = consumerAxiosOptions?.baseURL || baseUrl
+  const axiosOptions = consumerAxiosOptions || resolvedBaseUrl
+    ? { ...consumerAxiosOptions, ...(resolvedBaseUrl ? { baseURL: resolvedBaseUrl } : {}) }
+    : undefined
   const useRestQueryDefaultOptions: Partial<UseQueryOptions> = {
     refetchOnWindowFocus: false
   }

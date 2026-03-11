@@ -1,0 +1,222 @@
+CREATE SCHEMA IF NOT EXISTS core;
+
+CREATE TYPE core.HAND_RESULT AS ENUM (
+    'WON',
+    'LOST',
+    'SPLIT',
+    'IN_PROGRESS'
+);
+
+CREATE TYPE core.TABLE_POSITION AS ENUM (
+    'SB',   -- Small Blind
+    'BB',   -- Big Blind
+    'UTG',  -- Under the Gun
+    'UTG+1', -- Under the Gun +1
+    'UTG+2', -- Under the Gun +2
+    'UTG+3',
+    'LJ',   -- Low Jack
+    'HJ',   -- Hijack
+    'CO',   -- Cutoff
+    'BTN'   -- Button
+);
+
+CREATE TYPE core.CARD AS ENUM (
+  '2h', '2d', '2c', '2s',
+  '3h', '3d', '3c', '3s',
+  '4h', '4d', '4c', '4s',
+  '5h', '5d', '5c', '5s',
+  '6h', '6d', '6c', '6s',
+  '7h', '7d', '7c', '7s',
+  '8h', '8d', '8c', '8s',
+  '9h', '9d', '9c', '9s',
+  'Th', 'Td', 'Tc', 'Ts',
+  'Jh', 'Jd', 'Jc', 'Js',
+  'Qh', 'Qd', 'Qc', 'Qs',
+  'Kh', 'Kd', 'Kc', 'Ks',
+  'Ah', 'Ad', 'Ac', 'As'
+);
+
+CREATE TABLE core.ORGANIZATIONS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name varchar(100) NOT NULL,
+    updated_at TIMESTAMP DEFAULT now(),
+    created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE core.USERS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE core.USERS_ORGANIZATIONS (
+    USER_ID UUID,
+    ORGANIZATION_ID UUID,
+    PRIMARY KEY (USER_ID, ORGANIZATION_ID),
+    FOREIGN KEY (USER_ID) REFERENCES core.USERS(id) ON DELETE CASCADE,
+    FOREIGN KEY (ORGANIZATION_ID) REFERENCES core.ORGANIZATIONS(id) ON DELETE CASCADE
+);
+
+CREATE INDEX USERS_ORGANIZATIONS_USER_ID_IDX on core.USERS_ORGANIZATIONS (USER_ID ASC);
+
+CREATE INDEX USERS_ORGANIZATIONS_ORGANIZATION_ID_IDX on core.USERS_ORGANIZATIONS (ORGANIZATION_ID ASC);
+
+CREATE TYPE core.PLAYER_ARCHETYPE AS ENUM (
+    'CRUSHER',
+    'REGULAR',
+    'CALLING_STATION',
+    'OLD_MAN_COFFEE',
+    'NIT',
+    'MANIAC',
+    'FISH'
+);
+
+CREATE TABLE core.PLAYERS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID, -- This is nullable as not every PLAYER is an USER
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(100) NOT NULL,
+    archetype core.PLAYER_ARCHETYPE,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT PLAYERS_USER_ID_FKEY FOREIGN KEY (USER_ID)
+    REFERENCES core.USERS (ID)
+);
+
+CREATE INDEX PLAYERS_USER_ID_IDX ON core.PLAYERS (USER_ID ASC);
+
+CREATE TYPE core.HAND_GROUP_TYPE AS ENUM (
+    'SESSION',
+    'FEATURED_PLAYER',
+    'HOMEWORK'
+);
+
+CREATE TABLE core.HAND_GROUPS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    group_type core.hand_group_type,
+    agent_id UUID NOT NULL, -- User who recorded the group
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT SESSIONS_AGENT_ID_FKEY FOREIGN KEY (AGENT_ID)
+    REFERENCES core.USERS (ID)
+);
+
+CREATE INDEX HAND_GROUPS_AGENT_ID_IDX ON core.HAND_GROUPS (AGENT_ID ASC);
+
+CREATE TYPE core.CURRENCY AS ENUM (
+  'USD',
+  'EUR',
+  'GBP',
+  'JPY',
+  'CNY',
+  'INR',
+  'AUD',
+  'CAD',
+  'CHF',
+  'NZD'
+);
+
+CREATE TABLE core.HANDS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hand_group_id UUID,
+    hand_number INTEGER NOT NULL, -- Sequential number of the hand in the session (e.g. 1st hand, 2nd hand)
+    currency core.CURRENCY DEFAULT 'USD',
+    num_players_seated INTEGER, -- Number of players seated for this hand (some may not be players though)
+    dealer_seat_num INTEGER, -- Seat number of the dealer for this specific hand
+    hero_position core.TABLE_POSITION, -- Position of the hero in this hand
+    community_cards core.CARD[] DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(hand_group_id, hand_number),
+
+    CONSTRAINT HANDS_HAND_GROUP_ID_FKEY FOREIGN KEY (HAND_GROUP_ID)
+    REFERENCES core.HAND_GROUPS (ID)
+);
+
+CREATE INDEX HANDS_HAND_GROUP_ID_IDX ON core.HANDS (HAND_GROUP_ID ASC);
+
+
+CREATE TYPE core.FORCED_BET_TYPE AS ENUM (
+    'SMALL_BLIND',
+    'BIG_BLIND',
+    'STRADDLE',
+    'ANTE'
+);
+
+CREATE TABLE core.FORCED_BETS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hand_id UUID NOT NULL,
+    bet_number INTEGER NOT NULL, -- Sequential number of the forced bet in the hand
+    type core.FORCED_BET_TYPE NOT NULL,
+    position core.TABLE_POSITION NOT NULL,
+    amount NUMERIC(10,2),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    FOREIGN KEY (HAND_ID) REFERENCES core.HANDS(id) ON DELETE CASCADE
+);
+
+
+
+
+CREATE TABLE core.HANDS_PLAYERS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hand_id UUID NOT NULL,
+    player_id UUID NOT NULL,
+    position core.TABLE_POSITION, -- Rotating position in the hand
+    hole_cards core.CARD[] DEFAULT NULL,
+    result core.HAND_RESULT, -- Outcome of the hand for the player
+    starting_stack NUMERIC(10,2),
+    ending_stack NUMERIC(10,2),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT HANDS_PLAYERS_HAND_ID_FKEY FOREIGN KEY (HAND_ID)
+    REFERENCES core.HANDS (ID),
+
+    CONSTRAINT HANDS_PLAYERS_PLAYER_ID_FKEY FOREIGN KEY (PLAYER_ID)
+    REFERENCES core.PLAYERS (ID)
+);
+
+CREATE INDEX HANDS_PLAYERS_HAND_ID_IDX ON core.HANDS_PLAYERS (HAND_ID ASC);
+
+CREATE INDEX HANDS_PLAYERS_PLAYER_ID_IDX ON core.HANDS_PLAYERS (PLAYER_ID ASC);
+
+CREATE TYPE core.STREET AS ENUM (
+    'PRE_FLOP',
+    'FLOP',
+    'TURN',
+    'RIVER'
+);
+
+CREATE TYPE core.ACTION AS ENUM (
+    'CHECK',
+    'CALL',
+    'BET',
+    'RAISE',
+    'FOLD'
+);
+
+CREATE TABLE core.HAND_ACTIONS (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    hand_player_id UUID NOT NULL,
+    street core.STREET,
+    action core.ACTION,
+    amount NUMERIC(10,2), -- Amount for BET/RAISE actions
+    action_sequence INTEGER NOT NULL,
+    is_all_in BOOLEAN,
+    updated_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP DEFAULT NOW(),
+
+    CONSTRAINT HAND_ACTIONS_HAND_PLAYER_ID_FKEY FOREIGN KEY (HAND_PLAYER_ID)
+    REFERENCES core.HANDS_PLAYERS (ID)
+);
+
+CREATE INDEX HAND_ACTIONS_HAND_PLAYER_ID_IDX ON core.HAND_ACTIONS (HAND_PLAYER_ID ASC);

@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { QueryFunctionContext } from '@tanstack/react-query'
 
 import { assocPath, keys, toUpper } from 'ramda'
@@ -48,28 +48,34 @@ export const createRestClient: StcRest.CreateRestClient = (
 
     createPostFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) => {
-          return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, axiosOptions)
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.post(expandRestPath(restPath, restParams || {}), data, mergedOptions)
         },
 
     createPutFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) =>
-          restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.put(expandRestPath(restPath, restParams || {}), data, mergedOptions)
+        },
 
     createPatchFn:
       (restPath, axiosOptions) =>
-        ({ data, restParams }) =>
-          restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, axiosOptions),
+        ({ data, restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.patch(expandRestPath(restPath, restParams || {}), data, mergedOptions)
+        },
 
     createDeleteFn:
       (restPath, axiosOptions) =>
-        (restParams) =>
-          restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), axiosOptions)
+        ({ restParams, axiosOptions: callAxiosOptions } = {}) => {
+          const mergedOptions = mergeAxiosOptions(axiosOptions, callAxiosOptions)
+          return restClient.axiosClient.delete(expandRestPath(restPath, restParams || {}), mergedOptions)
+        }
   }
 
   // all clients use these middlewares
-
   restClient.axiosClient.interceptors.request.use(
     _requestPreprocessor({
       verbose: !!clientConfig?.verbose,
@@ -78,10 +84,19 @@ export const createRestClient: StcRest.CreateRestClient = (
   )
 
   restClient.axiosClient.interceptors.response.use(
-    _responsePostProcessor({
-      verbose: !!clientConfig?.verbose,
-      responsePostProcessor: clientConfig?.responsePostProcessorFn
-    })
+    (response) => {
+      // onSuccess response handling
+      return onPostProcessorResponseSuccess({
+        verbose: !!clientConfig?.verbose,
+        responsePostProcessor: clientConfig?.responsePostProcessorFn,
+      })(response)
+    },
+    // OnError response handling
+    (error) => {
+      return onPostProcessorResponseError({
+        error, onAuthFailureFn: clientConfig?.onAuthFailureFn
+      })(error)
+    }
   )
   return restClient
 }
@@ -89,6 +104,21 @@ export const createRestClient: StcRest.CreateRestClient = (
 //*****************************************************************************
 // Module Only Stuff
 //*****************************************************************************
+
+// Merges hook-level and call-level axios options.
+// Call-level options take precedence, with headers deep-merged.
+const mergeAxiosOptions = (
+  hookOptions?: Partial<AxiosRequestConfig>,
+  callOptions?: Partial<AxiosRequestConfig>
+): Partial<AxiosRequestConfig> | undefined => {
+  if (!callOptions) return hookOptions
+  if (!hookOptions) return callOptions
+  return {
+    ...hookOptions,
+    ...callOptions,
+    headers: { ...hookOptions.headers, ...callOptions.headers }
+  }
+}
 
 interface _RequestPreProcessorOptions {
   verbose?: boolean
@@ -115,9 +145,14 @@ const _requestPreprocessor =
         : req
     }
 
-interface _RequestPostProcessorOptions {
+interface _RequestPostProcessorOptionsSuccess {
   verbose?: boolean
   responsePostProcessor?: (rsp: AxiosResponse) => AxiosResponse
+}
+
+interface _RequestPostProcessorOptionsError {
+  error: any
+  onAuthFailureFn?: (error: any) => void
 }
 
 export const f = async () => {
@@ -126,8 +161,8 @@ export const f = async () => {
 
 
 
-const _responsePostProcessor =
-  (opts: _RequestPostProcessorOptions) =>
+const onPostProcessorResponseSuccess =
+  (opts: _RequestPostProcessorOptionsSuccess) =>
     (rsp: AxiosResponse) =>
     {
 
@@ -141,6 +176,17 @@ const _responsePostProcessor =
 
       return responsePostProcessor(rsp)
     }
+
+
+const onPostProcessorResponseError =
+   (opts: _RequestPostProcessorOptionsError) =>
+     (rspError: AxiosError) => {
+       const { error, onAuthFailureFn } = opts
+       if (error.status === 401 && onAuthFailureFn) {
+         onAuthFailureFn(error)
+       }
+       return Promise.reject(rspError)
+     }
 
 /**
  * @function _expandRestPath

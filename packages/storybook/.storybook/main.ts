@@ -21,6 +21,9 @@ const config: StorybookConfig = {
   },
  async viteFinal(config) {
   return mergeConfig(config, {
+    optimizeDeps: {
+      exclude: ["node_modules/.cache/sb-vite"],
+    },
     assetsInclude: ["/sb-preview/runtime.js"], 
       css: {
       postcss: {

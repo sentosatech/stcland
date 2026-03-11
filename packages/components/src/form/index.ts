@@ -14,7 +14,7 @@ import {
   Password,
   RadioButton,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   Text,
   TextArea,
   TimeInput,
@@ -31,7 +31,7 @@ import type {
   TextInputProps,
   TimeInputProps,
   CheckBoxProps,
-  SelectProps,
+  SelectInputProps,
 } from './inputs'
 
 export {
@@ -47,7 +47,7 @@ export {
   Password,
   RadioButton,
   RadioButtonGroup,
-  Select,
+  SelectInput,
   Text,
   TextArea,
   TimeInput,
@@ -66,7 +66,7 @@ export type {
   TextAreaProps,
   TextInputProps,
   TimeInputProps,
-  SelectProps,
+  SelectInputProps,
   FormTitleProps,
   FieldsetProps,
 }

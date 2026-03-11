@@ -20,12 +20,11 @@ function isValidIcon(iconSet: Record<string, React.ComponentType<any>>, iconName
 export const Icon: React.FC<IconProps> = ({
   iconName,
   solid = false,
-  sm,
-  md,
-  lg,
-  secondaryColor = false,
+  size = 'md',
+  type = 'primary',
   highlightOnHover = false,
   brightenOnHover = false,
+  disabled = false,
   muted = false,
   bright = false,
   onClick = () => {},
@@ -46,9 +45,24 @@ export const Icon: React.FC<IconProps> = ({
 
   const defaultStyles: IconStyles = {
     root: 'p-2',
-    secondary: 'text-secondary-main',
-    primary: 'text-primary-main',
-    neutral: 'text-gray-600',
+    secondary:{
+      default: 'text-primary-surface-dark',
+      hover: 'hover:text-primary-text-icon-default',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    primary: {
+      default: 'text-primary-surface-default',
+      hover: 'hover:text-primary-surface-light',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
+    tertiary: {
+      default: 'text-primary-surface-light',
+      hover: 'hover:text-primary-surface-subtle',
+      pressed: 'active:text-primary-surface-dark',
+      disabled: 'disabled:bg-neutral-surface-disabled disabled:text-neutral-text-icon-disabled'
+    },
     sm: 'h-4.5 w-4.5',
     md: 'h-6 w-6',
     lg: 'h-7 w-7',
@@ -56,25 +70,40 @@ export const Icon: React.FC<IconProps> = ({
     bright: 'brightness-125',
     highlightOnHover: 'hover:bg-gray-600',
     brightenOnHover: 'hover:brightness-125',
-    muted: 'opacity-50'
+    muted: 'opacity-50',
+    icon: '',
+    button: ''
   }
 
-  const mergedStyles = appliedStyles<IconStyles>(defaultStyles, customStyles)
+  const mergedStyles = appliedStyles(defaultStyles, customStyles)
 
   const rootVariants = {
     [mergedStyles.highlightOnHover]: highlightOnHover,
   }
 
-  const colorVariants = {
-    [mergedStyles.secondary]: secondaryColor,
-    [mergedStyles.primary]: !secondaryColor,
+  const primary = type === 'primary'
+  const secondary = type === 'secondary'
+  const tertiary = type === 'tertiary'
+
+  const typeVariants = primary
+    ? mergedStyles.primary
+    : secondary
+      ? mergedStyles.secondary
+      : tertiary
+        ? mergedStyles.tertiary
+        : mergedStyles.primary // Default
+
+  const variantStyles =  {
+    [typeVariants.default]: !disabled,
+    [typeVariants.hover]: !disabled,
+    [typeVariants.pressed]: !disabled,
+    [typeVariants.disabled]: disabled,
   }
 
-  const noSizeVariants = !sm && !md && !lg
   const sizeVariants = {
-    [mergedStyles.sm]: sm,
-    [mergedStyles.md]: md || noSizeVariants, // Default to md if no size specified
-    [mergedStyles.lg]: lg
+    [mergedStyles.sm]: size === 'sm',
+    [mergedStyles.md]: size === 'md',
+    [mergedStyles.lg]: size === 'lg'
   }
 
   const iconVariants = {
@@ -85,7 +114,7 @@ export const Icon: React.FC<IconProps> = ({
 
   const cn = {
     root: cns(mergedStyles.root, rootVariants, className),
-    icon: cns(iconVariants, colorVariants, sizeVariants)
+    icon: cns(iconVariants, variantStyles, sizeVariants, mergedStyles.icon, 'group-disabled:text-gray-600')
   }
 
   return (

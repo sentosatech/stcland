@@ -7,7 +7,7 @@ import { pathExistsSync } from 'path-exists'
 import { Database } from 'arangojs'
 
 import {
-  type ArangoHostConfig, type CreateDatabaseUser,
+  type ArangoHostConfig, type CreateDatabaseUserOptions,
   getSysDb, dbExists, dropDb, canConnectToServer
 } from '../utils'
 
@@ -25,7 +25,7 @@ const hostConfig: ArangoHostConfig = {
   password: 'pw',
 }
 
-const dbUsers: CreateDatabaseUser[] = [
+const dbUsers: CreateDatabaseUserOptions[] = [
   { username: 'root', passwd: 'pw' },
 ]
 
@@ -51,7 +51,7 @@ afterAll(async () => {
   // await dropDb(sysDb, dbName)
 })
 
-describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
+describe('Test @stcland/arango/spreadsheet-loader', async () => {
   test('Arango data loading', async () => {
 
     const ifTargetDbDoesNotExist: IfTargetDbDoesNotExist = 'Create'
@@ -65,8 +65,8 @@ describe.skip('Test @stcland/arango/spreadsheet-loader', async () => {
 
     console.log('results: ', results)
   })
-  test.todo('DB/Collection existance cases', async () => {})
-  test.todo('Invalid worksheet contents', async () => {})
-  test.todo('Invalid Edges', async () => {})
-  test.todo('Mismatch in collection type specified in spreadsheet and actual collection type', async () => {})
+  // test.todo('DB/Collection existance cases', async () => {})
+  // test.todo('Invalid worksheet contents', async () => {})
+  // test.todo('Invalid Edges', async () => {})
+  // test.todo('Mismatch in collection type specified in spreadsheet and actual collection type', async () => {})
 })

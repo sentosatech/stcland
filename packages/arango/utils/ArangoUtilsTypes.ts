@@ -1,21 +1,23 @@
 
 import type { Database } from 'arangojs'
-import type { CreateDatabaseUser, CreateDatabaseOptions } from 'arangojs/database'
+import type { CreateDatabaseOptions } from 'arangojs/databases'
+import type { CreateDatabaseUserOptions } from 'arangojs/users'
 
-import  { CollectionType } from 'arangojs/collection'
+
+import  { CollectionType } from 'arangojs/collections'
 import type {
   DocumentCollection,
   EdgeCollection
-} from 'arangojs/collection'
+} from 'arangojs/collections'
 
 import {
   Graph, EdgeDefinitionOptions,
   CreateGraphOptions as ArangoCreateGraphOptions
-} from 'arangojs/graph'
+} from 'arangojs/graphs'
 
 // re-export arango types so clients can use directly
 export { Graph, Database, CollectionType }
-export type { DocumentCollection, EdgeCollection, CreateDatabaseUser }
+export type { DocumentCollection, EdgeCollection, CreateDatabaseUserOptions }
 
 
 // --- General utils ----------------------------------------------------------
@@ -155,7 +157,7 @@ export type GetEdgeCollection = (
   db: Database,
   collectionName: string,
   ifCollectionDoesNotExist?: IfCollectionDoesNotExistOnGet, // default is ThrowError
-  ) => Promise<DocumentCollection>;
+  ) => Promise<EdgeCollection>;
 
 export type GetCollectionType = {
   (collection: DocumentCollection | EdgeCollection) : Promise<CollectionType>;

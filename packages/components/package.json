@@ -1,6 +1,6 @@
 {
   "name": "@stcland/components",
-  "version": "0.0.6",
+  "version": "0.0.28",
   "type": "module",
   "main": "./dist/index.es.js",
   "module": "./dist/index.es.js",
@@ -44,6 +44,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/sortable": "^8.0.0",
     "@heroicons/react": "^2.1.5",
     "@hookform/devtools": "^4.3.1",
     "@stcland/utils": "workspace:^",
@@ -54,7 +56,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
-    "react-tailwindcss-select": "^1.8.5"
+    "react-tailwindcss-select": "^1.8.5",
+    "react-use": "^17.5.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
