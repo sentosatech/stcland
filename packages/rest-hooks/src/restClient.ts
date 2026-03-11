@@ -163,7 +163,7 @@ const onPostProcessorResponseError =
        if (error.status === 401 && onAuthFailureFn) {
          onAuthFailureFn(error)
        }
-       return rspError
+       return Promise.reject(rspError)
      }
 
 /**

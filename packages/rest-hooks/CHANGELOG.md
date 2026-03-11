@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.22
+
+### Patch Changes
+
+- Reject promise, making sure React Query routes to onError instead of onSuccess.
+
 ## 0.0.21
 
 ### Patch Changes
