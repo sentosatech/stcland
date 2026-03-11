@@ -1,5 +1,11 @@
 # @stcland/rest-hooks
 
+## 0.0.23
+
+### Patch Changes
+
+- Make sure each hook instance have access to axiosOpts.
+
 ## 0.0.22
 
 ### Patch Changes

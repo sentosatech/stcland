@@ -254,6 +254,10 @@ export namespace StcRest {
     restParams?: RestParams;
       // restParams.pathParams - For path variable substitutions.
       // restParams.queryParams - Optional path and query params for the REST call.
+    axiosOptions?: Partial<AxiosRequestConfig>;
+      // Per-call Axios request configuration.
+      // Merged on top of hook-level axiosOptions (call-level takes precedence).
+      // Useful for dynamic options like onUploadProgress that vary per call.
   }
 
   /**
